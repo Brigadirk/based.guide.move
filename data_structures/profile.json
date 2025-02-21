@@ -1,0 +1,79 @@
+{
+    "user": {
+      "citizenship": {
+        "primary": "Netherlands",
+        "dual_citizenship": false,
+        "renunciation_plans": false
+      },
+      "residency_status": {
+        "current": "US",
+        "previous": [],
+        "tie_breaker_rules": "US"
+      },
+      "income_sources": [
+        {
+          "type": "salary",
+          "location": "US",
+          "amount": 100000,
+          "taxable": true,
+          "feie_eligible": false
+        },
+        {
+          "type": "investments",
+          "location": "Netherlands",
+          "amount": 50000,
+          "taxable": true
+        },
+        {
+          "type": "rental_income",
+          "location": "Netherlands",
+          "amount": 20000,
+          "taxable": true
+        }
+      ],
+      "assets": [
+        {
+          "type": "stocks",
+          "location": "US",
+          "value": 200000,
+          "holding_period": ">1 year",
+          "liquidity": "high",
+          "reporting_requirements": ["FBAR"]
+        },
+        {
+          "type": "property",
+          "location": "Netherlands",
+          "value": 300000,
+          "holding_period": ">5 years",
+          "liquidity": "low"
+        },
+        {
+          "type": "cryptocurrency",
+          "location": "global",
+          "value": 50000,
+          "holding_period": "<1 year",
+          "liquidity": "high",
+          "reporting_requirements": ["FATCA"]
+        }
+      ],
+      "tax_goals": {
+        "primary_objective": "tax_optimization",
+        "risk_tolerance": "moderate",
+        "time_horizon": "long_term"
+      },
+      "geographic_preferences": {
+        "preferred_countries": "any",
+        "maximum_minimum_stay": "any"
+      },
+      "additional_context": {
+        "retirement_planning": {
+          "retirement_accounts": ["401(k)", "IRA"],
+          "retirement_visa_options": []
+        },
+        "family_considerations": {
+          "spousal_income": 0,
+          "childcare_costs": 0
+        }
+      }
+    }
+  }
