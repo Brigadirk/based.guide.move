@@ -1,0 +1,122 @@
+{
+    "country": "Maldives",
+    "overview": {
+        "tax_residency_rules": "Determined by physical presence (183 days) or domicile.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Maldivian Rufiyaa (MVR)",
+        "tax_authority": "Maldives Inland Revenue Authority (MIRA)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 100,000 MVR",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "100,001 - 200,000 MVR",
+                    "rate": "3%"
+                },
+                {
+                    "bracket": "200,001 - 300,000 MVR",
+                    "rate": "4%"
+                },
+                {
+                    "bracket": "300,001+ MVR",
+                    "rate": "5%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "First 100,000 MVR of employment income is tax-free.",
+            "social_security": "Information not available"
+        },
+        "corporate_tax": {
+            "rate": "15% on net profits.",
+            "small_business_rate": "Information not available",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "Information not available",
+                "interest": "Information not available",
+                "royalties": "Information not available"
+            },
+            "deductions": "Business expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "15% (held less than 1 year).",
+                    "long_term_rate": "5% (held more than 1 year)."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "15% (held less than 2 years).",
+                    "long_term_rate": "5% (held more than 2 years)."
+                },
+                {
+                    "asset_type": "Other Assets",
+                    "short_term_rate": "15%",
+                    "long_term_rate": "5%"
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt."
+        },
+        "vat_gst": {
+            "rate": "6% on most goods and services.",
+            "reduced_rate": "Information not available",
+            "exemptions": "Healthcare, education, hospitality."
+        },
+        "property_tax": {
+            "rate": "0.5 - 1% of assessed value, depending on property type.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "20% on inherited assets.",
+            "exemptions": "Spouse, children, charitable donations."
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "No",
+        "requirements": "Information not available",
+        "tax_benefits": "Information not available",
+        "duration": "Information not available"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "Sri Lanka",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Singapore",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United Arab Emirates",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "15% on crypto income.",
+            "capital_gains_rate": "5% on crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "15% on NFT income.",
+            "capital_gains_rate": "5% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Low political risk.",
+        "economic_stability": "Stable economy with a focus on tourism.",
+        "legal_system": "Common law system.",
+        "ease_of_doing_business": "Ranked 94th in the World Bank's Ease of Doing Business Index."
+    }
+}

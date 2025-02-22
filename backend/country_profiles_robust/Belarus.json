@@ -1,0 +1,141 @@
+{
+    "country": "Belarus",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or registration of permanent residence.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Belarusian ruble (BYN)",
+        "tax_authority": "Ministry of Taxes and Duties of the Republic of Belarus",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - BYN 9,285",
+                    "rate": "12%"
+                },
+                {
+                    "bracket": "BYN 9,286 - BYN 18,570",
+                    "rate": "13%"
+                },
+                {
+                    "bracket": "BYN 18,571 - BYN 37,140",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "BYN 37,141 - BYN 231,681",
+                    "rate": "25%"
+                },
+                {
+                    "bracket": "BYN 231,681+",
+                    "rate": "30%"
+                }
+            ],
+            "foreign_income_taxed": true,
+            "exemptions": "Standard deductions, including children and disability status.",
+            "social_security": "34% of income (includes pension, health, disability, and employment contributions)."
+        },
+        "corporate_tax": {
+            "rate": "20% on net profits.",
+            "small_business_rate": "0% for small businesses with gross revenue under BYN 250,000.",
+            "foreign_income_taxed": true,
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "15%",
+                "royalties": "15%"
+            },
+            "deductions": "Expenses incurred in generating income, including depreciation and R&D."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "15% (held less than 2 years).",
+                    "long_term_rate": "12% (held for 2 years or more)."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "20% (held less than 5 years).",
+                    "long_term_rate": "13% (held for 5 years or more)."
+                },
+                {
+                    "asset_type": "Other Assets",
+                    "short_term_rate": "18% (held less than 3 years).",
+                    "long_term_rate": "15% (held for 3 years or more)."
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt."
+        },
+        "vat_gst": {
+            "rate": "20% on most goods and services.",
+            "reduced_rate": "10% on certain food items and utilities.",
+            "exemptions": "Healthcare, education, and financial services."
+        },
+        "property_tax": {
+            "rate": "1% of assessed value for individuals.",
+            "exemptions": "Primary residence with land size under 500 square meters."
+        },
+        "inheritance_tax": {
+            "rate": "15% on inherited assets from non-relatives.",
+            "exemptions": "Spouse, children, and parents."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [
+        {
+            "name": "Minsk World Trade Center",
+            "location": "Minsk",
+            "tax_incentives": "Reduced corporate tax rate of 9% and VAT exemption.",
+            "business_types": "IT, manufacturing, services.",
+            "setup_requirements": "Minimum investment of \u20ac500,000."
+        },
+        {
+            "name": "Brest Industrial Park",
+            "location": "Brest",
+            "tax_incentives": "Exemption from property tax and land tax for 5 years.",
+            "business_types": "Manufacturing, logistics, warehousing.",
+            "setup_requirements": "Minimum investment of \u20ac1 million."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "Russia",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Ukraine",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available.",
+            "mining_tax": "Information not available."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Belarus is subject to international sanctions, which may affect tax regulations.",
+        "economic_stability": "The Belarussian economy is heavily dependent on Russia and sensitive to geopolitical events.",
+        "legal_system": "The Belarussian legal system is heavily influenced by the government, which may impact tax dispute resolution.",
+        "ease_of_doing_business": "Ranked 53rd in the World Bank's Ease of Doing Business Index."
+    }
+}

@@ -1,0 +1,126 @@
+{
+    "country": "Moldova",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule.",
+        "tax_year": "Calendar year.",
+        "currency": "Moldovan Leu (MDL)",
+        "tax_authority": "State Tax Service of the Republic of Moldova",
+        "tax_filing_frequency": "Quarterly for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 36,000 MDL",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "36,001 - 72,000 MDL",
+                    "rate": "7%"
+                },
+                {
+                    "bracket": "72,001 - 144,000 MDL",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "144,001+ MDL",
+                    "rate": "20%"
+                }
+            ],
+            "foreign_income_taxed": true,
+            "exemptions": "N/A",
+            "social_security": "23% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "12% on net profits.",
+            "small_business_rate": "Information not available.",
+            "foreign_income_taxed": true,
+            "withholding_taxes": {
+                "dividends": "5%",
+                "interest": "12%",
+                "royalties": "15%"
+            },
+            "deductions": "R&D expenses, depreciation, charitable contributions."
+        },
+        "capital_gains_tax": {
+            "rate": "12% on net capital gains.",
+            "exemptions": "Gains from the sale of primary residence are exempt.",
+            "short_term_capital_gains": "Information not available."
+        },
+        "vat_gst": {
+            "rate": "20% on most goods and services.",
+            "reduced_rate": "Information not available.",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "0.2% - 2% of assessed value, depending on property type.",
+            "exemptions": "Primary residence (up to 120 sqm)."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Surviving spouse and children."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "Yes",
+        "requirements": "Must have a valid passport and proof of income.",
+        "tax_benefits": "Income earned abroad is tax-exempt.",
+        "duration": "1 year, with the option to renew."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Balti Free Economic Zone",
+            "location": "Balti",
+            "tax_incentives": "0% corporate tax, 0% customs duties.",
+            "business_types": "Manufacturing, IT, logistics.",
+            "setup_requirements": "Minimum investment of 100,000 MDL."
+        },
+        {
+            "name": "Orhei Free Economic Zone",
+            "location": "Orhei",
+            "tax_incentives": "0% corporate tax, 0% customs duties.",
+            "business_types": "Manufacturing, agriculture, tourism.",
+            "setup_requirements": "Minimum investment of 500,000 MDL."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "Romania",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Ukraine",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Bulgaria",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "12% on crypto income.",
+            "capital_gains_rate": "12% on crypto capital gains.",
+            "mining_tax": "Income from crypto mining is taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "12% on NFT income.",
+            "capital_gains_rate": "12% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Low political risk.",
+        "economic_stability": "Stable economic growth.",
+        "legal_system": "Transparent and efficient legal system.",
+        "ease_of_doing_business": "Ranked 48th in the World Bank's Ease of Doing Business Index."
+    }
+}

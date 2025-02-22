@@ -1,0 +1,114 @@
+{
+    "country": "Mauritania",
+    "overview": {
+        "tax_residency_rules": "Information not available.",
+        "tax_year": "Information not available.",
+        "currency": "Ouguiya (MRO)",
+        "tax_authority": "Mauritanian Tax Administration",
+        "tax_filing_frequency": "Information not available.",
+        "currency_exchange_rules": "Information not available."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 200,000 MRO",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "200,001 - 400,000 MRO",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "400,001 - 600,000 MRO",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "600,001+ MRO",
+                    "rate": "30%"
+                }
+            ],
+            "foreign_income_taxed": "Information not available.",
+            "exemptions": "Information not available.",
+            "social_security": "Information not available."
+        },
+        "corporate_tax": {
+            "rate": "25% on net profits.",
+            "small_business_rate": "10% for small businesses.",
+            "foreign_income_taxed": "Information not available.",
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "10%",
+                "royalties": "15%"
+            },
+            "deductions": "Information not available."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                }
+            ],
+            "exemptions": "Information not available."
+        },
+        "vat_gst": {
+            "rate": "18%",
+            "reduced_rate": "5% on certain basic goods and necessities.",
+            "exemptions": "Information not available."
+        },
+        "property_tax": {
+            "rate": "0.5% to 1% of assessed value.",
+            "exemptions": "Information not available."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "France",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available.",
+            "mining_tax": "Information not available."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Information not available.",
+        "economic_stability": "Information not available.",
+        "legal_system": "Information not available.",
+        "ease_of_doing_business": "Information not available."
+    }
+}

@@ -1,0 +1,118 @@
+{
+    "country": "Romania",
+    "overview": {
+        "tax_residency_rules": "Determined by domicile or 183-day rule.",
+        "tax_year": "Calendar year (January 1st - December 31st).",
+        "currency": "Romanian leu (RON)",
+        "tax_authority": "National Agency for Fiscal Administration (ANAF)",
+        "tax_filing_frequency": "Monthly or quarterly (depending on the type of tax and taxpayer).",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 255,000 RON",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "255,001 - 655,000 RON",
+                    "rate": "20%"
+                }
+            ],
+            "foreign_income_taxed": "Yes, if the individual is a tax resident.",
+            "exemptions": "None.",
+            "social_security": "25% of gross income (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "16% on net profits.",
+            "small_business_rate": "3% for micro-enterprises with revenue under 1,000,000 RON.",
+            "foreign_income_taxed": "Yes, if the company has a permanent establishment in Romania.",
+            "withholding_taxes": {
+                "dividends": "5%",
+                "interest": "16%",
+                "royalties": "16%"
+            },
+            "deductions": "R&D expenses, depreciation, interest expenses."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "16% (held less than 1 year).",
+                    "long_term_rate": "0% (held more than 1 year)."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "16% (held less than 5 years).",
+                    "long_term_rate": "0% (held more than 5 years)."
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "16% (held less than 1 year).",
+                    "long_term_rate": "0% (held more than 1 year)."
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt."
+        },
+        "vat_gst": {
+            "rate": "19% on most goods and services.",
+            "reduced_rate": "9% on food, utilities, and tourism.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "0.1% - 1.3% of assessed value, depending on the property type and location.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "3.6% for Class I heirs (spouse, children); 16% for Class II heirs (siblings, grandparents, aunts/uncles).",
+            "exemptions": "None."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "No",
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [
+        {
+            "name": "Constanta Free Zone",
+            "location": "Constanta",
+            "tax_incentives": "0% corporate tax for 6 years, reduced property tax.",
+            "business_types": "Logistics, manufacturing, tourism.",
+            "setup_requirements": "Minimum investment of \u20ac100,000."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on income and business profits."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "16% on crypto income.",
+            "capital_gains_rate": "0% on crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "16% on NFT income.",
+            "capital_gains_rate": "0% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Moderate political stability.",
+        "economic_stability": "Stable economic growth.",
+        "legal_system": "Well-developed legal system.",
+        "ease_of_doing_business": "Ranked 53rd in the World Bank's Ease of Doing Business Index."
+    }
+}

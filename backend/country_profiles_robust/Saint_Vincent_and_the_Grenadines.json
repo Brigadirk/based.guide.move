@@ -1,0 +1,104 @@
+{
+    "country": "Saint Vincent and the Grenadines",
+    "overview": {
+        "tax_residency_rules": "Determined by physical presence (183 days or more).",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Eastern Caribbean Dollar (XCD)",
+        "tax_authority": "Inland Revenue Department",
+        "tax_filing_frequency": "Individuals: March 15; Businesses: June 30.",
+        "currency_exchange_rules": "No restrictions on currency exchange."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 15,000 XCD",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "15,001 - 30,000 XCD",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "30,001 - 60,000 XCD",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "60,001+ XCD",
+                    "rate": "25%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "None.",
+            "social_security": "5% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "25% on net profits.",
+            "small_business_rate": "Information not available.",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "0%",
+                "royalties": "15%"
+            },
+            "deductions": "Business expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "Information not available",
+                    "long_term_rate": "15%"
+                },
+                {
+                    "asset_type": "Other Assets",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                }
+            ],
+            "exemptions": "Information not available."
+        },
+        "vat_gst": {
+            "rate": "15% on most goods and services.",
+            "reduced_rate": "Information not available.",
+            "exemptions": "Food, medicine, education."
+        },
+        "property_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "25% on crypto income.",
+            "capital_gains_rate": "15% on crypto capital gains.",
+            "mining_tax": "Information not available."
+        },
+        "nft_tax": {
+            "income_tax_rate": "25% on NFT income.",
+            "capital_gains_rate": "15% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Low political risk.",
+        "economic_stability": "Stable economy with tourism and agriculture sectors.",
+        "legal_system": "Based on English common law.",
+        "ease_of_doing_business": "Ranked 103rd in the World Bank's Ease of Doing Business Index."
+    }
+}

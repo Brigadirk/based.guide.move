@@ -1,0 +1,126 @@
+{
+    "country": "Costa Rica",
+    "overview": {
+        "tax_residency_rules": "Determined by residency card or physical presence.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Costa Rican col\u00f3n (CRC)",
+        "tax_authority": "Ministry of Finance and Public Credit",
+        "tax_filing_frequency": "Monthly for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - \u20a1840,310",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "\u20a1840,311 - \u20a11.8 million",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "\u20a11.8 million - \u20a14.2 million",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "\u20a14.2 million - \u20a16.6 million",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "\u20a16.6 million+",
+                    "rate": "25%"
+                }
+            ],
+            "foreign_income_taxed": true,
+            "exemptions": "Basic exemption of \u20a1840,310.",
+            "social_security": "10.24% of gross income."
+        },
+        "corporate_tax": {
+            "rate": "30% on net profits.",
+            "small_business_rate": "Information not available.",
+            "foreign_income_taxed": true,
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "15%",
+                "royalties": "15%"
+            },
+            "deductions": "Standard deductions and specific deductions for certain expenses."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "15%",
+                    "long_term_rate": "8%"
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "15%",
+                    "long-term_rate": "8%"
+                },
+                {
+                    "asset_type": "Other",
+                    "short_term_rate": "15%",
+                    "long-term_rate": "8%"
+                }
+            ],
+            "exemptions": "Sale of primary residence if lived in for at least two years."
+        },
+        "vat_gst": {
+            "rate": "13% on most goods and services.",
+            "reduced_rate": "4% on basic food items and medicines.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "0.25% of assessed value.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Proof of remote income, health insurance, and Spanish language proficiency.",
+        "tax_benefits": "Exemption from income tax on foreign-sourced income.",
+        "duration": "One year, renewable."
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Canada",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Income tax rates apply to crypto income.",
+            "capital_gains_rate": "Capital gains tax rates apply to crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Income tax rates apply to NFT income.",
+            "capital_gains_rate": "Capital gains tax rates apply to NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Political stability is generally good.",
+        "economic_stability": "Economic growth and inflation are relatively stable.",
+        "legal_system": "Tax disputes are handled by the Tax Court.",
+        "ease_of_doing_business": "Ranked 62nd in the World Bank's Ease of Doing Business Index."
+    }
+}

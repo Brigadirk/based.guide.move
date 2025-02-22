@@ -1,0 +1,119 @@
+{
+    "country": "Czechia",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or center of vital interests.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Czech Koruna (CZK)",
+        "tax_authority": "General Financial Directorate",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 16 200 CZK",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "16 201 - 68 000 CZK",
+                    "rate": "23%"
+                },
+                {
+                    "bracket": "68 001+ CZK",
+                    "rate": "32%"
+                }
+            ],
+            "foreign_income_taxed": "Yes, but foreign tax credit is available.",
+            "exemptions": "Income up to 6 000 CZK per year is tax-free.",
+            "social_security": "6.5% of gross income (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "19% on net profits.",
+            "small_business_rate": "Information not available.",
+            "foreign_income_taxed": "Yes, but foreign tax credit is available.",
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "15%",
+                "royalties": "15%"
+            },
+            "deductions": "Standard deductions and itemized deductions are available."
+        },
+        "capital_gains_tax": {
+            "rate": "15% on net capital gains.",
+            "exemptions": "Gains from the sale of primary residence are exempt.",
+            "short_term_rate": "Information not available.",
+            "long_term_rate": "Information not available."
+        },
+        "vat_gst": {
+            "rate": "21% on most goods and services.",
+            "reduced_rate": "15% on certain goods and services.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "Property tax varies by municipality.",
+            "exemptions": "Primary residence may be eligible for exemptions."
+        },
+        "inheritance_tax": {
+            "rate": "7.5% for Class I heirs, 15% for Class II heirs, and 40% for Class III heirs.",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "Yes",
+        "requirements": "Proof of employment or self-employment outside of Czechia.",
+        "tax_benefits": "No special tax benefits for digital nomads.",
+        "duration": "1 year, renewable."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Ostrava Industrial Zone",
+            "location": "Ostrava",
+            "tax_incentives": "Reduced corporate tax rate of 15%, special tax breaks for R&D.",
+            "business_types": "Manufacturing, logistics.",
+            "setup_requirements": "Investment of at least 50 million CZK."
+        },
+        {
+            "name": "Pardubice Industrial Zone",
+            "location": "Pardubice",
+            "tax_incentives": "Reduced corporate tax rate of 15%, tax breaks for new businesses.",
+            "business_types": "Automotive, engineering.",
+            "setup_requirements": "Minimum investment of 20 million CZK."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "15% on crypto income.",
+            "capital_gains_rate": "15% on crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "15% on NFT income.",
+            "capital_gains_rate": "15% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Stable political environment with a low risk of tax changes.",
+        "economic_stability": "Strong economy with low inflation and a stable currency.",
+        "legal_system": "Well-developed legal system with clear and enforced tax laws.",
+        "ease_of_doing_business": "Ranked 27th in the World Bank's Ease of Doing Business Index."
+    }
+}

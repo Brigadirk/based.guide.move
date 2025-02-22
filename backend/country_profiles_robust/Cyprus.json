@@ -1,0 +1,120 @@
+{
+    "country": "Cyprus",
+    "overview": {
+        "tax_residency_rules": "183-day presence rule or main center of vital interests.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Euro (EUR)",
+        "tax_authority": "Cyprus Tax Department",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "Free flow of capital and no currency controls."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - \u20ac19,500",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "\u20ac19,501 - \u20ac28,000",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "\u20ac28,001 - \u20ac36,300",
+                    "rate": "25%"
+                },
+                {
+                    "bracket": "\u20ac36,301 - \u20ac60,000",
+                    "rate": "30%"
+                },
+                {
+                    "bracket": "\u20ac60,001+",
+                    "rate": "35%"
+                }
+            ],
+            "foreign_income_taxed": "Yes, unless exempt under Double Taxation Agreements.",
+            "exemptions": "Basic personal allowance of \u20ac19,500.",
+            "social_security": "7.8% of gross income (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "12.5% on net profits.",
+            "small_business_rate": "Information not available",
+            "foreign_income_taxed": "Yes, unless exempt under Double Taxation Agreements.",
+            "withholding_taxes": {
+                "dividends": "0% for residents and non-residents.",
+                "interest": "0% for residents, 30% for non-residents.",
+                "royalties": "0% for residents, 10% for non-residents."
+            },
+            "deductions": "Standard deductions, business expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": "20% on net capital gains.",
+            "exemptions": "Exemptions for gains from the sale of primary residence, assets held for more than 12 years.",
+            "short_term_rate": "Information not available",
+            "long_term_rate": "Information not available"
+        },
+        "vat_gst": {
+            "rate": "19% on most goods and services.",
+            "reduced_rate": "9% on certain essential items.",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "0.1% to 0.3% of assessed value.",
+            "exemptions": "Primary residence, properties under \u20ac125,000."
+        },
+        "inheritance_tax": {
+            "rate": "0% for direct descendants (spouse, children, grandchildren).",
+            "exemptions": "Inherited property valued less than \u20ac170,000."
+        },
+        "wealth_tax": {
+            "rate": "0%",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "Yes",
+        "requirements": "Proof of remote employment, minimum income of \u20ac3,500 per month.",
+        "tax_benefits": "50% tax exemption on employment income for the first 10 years.",
+        "duration": "Initially for 1 year, renewable indefinitely."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Cyprus Investment Programme",
+            "location": "Cyprus",
+            "tax_incentives": "Fast-track citizenship, tax benefits for investors.",
+            "business_types": "Investment in real estate, businesses, or infrastructure.",
+            "setup_requirements": "Investment of at least \u20ac2 million."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income, but not capital gains."
+        },
+        {
+            "country": "Russia",
+            "description": "Avoids double taxation on income, but not capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "12.5% on crypto income.",
+            "capital_gains_rate": "20% on crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "12.5% on NFT income.",
+            "capital_gains_rate": "20% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Low political risk, stable economy and legal system.",
+        "economic_stability": "Strong economic growth and low unemployment.",
+        "legal_system": "Based on English common law, efficient and transparent.",
+        "ease_of_doing_business": "Ranked 53rd in the World Bank's Ease of Doing Business Index."
+    }
+}

@@ -1,0 +1,131 @@
+{
+    "country": "France",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or domicile.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Euro (EUR)",
+        "tax_authority": "French Tax Administration (DGFiP)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 10,225 EUR",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "10,226 - 26,070 EUR",
+                    "rate": "11%"
+                },
+                {
+                    "bracket": "26,071 - 74,545 EUR",
+                    "rate": "30%"
+                },
+                {
+                    "bracket": "74,546 - 158,227 EUR",
+                    "rate": "41%"
+                },
+                {
+                    "bracket": "158,228+ EUR",
+                    "rate": "45%"
+                }
+            ],
+            "foreign_income_taxed": true,
+            "exemptions": "Various tax deductions and credits available.",
+            "social_security": "15.5% of gross income (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "25% on net profits.",
+            "small_business_rate": "15% for small businesses with revenue under 10 million EUR.",
+            "foreign_income_taxed": true,
+            "withholding_taxes": {
+                "dividends": "12.8% if recipient is a resident company, 25% if recipient is a non-resident.",
+                "interest": "0% if recipient is a bank, 12.8% if recipient is a resident company, 25% if recipient is a non-resident.",
+                "royalties": "25%"
+            },
+            "deductions": "R&D expenses, depreciation, interest expenses."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "30% (held less than 2 years).",
+                    "long_term_rate": "12.8% (held more than 2 years)."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "30% (held less than 2 years).",
+                    "long_term_rate": "19% (held more than 2 years)."
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "30% (held less than 2 years).",
+                    "long_term_rate": "12.8% (held more than 2 years)."
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt up to 200,000 EUR.",
+            "deferred_taxation": "Capital gains tax can be deferred if the proceeds are reinvested in certain assets."
+        },
+        "vat_gst": {
+            "rate": "20% on most goods and services.",
+            "reduced_rate": "10% on food items, newspapers, transportation.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "Based on assessed value of property.",
+            "exemptions": "Primary residence may be eligible for exemptions."
+        },
+        "inheritance_tax": {
+            "rate": "Up to 60% on inherited assets, depending on the relationship to the deceased.",
+            "exemptions": "Spouse and direct descendants are exempt up to certain limits."
+        },
+        "wealth_tax": {
+            "rate": "0.5% on net worth above 1.3 million EUR.",
+            "exemptions": "Primary residence is exempt."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Must earn a minimum of 60,000 EUR annually and have proof of health insurance.",
+        "tax_benefits": "Can claim the \"Impatriate Regime\" for tax exemptions on foreign income for up to 8 years.",
+        "duration": "4 years, renewable."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Lyon Part-Dieu Business District",
+            "location": "Lyon",
+            "tax_incentives": "Reduced property tax and business rates.",
+            "business_types": "Services, technology.",
+            "setup_requirements": "Minimum investment of 1 million EUR."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on business income and dividends."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "30% on crypto income.",
+            "capital_gains_rate": "12.8% on crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "30% on NFT income.",
+            "capital_gains_rate": "12.8% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Stable political environment with a strong legal system.",
+        "economic_stability": "Developed economy with low inflation and currency stability.",
+        "legal_system": "Robust legal system with clear tax laws and regulations.",
+        "ease_of_doing_business": "Ranked 29th in the World Bank's Ease of Doing Business Index."
+    }
+}

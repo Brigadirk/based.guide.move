@@ -1,0 +1,122 @@
+{
+    "country": "Dominican Republic",
+    "overview": {
+        "tax_residency_rules": "Determined by physical presence in the country, time spent in the country, and economic and social interests.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Dominican Peso (DOP)",
+        "tax_authority": "Internal Revenue Service (DGII)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 519,000 DOP",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "519,001 - 1,060,000 DOP",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "1,060,001 - 1,720,000 DOP",
+                    "rate": "25%"
+                },
+                {
+                    "bracket": "1,720,001 and over",
+                    "rate": "30%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "Basic deductions and allowances are available.",
+            "social_security": "9.75% (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "27%",
+            "small_business_rate": "15% for small businesses with revenue under 5 million DOP.",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "10%",
+                "royalties": "15%"
+            },
+            "deductions": "Standard business deductions and expenses are allowed."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Real estate",
+                    "short_term_rate": "10%",
+                    "long_term_rate": "2% (held over 5 years)."
+                },
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "27%",
+                    "long_term_rate": "10% (held over 5 years)."
+                },
+                {
+                    "asset_type": "Other assets",
+                    "short_term_rate": "27%",
+                    "long_term_rate": "15% (held over 5 years)."
+                }
+            ],
+            "exemptions": "Certain gains are exempt, such as gains from the sale of a primary residence."
+        },
+        "vat_gst": {
+            "rate": "18%",
+            "reduced_rate": "12% on certain goods and services.",
+            "exemptions": "Healthcare, education, and certain food items."
+        },
+        "property_tax": {
+            "rate": "1% of assessed value.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "3%",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": "1% on net worth above 10 million DOP.",
+            "exemptions": "Primary residence."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Canada",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Spain",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "27% on crypto income.",
+            "capital_gains_rate": "27% (held less than 5 years).",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "27% on NFT income.",
+            "capital_gains_rate": "27% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Information not available.",
+        "economic_stability": "Information not available.",
+        "legal_system": "Information not available.",
+        "ease_of_doing_business": "Information not available."
+    }
+}

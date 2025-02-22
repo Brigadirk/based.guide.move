@@ -1,0 +1,113 @@
+{
+    "country": "Poland",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or domicile.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Polish z\u0142oty (PLN)",
+        "tax_authority": "National Revenue Administration",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "Up to PLN 120,000",
+                    "rate": "17%"
+                },
+                {
+                    "bracket": "PLN 120,000 - PLN 1,000,000",
+                    "rate": "32%"
+                },
+                {
+                    "bracket": "PLN 1,000,000",
+                    "rate": "45%"
+                }
+            ],
+            "foreign_income_taxed": "Yes, unless tax treaty applies.",
+            "exemptions": "Personal allowance of PLN 30,000.",
+            "social_security": "9.76% of income (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "19% (CIT).",
+            "small_business_rate": "9% (for businesses with revenue under PLN 2 million).",
+            "foreign_income_taxed": "Yes, unless tax treaty applies.",
+            "withholding_taxes": {
+                "dividends": "19%",
+                "interest": "20%",
+                "royalties": "20%"
+            },
+            "deductions": "R&D expenses, depreciation, interest expenses."
+        },
+        "capital_gains_tax": {
+            "rate": "19%",
+            "exemptions": "Exemption for gains from the sale of primary residence after 5 years of ownership."
+        },
+        "vat_gst": {
+            "rate": "23% (standard).",
+            "reduced_rate": "8% (on food, books).",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "0.08% - 0.15% of assessed value (depending on municipality).",
+            "exemptions": "None"
+        },
+        "inheritance_tax": {
+            "rate": "7% - 20% (depending on relationship to deceased).",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": "None",
+            "exemptions": "None"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "Yes",
+        "requirements": "Income threshold of PLN 7,760 per month or equivalent.",
+        "tax_benefits": "Flat tax rate of 19% on Polish income.",
+        "duration": "Up to 1 year (renewable)."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Katowice Special Economic Zone",
+            "location": "Katowice region",
+            "tax_incentives": "Corporate income tax exemption for 15 years, reduced property tax.",
+            "business_types": "Manufacturing, logistics.",
+            "setup_requirements": "Minimum investment of PLN 10 million."
+        },
+        {
+            "name": "\u0141\u00f3d\u017a Special Economic Zone",
+            "location": "\u0141\u00f3d\u017a region",
+            "tax_incentives": "Corporate income tax exemption for 10 years, reduced property tax.",
+            "business_types": "Manufacturing, R&D.",
+            "setup_requirements": "Minimum investment of PLN 5 million."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on income and dividends."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "19% on crypto income.",
+            "capital_gains_rate": "19% on crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "19% on NFT income.",
+            "capital_gains_rate": "19% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Political stability.",
+        "economic_stability": "Stable economy and low inflation.",
+        "legal_system": "Well-developed legal system.",
+        "ease_of_doing_business": "Ranked 49th in the World Bank's Ease of Doing Business Index."
+    }
+}

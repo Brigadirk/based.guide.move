@@ -1,0 +1,114 @@
+{
+    "country": "Sao Tome and Principe",
+    "overview": {
+        "tax_residency_rules": "Determined by physical presence of 183 days or habitual abode.",
+        "tax_year": "Calendar year.",
+        "currency": "S\u00e3o Tom\u00e9 and Pr\u00edncipe Dobra (STD)",
+        "tax_authority": "National Tax Authority (AN)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 164,430 STD",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "164,431 - 274,052 STD",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "274,053 - 548,105 STD",
+                    "rate": "25%"
+                },
+                {
+                    "bracket": "548,106+ STD",
+                    "rate": "35%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "Interest on savings and insurance premiums.",
+            "social_security": "10% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "35% on net profits.",
+            "small_business_rate": "Information not available.",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "15%",
+                "royalties": "15%"
+            },
+            "deductions": "Business expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "20%",
+                    "long_term_rate": "15%"
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "20%",
+                    "long_term_rate": "15%"
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "20%",
+                    "long_term_rate": "15%"
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt."
+        },
+        "vat_gst": {
+            "rate": "16% on most goods and services.",
+            "reduced_rate": "8% on basic food items and essential utilities.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "10% on inherited assets.",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "Portugal",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "35% on crypto income.",
+            "capital_gains_rate": "20% on crypto capital gains.",
+            "mining_tax": "Taxed as income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "35% on NFT income.",
+            "capital_gains_rate": "20% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Information not available.",
+        "economic_stability": "Information not available.",
+        "legal_system": "Information not available.",
+        "ease_of_doing_business": "Ranked 174th in the World Bank's Ease of Doing Business Index."
+    }
+}

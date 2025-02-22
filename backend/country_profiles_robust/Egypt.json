@@ -1,0 +1,103 @@
+{
+    "country": "Egypt",
+    "overview": {
+        "tax_residency_rules": "Individuals: 183-day rule\nCompanies: Place of management.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Egyptian pound (EGP)",
+        "tax_authority": "Egyptian Tax Authority (ETA)",
+        "tax_filing_frequency": "Annually by April 30 for businesses, and by June 1 for individuals.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "Up to EGP 10,000",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "EGP 10,001 - EGP 20,000",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "EGP 20,001 - EGP 30,000",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "EGP 30,001 - EGP 40,000",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "EGP 40,001 - EGP 50,000",
+                    "rate": "22.5%"
+                },
+                {
+                    "bracket": "Over EGP 50,000",
+                    "rate": "25%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "Basic exemption of EGP 8,000.",
+            "social_security": "Social security contributions are not levied on employment income."
+        },
+        "corporate_tax": {
+            "rate": "22.5%",
+            "small_business_rate": "Information not available",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "Information not available",
+                "royalties": "Information not available"
+            },
+            "deductions": "Standard deductions, business expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": "22.5%",
+            "exemptions": "Gains on primary residence are exempt.",
+            "short_term_rate": "Information not available",
+            "long_term_rate": "Information not available"
+        },
+        "vat_gst": {
+            "rate": "14%",
+            "reduced_rate": "Information not available",
+            "exemptions": "Healthcare, education, basic food items."
+        },
+        "property_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        },
+        "inheritance_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Information not available",
+            "capital_gains_rate": "Information not available",
+            "mining_tax": "Information not available"
+        },
+        "nft_tax": {
+            "income_tax_rate": "Information not available",
+            "capital_gains_rate": "Information not available"
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Political stability is a concern, and tax policy may be subject to change.",
+        "economic_stability": "Economic stability is a concern, with high inflation rates.",
+        "legal_system": "The legal system is complex, and tax disputes may be difficult to resolve.",
+        "ease_of_doing_business": "Ranked 114th in the World Bank's Ease of Doing Business Index."
+    }
+}

@@ -1,0 +1,126 @@
+{
+    "country": "Cambodia",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or domicile.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Cambodian riel (KHR)",
+        "tax_authority": "General Department of Taxation (GDT)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 2,000,000 KHR",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "2,000,001 - 4,000,000 KHR",
+                    "rate": "5%"
+                },
+                {
+                    "bracket": "4,000,001 - 6,000,000 KHR",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "6,000,001 - 8,000,000 KHR",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "8,000,001 - 10,000,000 KHR",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "10,000,001+ KHR",
+                    "rate": "25%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "First 2,000,000 KHR of income is tax-free.",
+            "social_security": "5% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "20% on net profits.",
+            "small_business_rate": "Information not available.",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "10%",
+                "royalties": "15%"
+            },
+            "deductions": "R&D expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": "20% on capital gains.",
+            "exemptions": "Gains from the sale of primary residence are exempt.",
+            "asset_type": "All assets."
+        },
+        "vat_gst": {
+            "rate": "10% on most goods and services.",
+            "reduced_rate": "Information not available.",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "1% of assessed value.",
+            "exemptions": "Information not available."
+        },
+        "inheritance_tax": {
+            "rate": "0%",
+            "exemptions": "Information not available."
+        },
+        "wealth_tax": {
+            "rate": "0%",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Must be employed by a foreign company, earn at least $2,000 per month, and have health insurance.",
+        "tax_benefits": "Income from foreign sources is exempt from Cambodian income tax.",
+        "duration": "1 year, renewable."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Sihanoukville Special Economic Zone",
+            "location": "Sihanoukville",
+            "tax_incentives": "0% corporate tax for the first 5 years, duty-free imports.",
+            "business_types": "Manufacturing, tourism, real estate.",
+            "setup_requirements": "Minimum investment of $5 million."
+        },
+        {
+            "name": "Siem Reap Special Economic Zone",
+            "location": "Siem Reap",
+            "tax_incentives": "0% corporate tax for the first 8 years, duty-free imports.",
+            "business_types": "Tourism, hospitality, manufacturing.",
+            "setup_requirements": "Minimum investment of $3 million."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "Thailand",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Vietnam",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "20% on crypto income.",
+            "capital_gains_rate": "20% on crypto capital gains.",
+            "mining_tax": "Taxed as income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "20% on NFT income.",
+            "capital_gains_rate": "20% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Political stability is generally good, but tax policies may change in the future.",
+        "economic_stability": "Strong economic growth in recent years, but income inequality remains a challenge.",
+        "legal_system": "The legal system is based on civil law and is relatively efficient.",
+        "ease_of_doing_business": "Ranked 86th in the World Bank's Ease of Doing Business Index."
+    }
+}

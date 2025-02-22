@@ -1,0 +1,125 @@
+{
+    "country": "Morocco",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or domicile.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Moroccan Dirham (MAD)",
+        "tax_authority": "Direction G\u00e9n\u00e9rale des Imp\u00f4ts (DGI)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 18,000 MAD",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "18,001 - 50,000 MAD",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "50,001 - 80,000 MAD",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "80,001 - 160,000 MAD",
+                    "rate": "30%"
+                },
+                {
+                    "bracket": "160,001 - 400,000 MAD",
+                    "rate": "32%"
+                },
+                {
+                    "bracket": "400,001+ MAD",
+                    "rate": "38%"
+                }
+            ],
+            "foreign_income_taxed": "Only if earned in Morocco.",
+            "exemptions": "First 18,000 MAD of income is tax-free.",
+            "social_security": "12% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "30% of net profits after tax deductions.",
+            "small_business_rate": "20% of net profits for small businesses with less than 500,000 MAD revenue.",
+            "foreign_income_taxed": "Only if earned through a Moroccan branch or subsidiary.",
+            "withholding_taxes": {
+                "dividends": "10% for domestic dividends, 20% for foreign dividends.",
+                "interest": "20%",
+                "royalties": "10%"
+            },
+            "deductions": "Business expenses, depreciation, R&D expenses."
+        },
+        "capital_gains_tax": {
+            "rate": "20% on capital gains.",
+            "exemptions": "Gains from the sale of primary residence are exempt."
+        },
+        "vat_gst": {
+            "rate": "20% (reduced rates apply in some cases).",
+            "reduced_rate": "14% on basic food items, transport, and tourism.",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "0.4% of assessed property value.",
+            "exemptions": "Main residence owned by low-income families."
+        },
+        "inheritance_tax": {
+            "rate": "Graduated rates ranging from 0% to 40%.",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": "1.5% on net worth above 100 million MAD.",
+            "exemptions": "Primary residence, business assets."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "Yes",
+        "requirements": "Remote working contract, proof of income, and health insurance.",
+        "tax_benefits": "50% of professional income tax is waived.",
+        "duration": "Valid for one year, renewable."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Casablanca Finance City",
+            "location": "Casablanca",
+            "tax_incentives": "Reduced corporate tax rate of 20%, tax exemptions for employees.",
+            "business_types": "Financial services, technology.",
+            "setup_requirements": "Minimum investment of 100,000 MAD."
+        },
+        {
+            "name": "Tangier Automotive City",
+            "location": "Tangier",
+            "tax_incentives": "Reduced corporate tax rate of 20%, customs exemptions.",
+            "business_types": "Automotive manufacturing, logistics.",
+            "setup_requirements": "Minimum investment of 50 million MAD."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "France",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Spain",
+            "description": "Avoids double taxation on income and dividends."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "20% on crypto income.",
+            "capital_gains_rate": "20% on crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "20% on NFT income.",
+            "capital_gains_rate": "20% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Low political risk.",
+        "economic_stability": "Stable economy with moderate inflation.",
+        "legal_system": "Modernized legal system.",
+        "ease_of_doing_business": "Ranked 53rd in the World Bank's Ease of Doing Business Index."
+    }
+}

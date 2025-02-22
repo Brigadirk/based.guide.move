@@ -1,0 +1,138 @@
+{
+    "country": "Kenya",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or permanent establishment.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Kenyan Shilling (KES)",
+        "tax_authority": "Kenya Revenue Authority (KRA)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 24,000 KES",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "24,001 - 32,333 KES",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "32,334 - 40,667 KES",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "40,668 - 52,667 KES",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "52,668 - 67,917 KES",
+                    "rate": "25%"
+                },
+                {
+                    "bracket": "67,918 - 87,417 KES",
+                    "rate": "30%"
+                },
+                {
+                    "bracket": "87,418+ KES",
+                    "rate": "35%"
+                }
+            ],
+            "foreign_income_taxed": true,
+            "exemptions": "Tax-free allowances, including personal allowance, family relief and maximum limit of 8,000 KES for contributions to pension schemes.",
+            "social_security": "Not applicable."
+        },
+        "corporate_tax": {
+            "rate": "30% on net profits.",
+            "small_business_rate": "Information not available.",
+            "foreign_income_taxed": true,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "12%",
+                "royalties": "20%"
+            },
+            "deductions": "Normal business expenses, depreciation, bad debts."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "5%"
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "5%"
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "5%"
+                }
+            ],
+            "exemptions": "Sale of primary residence, retirement benefits."
+        },
+        "vat_gst": {
+            "rate": "16% on most goods and services.",
+            "reduced_rate": "Information not available.",
+            "exemptions": "Food, healthcare, education."
+        },
+        "property_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Remote work with clients outside of Kenya, proof of income and health insurance.",
+        "tax_benefits": "Tax incentives include a flat tax of 15% on gross income, tax holidays for up to 10 years, and exemption from capital gains tax on foreign income.",
+        "duration": "1 year, renewable."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Mombasa Export Processing Zone (EPZ)",
+            "location": "Mombasa",
+            "tax_incentives": "Tax holidays for up to 10 years, duty-free imports.",
+            "business_types": "Manufacturing, logistics.",
+            "setup_requirements": "Minimum investment of 50 million KES."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available.",
+            "mining_tax": "Information not available."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Political stability is generally good, but risks can arise during election periods.",
+        "economic_stability": "The economy is growing, but inflation and currency volatility can impact tax calculations.",
+        "legal_system": "The legal system is well-established, but enforcement can be slow at times.",
+        "ease_of_doing_business": "Ranked 56th in the World Bank's Ease of Doing Business Index."
+    }
+}

@@ -1,0 +1,108 @@
+{
+    "country": "Cameroon",
+    "overview": {
+        "tax_residency_rules": "183-day rule or physical presence in Cameroon for more than six months in a calendar year.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Central African Franc (XAF)",
+        "tax_authority": "Directorate General of Taxation",
+        "tax_filing_frequency": "Annually by March 31.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 400,000 XAF",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "400,001 - 960,000 XAF",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "960,001 - 2,000,000 XAF",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "2,000,001 - 4,000,000 XAF",
+                    "rate": "30%"
+                },
+                {
+                    "bracket": "4,000,001+ XAF",
+                    "rate": "35%"
+                }
+            ],
+            "foreign_income_taxed": "Yes, on worldwide income.",
+            "exemptions": "Various exemptions for family members, medical expenses, and pension contributions.",
+            "social_security": "4.2% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "30% on net profits.",
+            "small_business_rate": "Information not available.",
+            "foreign_income_taxed": "Yes, on worldwide income.",
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "15%",
+                "royalties": "15%"
+            },
+            "deductions": "Standard deductions and specific deductions for certain expenses."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "20% (held less than 2 years).",
+                    "long_term_rate": "15% (held more than 2 years)."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "30% (held less than 5 years).",
+                    "long_term_rate": "15% (held more than 5 years)."
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt."
+        },
+        "vat_gst": {
+            "rate": "19.25% on most goods and services.",
+            "reduced_rate": "5% on certain basic necessities.",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "Depending on property value and municipality.",
+            "exemptions": "Information not available."
+        },
+        "inheritance_tax": {
+            "rate": "0% for direct heirs.",
+            "exemptions": "Information not available."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available.",
+            "mining_tax": "Information not available."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Political instability and corruption can impact tax enforcement and stability.",
+        "economic_stability": "High inflation and currency fluctuations may affect tax calculations.",
+        "legal_system": "Tax disputes may be subject to delays and inefficiencies in the legal system.",
+        "ease_of_doing_business": "Ranked 168th in the World Bank's Ease of Doing Business Index."
+    }
+}

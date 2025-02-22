@@ -1,0 +1,29 @@
+{
+    "country": "Georgia",
+    "tax_summary": {
+        "territorial_tax": false,
+        "income_tax_rate": "Flat 20% income tax, with a 15% lower rate for income from business activities if certain requirements are met.",
+        "capital_gains_tax": "Zero capital gains tax for assets held for more than two years.",
+        "tax_treaties": ["Has a tax treaty with the US to prevent double taxation."],
+        "digital_nomad_tax_info": "No specific tax incentives for digital nomads, but the low flat income tax rate and the beneficial capital gains tax treatment make it attractive."
+    },
+    "visa_info": {
+        "digital_nomad_visa_available": true,
+        "visa_duration": "Up to one year, with the option to extend for an additional year.",
+        "visa_requirements_summary": "Proof of financial means, health insurance, and a criminal background check.",
+        "family_visa_options": "Family members can apply for a dependent visa."
+    },
+    "lifestyle_info": {
+        "cost_of_living": "Low, significantly lower than in the US or EU.",
+        "healthcare_quality": "Developing, but private healthcare options are available.",
+        "language": "Georgian, with English widely spoken in major cities and tourist areas.",
+        "digital_nomad_community": "Growing digital nomad community, especially in Tbilisi.",
+        "safety": "Generally safe, with a low crime rate."
+    },
+    "overall_suitability_score": 4,
+    "reasons_for_recommendation": [
+        "Low flat income tax rate and zero capital gains tax for long-term investments.",
+        "Easy visa process with a one-year renewable digital nomad visa.",
+        "Low cost of living, making it budget-friendly for digital nomads."
+    ]
+}

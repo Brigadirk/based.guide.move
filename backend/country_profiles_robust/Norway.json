@@ -1,0 +1,121 @@
+{
+    "country": "Norway",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day physical presence rule or substantial economic ties.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Norwegian Krone (NOK)",
+        "tax_authority": "Norwegian Tax Administration (Skatteetaten)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 250,000 NOK",
+                    "rate": "12%"
+                },
+                {
+                    "bracket": "250,001 - 675,000 NOK",
+                    "rate": "22%"
+                },
+                {
+                    "bracket": "675,001 - 1,020,000 NOK",
+                    "rate": "31.4%"
+                },
+                {
+                    "bracket": "1,020,001+ NOK",
+                    "rate": "33.9%"
+                }
+            ],
+            "foreign_income_taxed": "Only if earned in Norway.",
+            "exemptions": "Basic personal allowance of 59.800 NOK.",
+            "social_security": "Employer pays 14.7% and employee contributes approximately 8% of salary."
+        },
+        "corporate_tax": {
+            "rate": "22% on net profits.",
+            "small_business_rate": "None",
+            "foreign_income_taxed": "Only if earned in Norway.",
+            "withholding_taxes": {
+                "dividends": "25%",
+                "interest": "0%",
+                "royalties": "15%"
+            },
+            "deductions": "Various deductions and allowances are available."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "22% (held less than 1 year).",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "22% (held less than 5 years).",
+                    "long_term_rate": "15% (held more than 5 years)."
+                }
+            ],
+            "exemptions": "Gains up to 500,000 NOK on the sale of a primary residence are exempt."
+        },
+        "vat_gst": {
+            "rate": "25% on most goods and services.",
+            "reduced_rate": "15% on certain goods and services (e.g., food, public transport).",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "No",
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [
+        {
+            "name": "Troll A Field",
+            "location": "North Sea",
+            "tax_incentives": "Reduced corporate tax rate.",
+            "business_types": "Oil and gas exploration and production.",
+            "setup_requirements": "Approval from the Norwegian government."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "22% on crypto income.",
+            "capital_gains_rate": "22% on crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "22% on NFT income.",
+            "capital_gains_rate": "22% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Low",
+        "economic_stability": "High",
+        "legal_system": "Developed legal system with specialized tax courts.",
+        "ease_of_doing_business": "Ranked 4th in the World Bank's Ease of Doing Business Index."
+    }
+}

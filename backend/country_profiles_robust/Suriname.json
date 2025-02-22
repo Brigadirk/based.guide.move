@@ -1,0 +1,117 @@
+{
+    "country": "Suriname",
+    "overview": {
+        "tax_residency_rules": "Determined by physical presence or substantial economic ties.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Surinamese dollar (SRD)",
+        "tax_authority": "Ministry of Finance",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "Up to SRD 13,500",
+                    "rate": "5%"
+                },
+                {
+                    "bracket": "SRD 13,501 - SRD 29,500",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "SRD 29,501 - SRD 60,000",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "SRD 60,001 - SRD 85,000",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "Over SRD 85,000",
+                    "rate": "25%"
+                }
+            ],
+            "foreign_income_taxed": "Only if remitted to Suriname.",
+            "exemptions": "Exemptions for elderly, disabled, and charitable donations.",
+            "social_security": "10% of gross salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "28.5% on net profits.",
+            "small_business_rate": "Information not available",
+            "foreign_income_taxed": "Only if remitted to Suriname.",
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "15%",
+                "royalties": "15%"
+            },
+            "deductions": "Standard deductions, depreciation, and business expenses."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "20% (held less than 5 years).",
+                    "long_term_rate": "10% (held more than 5 years)."
+                },
+                {
+                    "asset_type": "Other Assets",
+                    "short_term_rate": "25% (held less than 1 year).",
+                    "long_term_rate": "15% (held more than 1 year)."
+                }
+            ],
+            "exemptions": "Gains from the sale of a primary residence are exempt."
+        },
+        "vat_gst": {
+            "rate": "10% on most goods and services.",
+            "reduced_rate": "Information not available",
+            "exemptions": "Healthcare, education, and financial services."
+        },
+        "property_tax": {
+            "rate": "Information not available",
+            "exemptions": "Owner-occupied homes."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "Netherlands",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "28.5% on crypto income.",
+            "capital_gains_rate": "15% on crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "28.5% on NFT income.",
+            "capital_gains_rate": "15% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Political uncertainty and corruption may impact tax stability.",
+        "economic_stability": "Economic fluctuations may affect tax revenues.",
+        "legal_system": "Tax laws and regulations are subject to change.",
+        "ease_of_doing_business": "Ranked 118th in the World Bank's Ease of Doing Business Index."
+    }
+}

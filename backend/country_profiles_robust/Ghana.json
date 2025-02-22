@@ -1,0 +1,131 @@
+{
+    "country": "Ghana",
+    "overview": {
+        "tax_residency_rules": "Determined by physical presence or permanent home.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Ghanaian cedi (GHS)",
+        "tax_authority": "Ghana Revenue Authority (GRA)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - GHS 36,360",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "GHS 36,361 - GHS 108,060",
+                    "rate": "7.5%"
+                },
+                {
+                    "bracket": "GHS 108,061 - GHS 156,060",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "GHS 156,061 - GHS 204,060",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "GHS 204,061 +",
+                    "rate": "25%"
+                }
+            ],
+            "foreign_income_taxed": true,
+            "exemptions": "None.",
+            "social_security": "5.5% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "25% on net profits.",
+            "small_business_rate": "Information not available.",
+            "foreign_income_taxed": true,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "15%",
+                "royalties": "10%"
+            },
+            "deductions": "R&D expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Shares",
+                    "short_term_rate": "Capital gains are taxed as ordinary income.",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "Capital gains are taxed as ordinary income.",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "Capital gains are taxed as ordinary income.",
+                    "long_term_rate": "Information not available."
+                }
+            ],
+            "exemptions": "None.",
+            "losses": "Capital losses are not deductible."
+        },
+        "vat_gst": {
+            "rate": "12.5% on most goods and services.",
+            "reduced_rate": "None.",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "Information not available.",
+            "exemptions": "None."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available.",
+            "exemptions": "None."
+        },
+        "wealth_tax": {
+            "rate": "None.",
+            "exemptions": "None."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [
+        {
+            "name": "Tema Export Processing Zone",
+            "location": "Tema",
+            "tax_incentives": "100% tax holiday for the first 5 years, reduced corporate tax rates thereafter.",
+            "business_types": "Manufacturing, ICT, tourism.",
+            "setup_requirements": "Minimum investment of $50,000."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Taxed as ordinary income.",
+            "capital_gains_rate": "Information not available.",
+            "mining_tax": "Information not available."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Taxed as ordinary income.",
+            "capital_gains_rate": "Information not available."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Political stability is generally good, but political risks can still arise.",
+        "economic_stability": "The economy is relatively stable, but inflation and currency devaluation can impact tax calculations.",
+        "legal_system": "The legal system is well-developed and generally respected.",
+        "ease_of_doing_business": "Ranked 118th in the World Bank's Ease of Doing Business Index."
+    }
+}

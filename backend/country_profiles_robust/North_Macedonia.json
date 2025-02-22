@@ -1,0 +1,134 @@
+{
+    "country": "North Macedonia",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or domicile.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Denar (MKD)",
+        "tax_authority": "Public Revenue Office",
+        "tax_filing_frequency": "Annually for individuals, quarterly for businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 6,250 MKD",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "6,251 - 12,500 MKD",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "12,501 - 25,000 MKD",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "25,001+ MKD",
+                    "rate": "25%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "Standard deduction of 240,000 MKD.",
+            "social_security": "9% of gross salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "10% on net profits.",
+            "small_business_rate": "Information not available",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "5%",
+                "interest": "10%",
+                "royalties": "15%"
+            },
+            "deductions": "Standard business expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "25%",
+                    "long_term_rate": "10%"
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "25%",
+                    "long_term_rate": "10%"
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "25%",
+                    "long_term_rate": "10%"
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence up to 10,000,000 MKD are exempt."
+        },
+        "vat_gst": {
+            "rate": "18% on most goods and services.",
+            "reduced_rate": "5% on basic food items, books.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "0.4% of assessed value.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "4%",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "Albania",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Bulgaria",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Croatia",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Serbia",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Slovenia",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "10%",
+            "capital_gains_rate": "10%",
+            "mining_tax": "Taxed as income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "10%",
+            "capital_gains_rate": "10%"
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Political stability generally good.",
+        "economic_stability": "Steady economic growth in recent years.",
+        "legal_system": "Well-developed legal system.",
+        "ease_of_doing_business": "Ranked 171st in the World Bank's Ease of Doing Business Index."
+    }
+}

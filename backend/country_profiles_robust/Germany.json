@@ -1,0 +1,126 @@
+{
+    "country": "Germany",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or permanent home in Germany.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Euro (EUR)",
+        "tax_authority": "Federal Central Tax Office (Bundeszentralamt f\u00fcr Steuern)",
+        "tax_filing_frequency": "Annually by May 31st.",
+        "currency_exchange_rules": "Restrictions on currency conversion for non-EU residents."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 9,984 EUR",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "9,985 - 58,596 EUR",
+                    "rate": "14%"
+                },
+                {
+                    "bracket": "58,597 - 277,825 EUR",
+                    "rate": "42%"
+                },
+                {
+                    "bracket": "277,826+ EUR",
+                    "rate": "45%"
+                },
+                {
+                    "bracket": "Over 1 million EUR",
+                    "rate": "47.475%"
+                }
+            ],
+            "foreign_income_taxed": "Yes",
+            "exemptions": "Tax-free allowance of 9,984 EUR.",
+            "social_security": "Employer and employee contribute 18.6% on gross wages (up to a certain income limit)."
+        },
+        "corporate_tax": {
+            "rate": "15% on net profits.",
+            "small_business_rate": "Information not available",
+            "foreign_income_taxed": "Yes, but foreign tax credit is available.",
+            "withholding_taxes": {
+                "dividends": "25% (reduced rate of 15% for EU/EEA parent companies).",
+                "interest": "0%",
+                "royalties": "0%"
+            },
+            "deductions": "Standard deductions for depreciation, interest, and research and development."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks/Shares",
+                    "short_term_rate": "25% (held less than 1 year).",
+                    "long_term_rate": "0% (held more than 1 year)."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "25% (held less than 10 years).",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Other Assets",
+                    "short_term_rate": "25% (held less than 1 year).",
+                    "long_term_rate": "25% (held more than 1 year)."
+                }
+            ],
+            "exemptions": "Private sale of personal assets is generally exempt."
+        },
+        "vat_gst": {
+            "rate": "19%",
+            "reduced_rate": "7% on certain goods and services.",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "Varies by municipality.",
+            "exemptions": "None"
+        },
+        "inheritance_tax": {
+            "rate": "7% - 30% on inherited assets, depending on the value and relationship to the deceased.",
+            "exemptions": "Spouse, children, and grandchildren."
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "Yes",
+        "requirements": "Self-employed individuals with proof of income and health insurance.",
+        "tax_benefits": "Freelancers and remote workers may be eligible for reduced tax rates.",
+        "duration": "Usually granted for 6 months to 1 year, renewable."
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income, capital gains, and inheritance."
+        },
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "France",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "25% on crypto income.",
+            "capital_gains_rate": "0% on crypto capital gains (held more than 1 year).",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "25% on NFT income.",
+            "capital_gains_rate": "0% on NFT capital gains (held more than 1 year)."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Stable political environment with a strong legal system.",
+        "economic_stability": "Strong and stable economy.",
+        "legal_system": "Efficient and well-developed legal system for tax disputes.",
+        "ease_of_doing_business": "Ranked 17th in the World Bank's Ease of Doing Business Index."
+    }
+}

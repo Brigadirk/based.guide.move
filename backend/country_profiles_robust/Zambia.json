@@ -1,0 +1,110 @@
+{
+    "country": "Zambia",
+    "overview": {
+        "tax_residency_rules": "Determined by 90-day physical presence rule.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Zambian Kwacha (ZMW)",
+        "tax_authority": "Zambia Revenue Authority",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 3,128 ZMW",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "3,129 - 9,405 ZMW",
+                    "rate": "30%"
+                },
+                {
+                    "bracket": "9,406 - 30,060 ZMW",
+                    "rate": "35%"
+                },
+                {
+                    "bracket": "30,061+ ZMW",
+                    "rate": "40%"
+                }
+            ],
+            "foreign_income_taxed": true,
+            "exemptions": "Employment income up to 3,128 ZMW/year is tax-free.",
+            "social_security": "Employee only: 9% of salary."
+        },
+        "corporate_tax": {
+            "rate": "35% on net profits.",
+            "small_business_rate": "15% for businesses with turnover less than 2 million ZMW.",
+            "foreign_income_taxed": true,
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "15%",
+                "royalties": "15%"
+            },
+            "deductions": "R&D expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": "20% on net capital gains.",
+            "exemptions": "Gains from the sale of primary residence and retirement benefits are exempt."
+        },
+        "vat_gst": {
+            "rate": "16% on most goods and services.",
+            "reduced_rate": "9% on certain food items.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "1% of assessed value.",
+            "exemptions": "None."
+        },
+        "inheritance_tax": {
+            "rate": "15%",
+            "exemptions": "Immediate family members and charities."
+        },
+        "wealth_tax": {
+            "rate": "1% on net worth above 10 million ZMW.",
+            "exemptions": "Primary residence."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Minimum monthly income of $2,000 and proof of travel health insurance.",
+        "tax_benefits": "Tax exemption on foreign income for up to 5 years.",
+        "duration": "Up to 2 years."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Lusaka South Multi-Facility Economic Zone",
+            "location": "Lusaka",
+            "tax_incentives": "Corporate tax exemption for the first 5 years, duty-free imports.",
+            "business_types": "Manufacturing, logistics.",
+            "setup_requirements": "Minimum investment of $1 million."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "South Africa",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and dividends."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto": {
+            "income_tax_rate": "35% on crypto income.",
+            "capital_gains_rate": "20% on crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft": {
+            "income_tax_rate": "35% on NFT income.",
+            "capital_gains_rate": "20% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Moderate political risk due to periodic elections and changes in government.",
+        "economic_stability": "High inflation and currency volatility may impact tax calculations.",
+        "legal_system": "Fairly developed legal system, but tax disputes may face delays.",
+        "ease_of_doing_business": "Ranked 89th in the World Bank's Ease of Doing Business Index."
+    }
+}

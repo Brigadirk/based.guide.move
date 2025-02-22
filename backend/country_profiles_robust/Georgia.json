@@ -1,0 +1,119 @@
+{
+    "country": "Georgia",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or permanent establishment.",
+        "tax_year": "Calendar year.",
+        "currency": "Georgian Lari (GEL)",
+        "tax_authority": "Revenue Service of Georgia",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "Up to 20,000 GEL",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "Over 20,000 GEL",
+                    "rate": "35%"
+                }
+            ],
+            "foreign_income_taxed": true,
+            "exemptions": "Standard deduction of 2,500 GEL per year.",
+            "social_security": "4% of salary."
+        },
+        "corporate_tax": {
+            "rate": "15% on net profits.",
+            "small_business_rate": null,
+            "foreign_income_taxed": true,
+            "withholding_taxes": {
+                "dividends": "0%",
+                "interest": "0%",
+                "royalties": "0%"
+            },
+            "deductions": "Various business expenses."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks/shares",
+                    "short_term_rate": "15%",
+                    "long_term_rate": "15%"
+                },
+                {
+                    "asset_type": "Real estate",
+                    "short_term_rate": "15%",
+                    "long_term_rate": "15%"
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "15%",
+                    "long_term_rate": "15%"
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are partially exempt.",
+            "carryover_rule": "Capital losses can be carried forward for 5 years."
+        },
+        "vat_gst": {
+            "rate": "18% on most goods and services.",
+            "reduced_rate": null,
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "1% of assessed value.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "N/A",
+            "exemptions": "N/A"
+        },
+        "wealth_tax": {
+            "rate": "N/A",
+            "exemptions": "N/A"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [
+        {
+            "name": "Kutaisi Free Industrial Zone",
+            "location": "Kutaisi",
+            "tax_incentives": "0% profit tax, 0% dividend tax.",
+            "business_types": "Manufacturing, logistics.",
+            "setup_requirements": "Minimum investment of 100,000 GEL."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "Armenia",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Azerbaijan",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "15%",
+            "capital_gains_rate": "15%",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "15%",
+            "capital_gains_rate": "15%"
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Low political risks.",
+        "economic_stability": "Stable economic growth.",
+        "legal_system": "Modern and transparent legal system.",
+        "ease_of_doing_business": "Ranked 7th in the World Bank's Ease of Doing Business Index."
+    }
+}

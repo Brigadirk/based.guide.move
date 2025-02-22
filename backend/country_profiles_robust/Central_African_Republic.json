@@ -1,0 +1,94 @@
+{
+    "country": "Central African Republic",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or physical presence in the country.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "CFA Franc (XAF)",
+        "tax_authority": "General Directorate of Taxes",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 250,000 XAF",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "250,001 - 500,000 XAF",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "500,001 - 1,000,000 XAF",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "1,000,001+ XAF",
+                    "rate": "25%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "None",
+            "social_security": "None"
+        },
+        "corporate_tax": {
+            "rate": "20% on net profits.",
+            "small_business_rate": "Information not available",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "15%",
+                "royalties": "15%"
+            },
+            "deductions": "Standard business expenses."
+        },
+        "capital_gains_tax": {
+            "rate": "20%",
+            "exemptions": "None",
+            "exceptions": "Information not available"
+        },
+        "vat_gst": {
+            "rate": "18%",
+            "reduced_rate": "Information not available",
+            "exemptions": "Exports, basic food items."
+        },
+        "property_tax": {
+            "rate": "1% on assessed value.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "10% on inherited assets.",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "20% on crypto income.",
+            "capital_gains_rate": "20% on crypto capital gains.",
+            "mining_tax": "Information not available"
+        },
+        "nft_tax": {
+            "income_tax_rate": "20% on NFT income.",
+            "capital_gains_rate": "20% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Tax administration is subject to corruption.",
+        "economic_stability": "Economic instability and dependence on natural resources.",
+        "legal_system": "Inadequate legal infrastructure.",
+        "ease_of_doing_business": "Low ranking in international indices (188th in the World Bank's Ease of Doing Business Index)."
+    }
+}
