@@ -1,0 +1,45 @@
+Italy - Corporate - Other issues
+×
+1.
+2.
+Unselect All
+Unselect All
+3.
+Include Cover Page
+Cancel
+×
+×
+![](../../-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+×
+![](other-issues.html)
+######
+Cancel
+Send
+Overview](../../italy.html)
+Corporate
+Individual
+# Italy
+## Corporate - Other issues
+Last reviewed - 10 February 2025
+## Adoption of IFRS and taxation
+For IAS/IFRS adopters, the Italian tax law provides for the enhanced derivation (*principio di derivazione rafforzata*) of the CIT basis from the IFRS statutory financial statements.
+The taxable base is determined starting from the net income arising from the profit and loss, increased or decreased by items directly booked to equity pursuant to the application of IAS/IFRS. In this respect, the accrual principle, and the qualification and classification criteria stated by the IFRS, are relevant for the calculation of the taxable base. Valuations criteria are not accepted for tax purposes. Specifications and limitations of the derivation principle can be introduced by means of a Decree issued by the Ministry of Finance.
+The First Time Adoption is characterised by the neutrality principle (*Principio della Neutralità*); such principle aims to neutralise the effects deriving from the movement to IAS/IFRS.
+The following specific rules applicable to IAS adopters must be considered:
+## Foreign Account Tax Compliance Act (FATCA) and Common Reporting Standard (CRS)
+The FATCA aims to detect and discourage offshore tax evasion by United States (US) citizens or residents for tax purposes in the United States who hold financial assets through foreign financial institutions (FFIs), generally banks, custodial institutions, certain investment entities, and life insurance companies.
+In order to simplify the obligations imposed on FFIs, the US Treasury and various foreign governments have entered into intergovernmental agreements (IGAs).
+The Italian Inter-Governmental Agreement (i.e. Italian IGA) was signed between Italy and the United States on January 10, 2014, and it has been ratified by the Law no. 95/2015 (i.e. FATCA ratification law) issued on January 18, 2015.
+For countries that have signed a Model 1 IGA, the United States has granted a number of important simplifications, such as the possibility for FFIs to use information collected for anti-money laundering (AML) purposes and for FATCA customer identification and the suspension of most of the penalties (e.g. account closure) for those account holders who refuse to provide the information required for their correct identification (i.e. recalcitrant).
+The FATCA implementation Decree (i.e. FATCA Decree) was issued by the Italian Ministry of Economy and Finance (MEF) on August 6, 2015.
+FATCA obligates Italian financial institutions to identify (starting from July 1, 2014) and classify account holders in order to report certain financial information (e.g. name, address, taxpayer identification number [TIN], account balance) related to US persons to the Italian Revenue Agency. The Italian tax authority will then exchange such information with the US Internal Revenue Service (IRS) by the end of September of each year.
+The IGA ratification Law also includes provisions regarding on-boarding and due diligence requirements for CRS purposes.
+The CRS implementation Decree (i.e. CRS Decree) was issued by the MEF on December 28, 2015. The CRS Decree includes the Annex C, which lists the reportable jurisdictions (i.e. each European Union member state that is not Italy and each jurisdiction that has signed an agreement with Italy or with the European Union on the basis of which it would receive information on reportable accounts), and Annex D, which lists the participating jurisdictions (i.e. each European Union member state that is not Italy and each jurisdiction that has signed an agreement with Italy or with the European Union on the basis of which it would transmit information on reportable accounts). Annex C and Annex D have been modified by further Decrees issued by the MEF.
+Starting from January 1, 2016, Italian financial institutions are required to identify and report non-resident (non-US) account holders to the Italian Revenue Agency, as provided by the CRS developed by the OECD.
+Marco Meulepas
+[### GlobalVATOnline
+[### Tax Control Framework and cooperative compliance regime in Italy
+×
+I understand

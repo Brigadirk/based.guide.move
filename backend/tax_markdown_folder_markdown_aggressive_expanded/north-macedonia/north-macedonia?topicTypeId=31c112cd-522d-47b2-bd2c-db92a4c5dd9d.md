@@ -1,0 +1,38 @@
+North Macedonia - Individual - Tax administration
+×
+1.
+2.
+Unselect All
+Unselect All
+3.
+Include Cover Page
+Cancel
+×
+×
+![](-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+×
+######
+Cancel
+Send
+Overview](north-macedonia.html)
+Corporate
+Individual
+# North Macedonia
+## Individual - Tax administration
+Last reviewed - 18 February 2025
+## Taxable period
+The tax year is the calendar year.
+## Tax returns
+As per the new PIT Law, taxpayers are no longer required to prepare and file the annual tax return (form PDD-GDP). Instead, the PRO undertook the obligation to prepare the annual tax return based on the electronic fillings made during the year by the companies and the taxpayers *elaborated in description of Payment of tax below*. The PRO would deliver to each taxpayer the draft annual tax return for the calendar year by 30 April of the following year. Within the next month (until 31 May), the taxpayer should confirm the correctness of the data included in the draft return or make appropriate corrections. If the taxpayer neither confirms nor corrects the prepared return by the PRO, the draft tax return would be deemed as final. In case the PRO cannot confirm the corrected annual tax return by the taxpayer, the tax would be determined by way of a Tax Assessment Form issued by the tax authorities.
+Individuals who realise business income and keep accounting records submit annual accounts and annual tax return by 15 March of the following year for the previous calendar year.
+## Payment of tax
+Under the new PIT Law, all taxable income should be reported and PIT paid in advance. Before payment of any taxable income to individuals, taxpayers that are domestic companies and domestic taxpayers that keep accounting records are obligated to calculate, withhold, and pay PIT on behalf of the individuals. These taxpayers should electronically file a calculation for the income payable to the individual and the PIT due to the PRO for approval. The PRO confirms the calculation, following which the payment of income and PIT could be made at the banks.
+In all other cases, the taxpayer is obligated to report taxable income and pay PIT in advance on a monthly basis. This obligation would apply for the taxable income realised abroad as well, except for salaries. Namely, by the 10th day of the following month for the income realised in the previous month, each taxpayer should electronically file a calculation for the income and the PIT due to the PRO for approval. Following the approval by the PRO, the PIT should be paid by the 15th day of the following month for the income realised in the previous month. Evidence related to the realised income should be filed to the PRO simultaneously. The electronic reporting of the salary received from abroad should be filed by 31 March of the following year.
+In case the calculation filed electronically by the taxpayer is not approved, or the corrected tax return is not accepted, the tax authorities would issue a Tax Assessment Form. In this case, the tax should be paid within 15 days as of the delivery of the Tax Assessment Form to the taxpayer.
+Individuals who realise business income and keep accounting records make monthly advance payment of tax in the amount of one twelfth of the calculated tax in the annual tax return for the previous year. The difference between the final tax liability based on the annual tax return and the tax paid in advance for the calendar year is settled by 30 June.
+![](-/media/world-wide-tax-summaries/northmacedoniamiroslav-marchevnorth-macedonia--miroslav-marchevjpg20210120171650340.ashx%3Frev=03dbeb07d57945a381f73ee8fb23b448&revision=03dbeb07-d579-45a3-81f7-3ee8fb23b448&hash=432F8B0920E5EB9EA60C0D4C9D5F18608B409BFB)
+Miroslav Marchev
+×
+I understand

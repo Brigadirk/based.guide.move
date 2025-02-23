@@ -1,0 +1,577 @@
+South Africa - Corporate - Taxes on corporate income
+[![](-/media/world-wide-tax-summaries/dev/new-pwclogo.ashx%3Frev=857d31d9188a45cb89c2a139fca9bbc2&revision=857d31d9-188a-45cb-89c2-a139fca9bbc2&hash=185803B13B63A76ED59B9489B23256389302FCC5)](index.html)
++ [Corporate income tax (CIT) rates](quick-charts/corporate-income-tax-cit-rates.html)
++ [Corporate income tax (CIT) due dates](quick-charts/corporate-income-tax-cit-due-dates.html)
++ [Personal income tax (PIT) rates](quick-charts/personal-income-tax-pit-rates.html)
++ [Personal income tax (PIT) due dates](quick-charts/personal-income-tax-pit-due-dates.html)
++ [Value-added tax (VAT) rates](quick-charts/value-added-tax-vat-rates.html)
++ [Withholding tax (WHT) rates](quick-charts/withholding-tax-wht-rates.html)
++ [Capital gains tax (CGT) rates](quick-charts/capital-gains-tax-cgt-rates.html)
++ [Net wealth/worth tax rates](quick-charts/net-wealth-worth-tax-rates.html)
++ [Inheritance and gift tax rates](quick-charts/inheritance-and-gift-tax-rates.html)
+×
+1.
+## Select up to 5 territories
+* A
+* Albania
+* Algeria
+* Angola
+* Argentina
+* Armenia
+* Australia
+* Austria
+* Azerbaijan
+* B
+* Bahrain
+* Bangladesh
+* Barbados
+* Belgium
+* Bermuda
+* Bolivia
+* Bosnia and Herzegovina
+* Botswana
+* Brazil
+* Bulgaria
+* C
+* Cabo Verde
+* Cambodia
+* Cameroon, Republic of
+* Canada
+* Cayman Islands
+* Chad
+* Chile
+* China, People's Republic of
+* Colombia
+* Congo, Democratic Republic of the
+* Congo, Republic of
+* Costa Rica
+* Croatia
+* Cyprus
+* Czech Republic
+* D
+* Denmark
+* Dominican Republic
+* E
+* Ecuador
+* Egypt
+* El Salvador
+* Equatorial Guinea
+* Estonia
+* Eswatini
+* Ethiopia
+* F
+* Finland
+* France
+* G
+* Gabon
+* Georgia
+* Germany
+* Ghana
+* Gibraltar
+* Greece
+* Greenland
+* Guatemala
+* Guernsey, Channel Islands
+* Guyana
+* H
+* Honduras
+* Hong Kong SAR
+* Hungary
+* I
+* Iceland
+* India
+* Indonesia
+* Iraq
+* Ireland
+* Isle of Man
+* Israel
+* Italy
+* Ivory Coast (Côte d'Ivoire)
+* J
+* Jamaica
+* Japan
+* Jersey, Channel Islands
+* Jordan
+* K
+* Kazakhstan
+* Kenya
+* Korea, Republic of
+* Kosovo
+* Kuwait
+* L
+* Lao PDR
+* Latvia
+* Lebanon
+* Libya
+* Liechtenstein
+* Lithuania
+* Luxembourg
+* M
+* Macau SAR
+* Madagascar
+* Malaysia
+* Malta
+* Mauritania
+* Mauritius
+* Mexico
+* Moldova
+* Mongolia
+* Montenegro
+* Morocco
+* Mozambique
+* Myanmar
+* N
+* Namibia, Republic of
+* Netherlands
+* New Caledonia
+* New Zealand
+* Nicaragua
+* Nigeria
+* North Macedonia
+* Norway
+* O
+* Oman
+* P
+* Pakistan
+* Palestinian territories
+* Panama
+* Papua New Guinea
+* Paraguay
+* Peru
+* Philippines
+* Poland
+* Portugal
+* Puerto Rico
+* Q
+* Qatar
+* R
+* Romania
+* Rwanda
+* S
+* Saint Lucia
+* Saudi Arabia
+* Senegal
+* Serbia
+* Singapore
+* Slovak Republic
+* Slovenia
+* South Africa
+* Spain
+* Sweden
+* Switzerland
+* T
+* Taiwan
+* Tanzania
+* Thailand
+* Timor-Leste
+* Trinidad and Tobago
+* Tunisia
+* Turkey
+* U
+* Uganda
+* Ukraine
+* United Arab Emirates
+* United Kingdom
+* United States
+* Uruguay
+* Uzbekistan, Republic of
+* V
+* Venezuela
+* Vietnam
+* Z
+* Zambia
+2.
+* Overview
+* Corporate
+* Select All
+Unselect All
+* Significant developments
+* Taxes on corporate income
+* Corporate residence
+* Other taxes
+* Branch income
+* Income determination
+* Deductions
+* Group taxation
+* Tax credits and incentives
+* Withholding taxes
+* Tax administration
+* Other issues
+* Individual
+* Select All
+Unselect All
+* Significant developments
+* Taxes on personal income
+* Residence
+* Other taxes
+* Income determination
+* Deductions
+* Foreign tax relief and tax treaties
+* Other tax credits and incentives
+* Tax administration
+* Sample personal income tax calculation
+* Other issues
+3.
+Include Cover Page
+Cancel
+×
+×
+![](-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+WWTS Operations Director, PwC US
+Please contact for general WWTS inquiries (by clicking name above).
+×
+######
+Name
+Email
+Subject
+Message
+Cancel
+Send
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+Finland
+France
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+Honduras
+Hong Kong SAR
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+Oman
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+Qatar
+Romania
+Rwanda
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+Venezuela
+Vietnam
+Zambia
+* [![](-/media/world-wide-tax-summaries/dev/overview-inactive-nav-icon.ashx%3Frev=dee1bb7128b64699a86a2a3f76847756&revision=dee1bb71-28b6-4699-a86a-2a3f76847756&hash=9005AA450606A6D2D6725C43CAAFA1FE11631251)
+Overview](south-africa.html)
+* ![](-/media/world-wide-tax-summaries/dev/corporate-active-nav-icon.ashx%3Frev=e54e9d5b7d6f49b8a9de27757112981b&revision=e54e9d5b-7d6f-49b8-a9de-27757112981b&hash=24295379334D867E5CEB564DB7B5655AFB8CA649)
+Corporate
++ [Significant developments](south-africa/corporate/significant-developments.html)
++ [Corporate residence](south-africa/corporate/corporate-residence.html)
++ [Branch income](south-africa/corporate/branch-income.html)
++ [Deductions](south-africa/corporate/deductions.html)
++ [Group taxation](south-africa/corporate/group-taxation.html)
++ [Tax credits and incentives](south-africa/corporate/tax-credits-and-incentives.html)
++ [Other issues](south-africa/corporate/other-issues.html)
+* ![](-/media/world-wide-tax-summaries/dev/individual-inactive-nav-icon.ashx%3Frev=03b86f89ec914ecdaac1550e9f0b113f&revision=03b86f89-ec91-4ecd-aac1-550e9f0b113f&hash=FC11F4F8557815513DCBD945919A90DE94EE1FC0)
+Individual
++ [Significant developments](south-africa/individual/significant-developments.html)
++ [Residence](south-africa/individual/residence.html)
++ [Income determination](south-africa/individual/income-determination.html)
++ [Deductions](south-africa/individual/deductions.html)
++ [Foreign tax relief and tax treaties](south-africa/individual/foreign-tax-relief-and-tax-treaties.html)
++ [Other tax credits and incentives](south-africa/individual/other-tax-credits-and-incentives.html)
++ [Sample personal income tax calculation](south-africa/individual/sample-personal-income-tax-calculation.html)
++ [Other issues](south-africa/individual/other-issues.html)
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+Finland
+France
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+Honduras
+Hong Kong SAR
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+Oman
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+Qatar
+Romania
+Rwanda
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+Venezuela
+Vietnam
+Zambia
+# South Africa
+## Corporate - Taxes on corporate income
+Last reviewed - 11 December 2024
+A South African (SA)-resident company is subject to CIT on its worldwide income, irrespective of the source of the income. Non-residents are taxable on SA-source income.
+For tax years ending before 31 March 2023, the CIT rate applicable to the corporate income of both resident and non-resident companies is a flat 28%. This rate is reduced to 27% with effect for years of assessment ending on or after 31 March 2023.
+Small business corporations that meet the requirements (including only natural persons as members/owners and with gross income of not more than ZAR 20 million) are taxed at the following rates for tax years ending on any date between 1 April 2024 and 31 March 2025:
+* 0% on the first ZAR 95,750 of taxable income.
+* 7% on taxable income above ZAR 95,750 but not exceeding ZAR 365,000.
+* ZAR 18,848 + 21% on taxable income above ZAR 365,000 but not exceeding ZAR 550,000.
+* ZAR 57,698 + 27% on taxable income exceeding ZAR 550,000.
+Special CIT rates apply in certain industries, such as gold mining and long-term insurance (*see below*).
+## Alternative turnover-based tax for very small companies
+To reduce the compliance costs for very small companies, a turnover-based presumptive tax is available. Companies with a turnover of less than ZAR 1 million per year can elect to pay this tax instead of normal CIT, at a rate ranging from 0% to 3%, depending on the level of turnover.
+## Dividends tax
+Dividends tax is imposed at 20% on dividends declared and paid by all resident companies as well as by non-resident companies in respect of shares listed on a South African exchange.
+Dividends are tax exempt if the beneficial owner of the dividend is an SA-resident company, SA-retirement fund, or other prescribed exempt person.
+The tax must be withheld by the company that pays the taxable dividend or, where the dividend is paid by a ‘regulated intermediary’, by the regulated intermediary (generally, this applies to listed shares). In the case of *in specie* dividends (i.e. dividends paid 'in kind’ or dividends other than dividends paid in cash), the company declaring the *in specie* dividend is liable for the dividends tax (and not the beneficial owner of the dividend).
+Exemptions from dividends tax and treaty-imposed reduced rates only apply if the beneficial owner of the dividend has made a prescribed declaration and undertaking to the paying company or regulated intermediary.
+## CIT for mining companies
+Special rates of normal tax, based on a standard formula, are prescribed for companies mining for gold. Companies mining for other minerals are subject to the same rate of normal tax that applies to ordinary companies.
+## CIT for long-term insurance companies
+Life insurance companies are required to follow the ‘five-funds approach’, with policies divided into five funds, depending on the nature of the beneficiary. Each fund is then allocated assets according to the risk carried by the fund. Each of the five funds is treated as a separate taxpayer and taxed at the rate applicable to that type of fund. These rates are 30% for individual policyholder funds, 0% for untaxed policyholder funds, and the standard CIT rate for company policyholder funds, risk policy funds, and corporate funds (a corporate fund being the company itself).
+## Local income taxes
+No local government taxes on income apply to either SA-resident or non-resident companies.
+* [Corporate - Significant developments](south-africa/corporate/significant-developments.html)
+* [Corporate - Corporate residence](south-africa/corporate/corporate-residence.html)
+![](-/media/world-wide-tax-summaries/attachments/south-africa---kyle-mandy.ashx%3Frev=2fe32baf3e244f0f9c8eb74d4a804213&revision=2fe32baf-3e24-4f0f-9c8e-b74d4a804213&hash=D605082592EE111E55E1D7C2C79F0982338803CC)
+Kyle Mandy
+Tax Partner, PwC South Africa
++27 11 797 4977
+[### PwC South Africa Publications and Industry Insights
+Read the most recent edition](http://www.pwc.co.za/en/publications.html)
+See Pillar Two developments by country or region](https://www.pwc.com/gx/en/services/tax/pillar-two-readiness/country-tracker.html)
+×
+I understand

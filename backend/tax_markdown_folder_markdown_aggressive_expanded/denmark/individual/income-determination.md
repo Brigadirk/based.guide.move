@@ -1,0 +1,66 @@
+Denmark - Individual - Income determination
+×
+1.
+2.
+Unselect All
+Unselect All
+3.
+Include Cover Page
+Cancel
+×
+×
+![](../../-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+×
+![](income-determination.html)
+######
+Cancel
+Send
+Overview](../../denmark.html)
+Corporate
+Individual
+# Denmark
+## Individual - Income determination
+Last reviewed - 03 February 2025
+## Employment income
+All remuneration from employment, whether in cash or in kind, is subject to tax when the employee has obtained a legal right to the remuneration, regardless of where payment is made and regardless of whether remitted. The liability extends to any living or housing allowance and any reimbursement of tax or other personal liability, whether paid directly to an employee or borne by the employer on the employee’s behalf.
+The Danish Parliament has adjusted the rates for taxation of company cars in order to promote environmental and climate 'friendly' cars, which are used as company cars. Accordingly, the thought is that the environmental amount in the coming years will be weighted higher in the total taxation of a company car, while the purchase price must be weighted less.
+These adjustments of the rates are gradual and takes place between 2021 and 2025, as illustrated in the below table:
+| Percentage | Prior 1 July 2021 | 1 July 2021 to 31 December 2021 | 2022 | 2023 | 2024 | 2025 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Rate on the car value up to DKK 300,000 | 25 | 24.5 | 24 | 23.5 | 23 | 22.5 |
+| Rate on the car value above DKK 300,000 | 20 | 20.5 | 21 | 21.5 | 22 | 22.5 |
+| Environmental charge | 150 | 250 | 350 | 450 | 600 | 700 |
+Payments by reimbursement to an employee for expenses for travel, entertainment, or any other service to be performed on behalf of the employer are taxable only to the extent that they are not actually expended in the performance of the service. Special rules apply for free housing provided by the employer. For some work-related benefits in kind, a limit of DKK 7,300 (2025) applies. Further, there are special rules related to tax-free allowances for travel costs and mileage.
+Any employee who is given a free telephone from their employer is taxed on DKK 3,300 (2025), regardless of actual usage and saved private expenditures. If spouses are both comprised by this tax, a reduction of the tax is applicable.
+## Equity compensation
+Share-based payments are, as a starting point, taxed as any other remuneration from employment, with the marginal tax rate at approximately 56%. However, the rules are very complicated and dependent on the specific situation. A beneficial reward scheme has been reintroduced from 1 July 2016.
+Further, special rules apply under certain conditions and limitations for 'small start-up businesses', as defined in the legislation.
+## Business income
+In general, private business owners (i.e. individuals operating a business on their own account and risk) are comprised by the general tax rates, etc. as employees. However, a number of rules and practises only apply to private business owners.
+It may be possible for independent business owners to use a special tax scheme, the Business Tax Scheme. This scheme primarily ensures that private business owners get full value when deducting commercial investments (e.g. interest expenses) thereby increasing the possibilities of consolidating and expanding the business by taxing the savings more gently than savings made for private purpose.
+To obtain the approval to apply the Business Tax Scheme, a number of formalities regarding bank accounts, withdrawals, and accounting, ensuring that private and corporate funds can be distinguished, must be observed. Basically, the business taxable profit is all taxable income with deduction of all corporate expenses. When using the Business Tax Scheme, the business profit that is not cashed for private use is taxed at 22%, which is equivalent to the corporate tax.
+## Capital gains and investment income
+Generally speaking, Denmark imposes tax on capital gains arising from the sale of private (non-business) assets. Typical assets not subject to capital gains taxation (if assets are non-business related) are furniture, art, and jewellery.
+### Properties
+Gains from the sale of a privately owned property, which has served as the primary place of living for the owner (during the period of ownership), will not be subject to capital gain taxation if the property is located on a lot/land that is less than 1,400 square metres in size. This is known as the '*parcelhusregel*'. If the lot/land is larger than 1,400 square metres, then the realised gain may still be exempted from taxation depending on actual circumstances. A similar rule exists for vacation houses/properties (known as '*sommerhusreglen*'), although conditions differ somewhat from what applies for ordinary houses/properties.
+Taxable capital gains from the sale of other property acquired after 1 January 1999 are taxed either as personal income or capital income. Special transitional rules apply to profits on property acquired before 1 January 1999 and sold in the income year 1999 or later.
+For individuals subject to full tax liability (resident and tax treaty resident in Denmark), foreign properties owned are subject to special exit tax rules. Under these rules, an unrealised gain due to increase in the property value (of a property located outside of Denmark) will be subject to exit tax upon departure from Denmark. Gain is determined based on value of the property upon arrival to Denmark (or date of purchase if bought while already living in Denmark) converted to Danish kroner using the exchange rate on the date of arrival/date of purchase, and then the value of the property in Danish kroner using the exchange rate on the date the Danish tax liability (tax liability as resident subject to taxation on worldwide income) ceases.
+### Capital gains and investment income
+Taxable gains and investment income are added to the taxable income. Certain allowances are available.
+The taxable income of an individual subject to full tax liability (resident and tax treaty resident in Denmark) includes interest, dividends, profits from gains on sale of shares, rents, royalties, professional fees, pensions, annuities, and alimony from all sources, wherever located, subject to any limitation that may be imposed under a tax treaty.
+While sale of ordinary shares is taxable based on a realisation principle, a so-called mark-to-market taxation is applied on certain investment funds, ETFs, etc., which implies that each year taxable gain/loss is to be declared even though a sale has not actually occurred. The gain/loss is determined based on the market value at the start of the year compared to the value end of the year (values for start and end of the year will be changed to value upon arrival/departure if moving to/out of Denmark during the year). Value is to be converted to Danish kroner using the exchange rate at start of the year/end of the year, so this will cover both gain due to increase in value of the investment fund, etc. and gain due to currency fluctuations.
+A person must declare income/gain/loss along with the filing of a Danish tax return each year, including profit/loss above a threshold of DKK 2,000 concerning bonds, certain other securities, and realised gains due to exchange rate fluctuations on deposits or debt in foreign currency.
+Capital gains taxation also applies to capital gains related to transactions of funds between accounts kept in other country of Danish kroner, where a capital gains arises due to fluctuations in the exchange rate between the relevant currency and Danish kroner between the time where the money was originally deposited and the time where the same funds are later withdrawn. In this regard, a first in first out principle is applied. Capital gain determined in this regard is composed by the threshold of DKK 2,000 per year (*see above*). This type of capital gain evaluation is to be made for persons who are considered resident and tax treaty resident in Denmark and will include any withdrawals of funds from accounts with funds in other currency than Danish kroner (possible also for transfers between accounts in the same bank), payments made to reduce mortgage principal, etc.
+### Pension
+In certain cases, foreign pension plans will not qualify as tax approved under Danish tax rules, and, in that case, the pension plan will be subject to mark-to-market taxation. This applies for individuals subject to full tax liability (resident and tax treaty resident in Denmark).
+The gain/loss is determined based on the market value at the start of the year compared to the value at the end of the year (values for start and end of the year will be changed to value upon arrival/departure if moving to/out of Denmark during the year). Value is to be converted to Danish kroner using the exchange rate at the start of the year/end of the year, so this will cover both gain due to increase in value of the pension plan and gain due to currency fluctuations.
+Besides the capital gains taxation, there may also be possible taxation related to contributions made to the foreign pension plan if such are still being made.
+## Treatment of intellectual property (IP)
+Individuals shall include profit or loss regarding sales of IP in their personal income. This means that profit from sale is subject to ordinary taxation.
+Royalties, defined as payment for the right to use any patent, trademark, secret formula, etc., are subject to a fixed tax rate of 22%, which must be withheld by the payer of the royalty. According to many tax treaties, Denmark has either waived right to tax the royalties or accepted a lower tax.
+![](../../-/media/world-wide-tax-summaries/denmarkclaus-hoeghjensendenmark--clause-hoeghjensenpng20220714151116669.ashx%3Frev=479d58fbd249453d8b2cff2c456f30d9&revision=479d58fb-d249-453d-8b2c-ff2c456f30d9&hash=7F07421FF6EC2A7BE323AFB9CBDDF9B56873ACCF)
+Claus Hoegh-Jensen
+×
+I understand

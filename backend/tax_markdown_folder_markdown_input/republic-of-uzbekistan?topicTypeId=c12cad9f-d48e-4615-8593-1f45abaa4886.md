@@ -1,0 +1,576 @@
+Uzbekistan, Republic of - Corporate - Taxes on corporate income
+[![](-/media/world-wide-tax-summaries/dev/new-pwclogo.ashx%3Frev=857d31d9188a45cb89c2a139fca9bbc2&revision=857d31d9-188a-45cb-89c2-a139fca9bbc2&hash=185803B13B63A76ED59B9489B23256389302FCC5)](index.html)
++ [Corporate income tax (CIT) rates](quick-charts/corporate-income-tax-cit-rates.html)
++ [Corporate income tax (CIT) due dates](quick-charts/corporate-income-tax-cit-due-dates.html)
++ [Personal income tax (PIT) rates](quick-charts/personal-income-tax-pit-rates.html)
++ [Personal income tax (PIT) due dates](quick-charts/personal-income-tax-pit-due-dates.html)
++ [Value-added tax (VAT) rates](quick-charts/value-added-tax-vat-rates.html)
++ [Withholding tax (WHT) rates](quick-charts/withholding-tax-wht-rates.html)
++ [Capital gains tax (CGT) rates](quick-charts/capital-gains-tax-cgt-rates.html)
++ [Net wealth/worth tax rates](quick-charts/net-wealth-worth-tax-rates.html)
++ [Inheritance and gift tax rates](quick-charts/inheritance-and-gift-tax-rates.html)
+×
+1.
+## Select up to 5 territories
+* A
+* Albania
+* Algeria
+* Angola
+* Argentina
+* Armenia
+* Australia
+* Austria
+* Azerbaijan
+* B
+* Bahrain
+* Bangladesh
+* Barbados
+* Belgium
+* Bermuda
+* Bolivia
+* Bosnia and Herzegovina
+* Botswana
+* Brazil
+* Bulgaria
+* C
+* Cabo Verde
+* Cambodia
+* Cameroon, Republic of
+* Canada
+* Cayman Islands
+* Chad
+* Chile
+* China, People's Republic of
+* Colombia
+* Congo, Democratic Republic of the
+* Congo, Republic of
+* Costa Rica
+* Croatia
+* Cyprus
+* Czech Republic
+* D
+* Denmark
+* Dominican Republic
+* E
+* Ecuador
+* Egypt
+* El Salvador
+* Equatorial Guinea
+* Estonia
+* Eswatini
+* Ethiopia
+* F
+* Finland
+* France
+* G
+* Gabon
+* Georgia
+* Germany
+* Ghana
+* Gibraltar
+* Greece
+* Greenland
+* Guatemala
+* Guernsey, Channel Islands
+* Guyana
+* H
+* Honduras
+* Hong Kong SAR
+* Hungary
+* I
+* Iceland
+* India
+* Indonesia
+* Iraq
+* Ireland
+* Isle of Man
+* Israel
+* Italy
+* Ivory Coast (Côte d'Ivoire)
+* J
+* Jamaica
+* Japan
+* Jersey, Channel Islands
+* Jordan
+* K
+* Kazakhstan
+* Kenya
+* Korea, Republic of
+* Kosovo
+* Kuwait
+* L
+* Lao PDR
+* Latvia
+* Lebanon
+* Libya
+* Liechtenstein
+* Lithuania
+* Luxembourg
+* M
+* Macau SAR
+* Madagascar
+* Malaysia
+* Malta
+* Mauritania
+* Mauritius
+* Mexico
+* Moldova
+* Mongolia
+* Montenegro
+* Morocco
+* Mozambique
+* Myanmar
+* N
+* Namibia, Republic of
+* Netherlands
+* New Caledonia
+* New Zealand
+* Nicaragua
+* Nigeria
+* North Macedonia
+* Norway
+* O
+* Oman
+* P
+* Pakistan
+* Palestinian territories
+* Panama
+* Papua New Guinea
+* Paraguay
+* Peru
+* Philippines
+* Poland
+* Portugal
+* Puerto Rico
+* Q
+* Qatar
+* R
+* Romania
+* Rwanda
+* S
+* Saint Lucia
+* Saudi Arabia
+* Senegal
+* Serbia
+* Singapore
+* Slovak Republic
+* Slovenia
+* South Africa
+* Spain
+* Sweden
+* Switzerland
+* T
+* Taiwan
+* Tanzania
+* Thailand
+* Timor-Leste
+* Trinidad and Tobago
+* Tunisia
+* Turkey
+* U
+* Uganda
+* Ukraine
+* United Arab Emirates
+* United Kingdom
+* United States
+* Uruguay
+* Uzbekistan, Republic of
+* V
+* Venezuela
+* Vietnam
+* Z
+* Zambia
+2.
+* Overview
+* Corporate
+* Select All
+Unselect All
+* Significant developments
+* Taxes on corporate income
+* Corporate residence
+* Other taxes
+* Branch income
+* Income determination
+* Deductions
+* Group taxation
+* Tax credits and incentives
+* Withholding taxes
+* Tax administration
+* Other issues
+* Individual
+* Select All
+Unselect All
+* Significant developments
+* Taxes on personal income
+* Residence
+* Other taxes
+* Income determination
+* Deductions
+* Foreign tax relief and tax treaties
+* Other tax credits and incentives
+* Tax administration
+* Sample personal income tax calculation
+* Other issues
+3.
+Include Cover Page
+Cancel
+×
+×
+![](-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+WWTS Operations Director, PwC US
+Please contact for general WWTS inquiries (by clicking name above).
+×
+######
+Name
+Email
+Subject
+Message
+Cancel
+Send
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+Finland
+France
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+Honduras
+Hong Kong SAR
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+Oman
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+Qatar
+Romania
+Rwanda
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+Venezuela
+Vietnam
+Zambia
+* [![](-/media/world-wide-tax-summaries/dev/overview-inactive-nav-icon.ashx%3Frev=dee1bb7128b64699a86a2a3f76847756&revision=dee1bb71-28b6-4699-a86a-2a3f76847756&hash=9005AA450606A6D2D6725C43CAAFA1FE11631251)
+Overview](republic-of-uzbekistan.html)
+* ![](-/media/world-wide-tax-summaries/dev/corporate-active-nav-icon.ashx%3Frev=e54e9d5b7d6f49b8a9de27757112981b&revision=e54e9d5b-7d6f-49b8-a9de-27757112981b&hash=24295379334D867E5CEB564DB7B5655AFB8CA649)
+Corporate
++ [Significant developments](republic-of-uzbekistan/corporate/significant-developments.html)
++ [Corporate residence](republic-of-uzbekistan/corporate/corporate-residence.html)
++ [Branch income](republic-of-uzbekistan/corporate/branch-income.html)
++ [Deductions](republic-of-uzbekistan/corporate/deductions.html)
++ [Group taxation](republic-of-uzbekistan/corporate/group-taxation.html)
++ [Tax credits and incentives](republic-of-uzbekistan/corporate/tax-credits-and-incentives.html)
++ [Other issues](republic-of-uzbekistan/corporate/other-issues.html)
+* ![](-/media/world-wide-tax-summaries/dev/individual-inactive-nav-icon.ashx%3Frev=03b86f89ec914ecdaac1550e9f0b113f&revision=03b86f89-ec91-4ecd-aac1-550e9f0b113f&hash=FC11F4F8557815513DCBD945919A90DE94EE1FC0)
+Individual
++ [Significant developments](republic-of-uzbekistan/individual/significant-developments.html)
++ [Residence](republic-of-uzbekistan/individual/residence.html)
++ [Income determination](republic-of-uzbekistan/individual/income-determination.html)
++ [Deductions](republic-of-uzbekistan/individual/deductions.html)
++ [Foreign tax relief and tax treaties](republic-of-uzbekistan/individual/foreign-tax-relief-and-tax-treaties.html)
++ [Other tax credits and incentives](republic-of-uzbekistan/individual/other-tax-credits-and-incentives.html)
++ [Other issues](republic-of-uzbekistan/individual/other-issues.html)
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+Finland
+France
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+Honduras
+Hong Kong SAR
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+Oman
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+Qatar
+Romania
+Rwanda
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+Venezuela
+Vietnam
+Zambia
+# Uzbekistan, Republic of
+## Corporate - Taxes on corporate income
+Last reviewed - 09 February 2025
+Resident corporations pay CIT on their worldwide income, whereas non-residents (i.e. foreign legal entities that have a PE in Uzbekistan or have income from sources in Uzbekistan not associated with a PE) pay CIT on income resulting from activities/sources in Uzbekistan.
+Non-resident corporations are taxed directly at the level of their Uzbek PE, if there is one, or via withholding tax (WHT) at the source of payment of the Uzbek-source income.
+CIT is charged on taxable profit calculated as a difference between gross income and deductible expenses reduced by applicable incentives granted by the Tax Code, other laws, or presidential decrees.
+The CIT rate is set in the Tax Code (previously, annually by presidential decree). Enterprises (i.e. legal entities) are generally subject to CIT at the rate of 15%. Commercial banks, producers of cement (clinker) and polyethylene granules, mobile services providers, and markets/shopping malls are subject to CIT at the rate of 20%.
+0% CIT rate for the export of goods (services) is abolished, income from exports will be included in the tax base for turnover tax from January 1, 2025.
+The rate of CIT applicable to the following categories of the taxpayers may be reduced by 50%:
+* Payers of turnover tax switching to CIT for the first time after 1 September 2022, for the tax period in which they switched to CIT, provided that their turnover does not exceed UZS 10 billion during that tax period.
+* CIT payers whose revenue generated throughout any tax period after 1 September 2022 exceeds UZS 10 billion for the first time, for the tax period in which this threshold is exceeded and for the tax period following it, provided that the revenue generated throughout the tax period in which the reduced rate is applied does not exceed UZS 100 billion.
+From February 1, 2025 to January 1, 2030, foreign companies that are not tax residents of countries with which Uzbekistan has a double taxation agreement are exempt from CIT if their annual volume of export IT services to residents of the IT park (including services for which royalties are paid) exceeds 10 million dollars.
+## Simplified tax regime (i.e. turnover tax)
+An optional simplified tax regime is available for all legal entities with annual turnover less than UZS 1 billion and individual entrepreneurs with turnover ranging from UZS 100 million to UZS 1 billion. Under this regime, turnover tax replaces CIT and VAT.
+Turnover taxpayers whose revenue exceeds UZS 1 during the year will, however, become subject to the general income tax regime from the month following the month in which the annual revenue threshold was exceeded.
+The reporting period for turnover tax has been set to a month (instead of a quarter previously).
+Legal entities that provide intermediary services under a commission agreement, instructions, and other intermediary services agreements, including individual entrepreneurs providing intermediary services to telecom operators, calculate revenue from sale of goods/services on the basis of the transaction amount.
+Certain taxpayers are not eligible for application of turnover tax (e.g. importers, producers of excise-liable goods, legal entities engaged into subsurface extraction, sale of petrol, diesel/gas fuel).
+The general turnover tax rate is 4% but may vary from 1 to 25% depending on type of entity and services provided.
+From January 1, 2025, 1% turnover tax is no longer available to legal entities located in established touristic zones.
+* [Corporate - Significant developments](republic-of-uzbekistan/corporate/significant-developments.html)
+* [Corporate - Corporate residence](republic-of-uzbekistan/corporate/corporate-residence.html)
+![](-/media/world-wide-tax-summaries/republicofuzbekistanabdulkhamid-muminovuzbekistan--abdulkhamid-muminovjpg20210713101151824.ashx%3Frev=ba5e2d7db6f4491695d9e037fd7e5e28&revision=ba5e2d7d-b6f4-4916-95d9-e037fd7e5e28&hash=37862B6B2F5350E75B31277ACD97347535B8AA2A)
+Abdulkhamid Muminov
+Tax Partner, PwC Uzbekistan
++998 78 120 6101
+![](-/media/world-wide-tax-summaries/republicofuzbekistanjamshid-juraevjamshid-juraev-croppedsquarejpg20220109234056130.ashx%3Frev=6a043517e0504fc4af855455f9abbc2a&revision=6a043517-e050-4fc4-af85-5455f9abbc2a&hash=F238BF8DA406B291A55051D57223F8B396BA7FA5)
+Jamshid Juraev
+Tax Partner, PwC Uzbekistan
++998 71 120 6101
+[### PwC Uzbekistan
+Tax services](http://www.pwc.com/uz/en/services/tax.html)
+See Pillar Two developments by country or region](https://www.pwc.com/gx/en/services/tax/pillar-two-readiness/country-tracker.html)
+×
+I understand

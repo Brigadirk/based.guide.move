@@ -1,0 +1,614 @@
+North Macedonia - Individual - Income determination
+[![](../../-/media/world-wide-tax-summaries/dev/new-pwclogo.ashx%3Frev=857d31d9188a45cb89c2a139fca9bbc2&revision=857d31d9-188a-45cb-89c2-a139fca9bbc2&hash=185803B13B63A76ED59B9489B23256389302FCC5)](../../index.html)
++ [Back](income-determination.html#)
++ [Corporate income tax (CIT) rates](../../quick-charts/corporate-income-tax-cit-rates.html)
++ [Corporate income tax (CIT) due dates](../../quick-charts/corporate-income-tax-cit-due-dates.html)
++ [Personal income tax (PIT) rates](../../quick-charts/personal-income-tax-pit-rates.html)
++ [Personal income tax (PIT) due dates](../../quick-charts/personal-income-tax-pit-due-dates.html)
++ [Value-added tax (VAT) rates](../../quick-charts/value-added-tax-vat-rates.html)
++ [Withholding tax (WHT) rates](../../quick-charts/withholding-tax-wht-rates.html)
++ [Capital gains tax (CGT) rates](../../quick-charts/capital-gains-tax-cgt-rates.html)
++ [Net wealth/worth tax rates](../../quick-charts/net-wealth-worth-tax-rates.html)
++ [Inheritance and gift tax rates](../../quick-charts/inheritance-and-gift-tax-rates.html)
++ [Back](income-determination.html#)
++ [Back](income-determination.html#)
+×
+1.
+## Select up to 5 territories
+* A
+* Albania
+* Algeria
+* Angola
+* Argentina
+* Armenia
+* Australia
+* Austria
+* Azerbaijan
+* B
+* Bahrain
+* Bangladesh
+* Barbados
+* Belgium
+* Bermuda
+* Bolivia
+* Bosnia and Herzegovina
+* Botswana
+* Brazil
+* Bulgaria
+* C
+* Cabo Verde
+* Cambodia
+* Cameroon, Republic of
+* Canada
+* Cayman Islands
+* Chad
+* Chile
+* China, People's Republic of
+* Colombia
+* Congo, Democratic Republic of the
+* Congo, Republic of
+* Costa Rica
+* Croatia
+* Cyprus
+* Czech Republic
+* D
+* Denmark
+* Dominican Republic
+* E
+* Ecuador
+* Egypt
+* El Salvador
+* Equatorial Guinea
+* Estonia
+* Eswatini
+* Ethiopia
+* F
+* Finland
+* France
+* G
+* Gabon
+* Georgia
+* Germany
+* Ghana
+* Gibraltar
+* Greece
+* Greenland
+* Guatemala
+* Guernsey, Channel Islands
+* Guyana
+* H
+* Honduras
+* Hong Kong SAR
+* Hungary
+* I
+* Iceland
+* India
+* Indonesia
+* Iraq
+* Ireland
+* Isle of Man
+* Israel
+* Italy
+* Ivory Coast (Côte d'Ivoire)
+* J
+* Jamaica
+* Japan
+* Jersey, Channel Islands
+* Jordan
+* K
+* Kazakhstan
+* Kenya
+* Korea, Republic of
+* Kosovo
+* Kuwait
+* L
+* Lao PDR
+* Latvia
+* Lebanon
+* Libya
+* Liechtenstein
+* Lithuania
+* Luxembourg
+* M
+* Macau SAR
+* Madagascar
+* Malaysia
+* Malta
+* Mauritania
+* Mauritius
+* Mexico
+* Moldova
+* Mongolia
+* Montenegro
+* Morocco
+* Mozambique
+* Myanmar
+* N
+* Namibia, Republic of
+* Netherlands
+* New Caledonia
+* New Zealand
+* Nicaragua
+* Nigeria
+* North Macedonia
+* Norway
+* O
+* Oman
+* P
+* Pakistan
+* Palestinian territories
+* Panama
+* Papua New Guinea
+* Paraguay
+* Peru
+* Philippines
+* Poland
+* Portugal
+* Puerto Rico
+* Q
+* Qatar
+* R
+* Romania
+* Rwanda
+* S
+* Saint Lucia
+* Saudi Arabia
+* Senegal
+* Serbia
+* Singapore
+* Slovak Republic
+* Slovenia
+* South Africa
+* Spain
+* Sweden
+* Switzerland
+* T
+* Taiwan
+* Tanzania
+* Thailand
+* Timor-Leste
+* Trinidad and Tobago
+* Tunisia
+* Turkey
+* U
+* Uganda
+* Ukraine
+* United Arab Emirates
+* United Kingdom
+* United States
+* Uruguay
+* Uzbekistan, Republic of
+* V
+* Venezuela
+* Vietnam
+* Z
+* Zambia
+2.
+* Overview
+* Corporate
+* Select All
+Unselect All
+* Significant developments
+* Taxes on corporate income
+* Corporate residence
+* Other taxes
+* Branch income
+* Income determination
+* Deductions
+* Group taxation
+* Tax credits and incentives
+* Withholding taxes
+* Tax administration
+* Other issues
+* Individual
+* Select All
+Unselect All
+* Significant developments
+* Taxes on personal income
+* Residence
+* Other taxes
+* Income determination
+* Deductions
+* Foreign tax relief and tax treaties
+* Other tax credits and incentives
+* Tax administration
+* Sample personal income tax calculation
+* Other issues
+3.
+Include Cover Page
+Cancel
+×
+×
+![](../../-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+WWTS Operations Director, PwC US
+Please contact for general WWTS inquiries (by clicking name above).
+×
+![](income-determination.html)
+######
+Name
+Email
+Subject
+Message
+Cancel
+Send
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+Finland
+France
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+Honduras
+Hong Kong SAR
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+Oman
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+Qatar
+Romania
+Rwanda
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+Venezuela
+Vietnam
+Zambia
+* [![](../../-/media/world-wide-tax-summaries/dev/overview-inactive-nav-icon.ashx%3Frev=dee1bb7128b64699a86a2a3f76847756&revision=dee1bb71-28b6-4699-a86a-2a3f76847756&hash=9005AA450606A6D2D6725C43CAAFA1FE11631251)
+Overview](../../north-macedonia.html)
+* ![](../../-/media/world-wide-tax-summaries/dev/corporate-inactive-nav-icon.ashx%3Frev=4a060b4ea71c406f957b576e9e82a306&revision=4a060b4e-a71c-406f-957b-576e9e82a306&hash=57A922613994972AB726331F6DCD6FFA99F32BCF)
+Corporate
++ [Significant developments](../corporate/significant-developments.html)
++ [Corporate residence](../corporate/corporate-residence.html)
++ [Branch income](../corporate/branch-income.html)
++ [Deductions](../corporate/deductions.html)
++ [Group taxation](../corporate/group-taxation.html)
++ [Tax credits and incentives](../corporate/tax-credits-and-incentives.html)
++ [Other issues](../corporate/other-issues.html)
+* ![](../../-/media/world-wide-tax-summaries/dev/individual-active-nav-icon.ashx%3Frev=9a49ece4b63d40329971480918c93630&revision=9a49ece4-b63d-4032-9971-480918c93630&hash=D55F0E041D7BE16F8D9758A2EA71A2362AA82DB9)
+Individual
++ [Significant developments](significant-developments.html)
++ [Residence](residence.html)
++ [Income determination](income-determination.html)
++ [Deductions](deductions.html)
++ [Foreign tax relief and tax treaties](foreign-tax-relief-and-tax-treaties.html)
++ [Other tax credits and incentives](other-tax-credits-and-incentives.html)
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+Finland
+France
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+Honduras
+Hong Kong SAR
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+Oman
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+Qatar
+Romania
+Rwanda
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+Venezuela
+Vietnam
+Zambia
+# North Macedonia
+## Individual - Income determination
+Last reviewed - 18 February 2025
+Generally, the following types of income realised in the country and abroad are subject to Macedonian taxation: income from work (employment and service agreement based income); income from self-employment (business, intellectual, registered agricultural business activity, and other types of independent activities); royalties; income from sale of own agricultural products; income from intellectual property (IP) rights; income from lease and sub-lease of movables and immovable property; income from capital; capital gains; gains from games of chance; income from insurance; and other income not mentioned above.
+PIT is payable on income irrespective of whether received in money, securities, in kind, or any other type of compensation.
+## Income from work
+Income from work is subject to taxation and is comprised of all income realised by the taxpayer based on employment, including income from contractual services. This income includes wages and salaries and other allowances realised based on employment; pensions; income of members of management and supervision bodies; salaries of officials, MPs, and advisors; salaries of professional athletes; allowances for jurors, forensic experts, and trustees; allowances of the members of the Macedonian Academy of Sciences and Arts; salary earned abroad based on employment in the country; allowances for interns according to the Internship Law; and every individual income realised based on temporary service contracts with legal entities and physical persons.
+## Income from self-employment
+Income from self-employment consists of income realised by individuals from business activities, registered agricultural business activity, or from rendering professional and other intellectual services, such as doctors, lawyers, public notaries, tax consultants, engineers, architects, accountants, etc. If several physical persons realise income from joint activity, each shall be subject to PIT on the share of the income attributable to a person in accordance to the agreement for joint activity.
+## Income from copyrights and related rights
+Income from copyrights is the compensation realised by the individual from artwork and related rights regulated under the Law on Copyrights and Related rights (e.g. paintings, artistic work in music, film, etc.). The tax base is decreased by the amount of recognised expenses that range between 20% and 50%.
+## Income from sale of own agricultural products
+Income from sale of one's own agricultural products consists of sale of own agricultural products to payers that keep accounting records and to natural persons if the sale took place outside organised green markets.
+The tax base is 20% of the gross income realised.
+The taxpayer whose total income in the year exceeds the amount of 1 million Macedonian denars (MKD) shall be required to register for business activity in accordance with the legislation by 15 January of the following year, at the latest.
+If the taxpayer during the calendar year generates income from sale of one's own agricultural products not exceeding MKD 1 million, such taxpayer shall have the right to recover the tax paid thereof, provided the taxpayer has not realised any other income that is taxable under the PIT Law.
+## Income from intellectual property (IP) rights
+Income from IP rights is the compensation realised by the individual based on rights regulated with the Intellectual Property Rights Law. The tax base is 90% of the gross income.
+## Income from lease and sub-lease of movables and immovable property
+Income from lease and sub-lease of movables and immovable property is comprised of income earned by physical persons from lease and sub-lease of movables and immovable property, equipment, transportation vehicles, and other property. In case of a non-furnished property lease, the taxpayer is recognised a 10% deduction on the tax base for maintenance and management expenses. As for the lease of equipped residential and business premises, a 15% deduction on the tax base is recognised to the individual.
+## Income from capital
+Income from capital refers to those realised from the following:
+* Dividends and other income realised through participation in the profit with legal and physical persons.
+* Interest on loans given to legal and physical persons.
+* Interest on time savings and other deposits.
+* Interest on bonds and other securities.
+* Other income from securities and financial instruments.
+### Dividend income
+Dividends are subject to a flat 10% tax rate on the gross amount paid. The tax is payable by the payer of the dividend by way of withholding.
+### Interest income
+Interest is subject to a flat 10% tax rate. The tax base is the amount of the calculated interest. Interest on bonds issued by the state and local government units (LGUs), public loans, and call deposits is not subject to taxation.
+The taxation of interest on time savings is postponed until accession of North Macedonia to the European Union.
+## Capital gains
+Capital gains refer to the income realised by the taxpayer as a positive difference from the sales of real estate, securities, share of capital, shares issued from investment funds, and other movables and immovable property.
+Capital gain is the difference between the sales price and the purchase price.
+The tax base is 90% of the realised capital gain from sale of securities, share of capital, share of investment funds, and immovable property in which the taxpayer has lived at least one year prior to the sale.
+Tax is not payable on capital gains realised from sale of securities that were:
+* issued within initial public offer
+* inherited/obtained as gift, if such inheritance/gift is exempt from taxation under the Property Taxes Law, if they are sold after two years from the day of acquisition
+* acquired within a procedure for denationalisations, or
+* issued as long-term debt securities by the state or by the municipalities.
+Capital gains from securities and shares issued by an investment fund is exempt if the gain is realised by exchange of shares from one to another investment fund managed by the same investment fund management company.
+Capital gains from the sale of immovable property are exempt in cases where the immovable property:
+* is sold following three years as of date of purchase, in case the taxpayer has lived in it for at least a year prior to the sale
+* is sold after five years as of date of purchase
+* is inherited/obtained as gift, if such inheritance/gift is exempt from taxation under the Property Taxes Law, if sold after five years as of date of acquisition or three years in case the taxpayer has lived in it for at least a year prior to the sale
+* is acquired within a procedure for denationalisations, or
+* is sold between spouses, or from spouses to third parties, and such sale is in relation to a divorce procedure.
+## Gains from games of chance
+The tax on gains from games of chance and other prize games is not paid on the realised gain if it does not exceed MKD 5,000; otherwise, tax is paid on the total amount of the gains, at a flat 15% rate.
+On the other hand, any gain realised in betting houses is taxable at a flat 15% rate, where the tax base is the difference between the betting deposit and the paid out gain.
+## Income from insurance
+Insurance income includes:
+* the life insurance premium paid out by a legal entity or a self-employed individual
+* the premium for non-life insurance paid out by a legal entity or a self-employed individual, excluding the premiums paid out for collective insurance of employees for work-related injuries, and
+* the paid out insured amount, except for the compensation for damages.
+## Other income
+Other income under the PIT Law is deemed to include all other taxable income realised by physical persons that is not mentioned above. This category especially includes the income generated by e-commerce through specialised Internet pages, Internet marketing services, amount of unused financial aid, amount of unused donations, trade shortages not caused by extraordinary events (theft, fire, or other natural disasters), which are not at the expense of the responsible person's salary, as well as income generated from the sale of usable solid waste.
+The tax base for the income generated from sale of usable solid waste is the gross income realised decreased by 50%.
+## Exempt income
+Tax exempt income, such as certain employment related expenses, awards, scholarships, damages, alimony, certain types of interest, etc., is exhaustively listed in the PIT Law.
+* [Individual - Deductions](deductions.html)
+![](../../-/media/world-wide-tax-summaries/northmacedoniamiroslav-marchevnorth-macedonia--miroslav-marchevjpg20210120171650340.ashx%3Frev=03dbeb07d57945a381f73ee8fb23b448&revision=03dbeb07-d579-45a3-81f7-3ee8fb23b448&hash=432F8B0920E5EB9EA60C0D4C9D5F18608B409BFB)
+Miroslav Marchev
+Partner, PwC North Macedonia
++389 70 270 177
+[### PwC North Macedonia
+Tax services](http://www.pwc.com/mk/en/services/tax.html)
+×
+I understand

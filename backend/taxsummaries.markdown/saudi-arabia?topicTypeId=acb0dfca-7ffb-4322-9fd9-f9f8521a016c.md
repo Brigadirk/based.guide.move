@@ -1,0 +1,959 @@
+
+
+
+
+
+
+
+
+
+Saudi Arabia - Corporate - Income determination
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[![](-/media/world-wide-tax-summaries/dev/new-pwclogo.ashx%3Frev=857d31d9188a45cb89c2a139fca9bbc2&revision=857d31d9-188a-45cb-89c2-a139fca9bbc2&hash=185803B13B63A76ED59B9489B23256389302FCC5)](index.html)
+[Worldwide Tax Summaries](index.html)
+
+* [Home](index.html)
+* Quick Charts
+  + [Back](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+  + [Corporate income tax (CIT) rates](quick-charts/corporate-income-tax-cit-rates.html)
+  + [Corporate income tax (CIT) due dates](quick-charts/corporate-income-tax-cit-due-dates.html)
+  + [Personal income tax (PIT) rates](quick-charts/personal-income-tax-pit-rates.html)
+  + [Personal income tax (PIT) due dates](quick-charts/personal-income-tax-pit-due-dates.html)
+  + [Value-added tax (VAT) rates](quick-charts/value-added-tax-vat-rates.html)
+  + [Withholding tax (WHT) rates](quick-charts/withholding-tax-wht-rates.html)
+  + [Capital gains tax (CGT) rates](quick-charts/capital-gains-tax-cgt-rates.html)
+  + [Net wealth/worth tax rates](quick-charts/net-wealth-worth-tax-rates.html)
+  + [Inheritance and gift tax rates](quick-charts/inheritance-and-gift-tax-rates.html)
+* [Interactive Map](interactive-map.html)
+* [Archives](archives.html)
+* Advance Print
+  + [Back](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+  + [Print current page](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+  + [Print corporate tax summary](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+  + [Print individual tax summary](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+  + [Advanced print](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+
+* Glossary
+  + [Back](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+  + [Common tax abbreviations](glossary/common-tax-abbreviations.html)
+  + [Currency codes](glossary/currency-codes.html)
+
+
+
+* [Print current page](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+* [Print corporate tax summary](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+* [Print individual tax summary](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+* [Advanced print](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+#### Advanced Print
+
+×
+
+Use the advanced print options to create a tailored report including your topics of interest across a select group of territories
+
+1.
+## Select up to 5 territories
+
+
+* A
+* Albania
+* Algeria
+* Angola
+* Argentina
+* Armenia
+* Australia
+* Austria
+* Azerbaijan
+* B
+* Bahrain
+* Bangladesh
+* Barbados
+* Belgium
+* Bermuda
+* Bolivia
+* Bosnia and Herzegovina
+* Botswana
+* Brazil
+* Bulgaria
+* C
+* Cabo Verde
+* Cambodia
+* Cameroon, Republic of
+* Canada
+* Cayman Islands
+* Chad
+* Chile
+* China, People's Republic of
+* Colombia
+* Congo, Democratic Republic of the
+* Congo, Republic of
+* Costa Rica
+* Croatia
+* Cyprus
+* Czech Republic
+* D
+* Denmark
+* Dominican Republic
+* E
+* Ecuador
+* Egypt
+* El Salvador
+* Equatorial Guinea
+* Estonia
+* Eswatini
+* Ethiopia
+* F
+* Finland
+* France
+* G
+* Gabon
+* Georgia
+* Germany
+* Ghana
+* Gibraltar
+* Greece
+* Greenland
+* Guatemala
+* Guernsey, Channel Islands
+* Guyana
+* H
+* Honduras
+* Hong Kong SAR
+* Hungary
+* I
+* Iceland
+* India
+* Indonesia
+* Iraq
+* Ireland
+* Isle of Man
+* Israel
+* Italy
+* Ivory Coast (Côte d'Ivoire)
+* J
+* Jamaica
+* Japan
+* Jersey, Channel Islands
+* Jordan
+* K
+* Kazakhstan
+* Kenya
+* Korea, Republic of
+* Kosovo
+* Kuwait
+* L
+* Lao PDR
+* Latvia
+* Lebanon
+* Libya
+* Liechtenstein
+* Lithuania
+* Luxembourg
+* M
+* Macau SAR
+* Madagascar
+* Malaysia
+* Malta
+* Mauritania
+* Mauritius
+* Mexico
+* Moldova
+* Mongolia
+* Montenegro
+* Morocco
+* Mozambique
+* Myanmar
+* N
+* Namibia, Republic of
+* Netherlands
+* New Caledonia
+* New Zealand
+* Nicaragua
+* Nigeria
+* North Macedonia
+* Norway
+* O
+* Oman
+* P
+* Pakistan
+* Palestinian territories
+* Panama
+* Papua New Guinea
+* Paraguay
+* Peru
+* Philippines
+* Poland
+* Portugal
+* Puerto Rico
+* Q
+* Qatar
+* R
+* Romania
+* Rwanda
+* S
+* Saint Lucia
+* Saudi Arabia
+* Senegal
+* Serbia
+* Singapore
+* Slovak Republic
+* Slovenia
+* South Africa
+* Spain
+* Sweden
+* Switzerland
+* T
+* Taiwan
+* Tanzania
+* Thailand
+* Timor-Leste
+* Trinidad and Tobago
+* Tunisia
+* Turkey
+* U
+* Uganda
+* Ukraine
+* United Arab Emirates
+* United Kingdom
+* United States
+* Uruguay
+* Uzbekistan, Republic of
+* V
+* Venezuela
+* Vietnam
+* Z
+* Zambia
+
+2.
+## Select topic areas
+
+
+* Overview
+
+* Corporate
+* Select All
+  Unselect All
+
+* Significant developments
+* Taxes on corporate income
+* Corporate residence
+* Other taxes
+* Branch income
+* Income determination
+* Deductions
+* Group taxation
+* Tax credits and incentives
+* Withholding taxes
+* Tax administration
+* Other issues
+
+* Individual
+* Select All
+  Unselect All
+
+* Significant developments
+* Taxes on personal income
+* Residence
+* Other taxes
+* Income determination
+* Deductions
+* Foreign tax relief and tax treaties
+* Other tax credits and incentives
+* Tax administration
+* Sample personal income tax calculation
+* Other issues
+
+
+
+3.
+## Select your format
+
+
+Include Cover Page
+
+Sort by territory
+
+Sort by topic
+
+
+
+
+Cancel
+Print
+
+
+
+
+
+
+
+
+Success! Your message has been sent.
+×
+
+
+
+
+ Error! Your message was not sent. Please try again.
+×
+
+
+
+
+![](-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+
+WWTS Operations Director, PwC US
+
+Please contact for general WWTS inquiries (by clicking name above).  
+
+
+
+##### Contact Us
+
+×
+
+
+ 
+![](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html)
+
+
+###### 
+
+
+
+Name
+
+
+Email
+
+
+Subject
+
+
+Message
+
+
+
+
+By submitting your email address, you acknowledge that you have read the [Privacy Statement](https://www.pwc.com/gx/en/legal-notices/pwc-privacy-statement.html "Privacy Statement") and that you consent to our processing data in accordance with the Privacy Statement.
+
+
+
+Cancel
+Send
+
+ 
+
+
+
+* Territory
+  
+  
+  Albania
+  Algeria
+  Angola
+  Argentina
+  Armenia
+  Australia
+  Austria
+  Azerbaijan
+  
+  Bahrain
+  Bangladesh
+  Barbados
+  Belgium
+  Bermuda
+  Bolivia
+  Bosnia and Herzegovina
+  Botswana
+  Brazil
+  Bulgaria
+  
+  Cabo Verde
+  Cambodia
+  Cameroon, Republic of
+  Canada
+  Cayman Islands
+  Chad
+  Chile
+  China, People's Republic of
+  Colombia
+  Congo, Democratic Republic of the
+  Congo, Republic of
+  Costa Rica
+  Croatia
+  Cyprus
+  Czech Republic
+  
+  Denmark
+  Dominican Republic
+  
+  Ecuador
+  Egypt
+  El Salvador
+  Equatorial Guinea
+  Estonia
+  Eswatini
+  Ethiopia
+  
+  Finland
+  France
+  
+  Gabon
+  Georgia
+  Germany
+  Ghana
+  Gibraltar
+  Greece
+  Greenland
+  Guatemala
+  Guernsey, Channel Islands
+  Guyana
+  
+  Honduras
+  Hong Kong SAR
+  Hungary
+  
+  Iceland
+  India
+  Indonesia
+  Iraq
+  Ireland
+  Isle of Man
+  Israel
+  Italy
+  Ivory Coast (Côte d'Ivoire)
+  
+  Jamaica
+  Japan
+  Jersey, Channel Islands
+  Jordan
+  
+  Kazakhstan
+  Kenya
+  Korea, Republic of
+  Kosovo
+  Kuwait
+  
+  Lao PDR
+  Latvia
+  Lebanon
+  Libya
+  Liechtenstein
+  Lithuania
+  Luxembourg
+  
+  Macau SAR
+  Madagascar
+  Malaysia
+  Malta
+  Mauritania
+  Mauritius
+  Mexico
+  Moldova
+  Mongolia
+  Montenegro
+  Morocco
+  Mozambique
+  Myanmar
+  
+  Namibia, Republic of
+  Netherlands
+  New Caledonia
+  New Zealand
+  Nicaragua
+  Nigeria
+  North Macedonia
+  Norway
+  
+  Oman
+  
+  Pakistan
+  Palestinian territories
+  Panama
+  Papua New Guinea
+  Paraguay
+  Peru
+  Philippines
+  Poland
+  Portugal
+  Puerto Rico
+  
+  Qatar
+  
+  Romania
+  Rwanda
+  
+  Saint Lucia
+  Saudi Arabia
+  Senegal
+  Serbia
+  Singapore
+  Slovak Republic
+  Slovenia
+  South Africa
+  Spain
+  Sweden
+  Switzerland
+  
+  Taiwan
+  Tanzania
+  Thailand
+  Timor-Leste
+  Trinidad and Tobago
+  Tunisia
+  Turkey
+  
+  Uganda
+  Ukraine
+  United Arab Emirates
+  United Kingdom
+  United States
+  Uruguay
+  Uzbekistan, Republic of
+  
+  Venezuela
+  Vietnam
+  
+  Zambia
+* [![](-/media/world-wide-tax-summaries/dev/overview-inactive-nav-icon.ashx%3Frev=dee1bb7128b64699a86a2a3f76847756&revision=dee1bb71-28b6-4699-a86a-2a3f76847756&hash=9005AA450606A6D2D6725C43CAAFA1FE11631251)
+  Overview](saudi-arabia.html)
+* ![](-/media/world-wide-tax-summaries/dev/corporate-active-nav-icon.ashx%3Frev=e54e9d5b7d6f49b8a9de27757112981b&revision=e54e9d5b-7d6f-49b8-a9de-27757112981b&hash=24295379334D867E5CEB564DB7B5655AFB8CA649)
+  Corporate
+  + [Significant developments](saudi-arabia/corporate/significant-developments.html)
+  + [Taxes on corporate income](saudi-arabia%3FtopicTypeId=c12cad9f-d48e-4615-8593-1f45abaa4886.html)
+  + [Corporate residence](saudi-arabia/corporate/corporate-residence.html)
+  + [Other taxes](saudi-arabia%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html)
+  + [Branch income](saudi-arabia/corporate/branch-income.html)
+  + [Income determination](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html)
+  + [Deductions](saudi-arabia/corporate/deductions.html)
+  + [Group taxation](saudi-arabia/corporate/group-taxation.html)
+  + [Tax credits and incentives](saudi-arabia/corporate/tax-credits-and-incentives.html)
+  + [Withholding taxes](saudi-arabia%3FtopicTypeId=d81ae229-7a96-42b6-8259-b912bb9d0322.html)
+  + [Tax administration](saudi-arabia%3FtopicTypeId=c3980974-40d6-4ba4-8a3e-eba74cf5f5b9.html)
+  + [Other issues](saudi-arabia/corporate/other-issues.html)
+* ![](-/media/world-wide-tax-summaries/dev/individual-inactive-nav-icon.ashx%3Frev=03b86f89ec914ecdaac1550e9f0b113f&revision=03b86f89-ec91-4ecd-aac1-550e9f0b113f&hash=FC11F4F8557815513DCBD945919A90DE94EE1FC0)
+  Individual
+  + [Significant developments](saudi-arabia/individual/significant-developments.html)
+  + [Taxes on personal income](saudi-arabia%3FtopicTypeId=35fd5f5e-24ba-48d0-a39a-b76315a497dc.html)
+  + [Residence](saudi-arabia/individual/residence.html)
+  + [Other taxes](saudi-arabia%3FtopicTypeId=2b4630b1-09c2-40e5-8405-1d8e4bb7f38c.html)
+  + [Income determination](saudi-arabia/individual/income-determination.html)
+  + [Deductions](saudi-arabia/individual/deductions.html)
+  + [Foreign tax relief and tax treaties](saudi-arabia/individual/foreign-tax-relief-and-tax-treaties.html)
+  + [Other tax credits and incentives](saudi-arabia/individual/other-tax-credits-and-incentives.html)
+  + [Tax administration](saudi-arabia%3FtopicTypeId=31c112cd-522d-47b2-bd2c-db92a4c5dd9d.html)
+  + [Sample personal income tax calculation](saudi-arabia/individual/sample-personal-income-tax-calculation.html)
+
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+
+Denmark
+Dominican Republic
+
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+
+Finland
+France
+
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+
+Honduras
+Hong Kong SAR
+Hungary
+
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+
+Oman
+
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+
+Qatar
+
+Romania
+Rwanda
+
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+
+Venezuela
+Vietnam
+
+Zambia
+
+
+
+ 
+
+
+
+# Saudi Arabia
+
+
+## Corporate - Income determination
+
+Last reviewed - 21 July 2024
+
+## Inventory valuation
+
+The weighted average-cost method is used for valuing inventory under Saudi tax law.
+
+## Capital gains
+
+Capital gains are subject to income tax or Zakat, as appropriate, at the normal income tax or Zakat rate. However, capital gains realised from the disposal of shares in Saudi stock companies listed in the Saudi market are tax exempt, subject to certain conditions.
+
+## Dividend income
+
+Dividend income that is received by a resident party is subject to income tax at the normal income tax rate unless exempt. Dividends can be exempt from income tax in Saudi Arabia if the following conditions are met, generally:
+
+* The percentage of ownership in the company invested in is not less than 10%.
+* The period of ownership of shares is not less than one year.
+
+Dividends paid by resident entities to a non-resident party are subject to WHT at 5%.
+
+## Interest income
+
+Interest income is subject to income tax at the normal income tax rate. Interest paid to a non-resident party is subject to WHT at 5%.
+
+## Royalty income
+
+Royalty income is subject to tax at the normal income tax rate. Royalties paid to a non-resident party are subject to WHT at 15%.
+
+Royalty is defined as per article one of the Saudi income tax law as follows:
+
+“Payments received for use of or the right to use intellectual rights, including, but not limited to, copyright, patents, designs, industrial secrets, trademarks and trade names, know-how, trade secrets, business, goodwill, and payments received against the use of information related to industrial, commercial, or scientific expertise, or against granting the right to exploit natural and mineral resources.”
+
+## Imports and supply contracts
+
+Saudi tax law provides that no profit will be considered to arise from a contract for the supply of goods to Saudi Arabia, provided delivery of the goods is either free on board (FOB) or cost, insurance, and freight (CIF) to a Saudi port. However, should the contract provide for the delivery and/or installation of materials at a point inside Saudi Arabia, the supplier may be considered to be carrying on business within Saudi Arabia, and, as a consequence, the contract may be subject to Saudi income taxation as follows:
+
+* If the material cost was identified in the supply contract separately from the cost of work performed in Saudi Arabia, then, in the absence of a PE, a WHT on the work that will be performed in Saudi Arabia may be assessed, based on the type of services. However, if the contract qualifies the supplier to have a PE in Saudi Arabia, then income tax will be applied according to the Saudi tax regulations as for a normal taxpayer.
+* If the supply contract indicates a total cost without segregation in the value of supply and the value of the other activities in Saudi Arabia, then the work performed in Saudi Arabia will be assigned a value equal to 10% of the contract value for each type of activity.
+
+## Foreign income
+
+The gross income derived by a capital company resident in Saudi Arabia from its operations and of its branches inside and outside Saudi Arabia is subject to tax in Saudi Arabia. However, in order to avoid double taxation on the same income, the following exceptions and clarifications are to be considered:
+
+* With respect to the income realised from investments in other resident capital companies and foreign capital companies (foreign dividends applicable from 1 January 2018) and in order to avoid double taxation, such income is to be excluded from being subject to tax under the following conditions:
+  + The percentage of ownership in the company invested in is not less than 10%.
+  + The period of ownership of shares is not less than one year.
+
+Previously (up to 31 December 2017), foreign dividends were taxable unless a double tax treaty (DTT) provided relief.
+
+There are no restrictions on repatriation of profits, fees, capital, salaries, or other monies.
+
+
+
+* [Corporate - Branch income](saudi-arabia/corporate/branch-income.html)
+* [Corporate - Deductions](saudi-arabia/corporate/deductions.html)
+
+
+
+
+
+* [Print Current Page](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+* [Print Corporate Tax Summary](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+* [Print Individual Tax Summary](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+* [Advanced Print](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html#)
+
+ Contacts
+
+
+ News
+
+
+ Print
+
+
+ Search
+
+
+
+
+
+### Saudi Arabia contacts
+
+##### Saudi Arabia contacts
+
+
+
+##### Saudi Arabia News
+
+
+
+![](-/media/world-wide-tax-summaries/attachments/saudi-_arabia---mohammed_al_obaidi.ashx%3Frev=253d28e9302f4c2f88ae4d79c0165d94&revision=253d28e9-302f-4c2f-88ae-4d79c0165d94&hash=9DCF61D7E180D2FAF104FC7284F888DB6F4800A2)
+
+Mohammed Al-Obaidi
+
+Partner, Zakat and Tax Leader, PwC Saudi Arabia
+
++966 11 211 0239 ext. 1021
+
+
+
+![](-/media/world-wide-tax-summaries/attachments/saudiarabia---fayezaldebs.ashx%3Frev=274384aab0ec49968a7cf8e0c9533de2&revision=274384aa-b0ec-4996-8a7c-f8e0c9533de2&hash=7DB119184F0AE39BF1C8889275F76AB25A5199A0)
+
+Fayez Aldebs
+
+Partner, PwC Saudi Arabia
+
++966 544 001 037
+
+
+
+![](-/media/world-wide-tax-summaries/saudiarabiamohammed-alkhashimo-alkhashi--personal-photojpg20220618065042022.ashx%3Frev=278cdd0d8fc14279bd6ba299b3b117d7&revision=278cdd0d-8fc1-4279-bd6b-a299b3b117d7&hash=C7E6BE52B5E159F86CDEDB0BFF112C562353B9D9)
+
+Mohammed Alkhashi
+
+Partner, PwC Saudi Arabia
+
++966 566 480 014
+
+
+
+
+
+
+
+[### Middle East Tax & Legal news
+
+Stay updated with our regular tax news alerts](http://www.pwc.com/m1/en/services/tax/me-tax-legal-news.html)
+
+[### PwC Middle East
+
+Tax services and publications](http://www.pwc.com/m1/en/services/tax.html)
+
+[### Doing Business in the Kingdom of Saudi Arabia
+
+Download the guide](https://www.pwc.com/m1/en/services/tax/legal-services/pathfinder-doing-business-in-the-middle-east.html)
+
+[### PwC's Pillar Two Country Tracker
+
+See Pillar Two developments by country or region](https://www.pwc.com/gx/en/services/tax/pillar-two-readiness/country-tracker.html)
+
+[### Global Tax Talk
+
+On-demand video series providing global tax policy news quickly and concisely](https://www.pwc.com/gx/en/services/tax/tax-policy-administration/global-tax-talk.html)
+
+
+
+
+
+
+ 
+[TOP](saudi-arabia%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html# "Return to top of the page")
+
+
+
+
+×
+ This site uses cookies to collect information about your browsing activities in order to provide you with more relevant content and promotional materials, and help us understand your interests and enhance the site. By continuing to browse this site you agree to the use of cookies. Visit our [cookie policy](https://www.pwc.com/gx/en/legal-notices/cookie-policy.html) to learn more.
+I understand
+
+
+
+
+© 2017 - 2025 PwC. All rights reserved. PwC refers to the PwC network and/or one or more of its member firms, each of which is a separate legal entity. Please see [www.pwc.com/structure](https://www.pwc.com/structure) for further details.
+
+
+[Legal notices](https://www.pwc.com/gx/en/legal-notices.html)
+[Privacy](https://www.pwc.com/gx/en/legal-notices/pwc-privacy-statement.html)
+[Cookie policy](https://www.pwc.com/gx/en/legal-notices/cookie-policy.html)
+[Legal disclaimer](https://www.pwc.com/gx/en/legal-notices/legal-disclaimer.html)
+[Terms and conditions](https://www.pwc.com/gx/en/legal-notices/terms-and-conditions.html)
+Support
+
+
+
+
+
+

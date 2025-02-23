@@ -1,0 +1,581 @@
+Ireland - Individual - Tax administration
+[![](-/media/world-wide-tax-summaries/dev/new-pwclogo.ashx%3Frev=857d31d9188a45cb89c2a139fca9bbc2&revision=857d31d9-188a-45cb-89c2-a139fca9bbc2&hash=185803B13B63A76ED59B9489B23256389302FCC5)](index.html)
++ [Corporate income tax (CIT) rates](quick-charts/corporate-income-tax-cit-rates.html)
++ [Corporate income tax (CIT) due dates](quick-charts/corporate-income-tax-cit-due-dates.html)
++ [Personal income tax (PIT) rates](quick-charts/personal-income-tax-pit-rates.html)
++ [Personal income tax (PIT) due dates](quick-charts/personal-income-tax-pit-due-dates.html)
++ [Value-added tax (VAT) rates](quick-charts/value-added-tax-vat-rates.html)
++ [Withholding tax (WHT) rates](quick-charts/withholding-tax-wht-rates.html)
++ [Capital gains tax (CGT) rates](quick-charts/capital-gains-tax-cgt-rates.html)
++ [Net wealth/worth tax rates](quick-charts/net-wealth-worth-tax-rates.html)
++ [Inheritance and gift tax rates](quick-charts/inheritance-and-gift-tax-rates.html)
+×
+1.
+## Select up to 5 territories
+* A
+* Albania
+* Algeria
+* Angola
+* Argentina
+* Armenia
+* Australia
+* Austria
+* Azerbaijan
+* B
+* Bahrain
+* Bangladesh
+* Barbados
+* Belgium
+* Bermuda
+* Bolivia
+* Bosnia and Herzegovina
+* Botswana
+* Brazil
+* Bulgaria
+* C
+* Cabo Verde
+* Cambodia
+* Cameroon, Republic of
+* Canada
+* Cayman Islands
+* Chad
+* Chile
+* China, People's Republic of
+* Colombia
+* Congo, Democratic Republic of the
+* Congo, Republic of
+* Costa Rica
+* Croatia
+* Cyprus
+* Czech Republic
+* D
+* Denmark
+* Dominican Republic
+* E
+* Ecuador
+* Egypt
+* El Salvador
+* Equatorial Guinea
+* Estonia
+* Eswatini
+* Ethiopia
+* F
+* Finland
+* France
+* G
+* Gabon
+* Georgia
+* Germany
+* Ghana
+* Gibraltar
+* Greece
+* Greenland
+* Guatemala
+* Guernsey, Channel Islands
+* Guyana
+* H
+* Honduras
+* Hong Kong SAR
+* Hungary
+* I
+* Iceland
+* India
+* Indonesia
+* Iraq
+* Ireland
+* Isle of Man
+* Israel
+* Italy
+* Ivory Coast (Côte d'Ivoire)
+* J
+* Jamaica
+* Japan
+* Jersey, Channel Islands
+* Jordan
+* K
+* Kazakhstan
+* Kenya
+* Korea, Republic of
+* Kosovo
+* Kuwait
+* L
+* Lao PDR
+* Latvia
+* Lebanon
+* Libya
+* Liechtenstein
+* Lithuania
+* Luxembourg
+* M
+* Macau SAR
+* Madagascar
+* Malaysia
+* Malta
+* Mauritania
+* Mauritius
+* Mexico
+* Moldova
+* Mongolia
+* Montenegro
+* Morocco
+* Mozambique
+* Myanmar
+* N
+* Namibia, Republic of
+* Netherlands
+* New Caledonia
+* New Zealand
+* Nicaragua
+* Nigeria
+* North Macedonia
+* Norway
+* O
+* Oman
+* P
+* Pakistan
+* Palestinian territories
+* Panama
+* Papua New Guinea
+* Paraguay
+* Peru
+* Philippines
+* Poland
+* Portugal
+* Puerto Rico
+* Q
+* Qatar
+* R
+* Romania
+* Rwanda
+* S
+* Saint Lucia
+* Saudi Arabia
+* Senegal
+* Serbia
+* Singapore
+* Slovak Republic
+* Slovenia
+* South Africa
+* Spain
+* Sweden
+* Switzerland
+* T
+* Taiwan
+* Tanzania
+* Thailand
+* Timor-Leste
+* Trinidad and Tobago
+* Tunisia
+* Turkey
+* U
+* Uganda
+* Ukraine
+* United Arab Emirates
+* United Kingdom
+* United States
+* Uruguay
+* Uzbekistan, Republic of
+* V
+* Venezuela
+* Vietnam
+* Z
+* Zambia
+2.
+* Overview
+* Corporate
+* Select All
+Unselect All
+* Significant developments
+* Taxes on corporate income
+* Corporate residence
+* Other taxes
+* Branch income
+* Income determination
+* Deductions
+* Group taxation
+* Tax credits and incentives
+* Withholding taxes
+* Tax administration
+* Other issues
+* Individual
+* Select All
+Unselect All
+* Significant developments
+* Taxes on personal income
+* Residence
+* Other taxes
+* Income determination
+* Deductions
+* Foreign tax relief and tax treaties
+* Other tax credits and incentives
+* Tax administration
+* Sample personal income tax calculation
+* Other issues
+3.
+Include Cover Page
+Cancel
+×
+×
+![](-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+WWTS Operations Director, PwC US
+Please contact for general WWTS inquiries (by clicking name above).
+×
+######
+Name
+Email
+Subject
+Message
+Cancel
+Send
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+Finland
+France
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+Honduras
+Hong Kong SAR
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+Oman
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+Qatar
+Romania
+Rwanda
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+Venezuela
+Vietnam
+Zambia
+* [![](-/media/world-wide-tax-summaries/dev/overview-inactive-nav-icon.ashx%3Frev=dee1bb7128b64699a86a2a3f76847756&revision=dee1bb71-28b6-4699-a86a-2a3f76847756&hash=9005AA450606A6D2D6725C43CAAFA1FE11631251)
+Overview](ireland.html)
+* ![](-/media/world-wide-tax-summaries/dev/corporate-inactive-nav-icon.ashx%3Frev=4a060b4ea71c406f957b576e9e82a306&revision=4a060b4e-a71c-406f-957b-576e9e82a306&hash=57A922613994972AB726331F6DCD6FFA99F32BCF)
+Corporate
++ [Significant developments](ireland/corporate/significant-developments.html)
++ [Corporate residence](ireland/corporate/corporate-residence.html)
++ [Branch income](ireland/corporate/branch-income.html)
++ [Deductions](ireland/corporate/deductions.html)
++ [Group taxation](ireland/corporate/group-taxation.html)
++ [Tax credits and incentives](ireland/corporate/tax-credits-and-incentives.html)
++ [Other issues](ireland/corporate/other-issues.html)
+* ![](-/media/world-wide-tax-summaries/dev/individual-active-nav-icon.ashx%3Frev=9a49ece4b63d40329971480918c93630&revision=9a49ece4-b63d-4032-9971-480918c93630&hash=D55F0E041D7BE16F8D9758A2EA71A2362AA82DB9)
+Individual
++ [Significant developments](ireland/individual/significant-developments.html)
++ [Residence](ireland/individual/residence.html)
++ [Income determination](ireland/individual/income-determination.html)
++ [Deductions](ireland/individual/deductions.html)
++ [Foreign tax relief and tax treaties](ireland/individual/foreign-tax-relief-and-tax-treaties.html)
++ [Other tax credits and incentives](ireland/individual/other-tax-credits-and-incentives.html)
++ [Sample personal income tax calculation](ireland/individual/sample-personal-income-tax-calculation.html)
++ [Other issues](ireland/individual/other-issues.html)
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+Finland
+France
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+Honduras
+Hong Kong SAR
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+Oman
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+Qatar
+Romania
+Rwanda
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+Venezuela
+Vietnam
+Zambia
+# Ireland
+## Individual - Tax administration
+Last reviewed - 10 February 2025
+## Taxable period
+The Irish tax year is aligned with the calendar year.
+## Tax returns
+Under the self-assessment system, individuals with non-PAYE income over certain threshold and directors controlling 15% or more of the share capital of certain companies are obligated to file a tax return for the tax year by 31 October or mid-November if filed electronically on Revenue Online Service (ROS), following the year end. Tax returns can be filed with the Revenue Authorities by paper submission or using the ROS.
+## Payment of tax
+Payment of tax under the self-assessment system is made in two instalments. Preliminary income tax for any year is due and payable by 31 October in that year. The tax paid must represent at least 90% of the individual’s final liability for that year, or 100% of the ultimate liability for the prior year. Alternatively, a taxpayer may elect to make a preliminary income tax payment payable in equal monthly instalments by way of direct debit equal to 105% of the ultimate liability for the pre-preceding year.
+Any balance of income tax due for a year is payable by the following 31 October provided the individual has met their preliminary income tax liability. For individuals who file their tax return and pay their liability using the ROS, an extension to the payment and filing deadline of 31 October may be available.
+## Payment of CGT
+Where chargeable gains are realised in the period 1 January to 30 November, the CGT will be due for payment by 15 December. Where chargeable gains are realised in the period 1 December 2020 to 31 December 2020, the CGT will be due for payment by following 31 January.
+## Tax audit process
+The tax authority in Ireland is the Office of the Revenue Commissioners. An audit of an individual’s annual tax return can be conducted. The primary objective of a Revenue audit is to promote voluntary compliance with tax obligations. The functions of a Revenue audit include checking the accuracy of a tax return, checking the declaration of a liability or a claim for repayment, collection of tax, and the collection of interest and penalties.
+Possible triggers of a Revenue audit include the selection by a random audit programme, computerised case selection based on risk analysis and profiling and a proactive system of intelligence gathering.
+## Statute of limitations
+If the Inspector of Taxes in the Irish Revenue Commissioners considers that a complete tax return has not been made, or if no return was made where one should have been made, the Inspector may issue an assessment which includes estimates of the tax which is considered due. The assessments cannot be issued more than four years after the end of the tax year in question.
+If the taxpayer disagrees with an assessment issued by the Inspector of Taxes, an appeal may be lodged by writing to the Inspector of Taxes within 30 days from the date of the Notice of Assessment. On receipt of an appeal the Inspector of Taxes may either revise the assessment having reviewed the grounds of the appeal or may list the case for a hearing before the Appeal Commissioners if the Inspector does not wish to revise the assessment.
+In certain circumstances there is no time limit within which the Inspector can issue an assessment, for example if the Inspector considers that a return did not contain a full and true disclosure of relevant facts.
+Usually the Irish tax authorities focus on areas which have recently experienced changes. Therefore, it is likely that the tax authorities will focus on claims under the SARP, Foreign Earnings Deduction (FED), and issues relating to share based remuneration, for example.
+Additionally, attention is being focused on employee non-cash benefits, expenses, and employers' implementation of Real Time Reporting (RTR).
+* [Individual - Other tax credits and incentives](ireland/individual/other-tax-credits-and-incentives.html)
+* [Individual - Sample personal income tax calculation](ireland/individual/sample-personal-income-tax-calculation.html)
+![](-/media/world-wide-tax-summaries/irelanddoone-odohertyireland--doone-odohertyjpg20220503103850985.ashx%3Frev=e51d2973a84b47b9894d0f29a453b511&revision=e51d2973-a84b-47b9-894d-0f29a453b511&hash=BD0A034CA76BFFCC5DCDF9806CB52B3859630D1F)
+Doone O'Doherty
+Tax Partner, PwC Ireland
++353 1 792 6593
+![](-/media/world-wide-tax-summaries/irelandparaic-burkeireland--paraic-burkejpg20230719141757562.ashx%3Frev=a6244bd4200b4dd38965d3075742250d&revision=a6244bd4-200b-4dd3-8965-d3075742250d&hash=8B2BA3AE3A82DA0083AD73415898FFCF15FFEB1E)
+Paraic Burke
+Head of Tax, PwC Ireland
++353 1 792 8655
+![](-/media/world-wide-tax-summaries/irelandsharlene-forkanireland--sharlene-forkanjpg20250129143454178.ashx%3Frev=1ac6cb65c27948e5ac527866abe22d96&revision=1ac6cb65-c279-48e5-ac52-7866abe22d96&hash=67FD2B1D55721000E4EF01D2F7F991F0CA48B5F1)
+Sharlene Forkan
+Senior Manager, PwC Ireland
++353 87 717 9320
+[### PwC Ireland
+Tax services and publications](http://www.pwc.ie/services/tax.html)
+×
+I understand

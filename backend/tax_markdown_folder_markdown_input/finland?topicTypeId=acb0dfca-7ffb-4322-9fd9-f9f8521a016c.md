@@ -1,0 +1,612 @@
+Finland - Corporate - Income determination
+[![](-/media/world-wide-tax-summaries/dev/new-pwclogo.ashx%3Frev=857d31d9188a45cb89c2a139fca9bbc2&revision=857d31d9-188a-45cb-89c2-a139fca9bbc2&hash=185803B13B63A76ED59B9489B23256389302FCC5)](index.html)
++ [Corporate income tax (CIT) rates](quick-charts/corporate-income-tax-cit-rates.html)
++ [Corporate income tax (CIT) due dates](quick-charts/corporate-income-tax-cit-due-dates.html)
++ [Personal income tax (PIT) rates](quick-charts/personal-income-tax-pit-rates.html)
++ [Personal income tax (PIT) due dates](quick-charts/personal-income-tax-pit-due-dates.html)
++ [Value-added tax (VAT) rates](quick-charts/value-added-tax-vat-rates.html)
++ [Withholding tax (WHT) rates](quick-charts/withholding-tax-wht-rates.html)
++ [Capital gains tax (CGT) rates](quick-charts/capital-gains-tax-cgt-rates.html)
++ [Net wealth/worth tax rates](quick-charts/net-wealth-worth-tax-rates.html)
++ [Inheritance and gift tax rates](quick-charts/inheritance-and-gift-tax-rates.html)
+×
+1.
+## Select up to 5 territories
+* A
+* Albania
+* Algeria
+* Angola
+* Argentina
+* Armenia
+* Australia
+* Austria
+* Azerbaijan
+* B
+* Bahrain
+* Bangladesh
+* Barbados
+* Belgium
+* Bermuda
+* Bolivia
+* Bosnia and Herzegovina
+* Botswana
+* Brazil
+* Bulgaria
+* C
+* Cabo Verde
+* Cambodia
+* Cameroon, Republic of
+* Canada
+* Cayman Islands
+* Chad
+* Chile
+* China, People's Republic of
+* Colombia
+* Congo, Democratic Republic of the
+* Congo, Republic of
+* Costa Rica
+* Croatia
+* Cyprus
+* Czech Republic
+* D
+* Denmark
+* Dominican Republic
+* E
+* Ecuador
+* Egypt
+* El Salvador
+* Equatorial Guinea
+* Estonia
+* Eswatini
+* Ethiopia
+* F
+* Finland
+* France
+* G
+* Gabon
+* Georgia
+* Germany
+* Ghana
+* Gibraltar
+* Greece
+* Greenland
+* Guatemala
+* Guernsey, Channel Islands
+* Guyana
+* H
+* Honduras
+* Hong Kong SAR
+* Hungary
+* I
+* Iceland
+* India
+* Indonesia
+* Iraq
+* Ireland
+* Isle of Man
+* Israel
+* Italy
+* Ivory Coast (Côte d'Ivoire)
+* J
+* Jamaica
+* Japan
+* Jersey, Channel Islands
+* Jordan
+* K
+* Kazakhstan
+* Kenya
+* Korea, Republic of
+* Kosovo
+* Kuwait
+* L
+* Lao PDR
+* Latvia
+* Lebanon
+* Libya
+* Liechtenstein
+* Lithuania
+* Luxembourg
+* M
+* Macau SAR
+* Madagascar
+* Malaysia
+* Malta
+* Mauritania
+* Mauritius
+* Mexico
+* Moldova
+* Mongolia
+* Montenegro
+* Morocco
+* Mozambique
+* Myanmar
+* N
+* Namibia, Republic of
+* Netherlands
+* New Caledonia
+* New Zealand
+* Nicaragua
+* Nigeria
+* North Macedonia
+* Norway
+* O
+* Oman
+* P
+* Pakistan
+* Palestinian territories
+* Panama
+* Papua New Guinea
+* Paraguay
+* Peru
+* Philippines
+* Poland
+* Portugal
+* Puerto Rico
+* Q
+* Qatar
+* R
+* Romania
+* Rwanda
+* S
+* Saint Lucia
+* Saudi Arabia
+* Senegal
+* Serbia
+* Singapore
+* Slovak Republic
+* Slovenia
+* South Africa
+* Spain
+* Sweden
+* Switzerland
+* T
+* Taiwan
+* Tanzania
+* Thailand
+* Timor-Leste
+* Trinidad and Tobago
+* Tunisia
+* Turkey
+* U
+* Uganda
+* Ukraine
+* United Arab Emirates
+* United Kingdom
+* United States
+* Uruguay
+* Uzbekistan, Republic of
+* V
+* Venezuela
+* Vietnam
+* Z
+* Zambia
+2.
+* Overview
+* Corporate
+* Select All
+Unselect All
+* Significant developments
+* Taxes on corporate income
+* Corporate residence
+* Other taxes
+* Branch income
+* Income determination
+* Deductions
+* Group taxation
+* Tax credits and incentives
+* Withholding taxes
+* Tax administration
+* Other issues
+* Individual
+* Select All
+Unselect All
+* Significant developments
+* Taxes on personal income
+* Residence
+* Other taxes
+* Income determination
+* Deductions
+* Foreign tax relief and tax treaties
+* Other tax credits and incentives
+* Tax administration
+* Sample personal income tax calculation
+* Other issues
+3.
+Include Cover Page
+Cancel
+×
+×
+![](-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+WWTS Operations Director, PwC US
+Please contact for general WWTS inquiries (by clicking name above).
+×
+######
+Name
+Email
+Subject
+Message
+Cancel
+Send
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+Finland
+France
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+Honduras
+Hong Kong SAR
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+Oman
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+Qatar
+Romania
+Rwanda
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+Venezuela
+Vietnam
+Zambia
+* [![](-/media/world-wide-tax-summaries/dev/overview-inactive-nav-icon.ashx%3Frev=dee1bb7128b64699a86a2a3f76847756&revision=dee1bb71-28b6-4699-a86a-2a3f76847756&hash=9005AA450606A6D2D6725C43CAAFA1FE11631251)
+Overview](finland.html)
+* ![](-/media/world-wide-tax-summaries/dev/corporate-active-nav-icon.ashx%3Frev=e54e9d5b7d6f49b8a9de27757112981b&revision=e54e9d5b-7d6f-49b8-a9de-27757112981b&hash=24295379334D867E5CEB564DB7B5655AFB8CA649)
+Corporate
++ [Significant developments](finland/corporate/significant-developments.html)
++ [Corporate residence](finland/corporate/corporate-residence.html)
++ [Branch income](finland/corporate/branch-income.html)
++ [Deductions](finland/corporate/deductions.html)
++ [Group taxation](finland/corporate/group-taxation.html)
++ [Tax credits and incentives](finland/corporate/tax-credits-and-incentives.html)
++ [Other issues](finland/corporate/other-issues.html)
+* ![](-/media/world-wide-tax-summaries/dev/individual-inactive-nav-icon.ashx%3Frev=03b86f89ec914ecdaac1550e9f0b113f&revision=03b86f89-ec91-4ecd-aac1-550e9f0b113f&hash=FC11F4F8557815513DCBD945919A90DE94EE1FC0)
+Individual
++ [Significant developments](finland/individual/significant-developments.html)
++ [Residence](finland/individual/residence.html)
++ [Income determination](finland/individual/income-determination.html)
++ [Deductions](finland/individual/deductions.html)
++ [Foreign tax relief and tax treaties](finland/individual/foreign-tax-relief-and-tax-treaties.html)
++ [Other tax credits and incentives](finland/individual/other-tax-credits-and-incentives.html)
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+Finland
+France
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+Honduras
+Hong Kong SAR
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+Oman
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+Qatar
+Romania
+Rwanda
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+Venezuela
+Vietnam
+Zambia
+# Finland
+## Corporate - Income determination
+Last reviewed - 24 January 2025
+Generally, since 2020, companies and other legal entities have only one income source; income from business and professional activities. It is taxed in accordance with the Business Income Tax Act (“BITA”).
+However, companies' agricultural activities are taxed in accordance with the Agricultural Income Tax Act. Furthermore, certain corporate types, such as non-profit organisations and mutual real estate companies (MRECs) and housing companies, may have personal-source income taxed in accordance with the Income Tax Act (ITA), and BITA shall be applicable only in case such parties are carrying out business activities. As a general rule, the expenses of one source of income cannot be deducted from the taxable income of another source, and a loss from one source of income cannot offset taxable income from another source.
+All taxable income received by a company is taxed at the CIT rate of 20%, irrespective of the source to which it is attributable.
+In general, Finland has a very broad income concept, and taxable income includes all income derived from a company’s activities, though there are some significant exceptions, including (among others):
+* Capital contributions by shareholders.
+* In most cases, dividends from unlisted companies (*see Dividend income below*).
+* Liquidation gains and capital gains qualifying for the participation exemption (*see Capital gains below*).
+* Proceeds from disposal of company’s own shares.
+* Merger gain.
+There is no general distinction between capital gains and other income; capital gains of a company are taxed as part of its general income either in the ‘business income’ basket or the ‘other income’ basket. No rates other than the general CIT rate of 20% are applied to any part of taxable income of a company.
+Taxable income of a company generally is computed on an accrual basis (i.e. income is taxable in the year it is earned). However, exemptions to this main rule do exist, including unrealised exchange gains and losses, which are taxable/deductible in the year of the rate change.
+## Inventory valuation
+Inventories may be written down to the lower of direct first in first out (FIFO) cost, replacement cost, or net realisable value. Conformity between book and tax reporting is required.
+## Capital gains
+Capital gains and losses are generally included in the taxable business income (i.e. sales proceeds are included in the taxable income, and the undepreciated balance of the asset sold is deducted in the sales year) and treated as ordinary income. However, the entire stock of machinery and equipment is treated as a single item, and the capital gain on machinery and equipment is entered as income indirectly by deducting the selling price from the remaining value of the stock of machinery and equipment.
+Capital gains arising from the sale of shares are tax exempt via a participation exemption, under certain circumstances. Specifically, capital gains arising from the sale of shares are tax exempt if:
+* the seller is not a company carrying out private equity activities (as defined by the BITA)
+* the seller has owned continuously, for a period of at least one year, at least 10% of the share capital of the target company, and
+* the shares are part of the seller’s fixed assets and the shareholding is included in the seller’s business income source for tax purposes.
+For the participation exemption to apply, the target company cannot be a real estate company, a housing company, or a company the activities of which mainly include owning of real estates. The target company must also be a Finnish company, a company referred to in the European Commission (EC) Parent-Subsidiary Directive, or a company resident in a country with which Finland has concluded a tax treaty that applies to the target company’s dividend distribution.
+Note that a capital gain is taxable to the extent that the gain corresponds with a previous tax-deductible write-down or provision made in connection with the acquisition cost of shares, subsidies received for acquiring shares, or previous capital losses deducted for Finnish tax purposes from intra-group transfer of the shares.
+Capital losses are non-deductible in situations where capital gains are exempt from tax.
+### Non-resident capital gains tax on the indirect transfer of Finnish real estate
+As a general rule, Finland taxes non-residents on their Finnish-source income only. A (non-exhaustive) list of such income is in Section 10 of the Income Tax Act. Until March 2023, this Section meant that non-residents were subject to Finnish capital gains tax on transfers of Finnish real estate or transfers of shares in Finnish housing limited companies or other limited companies or cooperatives whose total assets are mostly (>50%) Finnish real estate. Although the list is not intended to be exhaustive, based on domestic legal practice, capital gains on the transfer of shares in companies that indirectly hold real estate has not been regarded as Finnish-source income. However, in March 2023, the tax base was extended to cover indirect transfers of Finnish real estate as well.
+A new provision to extend the capital gains taxation of non-resident companies investing in Finnish real estate came into effect on 1 March 2023 and applies to all indirect real estate disposals by non-residents. The purpose of the change of law is to ensure Finland is exercising its taxing rights on sale of shares in real estate companies as broadly as possible under the relevant tax treaties in force.
+According to the new provision, the profit realised on the transfer of shares, or similar rights, of an entity will be subject to capital gains tax in Finland if more than 50 % of the total assets consist directly or indirectly of Finnish real estate. When evaluating the ownership ratio, the last 365 days before the sale are considered; if the ownership condition is met at any time during this period, the indirect sale is subject to capital gains tax in Finland. Indirect ownership, within the meaning of the provision, could be formed through several companies, and the companies in the ownership chain could be domestic or foreign companies.
+The taxation of indirect holdings will apply to transfers of Finnish and foreign entities, regardless of their legal form and possible chain of ownership. Therefore, the extended provision covers transfers of foreign real estate holding companies and transfers of shares in a limited partnership or special investment fund that invests in Finnish real estate (as long as majority of the assets are directly or indirectly Finnish real estate). The taxpayer has an obligation to declare income arising from indirect transfers of Finnish real estate.
+However, it should be noted that the following exclusions and protection against the provision may be available.
+* The transfers of publicly listed companies are excluded from the scope of the provision.
+* Foreign investment funds that are considered comparable to Finnish tax-exempt investment funds are tax exempt in Finland by virtue of the domestic legislation.
+* Applicable double tax treaties (DTTs) may provide protection against the provision. Currently, only about half of Finland’s DTTs allow taxation of indirect transfers of immovable property and none contain the so-called '365-day rule'.
+## Dividend income
+Dividends received by a Finnish company are tax exempt in most cases.
+However, dividends received by a Finnish company are fully taxable (100%) if:
+* the dividend is received from a publicly quoted company, the receiving company is not a publicly quoted company, and the shareholding is less than 10% of the equity of the distributing company
+* the dividend is distributed by a non-resident company that is not such as mentioned in the EC Parent-Subsidiary Directive or other company resident in an EU or EEA country that is not liable to pay at least 10% tax for its income, or
+* the dividend is distributed by a company resident outside the European Union or European Economic Area.
+Note that most of the Finnish tax treaties include provisions enabling tax-exempt dividends from the tax treaty country in case of at least a 10% shareholding.
+Furthermore, dividends received are partly (75%) taxable if the dividend is received on shares belonging to 'investment assets' and the receiving company does not own at least 10% of the equity of the distributing company that is resident in another EU member state and covered by the EC Parent-Subsidiary Directive or the dividend is received on shares belonging to 'investment assets' and the distributing company is resident in Finland or an EEA country but not a company covered by the EC Parent-Subsidiary Directive (note that only financial, pension, and insurance institutions may have assets that are considered as 'investment assets').
+Finland has implemented into domestic tax legislation the changes in the Parent-Subsidiary Directive (concerning mismatches in tax treatment of profit distribution to avoid situations of double non-taxation and general anti-abuse rules, directives 2014/86/EU and 2015/121/EU) by limiting Finnish companies' right to receive tax-exempt dividends. Due to these changes, dividends received by a Finnish company are always considered fully taxable in case:
+* the dividend is tax deductible for the distributing company, or
+* the dividend distribution relates to an arrangement or series of arrangements mainly aimed at achieving a tax benefit that is not meant to be the purpose of the dividend article and is not genuine, taking into account all the facts and circumstances related to the case (i.e. the arrangement or series of arrangements is not based on solid business reasons).
+### Stock dividends
+Stock dividends (bonus shares) may be distributed to stockholders, which are corporations and other legal entities with some exceptions, free of tax on the shareholder (*see Dividend income above*).
+### Distributions from reserves for invested unrestricted equity
+Distributions from reserves for invested unrestricted equity are, in general, deemed as dividends. However, distributions from non-listed companies can be deemed as capital gain if they are:
+* a return of capital investment made by the same taxpayer
+* distributed within ten years of the investment, and
+* clarified by the taxpayer that the above-mentioned conditions are met.
+Distributions cannot be deemed as a capital gain if the reserves for invested unrestricted equity have been formed in conjunction with company restructurings (merger and acquisition [M&A] processes).
+## Interest income
+Interest income of a company is taxed as part of its general income, thus the regular CIT rate of 20% is applied.
+## Royalty income
+Royalty income of a company is taxed as part of its general income, thus the regular CIT rate of 20% is applied.
+## Foreign income
+A Finnish corporation is taxed on foreign dividends when the decision to distribute dividends is made and on foreign branch income and other foreign income (e.g. interest and royalties) as earned. The principal method of avoiding double taxation is the credit method, although the exemption method is still applied in a few older treaties (*see the [Tax credits and incentives](finland/corporate/tax-credits-and-incentives.html) section for more information*).
+* [Corporate - Branch income](finland/corporate/branch-income.html)
+* [Corporate - Deductions](finland/corporate/deductions.html)
+![](-/media/world-wide-tax-summaries/attachments/finland---martti-virolainen.ashx%3Frev=dbce1a2158a5437bb2ce488a55bcea65&revision=dbce1a21-58a5-437b-b2ce-488a55bcea65&hash=E9183B3AADB3641FAC05211716B55597818C0748)
+Martti Virolainen
+Partner, PwC Finland
++358 20 787 7396
+[### PwC Finland
+Tax services and publications](http://www.pwc.fi/en/services/tax.html)
+[### PwC's EU Public Country-by-Country Reporting Tracker
+Explore EU public country-by-country reporting developments across the 27 individual member states](https://www.pwc.com/gx/en/services/tax/eu-pcbcr-reporting-tracker.html)
+See Pillar Two developments by country or region](https://www.pwc.com/gx/en/services/tax/pillar-two-readiness/country-tracker.html)
+×
+I understand

@@ -1,0 +1,574 @@
+Cambodia - Corporate - Tax administration
+[![](-/media/world-wide-tax-summaries/dev/new-pwclogo.ashx%3Frev=857d31d9188a45cb89c2a139fca9bbc2&revision=857d31d9-188a-45cb-89c2-a139fca9bbc2&hash=185803B13B63A76ED59B9489B23256389302FCC5)](index.html)
++ [Corporate income tax (CIT) rates](quick-charts/corporate-income-tax-cit-rates.html)
++ [Corporate income tax (CIT) due dates](quick-charts/corporate-income-tax-cit-due-dates.html)
++ [Personal income tax (PIT) rates](quick-charts/personal-income-tax-pit-rates.html)
++ [Personal income tax (PIT) due dates](quick-charts/personal-income-tax-pit-due-dates.html)
++ [Value-added tax (VAT) rates](quick-charts/value-added-tax-vat-rates.html)
++ [Withholding tax (WHT) rates](quick-charts/withholding-tax-wht-rates.html)
++ [Capital gains tax (CGT) rates](quick-charts/capital-gains-tax-cgt-rates.html)
++ [Net wealth/worth tax rates](quick-charts/net-wealth-worth-tax-rates.html)
++ [Inheritance and gift tax rates](quick-charts/inheritance-and-gift-tax-rates.html)
+×
+1.
+## Select up to 5 territories
+* A
+* Albania
+* Algeria
+* Angola
+* Argentina
+* Armenia
+* Australia
+* Austria
+* Azerbaijan
+* B
+* Bahrain
+* Bangladesh
+* Barbados
+* Belgium
+* Bermuda
+* Bolivia
+* Bosnia and Herzegovina
+* Botswana
+* Brazil
+* Bulgaria
+* C
+* Cabo Verde
+* Cambodia
+* Cameroon, Republic of
+* Canada
+* Cayman Islands
+* Chad
+* Chile
+* China, People's Republic of
+* Colombia
+* Congo, Democratic Republic of the
+* Congo, Republic of
+* Costa Rica
+* Croatia
+* Cyprus
+* Czech Republic
+* D
+* Denmark
+* Dominican Republic
+* E
+* Ecuador
+* Egypt
+* El Salvador
+* Equatorial Guinea
+* Estonia
+* Eswatini
+* Ethiopia
+* F
+* Finland
+* France
+* G
+* Gabon
+* Georgia
+* Germany
+* Ghana
+* Gibraltar
+* Greece
+* Greenland
+* Guatemala
+* Guernsey, Channel Islands
+* Guyana
+* H
+* Honduras
+* Hong Kong SAR
+* Hungary
+* I
+* Iceland
+* India
+* Indonesia
+* Iraq
+* Ireland
+* Isle of Man
+* Israel
+* Italy
+* Ivory Coast (Côte d'Ivoire)
+* J
+* Jamaica
+* Japan
+* Jersey, Channel Islands
+* Jordan
+* K
+* Kazakhstan
+* Kenya
+* Korea, Republic of
+* Kosovo
+* Kuwait
+* L
+* Lao PDR
+* Latvia
+* Lebanon
+* Libya
+* Liechtenstein
+* Lithuania
+* Luxembourg
+* M
+* Macau SAR
+* Madagascar
+* Malaysia
+* Malta
+* Mauritania
+* Mauritius
+* Mexico
+* Moldova
+* Mongolia
+* Montenegro
+* Morocco
+* Mozambique
+* Myanmar
+* N
+* Namibia, Republic of
+* Netherlands
+* New Caledonia
+* New Zealand
+* Nicaragua
+* Nigeria
+* North Macedonia
+* Norway
+* O
+* Oman
+* P
+* Pakistan
+* Palestinian territories
+* Panama
+* Papua New Guinea
+* Paraguay
+* Peru
+* Philippines
+* Poland
+* Portugal
+* Puerto Rico
+* Q
+* Qatar
+* R
+* Romania
+* Rwanda
+* S
+* Saint Lucia
+* Saudi Arabia
+* Senegal
+* Serbia
+* Singapore
+* Slovak Republic
+* Slovenia
+* South Africa
+* Spain
+* Sweden
+* Switzerland
+* T
+* Taiwan
+* Tanzania
+* Thailand
+* Timor-Leste
+* Trinidad and Tobago
+* Tunisia
+* Turkey
+* U
+* Uganda
+* Ukraine
+* United Arab Emirates
+* United Kingdom
+* United States
+* Uruguay
+* Uzbekistan, Republic of
+* V
+* Venezuela
+* Vietnam
+* Z
+* Zambia
+2.
+* Overview
+* Corporate
+* Select All
+Unselect All
+* Significant developments
+* Taxes on corporate income
+* Corporate residence
+* Other taxes
+* Branch income
+* Income determination
+* Deductions
+* Group taxation
+* Tax credits and incentives
+* Withholding taxes
+* Tax administration
+* Other issues
+* Individual
+* Select All
+Unselect All
+* Significant developments
+* Taxes on personal income
+* Residence
+* Other taxes
+* Income determination
+* Deductions
+* Foreign tax relief and tax treaties
+* Other tax credits and incentives
+* Tax administration
+* Sample personal income tax calculation
+* Other issues
+3.
+Include Cover Page
+Cancel
+×
+×
+![](-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+WWTS Operations Director, PwC US
+Please contact for general WWTS inquiries (by clicking name above).
+×
+######
+Name
+Email
+Subject
+Message
+Cancel
+Send
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+Finland
+France
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+Honduras
+Hong Kong SAR
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+Oman
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+Qatar
+Romania
+Rwanda
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+Venezuela
+Vietnam
+Zambia
+* [![](-/media/world-wide-tax-summaries/dev/overview-inactive-nav-icon.ashx%3Frev=dee1bb7128b64699a86a2a3f76847756&revision=dee1bb71-28b6-4699-a86a-2a3f76847756&hash=9005AA450606A6D2D6725C43CAAFA1FE11631251)
+Overview](cambodia.html)
+* ![](-/media/world-wide-tax-summaries/dev/corporate-active-nav-icon.ashx%3Frev=e54e9d5b7d6f49b8a9de27757112981b&revision=e54e9d5b-7d6f-49b8-a9de-27757112981b&hash=24295379334D867E5CEB564DB7B5655AFB8CA649)
+Corporate
++ [Significant developments](cambodia/corporate/significant-developments.html)
++ [Corporate residence](cambodia/corporate/corporate-residence.html)
++ [Branch income](cambodia/corporate/branch-income.html)
++ [Deductions](cambodia/corporate/deductions.html)
++ [Group taxation](cambodia/corporate/group-taxation.html)
++ [Tax credits and incentives](cambodia/corporate/tax-credits-and-incentives.html)
++ [Other issues](cambodia/corporate/other-issues.html)
+* ![](-/media/world-wide-tax-summaries/dev/individual-inactive-nav-icon.ashx%3Frev=03b86f89ec914ecdaac1550e9f0b113f&revision=03b86f89-ec91-4ecd-aac1-550e9f0b113f&hash=FC11F4F8557815513DCBD945919A90DE94EE1FC0)
+Individual
++ [Significant developments](cambodia/individual/significant-developments.html)
++ [Residence](cambodia/individual/residence.html)
++ [Income determination](cambodia/individual/income-determination.html)
++ [Deductions](cambodia/individual/deductions.html)
++ [Foreign tax relief and tax treaties](cambodia/individual/foreign-tax-relief-and-tax-treaties.html)
++ [Other tax credits and incentives](cambodia/individual/other-tax-credits-and-incentives.html)
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+Finland
+France
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+Honduras
+Hong Kong SAR
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+Oman
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+Qatar
+Romania
+Rwanda
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+Venezuela
+Vietnam
+Zambia
+# Cambodia
+## Corporate - Tax administration
+Last reviewed - 19 September 2024
+## Taxable period
+The standard tax year is the calendar year, although different accounting year-ends may be granted upon application.
+## Tax returns
+The return for annual taxes (i.e. CIT or MT) is to be filed annually, within three months of tax year-end.
+Returns for monthly taxes (e.g. 1% prepayments of CIT, WHT, ToS or ToFB, SPT, and accommodation tax) are to be filed monthly, within 20 days of the following month. The deadline will be extended to the next working day if the 20th day falls on a Saturday, Sunday, or public holiday.
+## Payment of tax
+CIT or MT is due for payment three months after tax year-end. The CIT or MT liability can be reduced by prepayment of CIT payments.
+Monthly taxes are due for payment by the 20th day of the succeeding month. The deadline will be extended to the next working day if the 20th day falls on a Saturday, Sunday, or public holiday.
+### Prepayment of CIT
+A prepayment of CIT equal to 1% of monthly turnover inclusive of all taxes, except VAT, is required to be paid on a monthly basis. The prepayment can be offset against the annual CIT liability and the MT.
+Where a taxpayer is in the period of CIT holiday, the taxpayer is also exempted from the prepayment obligations. However, a nil monthly return will need to be lodged.
+Where a taxpayer is not subject to MT, a monthly prepayment of CIT must still be made. However, unutilised prepayments from a prior year can be used to offset the current amount due, and no physical payment may be required.
+## Tax audit process
+### **Standard operating procedures for tax audits (SOP for tax audits)**
+The Cambodian tax authorities have issued a tax audit SOP to guide tax officers in managing the tax audit process. This SOP aims to prevent different departments from creating duplicate tax audits.
+## Statute of limitations
+The tax audit period (i.e. the limitation of the period within which the tax authorities can perform tax audits) is as follows:
+* Within three or five years of the date of submission of the tax returns.
+* More than five years with prior approval from the Minister of Economy and Finance.
+* Any time with the written consent of the taxpayers.
+In practice, the tax authorities focus the tax reassessment on various matters, including payment to third parties overseas, fringe benefits provided to employees, and related party transactions (e.g. payment of management fee to head office, loans from shareholders).
+* [Corporate - Other issues](cambodia/corporate/other-issues.html)
+![](-/media/world-wide-tax-summaries/attachments/cambodia---heng_thy.ashx%3Frev=af9606be6c9d439d8cc7f70831fef34d&revision=af9606be-6c9d-439d-8cc7-f70831fef34d&hash=E0EB24E733F40ED0D469374FEE4767E95403E368)
+Heng Thy
+Tax Partner, PwC Cambodia
++855 23 860 606
+[### PwC Cambodia
+Tax services and publications](http://www.pwc.com/kh/en/services/tax.html)
+See Pillar Two developments by country or region](https://www.pwc.com/gx/en/services/tax/pillar-two-readiness/country-tracker.html)
+×
+I understand

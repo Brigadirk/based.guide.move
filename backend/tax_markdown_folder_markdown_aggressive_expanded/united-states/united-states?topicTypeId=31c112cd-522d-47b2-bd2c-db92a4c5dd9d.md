@@ -1,0 +1,59 @@
+United States - Individual - Tax administration
+×
+1.
+2.
+Unselect All
+Unselect All
+3.
+Include Cover Page
+Cancel
+×
+×
+![](-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+×
+######
+Cancel
+Send
+Overview](united-states.html)
+Corporate
+Individual
+# United States
+## Individual - Tax administration
+Last reviewed - 13 August 2024
+## Tax period
+The United States tax year generally is the same as the calendar year, or 1 January through 31 December.
+## Tax returns
+Individual income tax returns (Form 1040) are due on the 15th day of the fourth month after the end of the tax year (i.e. 15 April) unless that day is a Saturday, Sunday, or federal holiday, at which point the return is considered timely filed on the next business day. If the taxpayer is unable to file the federal individual income tax return by the due date, it may be possible to receive an automatic six-month extension of time to file. To do so, the taxpayer must file Form 4868 (Application for Automatic Extension of Time To File US Individual Income Tax Return) by the due date for filing the return. Note that filing for an extension does not extend the time to pay taxes. If the amount due is not paid by the regular due date, interest will accrue.
+Husbands and wives may generally file a joint return only if each is either a citizen or a resident. However, where only one spouse is a full-year or part-year citizen or resident, a joint return may be filed if both spouses agree to be taxed as full-year residents on their combined worldwide income.
+Generally, joint filing will result in a lower tax liability than separate filing. This determination can be made with certainty only after a thorough review of the taxpayers' facts and circumstances. Married non-resident aliens (i.e. where both spouses are non-resident aliens) may not file joint returns and must use the tax table for married persons filing separate returns. Non-resident aliens may not file as heads of household.
+## Payment of tax
+If federal income tax is owed, payment is due on 15 April in order to avoid interest and penalties for non-payment.
+Most types of US-source income paid to a foreign person are subject to tax at a rate of 30%, collected through withholding, although a reduced rate or exemption may apply under an applicable tax treaty or statutory exemption. In general, a person that makes a payment of US-source income to a foreign person must withhold the proper amount of tax and deposit it with the US government, report the payment on Form 1042-S, and file a Form 1042 by 15 March of the year following the payment(s).
+Income tax is withheld from employee compensation. Citizens, resident aliens, and non-resident taxpayers with significant income not subject to withholding (e.g. self-employment income, interest, dividends) must generally make quarterly payments of estimated tax due 15 April, 15 June, 15 September, and 15 January following the close of the tax year. Non-resident aliens who do not have any income subject to payroll withholding tax must make three estimated tax payments (rather than four) due 15 June, 15 September, and 15 January, with 50% due with the first payment.
+## Tax audit process
+The tax authority in the United States is the Internal Revenue Service (IRS). An audit is an IRS review of an individual's accounts and financial information to ensure information is being reported correctly and to verify the amount of tax reported on the individual's tax return is accurate. An individual's tax return may be examined for a variety of reasons, and the examination may take place in any one of several ways. Returns are chosen by computerised screening, by random sample, or by an income document matching program. After the examination, if any changes to the individual's tax are proposed, one can either agree with those changes and pay any additional tax owed or one can disagree with the changes and appeal the decision.
+In the event of a disagreement, the IRS has an appeals system. If taxpayers do not reach an agreement with the IRS Office of Appeals, or if the taxpayer simply does not want to appeal the case to the IRS Office of Appeals, in most instances the taxpayer may take the case to court.
+If taxpayers overpay their tax, there is a limited amount of time in which to file a claim for a credit or refund. Taxpayers can claim a credit or refund by filing Form 1040X and mailing it to the IRS Service Center where the original return was filed. A separate form must be filed for each year or period involved, along with an explanation of each item of income, deduction, or credit on which the claim is based.
+## Statute of limitations
+Generally, the IRS has three years after a return is due or filed, whichever is later, to make tax assessments. That particular date is also referred to as the statute expiration date. Statute of limitations will also limit the time taxpayers have to file a claim for credit or refund.
+The Treasury Department's Office of Tax Policy and IRS use the 'Priority Guidance Plan' each year to identify and prioritise the tax issues that should be addressed through regulations, revenue rulings, revenue procedures, notices, and other published administrative guidance. The 2022/23 Priority Guidance Plan focuses resources on guidance items that are most important to taxpayers and tax administration. Published guidance plays an important role in increasing voluntary compliance by helping to clarify ambiguous areas of the tax law.
+![](-/media/world-wide-tax-summaries/unitedstateskrishnan-chandrasekharkrishnanchandrasekharjpg20240802104829750.ashx%3Frev=a9dac49f714c46709a8fbeab0e31111e&revision=a9dac49f-714c-4670-9a8f-beab0e31111e&hash=E9E41986716B634E89A72EFFED5914AF0FD705DC)
+Krishnan Chandrasekhar
+![](-/media/world-wide-tax-summaries/unitedstatesedwin-p-geilsunited-states--ed-geils2jpg20230919113633954.ashx%3Frev=ac1ef7663fde46d9b10e684fff26ea9c&revision=ac1ef766-3fde-46d9-b10e-684fff26ea9c&hash=4049A959BC0D9853C91C4D146A51C7BE6E4C9FC6)
+Ed Geils
+### Ripple effect of IRS layoffs on business (7:12)
+## More from Policy on Demand
+Policy on Demand
+February 21, 2025
+The Senate advances the budget reconciliation process and confirmations for President Trump's economic team; House floor action will follow with the President's backing.
+Policy on Demand
+February 19, 2025
+How will consensus and policy come together in the House to move the budget reconciliation process forward? Chairman Dave Camp walks through reconciliation next steps, highlighting challenges andcompeting priorities.
+[### 2025 Tax Policy Outlook
+### Policy On Demand
+### Ripple effect of IRS layoffs on business (7:12)
+How soon will companies feel the effects of reduced IRS staffing?
+×
+I understand

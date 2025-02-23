@@ -1,0 +1,1070 @@
+
+
+
+
+
+
+
+
+
+Luxembourg - Corporate - Other taxes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[![](-/media/world-wide-tax-summaries/dev/new-pwclogo.ashx%3Frev=857d31d9188a45cb89c2a139fca9bbc2&revision=857d31d9-188a-45cb-89c2-a139fca9bbc2&hash=185803B13B63A76ED59B9489B23256389302FCC5)](index.html)
+[Worldwide Tax Summaries](index.html)
+
+* [Home](index.html)
+* Quick Charts
+  + [Back](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+  + [Corporate income tax (CIT) rates](quick-charts/corporate-income-tax-cit-rates.html)
+  + [Corporate income tax (CIT) due dates](quick-charts/corporate-income-tax-cit-due-dates.html)
+  + [Personal income tax (PIT) rates](quick-charts/personal-income-tax-pit-rates.html)
+  + [Personal income tax (PIT) due dates](quick-charts/personal-income-tax-pit-due-dates.html)
+  + [Value-added tax (VAT) rates](quick-charts/value-added-tax-vat-rates.html)
+  + [Withholding tax (WHT) rates](quick-charts/withholding-tax-wht-rates.html)
+  + [Capital gains tax (CGT) rates](quick-charts/capital-gains-tax-cgt-rates.html)
+  + [Net wealth/worth tax rates](quick-charts/net-wealth-worth-tax-rates.html)
+  + [Inheritance and gift tax rates](quick-charts/inheritance-and-gift-tax-rates.html)
+* [Interactive Map](interactive-map.html)
+* [Archives](archives.html)
+* Advance Print
+  + [Back](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+  + [Print current page](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+  + [Print corporate tax summary](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+  + [Print individual tax summary](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+  + [Advanced print](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+
+* Glossary
+  + [Back](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+  + [Common tax abbreviations](glossary/common-tax-abbreviations.html)
+  + [Currency codes](glossary/currency-codes.html)
+
+
+
+* [Print current page](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+* [Print corporate tax summary](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+* [Print individual tax summary](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+* [Advanced print](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+#### Advanced Print
+
+×
+
+Use the advanced print options to create a tailored report including your topics of interest across a select group of territories
+
+1.
+## Select up to 5 territories
+
+
+* A
+* Albania
+* Algeria
+* Angola
+* Argentina
+* Armenia
+* Australia
+* Austria
+* Azerbaijan
+* B
+* Bahrain
+* Bangladesh
+* Barbados
+* Belgium
+* Bermuda
+* Bolivia
+* Bosnia and Herzegovina
+* Botswana
+* Brazil
+* Bulgaria
+* C
+* Cabo Verde
+* Cambodia
+* Cameroon, Republic of
+* Canada
+* Cayman Islands
+* Chad
+* Chile
+* China, People's Republic of
+* Colombia
+* Congo, Democratic Republic of the
+* Congo, Republic of
+* Costa Rica
+* Croatia
+* Cyprus
+* Czech Republic
+* D
+* Denmark
+* Dominican Republic
+* E
+* Ecuador
+* Egypt
+* El Salvador
+* Equatorial Guinea
+* Estonia
+* Eswatini
+* Ethiopia
+* F
+* Finland
+* France
+* G
+* Gabon
+* Georgia
+* Germany
+* Ghana
+* Gibraltar
+* Greece
+* Greenland
+* Guatemala
+* Guernsey, Channel Islands
+* Guyana
+* H
+* Honduras
+* Hong Kong SAR
+* Hungary
+* I
+* Iceland
+* India
+* Indonesia
+* Iraq
+* Ireland
+* Isle of Man
+* Israel
+* Italy
+* Ivory Coast (Côte d'Ivoire)
+* J
+* Jamaica
+* Japan
+* Jersey, Channel Islands
+* Jordan
+* K
+* Kazakhstan
+* Kenya
+* Korea, Republic of
+* Kosovo
+* Kuwait
+* L
+* Lao PDR
+* Latvia
+* Lebanon
+* Libya
+* Liechtenstein
+* Lithuania
+* Luxembourg
+* M
+* Macau SAR
+* Madagascar
+* Malaysia
+* Malta
+* Mauritania
+* Mauritius
+* Mexico
+* Moldova
+* Mongolia
+* Montenegro
+* Morocco
+* Mozambique
+* Myanmar
+* N
+* Namibia, Republic of
+* Netherlands
+* New Caledonia
+* New Zealand
+* Nicaragua
+* Nigeria
+* North Macedonia
+* Norway
+* O
+* Oman
+* P
+* Pakistan
+* Palestinian territories
+* Panama
+* Papua New Guinea
+* Paraguay
+* Peru
+* Philippines
+* Poland
+* Portugal
+* Puerto Rico
+* Q
+* Qatar
+* R
+* Romania
+* Rwanda
+* S
+* Saint Lucia
+* Saudi Arabia
+* Senegal
+* Serbia
+* Singapore
+* Slovak Republic
+* Slovenia
+* South Africa
+* Spain
+* Sweden
+* Switzerland
+* T
+* Taiwan
+* Tanzania
+* Thailand
+* Timor-Leste
+* Trinidad and Tobago
+* Tunisia
+* Turkey
+* U
+* Uganda
+* Ukraine
+* United Arab Emirates
+* United Kingdom
+* United States
+* Uruguay
+* Uzbekistan, Republic of
+* V
+* Venezuela
+* Vietnam
+* Z
+* Zambia
+
+2.
+## Select topic areas
+
+
+* Overview
+
+* Corporate
+* Select All
+  Unselect All
+
+* Significant developments
+* Taxes on corporate income
+* Corporate residence
+* Other taxes
+* Branch income
+* Income determination
+* Deductions
+* Group taxation
+* Tax credits and incentives
+* Withholding taxes
+* Tax administration
+* Other issues
+
+* Individual
+* Select All
+  Unselect All
+
+* Significant developments
+* Taxes on personal income
+* Residence
+* Other taxes
+* Income determination
+* Deductions
+* Foreign tax relief and tax treaties
+* Other tax credits and incentives
+* Tax administration
+* Sample personal income tax calculation
+* Other issues
+
+
+
+3.
+## Select your format
+
+
+Include Cover Page
+
+Sort by territory
+
+Sort by topic
+
+
+
+
+Cancel
+Print
+
+
+
+
+
+
+
+
+Success! Your message has been sent.
+×
+
+
+
+
+ Error! Your message was not sent. Please try again.
+×
+
+
+
+
+![](-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+
+WWTS Operations Director, PwC US
+
+Please contact for general WWTS inquiries (by clicking name above).  
+
+
+
+##### Contact Us
+
+×
+
+
+ 
+![](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html)
+
+
+###### 
+
+
+
+Name
+
+
+Email
+
+
+Subject
+
+
+Message
+
+
+
+
+By submitting your email address, you acknowledge that you have read the [Privacy Statement](https://www.pwc.com/gx/en/legal-notices/pwc-privacy-statement.html "Privacy Statement") and that you consent to our processing data in accordance with the Privacy Statement.
+
+
+
+Cancel
+Send
+
+ 
+
+
+
+* Territory
+  
+  
+  Albania
+  Algeria
+  Angola
+  Argentina
+  Armenia
+  Australia
+  Austria
+  Azerbaijan
+  
+  Bahrain
+  Bangladesh
+  Barbados
+  Belgium
+  Bermuda
+  Bolivia
+  Bosnia and Herzegovina
+  Botswana
+  Brazil
+  Bulgaria
+  
+  Cabo Verde
+  Cambodia
+  Cameroon, Republic of
+  Canada
+  Cayman Islands
+  Chad
+  Chile
+  China, People's Republic of
+  Colombia
+  Congo, Democratic Republic of the
+  Congo, Republic of
+  Costa Rica
+  Croatia
+  Cyprus
+  Czech Republic
+  
+  Denmark
+  Dominican Republic
+  
+  Ecuador
+  Egypt
+  El Salvador
+  Equatorial Guinea
+  Estonia
+  Eswatini
+  Ethiopia
+  
+  Finland
+  France
+  
+  Gabon
+  Georgia
+  Germany
+  Ghana
+  Gibraltar
+  Greece
+  Greenland
+  Guatemala
+  Guernsey, Channel Islands
+  Guyana
+  
+  Honduras
+  Hong Kong SAR
+  Hungary
+  
+  Iceland
+  India
+  Indonesia
+  Iraq
+  Ireland
+  Isle of Man
+  Israel
+  Italy
+  Ivory Coast (Côte d'Ivoire)
+  
+  Jamaica
+  Japan
+  Jersey, Channel Islands
+  Jordan
+  
+  Kazakhstan
+  Kenya
+  Korea, Republic of
+  Kosovo
+  Kuwait
+  
+  Lao PDR
+  Latvia
+  Lebanon
+  Libya
+  Liechtenstein
+  Lithuania
+  Luxembourg
+  
+  Macau SAR
+  Madagascar
+  Malaysia
+  Malta
+  Mauritania
+  Mauritius
+  Mexico
+  Moldova
+  Mongolia
+  Montenegro
+  Morocco
+  Mozambique
+  Myanmar
+  
+  Namibia, Republic of
+  Netherlands
+  New Caledonia
+  New Zealand
+  Nicaragua
+  Nigeria
+  North Macedonia
+  Norway
+  
+  Oman
+  
+  Pakistan
+  Palestinian territories
+  Panama
+  Papua New Guinea
+  Paraguay
+  Peru
+  Philippines
+  Poland
+  Portugal
+  Puerto Rico
+  
+  Qatar
+  
+  Romania
+  Rwanda
+  
+  Saint Lucia
+  Saudi Arabia
+  Senegal
+  Serbia
+  Singapore
+  Slovak Republic
+  Slovenia
+  South Africa
+  Spain
+  Sweden
+  Switzerland
+  
+  Taiwan
+  Tanzania
+  Thailand
+  Timor-Leste
+  Trinidad and Tobago
+  Tunisia
+  Turkey
+  
+  Uganda
+  Ukraine
+  United Arab Emirates
+  United Kingdom
+  United States
+  Uruguay
+  Uzbekistan, Republic of
+  
+  Venezuela
+  Vietnam
+  
+  Zambia
+* [![](-/media/world-wide-tax-summaries/dev/overview-inactive-nav-icon.ashx%3Frev=dee1bb7128b64699a86a2a3f76847756&revision=dee1bb71-28b6-4699-a86a-2a3f76847756&hash=9005AA450606A6D2D6725C43CAAFA1FE11631251)
+  Overview](luxembourg.html)
+* ![](-/media/world-wide-tax-summaries/dev/corporate-active-nav-icon.ashx%3Frev=e54e9d5b7d6f49b8a9de27757112981b&revision=e54e9d5b-7d6f-49b8-a9de-27757112981b&hash=24295379334D867E5CEB564DB7B5655AFB8CA649)
+  Corporate
+  + [Significant developments](luxembourg/corporate/significant-developments.html)
+  + [Taxes on corporate income](luxembourg%3FtopicTypeId=c12cad9f-d48e-4615-8593-1f45abaa4886.html)
+  + [Corporate residence](luxembourg/corporate/corporate-residence.html)
+  + [Other taxes](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html)
+  + [Branch income](luxembourg/corporate/branch-income.html)
+  + [Income determination](luxembourg%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html)
+  + [Deductions](luxembourg/corporate/deductions.html)
+  + [Group taxation](luxembourg/corporate/group-taxation.html)
+  + [Tax credits and incentives](luxembourg/corporate/tax-credits-and-incentives.html)
+  + [Withholding taxes](luxembourg%3FtopicTypeId=d81ae229-7a96-42b6-8259-b912bb9d0322.html)
+  + [Tax administration](luxembourg%3FtopicTypeId=c3980974-40d6-4ba4-8a3e-eba74cf5f5b9.html)
+  + [Other issues](luxembourg/corporate/other-issues.html)
+* ![](-/media/world-wide-tax-summaries/dev/individual-inactive-nav-icon.ashx%3Frev=03b86f89ec914ecdaac1550e9f0b113f&revision=03b86f89-ec91-4ecd-aac1-550e9f0b113f&hash=FC11F4F8557815513DCBD945919A90DE94EE1FC0)
+  Individual
+  + [Significant developments](luxembourg/individual/significant-developments.html)
+  + [Taxes on personal income](luxembourg%3FtopicTypeId=35fd5f5e-24ba-48d0-a39a-b76315a497dc.html)
+  + [Residence](luxembourg/individual/residence.html)
+  + [Other taxes](luxembourg%3FtopicTypeId=2b4630b1-09c2-40e5-8405-1d8e4bb7f38c.html)
+  + [Income determination](luxembourg/individual/income-determination.html)
+  + [Deductions](luxembourg/individual/deductions.html)
+  + [Foreign tax relief and tax treaties](luxembourg/individual/foreign-tax-relief-and-tax-treaties.html)
+  + [Other tax credits and incentives](luxembourg/individual/other-tax-credits-and-incentives.html)
+  + [Tax administration](luxembourg%3FtopicTypeId=31c112cd-522d-47b2-bd2c-db92a4c5dd9d.html)
+
+Albania
+Algeria
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+
+Bahrain
+Bangladesh
+Barbados
+Belgium
+Bermuda
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Bulgaria
+
+Cabo Verde
+Cambodia
+Cameroon, Republic of
+Canada
+Cayman Islands
+Chad
+Chile
+China, People's Republic of
+Colombia
+Congo, Democratic Republic of the
+Congo, Republic of
+Costa Rica
+Croatia
+Cyprus
+Czech Republic
+
+Denmark
+Dominican Republic
+
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Estonia
+Eswatini
+Ethiopia
+
+Finland
+France
+
+Gabon
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Guatemala
+Guernsey, Channel Islands
+Guyana
+
+Honduras
+Hong Kong SAR
+Hungary
+
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Ivory Coast (Côte d'Ivoire)
+
+Jamaica
+Japan
+Jersey, Channel Islands
+Jordan
+
+Kazakhstan
+Kenya
+Korea, Republic of
+Kosovo
+Kuwait
+
+Lao PDR
+Latvia
+Lebanon
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+
+Macau SAR
+Madagascar
+Malaysia
+Malta
+Mauritania
+Mauritius
+Mexico
+Moldova
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+
+Namibia, Republic of
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Nigeria
+North Macedonia
+Norway
+
+Oman
+
+Pakistan
+Palestinian territories
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Puerto Rico
+
+Qatar
+
+Romania
+Rwanda
+
+Saint Lucia
+Saudi Arabia
+Senegal
+Serbia
+Singapore
+Slovak Republic
+Slovenia
+South Africa
+Spain
+Sweden
+Switzerland
+
+Taiwan
+Tanzania
+Thailand
+Timor-Leste
+Trinidad and Tobago
+Tunisia
+Turkey
+
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan, Republic of
+
+Venezuela
+Vietnam
+
+Zambia
+
+
+
+ 
+
+
+
+# Luxembourg
+
+
+## Corporate - Other taxes
+
+Last reviewed - 21 January 2025
+
+## Value-added tax (VAT)
+
+Supplies of goods and services, which are deemed to take place in Luxembourg, are subject to VAT at the standard rate of 17% (lowest standard VAT rate in the European Union) or, on certain transactions, at 14% (e.g. certain wines, advertising pamphlets, management and safekeeping of securities), 8% (e.g. supply of gas or electricity), or 3% (e.g. food [except most alcohol beverages]; pharmaceutical products; books [including e-books since the Circular n°793 released by the Luxembourg VAT authorities of 17 May 2019]; radio and television broadcasting services [except adult entertainment]; shoes, accessories, and clothes designed for children under the age of 14).
+
+Banking, financial, insurance, and reinsurance transactions are generally exempt activities. The VAT paid on costs that have a direct and immediate link with these transactions cannot be recovered except when related to services performed for persons established outside the European Union. Other VAT-exempt transactions, such as exports and related transports, allow the supplier to recover input VAT on related costs.
+
+Luxembourg resident taxable persons are, in principle, required to be registered for VAT. However, taxable persons carrying on exclusively VAT-exempt activities and who do not have any right to recover input VAT are not required to register for VAT unless they are liable to self-assess VAT on good/services required from abroad. If so, they may be subject to simplified VAT compliance obligations.
+
+Taxpayers whose activities are subject to VAT are entitled to offset against their VAT payable the amount of such tax charged to them by their suppliers or self-accounted by them on import or acquisitions of goods or services from abroad.
+
+### VAT returns and compliance
+
+VAT returns must, in principle, be filed on a monthly basis (as well as a recapitulative annual return). Derogations may be obtained to file quarterly or only annual VAT returns, subject to certain conditions (level of turnover or incoming transactions subject to VAT and level of purchases of goods and services on which Luxembourg VAT must be self-accounted for).
+
+An obligation to provide a Standard Audit File for Tax (SAF-T), containing reliable accounting data, has been implemented by the VAT authorities. In Luxembourg, the SAF-T equivalent is referred to as FAIA (*Fichier d’Audit Informatisé de l’Administration de l’Enregistrement, des Domaines et de la TVA*). This specific .xml file is used by taxable persons to make information available to Luxembourg VAT authorities during a VAT audit. Only specific taxable persons (subject to the Luxembourg Standard Chart of Accounts) having a certain minimum number of transactions (+/- 500) and registered under a 'normal filing regime' with a turnover exceeding EUR 112,000 are currently concerned. On the other hand, some entities (i.e. banks and insurance companies) are not yet subject to these SAF-T obligations, although they may be required to provide all VAT-relevant data to the authorities in a structured electronic file.
+
+Penalties and late interest may be imposed by the VAT authorities in case of infringements to the VAT legislation. Furthermore, aggravated tax fraud (*fraude fiscale aggravée*) and tax swindle (*escroquerie fiscale*) can be punished with imprisonment.
+
+### Luxembourg VAT particularities
+
+* A VAT grouping regime has been implemented in the Luxembourg VAT legislation in the summer 2018. Such regime allows any company established in Luxembourg (and Luxembourg fixed establishments of foreign companies) having financial, economic, and organisational links to be seen as a single VAT person. This regime is optional. Transactions between group members are disregarded for VAT purposes, and only the VAT returns of the group must be submitted (no individual VAT returns for the members) by the group representative.
+* Article 80 of the EU VAT Directive has also been implemented in the Luxembourg VAT legislation in the summer 2018. This provision aims at avoiding VAT loss for member states in specific situations where the sale or purchase price of a supply has been overestimated or underestimated between related parties. This provision allows member states to disregard the consideration agreed between related parties, to retain the open market value of that supply.
+* Managing directors, managers of companies (established and/or VAT registered in Luxembourg), as well as ‘de jure’ and ‘de facto’ managers in charge of the daily management of such companies, can be held jointly and personally liable in the event of breach of VAT compliance obligations and/or non-payment of the VAT due by the taxpayer they manage.
+
+## Customs duties/import tariffs
+
+Based on a European Regulation, goods entering within the territory of the European Union may be subject to customs duties/import tariffs. Applicable rates are based on the nature and on the quantity of the products.
+
+## Excise duties
+
+In addition to VAT, some products are subject to specific excise duties. In Luxembourg, these products are electricity, mineral oils, manufactured tobacco, and alcohol.
+
+Excise duties are not based on the sale price of the products but on the quantity. Excise duty becomes chargeable at the time, and in the EU member state, of release for consumption. Release for consumption occurs in any of the following instances:
+
+* The departure of excise goods from a duty suspension arrangement.
+* The holding of excise goods outside a duty suspension arrangement where excise duty has not been levied, pursuant to the applicable provisions of Community law and national legislation.
+* The production of excise goods outside a duty suspension arrangement.
+* The importation of excise goods, including irregular importation, unless the excise goods are placed, immediately upon importation, under a duty suspension arrangement.
+
+## Stamp taxes
+
+There is no stamp duty in Luxembourg.
+
+## Environment taxes
+
+There are no environment taxes applicable to Luxembourg entities.
+
+## Net wealth tax (NWT)
+
+### NWT regime
+
+Both Luxembourg resident companies and Luxembourg branches of non-resident companies are subject to NWT on their net wealth as at 1 January, based on prescribed valuation methods. The following scale of rates applies for NWT:
+
+* On a taxable base of up to EUR 500 million: 0.5%.
+* On the taxable base exceeding EUR 500 million: NWT of EUR 2.5 million, plus 0.05% on the component of the NWT base above EUR 500 million. No cap is set.
+
+In general, assets are to be taken into account at market value (except for real estate, which is subject to a special regime). Shareholdings qualifying for the participation exemption generally are exempt from NWT (*see Dividend income in the [Income determination](luxembourg%3FtopicTypeId=acb0dfca-7ffb-4322-9fd9-f9f8521a016c.html) section*).
+
+### Minimum NWT
+
+A minimum NWT charge applies for all corporate entities having their statutory seat or central administration in Luxembourg.
+
+Until tax year 2024 (included), entities with aggregated fixed financial assets, transferable securities, inter-company receivables, and cash in excess of both 90% of their total gross assets and EUR 350,000 are subject to a minimum NWT charge of EUR 4,815.
+
+All other corporations with a statutory seat or central administration in Luxembourg (including securitisation vehicles, *Société d'Investissement en Capital à Risque* [SICARs], *Société d’Epargne-Pension à Capital Variable* [SEPCAVs], and *Association d’Epargne-Pension* [ASSEPs]) will be subject to a minimum NWT charge ranging from EUR 535 to EUR 32,100, depending on company’s total gross assets, as follows:
+
+| Total gross assets (EUR) | Minimum NWT charge (EUR) |
+| --- | --- |
+| Up to 350,000 | 535 |
+| 350,001 to 2,000,000 | 1,605 |
+| 2,000,001 to 10,000,000 | 5,350 |
+| 10,000,001 to 15,000,000 | 10,700 |
+| 15,000,001 to 20,000,000 | 16,050 |
+| 20,000,001 to 30,000,000 | 21,400 |
+| 30,000,001 and above | 32,100 |
+
+On 10 November 2023, the Luxembourg constitutional court ruled that the Luxembourg minimum NWT regime is partly unconstitutional as it leads to a discriminatory situation amongst certain taxpayers in a similar situation. The decision of the constitutional court only has an impact on taxpayers whose total balance sheet is comprised between EUR 350,000 and EUR 2,000,000 and who have aggregated fixed financial assets, transferable securities, inter-company receivables, and cash in excess of 90% of their total balance sheet.
+
+As from tax year 2025, the minimum NWT amounts to:
+
+* EUR 535 for a balance sheet total up to and including EUR 350,000.
+* EUR 1,605 for a balance sheet total exceeding EUR 350,000 up to and including EUR 2 million.
+* EUR 4,815 for a balance sheet total exceeding EUR 2 million.
+
+The legislation makes it clear that the balance sheet to be used for these purposes is the closing balance sheet for the tax year concerned that is in conformity with all CIT provisions. Consequently, all figures to be used are those as shown in the commercial balance sheet, subject only to any specific revaluations necessary to apply CIT provisions.
+
+In particular, shareholdings that qualify for the participation exemption and Luxembourg-situs real estate must both be included in gross assets for these purposes. Conversely, foreign-situs real estate and other assets, such as those of a foreign branch, the income from which is excluded from the Luxembourg tax base under the provisions of a DTT, are not to be included in gross assets.
+
+### Automatic reduction of the minimum NWT
+
+The above minimum NWT of year N is reduced automatically by the amount of CIT due in year N-1, after tax credits. If the CIT due in year N-1 is higher than the minimum NWT, no minimum NWT is due (as full reduction of the minimum NWT). If the CIT due in year N-1 is lower than the minimum NWT and cannot fully offset the minimum NWT, this reduced minimum NWT may not be further reduced through the creation of a NWT reserve.
+
+### NWT reduction through an NWT reserve
+
+The NWT of a given year may be also reduced through the creation of a special reserve.
+
+The NWT reduction for year N (e.g. 2024) has to be requested in the corporate tax returns of year N-1 (e.g. 2023). The NWT special reserve of year N should be kept during the five-year period following the NWT reduction request (i.e. years N, N+1, N+2, N+3, and N+4). After the five-year period (i.e. as from year N+5), the NWT reserve of year N is released and can be either distributed to the shareholders or used to constitute a new NWT reserve.
+
+The CIT due in a given year N-1 (e.g. 2023) represents the limit for the NWT reduction for the following year N (e.g. 2024). The CIT to be taken into consideration for the limit of NWT reduction is the amount due, including the employment fund contribution, before any tax credits. As a second limit, the NWT reduction is limited by the minimum NWT. This NWT reserve may have the effect to reduce the NWT due down to zero unless the specific case referred to above where this is a residual minimum NWT.
+
+## Subscription tax
+
+Investment funds are subject to subscription tax (at various rates) on their total net assets valued at the last day of each quarter. Institutional funds and monetary funds are subject to an annual rate of 0.01% and the other funds to an annual rate of 0.05%. Funds of institutional funds and monetary institutional funds are exempt from subscription tax.
+
+However, a graduated rate reduction applies as of 1 January 2021 for fund vehicles covered by the law of 17 December 2010 relating to the undertakings for collective investments (Part I and Part II of the 2010 Undertakings for Collective Investment [UCI] regime) that invest in 'sustainable' investments, tabulated as follows:
+
+| Percentage of net assets of the fund or compartment invested in 'sustainable' assets | Subscription tax rate (annualised) applicable to element of net assets that are 'sustainable' (%) |
+| --- | --- |
+| Over 5% | 0.04 |
+| Over 20% | 0.03 |
+| Over 35% | 0.02 |
+| Over 50% | 0.01 |
+
+'Sustainable' assets are those as defined in Art. 3 EU Regulation 2020/852. Investment level percentages will need to be formally certified by an auditor and transmitted to the indirect tax authorities (i.e. Administration de l’Enregistrement, des Domaines et de la TVA) together with the subscription tax returns.
+
+Exemptions from subscription tax are available for exchange traded funds ("ETF") and their compartments, and an extension of exemption is available for funds dedicated to multi-employer pension vehicles or to several employers providing pension benefits to their employees. An exemption has also been introduced for listed Undertakings for Collective Investment in Transferable Securities ("UCITS ETF") as from 2025.
+
+Where a foreign UCI is managed by a Luxembourg-based management company (or where the foreign UCI’s place of effective management is located in Luxembourg), the UCI will not be deemed to be domiciled in Luxembourg and therefore not be subject to subscription tax in Luxembourg.
+
+## General registration taxes
+
+A fixed registration duty of EUR 75 is levied on certain transactions involving Luxembourg legal entities (i.e. incorporation, amendment to the articles of association, and transfer of seat to Luxembourg).
+
+### Real estate transactions
+
+The sale or transfer of immovable property located in Luxembourg is subject to a proportional registration duty (inclusive of the transcription tax) of 7% (plus a city surtax of 3% if the building is located in Luxembourg City).
+
+Contributions of immovable property located in Luxembourg in exchange for securities are subject to a proportional registration duty (inclusive of the transcription tax) of 3.2% (plus a city surtax of 0.3% if the building is located in Luxembourg City).
+
+Contributions of immovable property located in Luxembourg in exchange for other than by shares are subject to a proportional registration duty (inclusive of the transcription tax) of 7% (plus a city surtax of 3% if the building is located in Luxembourg City).
+
+The contribution of immovable property in the context of restructuring transactions are not subject to proportional registration duty if some conditions are met.
+
+Rental agreements are not subject to any registration obligation, with the exception of long-term leasing agreements. Parties still have the possibility to register lease agreements voluntarily, notably to determine the date of an agreement for civil law purpose, or make them enforceable against third parties. If the rental agreement is voluntarily registered, registration duty at 0.6% would remain due, unless a valid VAT option has been duly approved by the Luxembourg VAT authorities. In that case, only the fixed registration duty of EUR 75 will apply.
+
+## Commune (municipalities) real estate tax
+
+Communes (municipalities) levy an annual real estate tax, the basis of which is the unitary value of real estate, which represents its estimated value in 1941. The basic rate varies from 0.7% to 1% of the unitary value, according to the category of property, and is multiplied by a coefficient, which varies with communes and different types of property. For commercial property, the coefficient in Luxembourg City is 750%, which should be applied to 1% of the unitary value. The real estate tax is deductible for CIT purposes.
+
+Note that Bill 8082, released by the Luxembourg government in October 2022, proposes a long-awaited revamp of the Luxembourg property tax. The draft Bill provides that property tax will remain a communal tax, the rate of which can be set by each commune within a range of 9% to 11%. However, in an opinion issued on 13 June 2024, the Council of State raised a series of formal objections to the draft bill which would need further amendments.
+
+## Real estate levy for Luxembourg funds owning Luxembourg real estate directly
+
+The 2021 Budget Law introduced a new tax, termed a real estate levy (*prélèvement immobilier*), which applies only in the restricted circumstances of a Luxembourg investment fund vehicle that:
+
+* is regulated under the 2007 specialised investment fund (SIF) regime, or the 2016 reserved alternative investment fund (RAIF) regime, or Part II of the 2010 UCI regime
+* has its own legal persona, unless it has adopted the legal form of a *société en commandite* simple (SCS), the combined effect of which is to place the FCP, SCSp, and SCS legal forms all outside the scope of this new levy (this is appropriate because investors in fund vehicles having these legal forms are for tax purposes to be treated as having direct ownership of any underlying real estate owned directly in the name of the fund vehicle, and thus be immediately taxable on the income and gains derived from such real estate, and so not having to be brought within the scope of any anti-avoidance measures)
+* owns directly (or indirectly through one or more entities that are regarded as tax transparent under Luxembourg principles) real estate assets, and
+* where such assets are located in the Grand Duchy of Luxembourg.
+
+Luxembourg real estate owned by any Luxembourg tax-opaque corporate (i.e. fully taxable) entity, which is in turn owned by the fund vehicle concerned (i.e. whilst there is indirect ownership), falls entirely outside the scope of this provision.
+
+Fund vehicles that are within scope will incur the real estate levy by derogation from the more general provisions that exempt the income of the various types of regulated fund vehicles noted above. The real estate levy is to apply on or after 1 January 2021 and is charged at a rate of 20% on :
+
+* the gross (but VAT-exclusive) amount of rental income deriving (directly or through tax transparent entities) from Luxembourg real estate assets, and
+* the net amount of gains on disposal deriving from such assets (directly or through tax transparent entities, either on disposal of the real asset by a transparent entity or disposal of the interest in the tax transparent entity owning the Luxembourg real estate)
+
+On 20 January 2022, the Luxembourg tax authorities issued an administrative circular providing guidance on application of the new real estate levy introduced by the 2021 Budget Law, *inter alia* clarifying related new filing obligations imposed on the Luxembourg investment vehicles in scope. The circular does not contain any major new clarifications but specifies the related filing obligations that Luxembourg vehicles might be subject to.
+
+Real estate levy due on income or gains arising or realised in a calendar year must be reported to the tax authorities no later than 31 May of the following calendar year, and the levy due must be paid no later than 10 June of the following calendar year. A real estate levy return (ACD - *Prélèvement immobilier: Déclaration pour le prélèvement immobilier*) must be filed via MyGuichet.lu and must be accompanied by an auditor’s certificate confirming that the amount being subject to the levy is computed in accordance with the provisions of the legislation. The return shall include the following information:
+
+* Amount of income generated by the Luxembourg-based real estate subject to real estate levy.
+* Breakdown of the income per real estate asset.
+* Amount of the real estate levy.
+
+The real estate levy return can be filed by a representative of the Luxembourg investment vehicle.
+
+## Payroll taxes
+
+Payroll taxes have to be withheld by the employer. The top payroll tax withholding rate is 42%. A solidarity tax of a maximum of 9% of tax must also be applied.
+
+## Social security contributions
+
+Compulsory social security contributions for employees are listed below:
+
+* For sickness: 2.80% of gross periodic remuneration, which is limited to a monthly ceiling of EUR 12,854.64 (annual ceiling estimated at EUR 154,255.68 as of 1 January 2024).
+* For pension: 8% of gross remuneration, which is limited to a monthly ceiling of EUR 12,854.64 (annual ceiling estimated at EUR 154,255.68 as of 1 January 2024).
+
+The social security contributions have to be withheld by the employer from the employee's gross salary.
+
+Certain multilateral and bilateral social security agreements protect the interests of temporarily resident employees.
+
+Employees (residents and non-residents) paying Luxembourg social security contributions are subject to the so-called dependency contribution on their gross professional income, reduced by EUR 642.73 per month (i.e. annual relief estimated at EUR 7,712.76 as of 1 January 2024). Net portfolio income and taxable capital gains of Luxembourg resident taxpayers are also subject to the dependency contribution, except for interest within the scope of the 20% withholding tax (WHT) in full discharge of income tax. The dependency contribution rate amounts to 1.4% (flat rate).
+
+
+
+* [Corporate - Corporate residence](luxembourg/corporate/corporate-residence.html)
+* [Corporate - Branch income](luxembourg/corporate/branch-income.html)
+
+
+
+
+
+* [Print Current Page](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+* [Print Corporate Tax Summary](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+* [Print Individual Tax Summary](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+* [Advanced Print](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html#)
+
+ Contacts
+
+
+ News
+
+
+ Print
+
+
+ Search
+
+
+
+
+
+### Luxembourg contacts
+
+##### Luxembourg contacts
+
+
+
+##### Luxembourg News
+
+
+
+![](-/media/world-wide-tax-summaries/luxembourgvincent-lebrunluxembourg--vincent-lebrunjpg20231004143008249.ashx%3Frev=f848a3728ff0455cb465b82310d90583&revision=f848a372-8ff0-455c-b465-b82310d90583&hash=38E1784644A138D156D05033D4FBFF59804F45A1)
+
+Vincent Lebrun
+
+Tax Partner, Tax Services Leader, PwC Luxembourg
+
++352 49 48 48 1
+
+
+
+
+
+
+
+[### PwC Luxembourg
+
+Tax services and publications](http://www.pwc.lu/en/tax.html)
+
+[### PwC's EU Public Country-by-Country Reporting Tracker
+
+Explore EU public country-by-country reporting developments across the 27 individual member states](https://www.pwc.com/gx/en/services/tax/eu-pcbcr-reporting-tracker.html)
+
+[### PwC's Pillar Two Country Tracker
+
+See Pillar Two developments by country or region](https://www.pwc.com/gx/en/services/tax/pillar-two-readiness/country-tracker.html)
+
+[### Global Tax Talk
+
+On-demand video series providing global tax policy news quickly and concisely](https://www.pwc.com/gx/en/services/tax/tax-policy-administration/global-tax-talk.html)
+
+
+
+
+
+
+ 
+[TOP](luxembourg%3FtopicTypeId=399bcbae-2967-429b-b371-99be91a47b34.html# "Return to top of the page")
+
+
+
+
+×
+ This site uses cookies to collect information about your browsing activities in order to provide you with more relevant content and promotional materials, and help us understand your interests and enhance the site. By continuing to browse this site you agree to the use of cookies. Visit our [cookie policy](https://www.pwc.com/gx/en/legal-notices/cookie-policy.html) to learn more.
+I understand
+
+
+
+
+© 2017 - 2025 PwC. All rights reserved. PwC refers to the PwC network and/or one or more of its member firms, each of which is a separate legal entity. Please see [www.pwc.com/structure](https://www.pwc.com/structure) for further details.
+
+
+[Legal notices](https://www.pwc.com/gx/en/legal-notices.html)
+[Privacy](https://www.pwc.com/gx/en/legal-notices/pwc-privacy-statement.html)
+[Cookie policy](https://www.pwc.com/gx/en/legal-notices/cookie-policy.html)
+[Legal disclaimer](https://www.pwc.com/gx/en/legal-notices/legal-disclaimer.html)
+[Terms and conditions](https://www.pwc.com/gx/en/legal-notices/terms-and-conditions.html)
+Support
+
+
+
+
+
+
