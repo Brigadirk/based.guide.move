@@ -175,3 +175,14 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Next.js specific
+/frontend/.next/
+/frontend/out/
+/frontend/node_modules/
+/frontend/build
+/frontend/.vercel
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+/frontend/.env*.local
