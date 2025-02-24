@@ -1,14 +1,13 @@
 'use client'
 
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { ProfileProgressBar } from "@/components/profile-progress"
-import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Profile, ProfileProgress } from "@/types/profile"
-import { useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 // Mock profile data - replace with real data later
 const mockProfile: Profile = {

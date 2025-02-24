@@ -1,15 +1,29 @@
 'use client'
 
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { redirect } from "next/navigation"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 export default function SettingsPage() {
-  const { user, logout } = useAuth()
+  const { user, logout, isLoading } = useAuth()
+  const router = useRouter()
 
-  if (!user) {
-    redirect('/login')
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/login?returnUrl=/settings')
+    }
+  }, [isLoading, user, router])
+
+  const handleLogout = () => {
+    logout()
+    router.push('/login')
+  }
+
+  // Show nothing while loading or if not authenticated
+  if (isLoading || !user) {
+    return null
   }
 
   return (
@@ -20,17 +34,13 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <div className="text-sm text-muted-foreground">Name</div>
-            <div>{user.name}</div>
-          </div>
-          <div>
             <div className="text-sm text-muted-foreground">Email</div>
             <div>{user.email}</div>
           </div>
           <Button 
             variant="destructive" 
             className="w-full"
-            onClick={() => logout()}
+            onClick={handleLogout}
           >
             Log out
           </Button>

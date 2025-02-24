@@ -17,4 +17,10 @@ export interface Country {
   taxDescription: string
   livingCostDescription: string
   qualityOfLifeDescription: string
+  taxHighlights: {
+    personalIncomeTax: string
+    corporateTax: string
+    vatRate?: string
+    [key: string]: string | undefined  // Fixed index signature
+  }
 } 
