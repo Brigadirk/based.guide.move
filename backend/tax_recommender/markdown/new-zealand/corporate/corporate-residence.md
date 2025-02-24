@@ -1,8 +1,0 @@
-# New Zealand
-## Corporate - Corporate residence
-Last reviewed - 20 December 2024
-Residence is determined by place of incorporation, location of head office, centre of management, or by directors’ exercising control of the company in New Zealand.
-## Permanent establishment (PE)
-Generally, DTAs to which New Zealand is a party define a PE as a fixed place of business through which a company carries on business. A PE can also exist without a fixed place of business if employees or dependent agents of the overseas company habitually exercise an authority to conclude contracts, or habitually play the principal role leading to the conclusion of contracts that are routinely concluded without material modification by the enterprise, in New Zealand. Further, a PE may be created where services are provided in New Zealand for a period of time.
-The term 'permanent establishment' is also defined in domestic legislation. In the first instance, New Zealand’s domestic legislation will honour the PE definition included in the relevant DTA. However, in the event that the relevant DTA has not been amended to incorporate Article 12(1) of the Multilateral Convention to Implement Tax Treaty Related Measures to prevent Base Erosion and Profit Shifting (MLI), a domestic PE avoidance rule may apply in certain circumstances for large multinational groups.
-There is also a new domestic law definition of PE (incorporating the OECD’s new PE definition) that applies where there is no relevant DTA, along with an associated amendment to New Zealand’s source rules that will deem income to have a source in New Zealand where it is attributable to a PE in New Zealand.

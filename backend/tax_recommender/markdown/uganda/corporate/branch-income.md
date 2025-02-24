@@ -1,6 +1,0 @@
-# Uganda
-## Corporate - Branch income
-Last reviewed - 10 February 2025
-Tax is imposed on the income of a non-resident company derived from running a branch in Uganda. The chargeable income of a branch in Uganda is taxed at the corporation tax rate of 30% after deduction of allowable expenses.
-In addition to corporation tax, branches are subject to extra tax at a rate of 15% on any repatriated income for a year of income. The repatriated income is calculated using the A + (B - C) - D approach. Where A is the net assets at the beginning of the year, B is the net profit for the year, C is the tax charge for the year, and D is the net assets at the end of the year.
-On the other hand, the tax imposed on the income of a non-resident person attributable to activities of a PE includes (i) the income derived from the sales of goods or merchandise in Uganda or similar kind or (ii) the income of other business activities carried on in Uganda that are of the same or similar kind as those carried out through the PE. The gross income of a PE excludes charges by a PE to the head office by way of royalties, commission for specific services performed or for management, or interest on moneys lent to the head office. Similarly, no deduction for such expenses (i.e. royalties, commissions, etc.) is allowed.

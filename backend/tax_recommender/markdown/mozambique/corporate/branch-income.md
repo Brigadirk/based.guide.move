@@ -1,6 +1,0 @@
-# Mozambique
-## Corporate - Branch income
-Last reviewed - 09 January 2025
-From a tax perspective, branches are liable for Mozambican CIT as a PE (i.e. branches are subject to CIT on the taxable profit directly allocated to the PE in the Mozambican territory, as well as any other income sourced in Mozambique derived from activities that are of the same or similar kind as those effected through the PE - limited 'force of attraction' rule), being subject to tax at a rate of 32%.
-In general, PEs are subject to the same rules for determination of taxable profit that tax resident companies are subject to. There are, however, certain adaptations that are required due to the nature of PEs and their relationship with the foreign parent entity. It follows, for example, that part of general administration and overhead costs incurred by the head office may be allocated to the PE and are tax deductible in the sphere of the PE, within reasonable limits and upon criteria disclosed and justified in the tax return, as well as consistently applied in the successive tax years (acceptable criteria include, but is not restricted to, the pro-rata of turnover, direct costs, and tangible fixed assets).
-Branch profit remittance to the foreign head office is not subject to tax in Mozambique.

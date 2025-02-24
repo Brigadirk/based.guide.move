@@ -1,6 +1,0 @@
-# Mexico
-## Corporate - Branch income
-Last reviewed - 26 July 2024
-Mexican branches of foreign corporations (i.e. PEs) are generally subject to the same tax rules as Mexican corporations, with some exceptions. Such exceptions include that branches may deduct _pro rata_ allocations of head office expenses, provided certain requirements are satisfied (such as the existence of an applicable tax treaty and a comprehensive agreement for the exchange of tax information between the relevant territory and Mexico), but may not deduct remittances to their head offices, even when such remittances are classified as royalties, fees, commissions, services, or interest.
-In general terms, profit distributions to the head office (other than those regarded as a return to the head office of the capital invested into the branch, which are reflected in their 'remittances accounts') either in cash or in kind from branches or other PEs are subject to the statutory CIT rate on the grossed-up distribution, unless the remittance is made from the CUFIN account balance (i.e. the after-tax earnings account).
-Branches are also subject to the 10% WHT on profit distributions, which can be reduced or eliminated based on any applicable tax treaty provision.

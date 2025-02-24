@@ -1,5 +1,0 @@
-# Uzbekistan, Republic of
-## Corporate - Branch income
-Last reviewed - 09 February 2025
-The Civil Code of the Republic of Uzbekistan provides that enterprises can establish and operate branches. However, the by-laws governing procedures for establishing entities with foreign investments do not provide sufficient guidance on establishing branches of foreign legal entities, creating a practical problem with registering of branches of foreign legal entities. Instead, such entities use a PE registration to perform business activities without establishing an Uzbek company.
-Generally, taxation of a PE’s income is similar to that of an Uzbek legal entity (i.e. the income of a PE is subject to CIT at the rate of 15%). As of 1 January 2022, net profits (i.e. a PE's taxable income less CIT) are subject to taxation at a tax rate of 10%, which aligns the PE taxation with Uzbek legal entities that pay a 10% dividends WHT. Starting from 1 January 2023, the rate of net profits tax may be reduced if provisions of the DTT between Uzbekistan and the jurisdiction of a non-resident’s tax residency provides for a reduced WHT rate on dividend income.

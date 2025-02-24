@@ -1,6 +1,0 @@
-# Kuwait
-## Corporate - Corporate residence
-Last reviewed - 23 January 2025
-A company is resident in Kuwait for CIT purposes if it earns income from Kuwait, directly or indirectly. Given that CIT in Kuwait does not apply to Kuwaiti entities, only foreign entities earning income from Kuwait would be subject to tax. In addition, any foreign corporate body that is a shareholder in a Kuwaiti limited liability company would be subject to tax to the extent of the foreign ownership (_see the section_). For the purpose of the CIT law, GCC entities wholly owned by GCC residents are treated in the same manner as Kuwaiti business entities.
-## Permanent establishment (PE)
-A place of business or the presence of company employees/representatives in Kuwait, even if for short-term visits, can trigger a PE in Kuwait. If the company is proven to have a PE in Kuwait, the Kuwait Tax Authority can subject to tax either the profit attributable to the PE or the full value of the contract, including the value of work performed outside Kuwait. The interpretation and application of the tax law by the Kuwait Tax Authority is usually inconsistent with international standards, and is subject to the widest possible interpretation in order to tax all income from Kuwait.
