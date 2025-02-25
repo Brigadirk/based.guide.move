@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 type ValidationError = {
   email?: string;
@@ -18,7 +19,14 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<ValidationError>({})
   const [isLoading, setIsLoading] = useState(false)
-  const { register } = useAuth()
+  const { register, isAuthenticated } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/profile')
+    }
+  }, [isAuthenticated, router])
 
   const validateForm = (): boolean => {
     const newErrors: ValidationError = {};

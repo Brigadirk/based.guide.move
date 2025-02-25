@@ -7,7 +7,7 @@ import { ProfileProgressBar } from "@/components/profile-progress"
 import Link from "next/link"
 import { Profile, ProfileProgress } from "@/types/profile"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 // Mock profile data - replace with real data later
 const mockProfile: Profile = {
@@ -47,14 +47,26 @@ function calculateProgress(profile: Profile): ProfileProgress {
 export default function ProfilePage() {
   const { isAuthenticated } = useAuth()
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login?returnUrl=/profile')
-    }
+    console.log('Profile Page - Auth State:', { isAuthenticated, isLoading })
+    
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+      console.log('Profile Page - After Timeout:', { isAuthenticated, isLoading: false })
+      
+      if (!isAuthenticated) {
+        console.log('Profile Page - Redirecting to login')
+        router.push('/login?returnUrl=/profile')
+      }
+    }, 100)
+
+    return () => clearTimeout(timer)
   }, [isAuthenticated, router])
 
-  if (!isAuthenticated) {
+  if (isLoading || !isAuthenticated) {
+    console.log('Profile Page - Rendering null:', { isLoading, isAuthenticated })
     return null
   }
 
