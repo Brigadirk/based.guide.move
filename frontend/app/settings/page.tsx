@@ -3,36 +3,47 @@
 import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { redirect } from "next/navigation"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export default function SettingsPage() {
-  const { user, logout } = useAuth()
+  const { isAuthenticated, logout } = useAuth()
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
 
-  if (!user) {
-    redirect('/login')
+  useEffect(() => {
+    console.log('Settings Page - Auth State:', { isAuthenticated, isLoading })
+    
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+      console.log('Settings Page - After Timeout:', { isAuthenticated, isLoading: false })
+      
+      if (!isAuthenticated) {
+        console.log('Settings Page - Redirecting to login')
+        router.push('/login?returnUrl=/settings')
+      }
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [isAuthenticated, router])
+
+  if (isLoading || !isAuthenticated) {
+    console.log('Settings Page - Rendering null:', { isLoading, isAuthenticated })
+    return null
   }
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-2xl mx-auto space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>User Settings</CardTitle>
+          <CardTitle>Settings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <div className="text-sm text-muted-foreground">Name</div>
-            <div>{user.name}</div>
-          </div>
-          <div>
-            <div className="text-sm text-muted-foreground">Email</div>
-            <div>{user.email}</div>
-          </div>
           <Button 
             variant="destructive" 
-            className="w-full"
-            onClick={() => logout()}
+            onClick={logout}
           >
-            Log out
+            Logout
           </Button>
         </CardContent>
       </Card>

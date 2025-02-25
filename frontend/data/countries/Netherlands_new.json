@@ -1,0 +1,135 @@
+{
+    "country": "Netherlands",
+    "overview": {
+      "tax_residency_rules": "For companies: Dutch resident company is subject to CIT on worldwide income. Non-resident entities have limited tax liability on Dutch source income. For individuals: Based on durable ties to the Netherlands, including family, economic, and social connections, or having a permanent home.",
+      "tax_year": "Generally calendar year (January 1 - December 31). Corporate taxpayers may adopt a different financial year.",
+      "currency": "Euro (EUR)",
+      "tax_authority": "Tax and Customs Administration (Belastingdienst)",
+      "tax_filing_frequency": "Annually for corporate and individual taxpayers.",
+      "currency_exchange_rules": "Under Functional Foreign Currency Regime, corporate taxpayers can file in a currency other than euros, converted using average exchange rate during the financial year."
+    },
+    "tax_rates": {
+      "personal_income_tax": {
+        "rate": [
+          {
+            "box": "Box 1 (Employment and Business Income) 2025 Rates",
+            "bracket": "0 - 38,441 EUR",
+            "rate": "8.17% on taxable income"
+          },
+          {
+            "box": "Box 1 (Employment and Business Income) 2025 Rates",
+            "bracket": "38,441 - 76,817 EUR",
+            "rate": "3,140 EUR + 37.48% on excess"
+          },
+          {
+            "box": "Box 1 (Employment and Business Income) 2025 Rates",
+            "bracket": "76,817+ EUR",
+            "rate": "17,523 EUR + 49.50% on excess"
+          },
+          {
+            "box": "Box 2 (Income from substantial shareholdings)",
+            "bracket": "First 67,804 EUR",
+            "rate": "24.5%"
+          },
+          {
+            "box": "Box 2 (Income from substantial shareholdings)",
+            "bracket": "Excess of 67,804 EUR",
+            "rate": "31%"
+          },
+          {
+            "box": "Box 3 (Income from savings and investments)",
+            "rate": "36% flat rate on deemed return"
+          }
+        ],
+        "foreign_income_taxed": true,
+        "exemptions": "Levy rebates reduce tax due. Expat ruling (30% ruling, being scaled back). Certain personal deductions (alimony, charitable contributions, medical expenses, mortgage interest).",
+        "social_security": "Employee insurance contributions and national insurance tax levied. National insurance contributions capped at EUR 10,628 per annum."
+      },
+      "corporate_tax": {
+        "rate": "Standard CIT rate: 25.8%. Lower rate of 19% applies to the first income bracket of EUR 200,000.",
+        "small_business_rate": "Lower rate of 19% applies to the first income bracket of EUR 200,000 may benefit smaller companies.",
+        "foreign_income_taxed": true,
+        "withholding_taxes": {
+          "dividends": "15% (standard WHT on dividends), conditional WHT 25.8% (2025) on payments to affiliated companies in low-tax or non-cooperative jurisdictions.",
+          "interest": "Conditional WHT 25.8% (2025) on payments to affiliated companies in low-tax or non-cooperative jurisdictions.",
+          "royalties": "Conditional WHT 25.8% (2025) on payments to affiliated companies in low-tax or non-cooperative jurisdictions."
+        },
+        "deductions": "Depreciation and amortisation, interest (subject to limitations like earnings stripping rule), provision for bad debt, charitable contributions, net operating losses (with limitations)."
+      },
+      "capital_gains_tax": {
+        "rate": [
+          {
+            "asset_type": "General",
+            "rate": "Capital gains are taxed as ordinary income under Corporate Income Tax, or under relevant Box for individuals. Participation exemption may apply to shares for corporate tax. Capital gains generally not taxed for individuals, except for lucrative investments."
+          }
+        ],
+        "exemptions": "Participation exemption for qualifying shareholdings (corporate). Gains from sale of primary residence may be indirectly exempt under Box 3 system for individuals (deemed return based)."
+      },
+      "vat_gst": {
+        "rate": "Standard rate: 21%.",
+        "reduced_rate": "9% (certain goods and services).",
+        "exemptions": "Certain goods and services are exempt from VAT (e.g., healthcare, education likely similar to Afghanistan, but not explicitly listed in summary)."
+      },
+      "property_tax": {
+        "rate": "Municipal tax on ownership of immovable property, rate determined by municipality based on property value.",
+        "exemptions": "Exemptions not detailed in summary, likely exist but not specified."
+      },
+      "inheritance_tax": {
+        "rate": "Rates range from 10% to 40% depending on relationship to deceased and value of inheritance.",
+        "exemptions": "Exemptions exist, varying based on relationship (spouse, children have different brackets/exemptions, not fully detailed in summary)."
+      },
+      "wealth_tax": {
+        "rate": "Box 3 system taxes deemed income from savings and investments at a flat rate of 36%. Effectively a wealth tax on deemed returns.",
+        "exemptions": "Tax-free allowance exists within Box 3 system, specifics not fully detailed in summary."
+      }
+    },
+    "digital_nomad_visa": {
+      "available": false,
+      "requirements": "N/A",
+      "tax_benefits": "N/A",
+      "duration": "N/A"
+    },
+    "special_economic_zones": [
+      {
+        "name": "Innovation Box Regime",
+        "location": "Nationwide",
+        "tax_incentives": "Reduced tax rate (unspecified in summary, but significantly lower than standard CIT) on profits from self-developed intangible assets.",
+        "business_types": "R&D intensive businesses, technology companies.",
+        "setup_requirements": "Possession of R&D certificate or legal access ticket (e.g., patent). Stricter requirements for larger companies."
+      },
+      {
+        "name": "Tonnage Tax Regime",
+        "location": "Nationwide",
+        "tax_incentives": "Taxable profit based on net tonnage of vessel, not actual profits. Favorable regime for shipping companies.",
+        "business_types": "Shipping companies.",
+        "setup_requirements": "Qualifying shipping activities. Available upon request for fixed periods."
+      }
+    ],
+    "double_taxation_agreements": [
+      {
+        "country": "Extensive Network",
+        "description": "The Netherlands has a wide network of double taxation treaties. MLI is applied to many treaties to implement BEPS measures, including Principal Purpose Test (PPT) to prevent treaty abuse."
+        },
+        {
+          "country": "Examples (not exhaustive): Germany, Belgium, USA, UK, France",
+          "description": "Numerous treaties exist with major economies globally. Consult official sources for a complete list and specific treaty details."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+      "crypto_tax": {
+        "income_tax_rate": "Likely taxed under Box 1 or Box 3 for individuals depending on nature of activity (employment/business income vs. investment). Corporate income tax for companies.",
+        "capital_gains_rate": "Capital gains taxation follows general rules, potentially tax-free for individuals (unless lucrative investment) or corporate income tax if applicable.",
+        "mining_tax": "Likely taxed as business income under Box 1 for individuals or corporate income tax for companies."
+      },
+      "nft_tax": {
+        "income_tax_rate": "Likely taxed under Box 1 or Box 3 for individuals depending on nature of activity (employment/business income vs. investment). Corporate income tax for companies.",
+        "capital_gains_rate": "Capital gains taxation follows general rules, potentially tax-free for individuals (unless lucrative investment) or corporate income tax if applicable."
+      }
+    },
+    "additional_notes": {
+      "political_risks": "Low political risk. Stable and predictable tax system.",
+      "economic_stability": "High economic stability. Eurozone member.",
+      "legal_system": "Well-developed and efficient legal system. Tax disputes resolution mechanisms in place.",
+      "ease_of_doing_business": "Ranked highly for ease of doing business in global indices. Advanced economy with transparent regulations."
+    }
+  }

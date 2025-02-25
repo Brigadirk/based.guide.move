@@ -8,9 +8,11 @@ import { useAuth } from "@/lib/auth-context"
 
 export function BottomNav() {
   const pathname = usePathname()
-  const { user } = useAuth()
+  const { isAuthenticated } = useAuth()
 
-  if (!user) return null
+  if (!isAuthenticated) {
+    return null
+  }
 
   return (
     <div className="fixed bottom-0 left-0 right-0 border-t bg-background py-2 px-8 md:px-16">

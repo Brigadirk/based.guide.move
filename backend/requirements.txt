@@ -1,0 +1,13 @@
+streamlit
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
+pydantic-settings
+python-dotenv
+PyJWT
+email-validator
+bcrypt==4.0.1 

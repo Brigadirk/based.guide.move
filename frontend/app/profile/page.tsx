@@ -4,11 +4,10 @@ import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { ProfileProgressBar } from "@/components/profile-progress"
-import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Profile, ProfileProgress } from "@/types/profile"
-import { useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 // Mock profile data - replace with real data later
 const mockProfile: Profile = {
@@ -46,20 +45,27 @@ function calculateProgress(profile: Profile): ProfileProgress {
 }
 
 export default function ProfilePage() {
-  const { user } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login')
+    // Only redirect after we've confirmed auth state
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/login') // Use replace instead of push
     }
-  }, [user, router])
+  }, [isAuthenticated, isLoading, router])
 
-  if (!user) {
+  // Don't render anything while checking auth
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  // Don't render anything if not authenticated
+  if (!isAuthenticated) {
     return null
   }
 
-  const profile = { ...mockProfile, email: user.email }
+  const profile = { ...mockProfile, email: "user@example.com" }
   const progress = calculateProgress(profile)
 
   return (
