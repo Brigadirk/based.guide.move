@@ -1,84 +1,101 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useAuth } from '@/lib/auth'
+import { useState } from 'react'
+import { useAuth } from '@/lib/auth-context'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import Link from 'next/link'
+
+type ValidationError = {
+  email?: string;
+  password?: string;
+  general?: string;
+}
 
 export default function LoginPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const returnUrl = searchParams.get('returnUrl') || '/'
-  const { login, user, isLoading } = useAuth()
-  const [error, setError] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [errors, setErrors] = useState<ValidationError>({})
+  const [isLoading, setIsLoading] = useState(false)
+  const { login } = useAuth()
 
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (!isLoading && user) {
-      router.push('/')
-    }
-  }, [isLoading, user, router])
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const success = login(
-      formData.get('email') as string,
-      formData.get('password') as string
-    )
+    setErrors({})
+    setIsLoading(true)
 
-    if (success) {
-      router.push(returnUrl)
-    } else {
-      setError('Invalid credentials')
+    try {
+      await login(email, password)
+    } catch (err: any) {
+      console.error('Login error:', err)
+      if (err.message.includes('email')) {
+        setErrors({ email: err.message })
+      } else if (err.message.includes('password')) {
+        setErrors({ password: err.message })
+      } else {
+        setErrors({ 
+          general: err.message || 'Invalid email or password' 
+        })
+      }
+    } finally {
+      setIsLoading(false)
     }
-  }
-
-  // Don't render form if loading or already authenticated
-  if (isLoading || user) {
-    return null
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md p-6">
-        <h1 className="text-2xl font-bold mb-6">Login</h1>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm mb-2">Email</label>
-            <Input 
-              name="email"
-              type="email"
-              defaultValue="test@example.com"
-              required
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm mb-2">Password</label>
-            <Input 
-              name="password"
-              type="password"
-              defaultValue="password123"
-              required
-            />
-          </div>
-
-          {error && (
-            <p className="text-red-500 text-sm">{error}</p>
-          )}
-
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-
-          <p className="text-sm text-muted-foreground text-center mt-4">
-            Use the pre-filled credentials for testing
-          </p>
-        </form>
+    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center">
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle>Welcome back</CardTitle>
+          <CardDescription>Enter your credentials to continue</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className={errors.email ? "border-red-500" : ""}
+              />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className={errors.password ? "border-red-500" : ""}
+              />
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password}</p>
+              )}
+            </div>
+            {errors.general && (
+              <p className="text-sm text-red-500">{errors.general}</p>
+            )}
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Logging in...' : 'Log in'}
+            </Button>
+            <p className="text-sm text-center text-muted-foreground">
+              Don't have an account?{' '}
+              <Link href="/signup" className="text-primary hover:underline">
+                Sign up
+              </Link>
+            </p>
+          </form>
+        </CardContent>
       </Card>
     </div>
   )

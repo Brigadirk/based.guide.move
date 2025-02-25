@@ -2,6 +2,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import { Nav } from '@/components/ui/nav'
 import { BottomNav } from '@/components/bottom-nav'
+import { AuthProvider } from '@/lib/auth-context'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,11 +19,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Nav />
-        <main className="container mx-auto px-4 py-8 pb-24">
-          {children}
-        </main>
-        <BottomNav />
+        <AuthProvider>
+          <Nav />
+          <main className="container mx-auto px-4 py-8 pb-24">
+            {children}
+          </main>
+          <BottomNav />
+        </AuthProvider>
       </body>
     </html>
   )

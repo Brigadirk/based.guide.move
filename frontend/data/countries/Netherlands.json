@@ -1,0 +1,129 @@
+{
+    "country": "Netherlands",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or significant economic ties.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Euro (EUR)",
+        "tax_authority": "Dutch Tax and Customs Administration (Belastingdienst)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 73,324 EUR",
+                    "rate": "37.10%"
+                },
+                {
+                    "bracket": "73,325 - 115,984 EUR",
+                    "rate": "49.50%"
+                },
+                {
+                    "bracket": "115,985+ EUR",
+                    "rate": "53.00%"
+                }
+            ],
+            "foreign_income_taxed": "Yes, on worldwide income.",
+            "exemptions": "Basic personal and labor tax credit.",
+            "social_security": "12.85% for employees and 21.65% for employers."
+        },
+        "corporate_tax": {
+            "rate": "15% on net profits.",
+            "small_business_rate": "19% if taxable profits are less than 200,000 EUR.",
+            "foreign_income_taxed": "No, foreign income is exempt if taxed in the other country.",
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "15%",
+                "royalties": "15%"
+            },
+            "deductions": "Various deductions for business expenses."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "26.9%",
+                    "long_term_rate": "26.9%"
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "26.9%",
+                    "long_term_rate": "26.9%"
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "26.9%",
+                    "long_term_rate": "26.9%"
+                }
+            ],
+            "exemptions": "Gains up to 6,850 EUR are tax-free."
+        },
+        "vat_gst": {
+            "rate": "21%",
+            "reduced_rate": "9%",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "0.21% - 0.38% of assessed value, varies by municipality.",
+            "exemptions": "None."
+        },
+        "inheritance_tax": {
+            "rate": "10-40%, based on relationship to the deceased.",
+            "exemptions": "Spouse, children, grandchildren."
+        },
+        "wealth_tax": {
+            "rate": "1.2% on net worth above 50,000 EUR.",
+            "exemptions": "Primary residence."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Earn more than 1,269 EUR per month, have health insurance, and pass a background check.",
+        "tax_benefits": "30% tax break on wages for the first 5 years.",
+        "duration": "1 year, renewable."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Amsterdam Airport City",
+            "location": "Amsterdam",
+            "tax_incentives": "Reduced corporate tax rate, investment subsidies, access to skilled labor.",
+            "business_types": "Logistics, aviation, ICT.",
+            "setup_requirements": "Minimum investment of 500,000 EUR."
+        },
+        {
+            "name": "Rotterdam The Hague Airport City",
+            "location": "Rotterdam",
+            "tax_incentives": "Reduced corporate tax rate, investment subsidies, access to infrastructure.",
+            "business_types": "Logistics, manufacturing, aviation.",
+            "setup_requirements": "Minimum investment of 1 million EUR."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on income and dividends."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "27% as miscellaneous income.",
+            "capital_gains_rate": "27%.",
+            "mining_tax": "27% as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "27% as miscellaneous income.",
+            "capital_gains_rate": "27%."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Information not available.",
+        "economic_stability": "Stable and developed economy with low inflation.",
+        "legal_system": "Well-developed legal system with clear tax laws.",
+        "ease_of_doing_business": "Ranked 4th in the World Bank's Ease of Doing Business Index."
+    }
+}

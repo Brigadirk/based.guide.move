@@ -10,17 +10,15 @@ export interface ApiResponse {
 }
 
 export interface Country {
-  id: string
-  name: string
-  taxScore: number
-  livingCost: number
-  taxDescription: string
-  livingCostDescription: string
-  qualityOfLifeDescription: string
+  id: string;
+  name: string;
+  taxDescription: string;
   taxHighlights: {
-    personalIncomeTax: string
-    corporateTax: string
-    vatRate?: string
-    [key: string]: string | undefined  // Fixed index signature
-  }
+    personalIncomeTax: string;
+    corporateTax: string;
+    vatRate?: string;
+  };
+  visaOptions: string[];
+  costOfLiving: 'Low' | 'Medium' | 'High' | 'Very High';
+  climate: string;
 } 

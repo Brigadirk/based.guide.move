@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from "@/lib/auth"
+import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { ProfileProgressBar } from "@/components/profile-progress"
@@ -45,20 +45,20 @@ function calculateProgress(profile: Profile): ProfileProgress {
 }
 
 export default function ProfilePage() {
-  const { user } = useAuth()
+  const { isAuthenticated } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login')
+    if (!isAuthenticated) {
+      router.push('/login?returnUrl=/profile')
     }
-  }, [user, router])
+  }, [isAuthenticated, router])
 
-  if (!user) {
+  if (!isAuthenticated) {
     return null
   }
 
-  const profile = { ...mockProfile, email: user.email }
+  const profile = { ...mockProfile, email: "user@example.com" }
   const progress = calculateProgress(profile)
 
   return (
