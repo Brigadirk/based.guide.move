@@ -1,0 +1,9 @@
+# Mexico
+## Individual - Significant developments
+Last reviewed - 10 February 2025
+During September 2020, an appeal court decision in Mexico City opened the possibility for foreign individuals leaving Mexico to seek a refund of part of their social security contributions that relate to pension and workers housing. The appeal court decision is a binding precedent only within the Mexico City area, although appeal courts in other jurisdictions within Mexico and the relevant authorities may follow the same criteria.
+On 9 December 2020, a reform that regulates and promotes teleworking as a form of labour organisation was approved, establishing rights and obligations for employers and employees. This reform entered into force on 12 January 2021.
+On 16 December 2020, a decree was published that amends, adds, and eliminates some tax provisions of the Social Security Law and Retirement Savings System Law. These apply from 1 January 2023.
+Starting 1 June 2020, the income tax law establishes specific rules for collecting tax in relation to individuals who provide services via the digital economy as apps for transportation services, short-term rentals, and selling goods and services via digital marketplaces.
+As of 2017, the Measurement and Actualisation Unit (UMA in Spanish) replaces the minimum wage in tax calculations, limits, exemptions, etc. as a unit of indexation. The UMA that corresponds to 2025 is 113.14Mexican pesos (MXN) per day.
+On 1 May 2024, a decree was published regarding the employment subsidy, which came into force on the same date. The subsidy amount is determined based on the employee's salary and a progressive tax rate established by the government; such subsidy decreases as the salary increases, and it is credited for the income tax withheld to employees with low-income by reducing their tax burden, as this subsidy is provided to employees who earn a salary below a threshold of MXN 10,171 on a monthly basis for 2025.

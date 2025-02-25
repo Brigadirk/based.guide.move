@@ -1,0 +1,5 @@
+# Timor-Leste
+## Corporate - Tax credits and incentives
+Last reviewed - 23 July 2024
+## Foreign tax credits
+A resident taxpayer is entitled to a credit for any foreign income tax paid in respect of foreign-source income. The foreign tax credit is calculated separately for each foreign country from which income is derived by a taxpayer. The value of such tax credits is limited to the value of the Timor-Leste income tax payable on that income. There is no deduction or carryforward of any excess foreign tax credit.

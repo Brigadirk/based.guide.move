@@ -1,0 +1,19 @@
+# Colombia
+## Individual - Income determination
+Last reviewed - 06 February 2025
+## Employment income
+A foreign resident is taxed on employment income earned for services performed in Colombia no matter where payment is made. Employment income includes salary and non-salary items, such as bonuses, living allowances, housing allowances, tax reimbursements, benefits in kind, and certain payments that must be made under Colombian labour law. All employees, including those who have agreed to receive an integral salary (i.e. without social benefits of the legal bonus and severance compensations), can treat up to 25% of the total annual employment income as exempt income. This 25% is limited to a maximum cap of TU 790 per year (COP 39.341.210 for FY 2025). Although some payments derived from a labour relationship may be agreed as not being salary, they are deemed to be income and subject to income tax.
+### Special savings account deposits
+Deposits made to special savings accounts to support the purchase of housing (AFC) are considered exempt income, provided these amounts, added to the mandatory and voluntary contributions to the pension system, do not exceed 30% of the employee's labour income for the year or TU 3,800 and that the employee does not withdraw them before ten years from the date of deposit. However, even if the deposit is withdrawn within ten years, it would continue to be treated as exempt income if it is used to pay for a housing acquisition.
+### Contributions to pension system
+Mandatory contributions made to the Colombian pension system funds by an employee are not deemed to constitute income or capital gains for the employee and are not part of the withholding tax (WHT) basis. Additionally, along with mandatory contributions to the health system, these mandatory pension contributions are considered non-taxable income.
+Voluntary contributions made by the employee or the employer to mandatory pension funds are considered non-taxable income for the employee and are not part of the WHT basis, provided that these amounts do not exceed 25% of the employee’s employment or taxable annual income nor TU 2,500 (COP 124.497.500 for FY 2025).
+Notwithstanding the above, contributions to the voluntary pension fund or AFC accounts will be taxed if they are withdrawn from the fund by the employee within ten years of having been deposited into the fund. Also in this case, even if the deposit is withdrawn within ten years, it would continue to be treated as exempt income if it is used to pay for a housing acquisition.
+Contributions made to foreign pension systems are deemed to be taxable for the expatriate or employee and are part of the WHT basis.
+## Capital gains
+Capital gains are subject to capital gains tax (_see the_ _section_).
+## Dividend income
+Domestic shareholders and individual foreign shareholders resident in Colombia are subject to income tax on dividends received from Colombian companies when these are paid out of profits taxed at the distributing entity level at the applicable rate from 0% to 39% (_see the section_). If received dividends were not subject to tax at the distributing entity level, such dividends will be taxed at a 35% flat rate, and the net income resulting from subtracting such tax from the gross dividend income will be subject to an additional tax from 0% to 39%.
+## Interest income
+‘Monetary correction’ on savings accounts (an adjustment that savings and loan institutions credit to clients placed in certain types of savings or term-deposit accounts in order to compensate for inflation) is free of tax. The correction must be certified by the financial institution. Any additional gain recognised as interest is, however, taxable.
+The inflation component of interest received by individuals (not required to carry accounting books) on certain bonds is not subject to income tax.

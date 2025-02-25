@@ -1,0 +1,7 @@
+# United Kingdom
+## Corporate - Branch income
+Last reviewed - 15 December 2024
+Tax rates on the profits of UK PEs of non-resident corporations are the same as for domestic corporations.
+There are specific rules setting out how the PE's profits should be evaluated for UK tax purposes, which broadly seek to treat the PE as if it were an independent entity dealing at arm’s length with its related parties, including other parts of the entity of which it is a PE. The United Kingdom recognises the OECD’s Authorised OECD Approach (AOA) to the attribution of profits. The precise application of the independent entity approach, and the use of the AOA, will depend on the terms of the DTT between the United Kingdom and the other territories involved. Financing arrangements between the PE and head office must be disregarded, and deemed royalty payments may also need to be disregarded. There are special rules for banks to stop under-performing loans being allocated to the UK PE in a way that is considered unacceptable and similar potential manipulations.
+As part of the legislative consultation back in June 2023, in addition to the PE threshold options considered (_see 'Permanent establishment (PE)' in the section for more information_), HMRC is considering amending the domestic provisions in relation to profit attribution to align with the AOA. As noted above, the Government has announced that it will further consult on these reforms in Spring 2025.
+Tax is not generally withheld on transfers of profits from a UK PE to the head office.

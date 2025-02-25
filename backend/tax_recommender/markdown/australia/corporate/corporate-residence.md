@@ -1,0 +1,15 @@
+# Australia
+## Corporate - Corporate residence
+Last reviewed - 24 December 2024
+A company is a resident of Australia for income tax purposes if it is incorporated in Australia or, if not incorporated in Australia, it carries on business in Australia and either (i) its central management and control are in Australia (CM&C test) or (ii) its voting power is controlled by shareholders who are residents of Australia.
+Guidance from the Australian Taxation Office (ATO) has indicated that if a foreign incorporated company carries on a business and has its central management and control in Australia, it will carry on business in Australia with the meaning of the CM&C test of residency, even though no part of the actual trading or investment operations of the business take places in Australia. The previous government proposed amendments to existing legislation to clarify the position so that a foreign incorporated company only will be treated as an Australian tax resident if it has a ‘significant economic connection to Australia’. However, there has been a change of government since this was first announced, and it remains unclear whether this proposal will proceed. If the measure is enacted as originally announced, this test will be satisfied where both the company’s core commercial activities are undertaken in Australia and its central management and control is in Australia. The measure, if enacted as proposed, would have effect from the first income year after the enabling legislation is enacted; however, taxpayers would have the option of applying the new law from 15 March 2017.
+## Permanent establishment (PE)
+The concept of a PE is established in both domestic law and various DTAs that have been concluded with Australia. Where a company is resident in a country with which Australia has a DTA, it is important to have regard to the definition of PE contained therein as this will generally apply in priority to the domestic law.
+Broadly, under Australia's domestic law, a PE is a place at or through which a person carries on any business, and includes:
+  * A place where the person is carrying on business through an agent (except where the agent does not have, or does not habitually exercise, a general authority to negotiate and conclude contracts on behalf of the person).
+  * A place where the person has, is using, or is installing substantial equipment or substantial machinery.
+  * A place where the person is engaged in a construction contract.
+  * Where the person is engaged in selling goods manufactured, assembled, processed, packed, or distributed by another person for, or at or to the order of, the first-mentioned person and either of those persons participates in the management, control, or capital of the other person or another person participates in the management, control, or capital of both of those persons, the place where the goods are manufactured, assembled, processed, packed, or distributed.
+
+
+Most DTAs contain a definition of PE that is similar, though not identical, to the definition under domestic law.

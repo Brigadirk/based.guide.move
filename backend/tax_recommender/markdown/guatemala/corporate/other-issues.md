@@ -1,0 +1,4 @@
+# Guatemala
+## Corporate - Other issues
+Last reviewed - 16 January 2025
+Accurate and current information regarding taxation in Guatemala is often difficult to obtain as the country lacks reporting services such as those available in other countries. It is also difficult to determine how the tax laws will be applied in practice in complex situations. The laws and regulations are limited and ordinarily cover only the most common situations. The system of legal precedent resulting from court decisions is narrowly used, and each issue is resolved by reference to the respective codes. Guatemala has shown little interest in tax planning, but it is possible to have informal consultations with the tax authorities and to obtain authoritative rulings in many cases. Discrepancies between government and management criteria are commonly brought to judgment by the Constitutional Court, whose binding sentences generally abrogate the laws in dispute.

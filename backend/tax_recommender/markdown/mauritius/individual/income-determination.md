@@ -1,0 +1,9 @@
+# Mauritius
+## Individual - Income determination
+Last reviewed - 14 October 2024
+## Employment income
+All income derived from employment exercised in Mauritius is liable to tax in Mauritius, regardless of where payment is made or who the employer is. Employment income includes salary, wages, leave pay, fee, overtime pay, perquisites, allowances, bonuses, gratuities, commissions, compensation for loss of office, tax borne by employer, pensions, retiring allowances, annuities, all benefits in kind, and reward or remuneration in relation to employment. Passages by sea, air, or land between Mauritius and another country provided under a contract of employment are exempt at up to 6% of the basic salary.
+Benefits in kind include the annual value of residential accommodation, use of cars, free meals, and full board provided for employees, as well as pecuniary liabilities of employees that are borne or reimbursed by the employer. Most benefits in kind are valued at standard scale rates that are usually less than the actual cost to the employer.
+## Capital gains and investment income
+There is no tax on capital gains in Mauritius. Where individuals enter into a series of purchases and resales of property, the tax authorities may take the view that they are carrying on a trade and assess them to tax accordingly. Income derived from dealings in units and securities is, however, exempt from tax. Capital gains received by a resident or non-resident from outside Mauritius are not taxable.
+Investment income derived from outside Mauritius is taxable in a resident recipient's hands if it is received in Mauritius or if it is dealt with in Mauritius in one’s interest or on one’s behalf. However, a tax credit in respect of foreign tax paid on such income is allowable against Mauritius tax computed with reference to that income. This normally nullifies any tax incidence in Mauritius on foreign income.
