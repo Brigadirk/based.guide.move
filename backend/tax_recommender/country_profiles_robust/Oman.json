@@ -1,0 +1,93 @@
+{
+    "country": "Oman",
+    "overview": {
+        "tax_residency_rules": "Residency determined by physical presence for more than 183 days in a calendar year.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Omani rial (OMR)",
+        "tax_authority": "Taxation Department of the Ministry of Finance",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - OMR 30,000",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "OMR 30,001 - OMR 60,000",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "OMR 60,001 - OMR 120,000",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "Over OMR 120,000",
+                    "rate": "20%"
+                }
+            ],
+            "foreign_income_taxed": "No",
+            "exemptions": "Nil",
+            "social_security": "No social security tax."
+        },
+        "corporate_tax": {
+            "rate": "15% on taxable income.",
+            "small_business_rate": "No specific reduced rate for small businesses.",
+            "foreign_income_taxed": "Yes, but foreign tax paid may be creditable.",
+            "withholding_taxes": {
+                "dividends": "5%",
+                "interest": "0%",
+                "royalties": "10%"
+            },
+            "deductions": "Allowed as per the Income Tax Law, including expenses related to business operations."
+        },
+        "capital_gains_tax": {
+            "rate": "Nil",
+            "exemptions": "Gains from the sale of personal assets, such as a primary residence, are exempt."
+        },
+        "vat_gst": {
+            "rate": "5% on most goods and services.",
+            "reduced_rate": "Nil",
+            "exemptions": "Healthcare, education, and certain essential goods."
+        },
+        "property_tax": {
+            "rate": "0% to 1.5% based on property type and location.",
+            "exemptions": "Nil"
+        },
+        "inheritance_tax": {
+            "rate": "Nil",
+            "exemptions": "Nil"
+        },
+        "wealth_tax": {
+            "rate": "Nil",
+            "exemptions": "Nil"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "No",
+        "requirements": "Information not available",
+        "tax_benefits": "Information not available",
+        "duration": "Information not available"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Taxed as per the income tax rates for individuals or businesses.",
+            "capital_gains_rate": "Nil",
+            "mining_tax": "Information not available"
+        },
+        "nft_tax": {
+            "income_tax_rate": "Taxed as per the income tax rates for individuals or businesses.",
+            "capital_gains_rate": "Nil"
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Political risks are generally low in Oman.",
+        "economic_stability": "Oman has a relatively stable economy, with low inflation and a stable currency.",
+        "legal_system": "The legal system is based on Islamic law, but international standards are generally followed.",
+        "ease_of_doing_business": "Ranked 65th in the World Bank's Ease of Doing Business Index."
+    }
+}

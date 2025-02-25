@@ -1,0 +1,118 @@
+{
+    "country": "Estonia",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or permanent residence.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Euro (EUR)",
+        "tax_authority": "Estonian Tax and Customs Board",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 2,000 EUR",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "2,001 - 4,000 EUR",
+                    "rate": "25%"
+                },
+                {
+                    "bracket": "4,001+ EUR",
+                    "rate": "30%"
+                }
+            ],
+            "foreign_income_taxed": true,
+            "exemptions": "None.",
+            "social_security": "20% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "20% on net profits.",
+            "small_business_rate": "None.",
+            "foreign_income_taxed": true,
+            "withholding_taxes": {
+                "dividends": "0% (within EU/EEA) / 10% (outside EU/EEA)",
+                "interest": "0% (within EU/EEA) / 10% (outside EU/EEA)",
+                "royalties": "0% (within EU/EEA) / 10% (outside EU/EEA)"
+            },
+            "deductions": "R&D expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "20% (held less than 1 year).",
+                    "long_term_rate": "20% (held more than 1 year)."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "20% (held less than 5 years).",
+                    "long_term_rate": "20% (held more than 5 years)."
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "20% (held less than 3 years).",
+                    "long_term_rate": "20% (held more than 3 years)."
+                }
+            ],
+            "exemptions": "None."
+        },
+        "vat_gst": {
+            "rate": "20% on most goods and services.",
+            "reduced_rate": "9% on basic food items.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "0.1% - 0.6% of assessed value (differs by municipality).",
+            "exemptions": "None."
+        },
+        "inheritance_tax": {
+            "rate": "20% for non-direct relatives.",
+            "exemptions": "Direct relatives."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Proof of income, health insurance, registration of address.",
+        "tax_benefits": "5% flat income tax.",
+        "duration": "One year, renewable."
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "Finland",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Latvia",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Lithuania",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "20% on crypto income.",
+            "capital_gains_rate": "20% on crypto capital gains.",
+            "mining_tax": "Taxed as income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "20% on NFT income.",
+            "capital_gains_rate": "20% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Low political risks.",
+        "economic_stability": "Stable economy with low inflation.",
+        "legal_system": "EU-compliant legal system.",
+        "ease_of_doing_business": "Ranked 18th in the World Bank's Ease of Doing Business Index."
+    }
+}

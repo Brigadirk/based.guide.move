@@ -1,0 +1,117 @@
+{
+    "country": "Zimbabwe",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or permanent establishment.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Zimbabwean Dollar (ZWL)",
+        "tax_authority": "Zimbabwe Revenue Authority (ZIMRA)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "Official exchange rates must be used for tax purposes."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "Up to ZWL 240,000",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "ZWL 240,001 - $480,000",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "ZWL 480,001 - $960,000",
+                    "rate": "25%"
+                },
+                {
+                    "bracket": "ZWL 960,001 - $1,440,000",
+                    "rate": "30%"
+                },
+                {
+                    "bracket": "Over ZWL 1,440,000",
+                    "rate": "35%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "Standard deduction of ZWL 1,200,000 per year.",
+            "social_security": "9% of salary (5% contributed by employee, 4% by employer)."
+        },
+        "corporate_tax": {
+            "rate": "25% on net profits.",
+            "small_business_rate": null,
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "10%",
+                "royalties": "10%"
+            },
+            "deductions": "Standard deductions include expenses related to business operations."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "All assets",
+                    "short_term_rate": null,
+                    "long_term_rate": "20% (held for more than 2 years)."
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt up to ZWL 500,000.",
+            "indexation": "No indexation allowed for inflation."
+        },
+        "vat_gst": {
+            "rate": "14.5% on most goods and services.",
+            "reduced_rate": "0% on some essential items.",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "0.2% of assessed value.",
+            "exemptions": "Residential properties up to ZWL 10 million."
+        },
+        "inheritance_tax": {
+            "rate": "5% on inherited assets above ZWL 500,000.",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": null,
+            "exemptions": null
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Applicants must have proof of remote work, sufficient income, and health insurance.",
+        "tax_benefits": "Digital nomads are not subject to Zimbabwean income tax on foreign-sourced income.",
+        "duration": "Up to 12 months, renewable."
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "South Africa",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Botswana",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "25% on crypto income.",
+            "capital_gains_rate": "20% on crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "25% on NFT income.",
+            "capital_gains_rate": "20% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Economic and political instability may impact tax compliance.",
+        "economic_stability": "Hyperinflation may affect tax calculations.",
+        "legal_system": "Tax disputes may face delays due to an underdeveloped legal system.",
+        "ease_of_doing_business": "Ranked 140th in the World Bank's Ease of Doing Business Index."
+    }
+}

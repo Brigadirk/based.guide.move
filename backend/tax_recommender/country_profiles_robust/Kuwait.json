@@ -1,0 +1,82 @@
+{
+    "country": "Kuwait",
+    "overview": {
+        "tax_residency_rules": "Individuals are considered tax residents if they spend 183 days or more in the country in a tax year.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Kuwaiti Dinar (KWD)",
+        "tax_authority": "Public Authority for Zakat and Taxation",
+        "tax_filing_frequency": "Annually, by April 30th for individuals and corporations.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 0 KWD",
+                    "rate": "0%"
+                }
+            ],
+            "foreign_income_taxed": "No",
+            "exemptions": "All types of personal income are exempt from tax.",
+            "social_security": "Not applicable."
+        },
+        "corporate_tax": {
+            "rate": "0% on net profits.",
+            "small_business_rate": "Not applicable.",
+            "foreign_income_taxed": "No",
+            "withholding_taxes": {
+                "dividends": "0%",
+                "interest": "0%",
+                "royalties": "0%"
+            },
+            "deductions": "All types of business expenses."
+        },
+        "capital_gains_tax": {
+            "rate": "0% on capital gains.",
+            "exemptions": "All types of capital gains are exempt from tax.",
+            "asset_type": "Not applicable"
+        },
+        "vat_gst": {
+            "rate": "Not applicable.",
+            "reduced_rate": "Not applicable.",
+            "exemptions": "All supplies of goods and services are exempt from VAT."
+        },
+        "property_tax": {
+            "rate": "Not applicable.",
+            "exemptions": "All types of property are exempt from property tax."
+        },
+        "inheritance_tax": {
+            "rate": "Not applicable.",
+            "exemptions": "All types of inheritances are exempt from tax."
+        },
+        "wealth_tax": {
+            "rate": "Not applicable.",
+            "exemptions": "All types of wealth are exempt from wealth tax."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "No.",
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "0%",
+            "capital_gains_rate": "0%",
+            "mining_tax": "0%"
+        },
+        "nft_tax": {
+            "income_tax_rate": "0%",
+            "capital_gains_rate": "0%"
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Kuwait has a stable political environment.",
+        "economic_stability": "Kuwait has a high income economy with low inflation and a stable currency.",
+        "legal_system": "Kuwait has a well-developed legal system.",
+        "ease_of_doing_business": "Ranked 61st in the World Bank's Ease of Doing Business Index."
+    }
+}

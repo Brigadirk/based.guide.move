@@ -1,0 +1,126 @@
+{
+    "country": "Greece",
+    "overview": {
+        "tax_residency_rules": "Determined by domicile or 183-day rule.",
+        "tax_year": "Calendar year.",
+        "currency": "Euro (EUR)",
+        "tax_authority": "Independent Authority for Public Revenue (AADE)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 10,000 EUR",
+                    "rate": "9%"
+                },
+                {
+                    "bracket": "10,001 - 20,000 EUR",
+                    "rate": "22%"
+                },
+                {
+                    "bracket": "20,001 - 30,000 EUR",
+                    "rate": "28%"
+                },
+                {
+                    "bracket": "30,001 - 40,000 EUR",
+                    "rate": "36%"
+                },
+                {
+                    "bracket": "40,001+ EUR",
+                    "rate": "44%"
+                }
+            ],
+            "foreign_income_taxed": "Yes",
+            "exemptions": "Certain personal allowances and deductions, such as spouse allowance and dependent deductions.",
+            "social_security": "20% of total income (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "22% on net profits.",
+            "small_business_rate": "13% for businesses with revenue under 100,000 EUR.",
+            "foreign_income_taxed": "Yes",
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "10%",
+                "royalties": "20%"
+            },
+            "deductions": "R&D expenses, depreciation, bad debts."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Shares",
+                    "short_term_rate": "15%",
+                    "long_term_rate": "5%"
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "15%",
+                    "long_term_rate": "10%"
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt up to a certain amount.",
+            "indexation_allowance": "Indexed to inflation."
+        },
+        "vat_gst": {
+            "rate": "24% on most goods and services.",
+            "reduced_rate": "13% on certain items, such as food and tourism.",
+            "super_reduced_rate": "6% on specific essential goods and services."
+        },
+        "property_tax": {
+            "rate": "Varying rates depending on property value and location.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "Progressive rates ranging from 0% to 40%.",
+            "exemptions": "Spouse, children, certain bequests."
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "No",
+        "requirements": "Information not available",
+        "tax_benefits": "Information not available",
+        "duration": "Information not available"
+    },
+    "special_economic_zones": [
+        {
+            "name": "Patras Port Free Zone",
+            "location": "Patras",
+            "tax_incentives": "Reduced corporate tax rate and customs exemptions.",
+            "business_types": "Manufacturing, logistics.",
+            "setup_requirements": "Minimum investment of 100,000 EUR."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on business profits."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "15% on crypto income.",
+            "capital_gains_rate": "5% on crypto capital gains.",
+            "mining_tax": "22% on mining income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "15% on NFT income.",
+            "capital_gains_rate": "5% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Low, with a stable political environment.",
+        "economic_stability": "Prone to economic fluctuations, with high public debt.",
+        "legal_system": "Efficient legal system, but can be slow in some cases.",
+        "ease_of_doing_business": "Ranked 62nd in the World Bank's Ease of Doing Business Index."
+    }
+}

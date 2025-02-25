@@ -1,0 +1,128 @@
+{
+    "country": "Switzerland",
+    "overview": {
+        "tax_residency_rules": "Determined by domicile or 183-day rule.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Swiss Franc (CHF)",
+        "tax_authority": "Federal Tax Administration (FTA)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "Strong Swiss Franc may impact currency conversions."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "Up to 15,000 CHF",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "15,001 - 33,000 CHF",
+                    "rate": "12.86%"
+                },
+                {
+                    "bracket": "33,001 - 77,000 CHF",
+                    "rate": "20.92%"
+                },
+                {
+                    "bracket": "77,001 - 127,000 CHF\n",
+                    "rate": "26.63%"
+                },
+                {
+                    "bracket": "127,001 - 260,000 CHF",
+                    "rate": "32.31%"
+                },
+                {
+                    "bracket": "260,000+ CHF",
+                    "rate": "39.42%"
+                }
+            ],
+            "foreign_income_taxed": "Yes, may be eligible for tax credit.",
+            "exemptions": "Standard deductions and allowances vary by canton.",
+            "social_security": "Variable depending on canton and income (approx. 6-10%)."
+        },
+        "corporate_tax": {
+            "rate": "8.5% on net profits at federal level, cantonal and municipal taxes vary.",
+            "small_business_rate": "Reduced rates may be available for small businesses in certain cantons.",
+            "foreign_income_taxed": "Yes, may be eligible for tax credit.",
+            "withholding_taxes": {
+                "dividends": "35% (reduced rates for qualified shareholders).",
+                "interest": "35% (reduced rates for certain types of interest).",
+                "royalties": "0% (if recipient is not resident in a low-tax jurisdiction)."
+            },
+            "deductions": "Standard deductions and allowances, including R&D expenses and depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": "Federal capital gains tax not levied. Cantonal taxes vary, generally between 5-20%.",
+            "exemptions": "Gains from the sale of private assets may be exempt.",
+            "short_term_rate": "Information not available.",
+            "long_term_rate": "Information not available."
+        },
+        "vat_gst": {
+            "rate": "7.7%",
+            "reduced_rate": "2.5% on essential items and tourist services.",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "Varies by canton and municipality.",
+            "exemptions": "Primary residence may be eligible for exemptions or reduced rates."
+        },
+        "inheritance_tax": {
+            "rate": "Federal inheritance tax abolished in 2007. Cantonal taxes vary.",
+            "exemptions": "Spouse, descendants, and certain charitable organizations."
+        },
+        "wealth_tax": {
+            "rate": "Federal wealth tax abolished in 1999. Cantonal wealth taxes vary.",
+            "exemptions": "Primary residence, retirement savings."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "No",
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [
+        {
+            "name": "Information not available",
+            "location": "Information not available",
+            "tax_incentives": "Information not available",
+            "business_types": "Information not available",
+            "setup_requirements": "Information not available"
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and dividends."
+        },
+        {
+            "country": "France",
+            "description": "Avoids double taxation on income and inheritance."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Income from crypto activities subject to personal income tax rates.",
+            "capital_gains_rate": "Capital gains from cryptocurrencies typically taxed at capital gains rates.",
+            "mining_tax": "Taxed as business income or capital gains, depending on circumstances."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Income from NFT sales subject to personal income tax rates.",
+            "capital_gains_rate": "Capital gains from NFTs taxed at capital gains rates."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Politically stable with a strong legal system.",
+        "economic_stability": "Strong and stable economy, but vulnerable to global economic fluctuations.",
+        "legal_system": "Well-developed legal system with clear tax regulations.",
+        "ease_of_doing_business": "Ranked 3rd in the World Bank's Ease of Doing Business Index."
+    }
+}

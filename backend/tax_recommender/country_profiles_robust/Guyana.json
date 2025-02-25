@@ -1,0 +1,109 @@
+{
+    "country": "Guyana",
+    "overview": {
+        "tax_residency_rules": "Determined by physical presence (183-day rule).",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Guyanese Dollar (GYD)",
+        "tax_authority": "Guyana Revenue Authority (GRA)",
+        "tax_filing_frequency": "Semi-annually for businesses and individuals (April 30 and October 31).",
+        "currency_exchange_rules": "Reporting required for foreign currency transactions over USD 5,000."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - GYD 600,000",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "GYD 600,001 - GYD 1,200,000",
+                    "rate": "33.3%"
+                },
+                {
+                    "bracket": "GYD 1,200,001 - GYD 2,400,000",
+                    "rate": "40%"
+                },
+                {
+                    "bracket": "GYD 2,400,001+",
+                    "rate": "41%"
+                }
+            ],
+            "foreign_income_taxed": "No",
+            "exemptions": "Income below GYD 600,000.",
+            "social_security": "Employee: 5.5%, Employer: 15.5%"
+        },
+        "corporate_tax": {
+            "rate": "25% on net profits.",
+            "small_business_rate": "10% for small businesses with annual turnover below GYD 15 million.",
+            "foreign_income_taxed": "Yes, through withholding tax.",
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "20%",
+                "royalties": "15%"
+            },
+            "deductions": "Depreciation, repairs, bad debts."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                }
+            ],
+            "exemptions": "Information not available."
+        },
+        "vat_gst": {
+            "rate": "14%",
+            "reduced_rate": "Information not available.",
+            "exemptions": "Basic food items, medicines."
+        },
+        "property_tax": {
+            "rate": "1.5% of property value for improved properties.",
+            "exemptions": "Owner-occupied homes with value below GYD 40 million."
+        },
+        "inheritance_tax": {
+            "rate": "10% on inherited assets above GYD 10 million.",
+            "exemptions": "Spouse, children, grandchildren."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "No",
+        "requirements": "Information not available.",
+        "tax_benefits": "Information not available.",
+        "duration": "Information not available."
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Income tax rates apply.",
+            "capital_gains_rate": "Capital gains tax rates apply.",
+            "mining_tax": "Information not available."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Income tax rates apply.",
+            "capital_gains_rate": "Capital gains tax rates apply."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Stable political environment.",
+        "economic_stability": "Growing economy.",
+        "legal_system": "Common law system.",
+        "ease_of_doing_business": "Ranked 134th in the World Bank's Ease of Doing Business Index."
+    }
+}

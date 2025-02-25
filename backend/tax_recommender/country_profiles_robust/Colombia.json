@@ -1,0 +1,121 @@
+{
+    "country": "Colombia",
+    "overview": {
+        "tax_residency_rules": "Determined by domicile, which is based on permanent residence.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Colombian peso (COP)",
+        "tax_authority": "Colombian Tax and Customs Authority (DIAN)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 2,329,000 COP",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "2,329,001 - 5,480,000 COP",
+                    "rate": "19%"
+                },
+                {
+                    "bracket": "5,480,001 - 11,413,000 COP",
+                    "rate": "25%"
+                },
+                {
+                    "bracket": "11,413,001 - 42,652,000 COP",
+                    "rate": "33%"
+                },
+                {
+                    "bracket": "42,652,001+ COP",
+                    "rate": "39%"
+                }
+            ],
+            "foreign_income_taxed": "Yes, if a permanent resident of Colombia.",
+            "exemptions": "Basic personal allowance of 2,329,000 COP.",
+            "social_security": "12% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "35% on net profits.",
+            "small_business_rate": "25% for businesses with revenue under 100,000 UVT (tax units).",
+            "foreign_income_taxed": "Yes, if a permanent establishment of a foreign company.",
+            "withholding_taxes": {
+                "dividends": "0% for individuals, 10% for companies.",
+                "interest": "35% on interest paid to non-residents.",
+                "royalties": "15% on royalties paid to non-residents."
+            },
+            "deductions": "Ordinary business expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "All assets (except real estate)",
+                    "short_term_rate": "35% on gains within 2 years of acquisition.",
+                    "long_term_rate": "0% on gains after 2 years of acquisition."
+                },
+                {
+                    "asset_type": "Real estate",
+                    "short_term_rate": "35% on gains within 1 year of acquisition.",
+                    "long_term_rate": "15% on gains after 1 year of acquisition."
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt.",
+            "indexation": "Indexing allowed for inflation."
+        },
+        "vat_gst": {
+            "rate": "19%",
+            "reduced_rate": "5% on basic food items and books.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "0.3% - 1% of assessed value.",
+            "exemptions": "Primary residence under 150 million COP."
+        },
+        "inheritance_tax": {
+            "rate": "10% on inherited assets.",
+            "exemptions": "Spouse, children, grandchildren."
+        },
+        "wealth_tax": {
+            "rate": "1% on net wealth above 5 billion COP.",
+            "exemptions": "Primary residence."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "No",
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income, capital gains, and dividends."
+        },
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income, capital gains, and dividends."
+        },
+        {
+            "country": "Spain",
+            "description": "Avoids double taxation on income and dividends."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "35% on crypto income.",
+            "capital_gains_rate": "0% on crypto capital gains."
+        },
+        "nft_tax": {
+            "income_tax_rate": "35% on NFT income.",
+            "capital_gains_rate": "0% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Low",
+        "economic_stability": "Stable economic growth and currency.",
+        "legal_system": "Well-developed legal system.",
+        "ease_of_doing_business": "Ranked 67th in the World Bank's Ease of Doing Business Index."
+    }
+}

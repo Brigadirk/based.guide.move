@@ -1,0 +1,89 @@
+{
+    "country": "Kiribati",
+    "overview": {
+        "tax_residency_rules": "Determined by physical presence in Kiribati for more than 183 days in a tax year.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Australian Dollar (AUD)",
+        "tax_authority": "Ministry of Finance and Economic Development",
+        "tax_filing_frequency": "Annually for individuals and businesses by April 30.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "Up to AUD 16,000",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "AUD 16,001 - AUD 40,000",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "Over AUD 40,000",
+                    "rate": "25%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "None",
+            "social_security": "Not applicable."
+        },
+        "corporate_tax": {
+            "rate": "25% on net profits.",
+            "small_business_rate": "Information not available",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "10%",
+                "royalties": "15%"
+            },
+            "deductions": "Reasonable business expenses."
+        },
+        "capital_gains_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        },
+        "vat_gst": {
+            "rate": "Information not available",
+            "reduced_rate": "Information not available",
+            "exemptions": "Information not available"
+        },
+        "property_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        },
+        "inheritance_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Information not available",
+            "capital_gains_rate": "Information not available",
+            "mining_tax": "Information not available"
+        },
+        "nft_tax": {
+            "income_tax_rate": "Information not available",
+            "capital_gains_rate": "Information not available"
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Kiribati faces geopolitical risks due to its small size and dependence on foreign aid.",
+        "economic_stability": "Kiribati has a stable economy supported by fishing and tourism.",
+        "legal_system": "Kiribati has a common law system based on English law.",
+        "ease_of_doing_business": "Kiribati ranks 126th in the World Bank's Ease of Doing Business Index."
+    }
+}

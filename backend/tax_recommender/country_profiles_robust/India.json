@@ -1,0 +1,134 @@
+{
+    "country": "India",
+    "overview": {
+        "tax_residency_rules": "Based on physical presence (182 days) or tax ordinarily.",
+        "tax_year": "Financial Year (April 1 - March 31).",
+        "currency": "Indian Rupee (INR)",
+        "tax_authority": "Central Board of Direct Taxes (CBDT).",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "Up to INR 250,000",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "INR 250,001 - INR 500,000",
+                    "rate": "5%"
+                },
+                {
+                    "bracket": "INR 500,001 - INR 750,000",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "INR 750,001 - INR 1000,000",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "INR 10,00,001 - INR 12,50,000",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "Above INR 12,50,000",
+                    "rate": "30%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "Basic exemption limit for individuals up to INR 250,000.",
+            "social_security": "Deducted as provident fund contributions."
+        },
+        "corporate_tax": {
+            "rate": "30% on net profits (plus surcharge and cess).",
+            "small_business_rate": "25% for companies with turnover less than INR 250 million.",
+            "foreign_income_taxed": true,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "20%",
+                "royalties": "10%"
+            },
+            "deductions": "R&D expenses, depreciation, interest on loans."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Listed Shares",
+                    "short_term_rate": "15% (held less than 1 year).",
+                    "long_term_rate": "10% (held more than 1 year)."
+                },
+                {
+                    "asset_type": "Unlisted Shares",
+                    "short_term_rate": "30% (held less than 2 years).",
+                    "long_term_rate": "20% (held more than 2 years)."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "30% (held less than 3 years).",
+                    "long_term_rate": "20% (held more than 3 years)."
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt up to INR 20 million."
+        },
+        "vat_gst": {
+            "rate": "5%, 12%, 18% and 28% on different goods and services.",
+            "reduced_rate": "Nil rated or exempted on essential items.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "Varies by state and municipality.",
+            "exemptions": "None."
+        },
+        "inheritance_tax": {
+            "rate": "Nil.",
+            "exemptions": "Nil."
+        },
+        "wealth_tax": {
+            "rate": "Nil.",
+            "exemptions": "Nil."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [
+        {
+            "name": "Bandla-Mundra Special Economic Zone",
+            "location": "Gujarat",
+            "tax_incentives": "100% exemption from customs duty on import of capital goods.",
+            "business_types": "Manufacturing, IT/ITES.",
+            "setup_requirements": "Minimum land area of 10 acres."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "30% on crypto income.",
+            "capital_gains_rate": "15% on crypto capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "30% on NFT income.",
+            "capital_gains_rate": "15% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Stable political environment with a focus on economic growth.",
+        "economic_stability": "Robust economic growth and a large domestic market.",
+        "legal_system": "Well-developed legal system, but tax disputes can be time-consuming.",
+        "ease_of_doing_business": "Ranked 63rd in the World Bank's Ease of Doing Business Index."
+    }
+}

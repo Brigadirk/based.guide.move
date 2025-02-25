@@ -1,0 +1,114 @@
+{
+    "country": "New Zealand",
+    "overview": {
+        "tax_residency_rules": "Determined by ordinary residence, physical presence, and domicile.",
+        "tax_year": "April 1 - March 31.",
+        "currency": "New Zealand Dollar (NZD)",
+        "tax_authority": "Inland Revenue Department (IRD)",
+        "tax_filing_frequency": "Annually on May 7 (extended to July 7 for individuals).",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "Up to $14,000",
+                    "rate": "10.5%"
+                },
+                {
+                    "bracket": "$14,001 - $48,000",
+                    "rate": "17.5%"
+                },
+                {
+                    "bracket": "$48,001 - $70,000",
+                    "rate": "30%"
+                },
+                {
+                    "bracket": "$70,001 - $180,000",
+                    "rate": "33%"
+                },
+                {
+                    "bracket": "Over $180,000",
+                    "rate": "39%"
+                }
+            ],
+            "foreign_income_taxed": "Yes, taxed on worldwide income.",
+            "exemptions": "First $14,000 of income is tax-free for residents.",
+            "social_security": "3% ACC levy included in PAYE (Accident Compensation Corporation)."
+        },
+        "corporate_tax": {
+            "rate": "28% on net profits.",
+            "small_business_rate": "10.5% on the first $500,000 of taxable income for 3 years of incorporation.",
+            "foreign_income_taxed": "Yes, taxed on worldwide income.",
+            "withholding_taxes": {
+                "dividends": "15% (can be reduced by double tax agreements).",
+                "interest": "0% for New Zealand sourced interest.",
+                "royalties": "15%"
+            },
+            "deductions": "Standard deductions and expenses allowed."
+        },
+        "capital_gains_tax": {
+            "rate": "Taxed as ordinary income at progressive rates.",
+            "exemptions": "Some exemptions apply, such as for the sale of a primary residence."
+        },
+        "vat_gst": {
+            "rate": "15%",
+            "reduced_rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "property_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "No, but a visitor's visa can be obtained for up to 3 months.",
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "Australia",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Canada",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Taxed as ordinary income at progressive rates.",
+            "capital_gains_rate": "Taxed as ordinary income at progressive rates.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Taxed as ordinary income at progressive rates.",
+            "capital_gains_rate": "Taxed as ordinary income at progressive rates."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Stable and transparent tax system with low political risk.",
+        "economic_stability": "Strong and stable economy with a stable currency.",
+        "legal_system": "Robust and efficient legal system with independent judiciary.",
+        "ease_of_doing_business": "Ranked 1st in the World Bank's Ease of Doing Business Index."
+    }
+}

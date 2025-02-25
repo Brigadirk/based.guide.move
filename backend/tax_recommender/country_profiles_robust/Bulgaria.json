@@ -1,0 +1,90 @@
+{
+    "country": "Bulgaria",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or permanent residence.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Bulgarian Lev (BGN)",
+        "tax_authority": "National Revenue Agency",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": "10% flat rate on all income.",
+            "foreign_income_taxed": false,
+            "exemptions": "None",
+            "social_security": "Pension contribution: 13.4% (5.1% paid by employee, 8.3% paid by employer), Health insurance contribution: 8% (employee only)."
+        },
+        "corporate_tax": {
+            "rate": "10% on net profits.",
+            "small_business_rate": "None",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "5%",
+                "interest": "10%",
+                "royalties": "10%"
+            },
+            "deductions": "Standard expenses, donations, R&D expenses."
+        },
+        "capital_gains_tax": {
+            "rate": "10% on net capital gains.",
+            "exemptions": "Gains from the sale of primary residence and certain other assets are exempt.",
+            "indexation": "None"
+        },
+        "vat_gst": {
+            "rate": "20% on most goods and services.",
+            "reduced_rate": "9% on food, drinks, and certain other items.",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "0.15% to 0.3% of assessed value, depending on property type and location.",
+            "exemptions": "None"
+        },
+        "inheritance_tax": {
+            "rate": "5% on inherited assets.",
+            "exemptions": "Spouse, children, grandchildren."
+        },
+        "wealth_tax": {
+            "rate": "None",
+            "exemptions": "None"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "France",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "10% on crypto income.",
+            "capital_gains_rate": "10% on crypto capital gains.",
+            "mining_tax": "Taxed as income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "10% on NFT income.",
+            "capital_gains_rate": "10% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Stable political environment.",
+        "economic_stability": "Low inflation and stable currency.",
+        "legal_system": "Well-developed legal system with a strong track record of enforcing tax laws.",
+        "ease_of_doing_business": "Ranked 40th in the World Bank's Ease of Doing Business Index."
+    }
+}

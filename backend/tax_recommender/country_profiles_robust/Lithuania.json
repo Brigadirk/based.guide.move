@@ -1,0 +1,126 @@
+{
+    "country": "Lithuania",
+    "overview": {
+        "tax_residency_rules": "Individuals: 183-day rule. Businesses: Registered office or place of effective management in Lithuania.",
+        "tax_year": "Calendar year (Jan 1 - Dec 31).",
+        "currency": "Euro (EUR)",
+        "tax_authority": "State Tax Inspectorate (STI)",
+        "tax_filing_frequency": "Annually for individuals by May 1. Quarterly for businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 5,000 EUR",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "5,001 - 20,000 EUR",
+                    "rate": "32%"
+                },
+                {
+                    "bracket": "20,001+ EUR",
+                    "rate": "37%"
+                }
+            ],
+            "foreign_income_taxed": "Yes",
+            "exemptions": "Personal allowance of 3,000 EUR per year. Various deductions and allowances.",
+            "social_security": "9% of salary (paid by employee) + 30.48% (paid by employer)"
+        },
+        "corporate_tax": {
+            "rate": "15%",
+            "small_business_rate": "5% (for small businesses meeting certain criteria).",
+            "foreign_income_taxed": "Yes, subject to specific rules.",
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "15%",
+                "royalties": "0%"
+            },
+            "deductions": "Business expenses, depreciation, R&D costs."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Shares/Stocks",
+                    "short_term_rate": "15% (held less than 3 years).",
+                    "long_term_rate": "0% (held more than 3 years)."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "15% (held less than 3 years).",
+                    "long_term_rate": "5% (held more than 3 years, certain conditions apply)."
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "15% (held less than 3 years).",
+                    "long_term_rate": "15% (held more than 3 years)."
+                }
+            ],
+            "exemptions": "Gains from the sale of the primary residence and certain inheritances are exempt."
+        },
+        "vat_gst": {
+            "rate": "21%",
+            "reduced_rate": "9% (for certain goods and services).",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "1% of assessed value (or 0.5% for residential property).",
+            "exemptions": "None."
+        },
+        "inheritance_tax": {
+            "rate": "0% (for close relatives). 5% for distant relatives.",
+            "exemptions": "None."
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "Yes",
+        "requirements": "Remote work contract with a non-Lithuanian employer. Monthly income of at least 3,500 EUR.",
+        "tax_benefits": "No special tax benefits for digital nomads.",
+        "duration": "1 year (renewable)."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Klaipeda Free Economic Zone",
+            "location": "Klaipeda",
+            "tax_incentives": "Corporate tax exemption for up to 10 years for certain businesses.",
+            "business_types": "Manufacturing, logistics, renewable energy.",
+            "setup_requirements": "Minimum investment of 1 million EUR."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "15% for personal income, 15% for corporate income.",
+            "capital_gains_rate": "15% for both personal and corporate capital gains.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "15% for personal income, 15% for corporate income.",
+            "capital_gains_rate": "15% for both personal and corporate capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Stable political environment with strong rule of law.",
+        "economic_stability": "Strong and growing economy, part of the Eurozone.",
+        "legal_system": "Modernized and efficient legal system.",
+        "ease_of_doing_business": "Ranked 11th in the World Bank's Ease of Doing Business Index."
+    }
+}

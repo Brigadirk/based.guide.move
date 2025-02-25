@@ -1,0 +1,119 @@
+{
+    "country": "Canada",
+    "overview": {
+        "tax_residency_rules": "Determined by residency status (183 days rule, significant residential ties).",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Canadian dollar (CAD)",
+        "tax_authority": "Canada Revenue Agency (CRA).",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - $50,197",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "$50,198 - $100,392",
+                    "rate": "20.5%"
+                },
+                {
+                    "bracket": "$100,393 - $155,625",
+                    "rate": "26%"
+                },
+                {
+                    "bracket": "$155,626 - $221,708",
+                    "rate": "29%"
+                },
+                {
+                    "bracket": "$221,709 - $533,903",
+                    "rate": "33%"
+                },
+                {
+                    "bracket": "$533,904+",
+                    "rate": "35%"
+                }
+            ],
+            "foreign_income_taxed": "Yes, for Canadian residents.",
+            "exemptions": "Basic personal amount (indexed annually) and other deductions and credits.",
+            "social_security": "Canada Pension Plan (CPP): 5.1% of earnings (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "15% on net profits (federal rate).",
+            "small_business_rate": "9% on the first $500,000 of active business income.",
+            "foreign_income_taxed": "Yes, for Canadian corporations.",
+            "withholding_taxes": {
+                "dividends": "25% (reduced rates apply under tax treaties).",
+                "interest": "15% (reduced rates apply under tax treaties).",
+                "royalties": "0% (with exceptions)."
+            },
+            "deductions": "Typical business expenses, such as salaries, rent, and depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": "50% of capital gains are included in taxable income and taxed at the individual's marginal tax rate.",
+            "exemptions": "Principal residence exemption (up to a certain amount).",
+            "half_year_rule": "Information not available."
+        },
+        "vat_gst": {
+            "rate": "5% (federal) + provincial rates (ranging from 5-15%).",
+            "reduced_rate": "Information not available.",
+            "exemptions": "Certain essential goods and services."
+        },
+        "property_tax": {
+            "rate": "Varies by municipality (usually based on assessed value).",
+            "exemptions": "Information not available."
+        },
+        "inheritance_tax": {
+            "rate": "Varies by province.",
+            "exemptions": "Spouses and dependent children."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "Yes",
+        "requirements": "Work permit and proof of financial support.",
+        "tax_benefits": "No specific tax benefits for digital nomads.",
+        "duration": "Up to 5 years."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Information not available.",
+            "location": "Information not available.",
+            "tax_incentives": "Information not available.",
+            "business_types": "Information not available.",
+            "setup_requirements": "Information not available."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Taxed as business income or property income depending on activities.",
+            "capital_gains_rate": "50% of capital gains are included in taxable income and taxed at the individual's marginal tax rate.",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Taxed as business income or property income depending on activities.",
+            "capital_gains_rate": "50% of capital gains are included in taxable income and taxed at the individual's marginal tax rate."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Stable political environment with low risk of expropriation.",
+        "economic_stability": "Strong and diversified economy with low inflation and currency stability.",
+        "legal_system": "Well-developed legal system with strong protection of property rights.",
+        "ease_of_doing_business": "Ranked 23rd in the World Bank's Ease of Doing Business Index."
+    }
+}

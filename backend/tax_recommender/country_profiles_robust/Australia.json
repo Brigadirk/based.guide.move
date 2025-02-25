@@ -1,0 +1,114 @@
+{
+    "country": "Australia",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or domicile.",
+        "tax_year": "1 July - 30 June.",
+        "currency": "Australian Dollar (AUD)",
+        "tax_authority": "Australian Taxation Office (ATO)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - $18,200",
+                    "rate": "Nil"
+                },
+                {
+                    "bracket": "$18,201 - $45,000",
+                    "rate": "19%"
+                },
+                {
+                    "bracket": "$45,001 - $120,000",
+                    "rate": "32.5%"
+                },
+                {
+                    "bracket": "$120,001 - $180,000",
+                    "rate": "37%"
+                },
+                {
+                    "bracket": "$180,001+",
+                    "rate": "45%"
+                }
+            ],
+            "foreign_income_taxed": "May be taxed under foreign income rules.",
+            "exemptions": "First $18,200 of income is tax-free.",
+            "social_security": "2% Medicare levy (with surcharge for high-income earners)."
+        },
+        "corporate_tax": {
+            "rate": "30% on net profits.",
+            "small_business_rate": "25% for businesses with annual turnover under $50 million.",
+            "foreign_income_taxed": "May be taxed under foreign income rules.",
+            "withholding_taxes": {
+                "dividends": "Information not available",
+                "interest": "Information not available",
+                "royalties": "Information not available"
+            },
+            "deductions": "R&D expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "Nil",
+                    "long_term_rate": "Nil"
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "Nil",
+                    "long_term_rate": "Nil"
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "Nil",
+                    "long_term_rate": "Nil"
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt.",
+            "indexation_allowance": "Inflation-adjusted cost base increases."
+        },
+        "vat_gst": {
+            "rate": "10% on most goods and services.",
+            "reduced_rate": "Information not available",
+            "exemptions": "Exports, healthcare, education."
+        },
+        "property_tax": {
+            "rate": "Varies by state and municipality.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "Yes",
+        "requirements": "Must meet certain eligibility criteria, such as income level and skills.",
+        "tax_benefits": "May be eligible for reduced tax rates under certain circumstances.",
+        "duration": "Up to 4 years."
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Information not available",
+            "capital_gains_rate": "Information not available",
+            "mining_tax": "Information not available"
+        },
+        "nft_tax": {
+            "income_tax_rate": "Information not available",
+            "capital_gains_rate": "Information not available"
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Information not available",
+        "economic_stability": "Information not available",
+        "legal_system": "Information not available",
+        "ease_of_doing_business": "Information not available"
+    }
+}

@@ -1,0 +1,118 @@
+{
+    "country": "Haiti",
+    "overview": {
+        "tax_residency_rules": "Determined by habitual abode and physical presence.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Haitian gourde (HTG)",
+        "tax_authority": "General Directorate of Taxes (DGI)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 2,200,000 HTG",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "2,200,001 - 3,500,000 HTG",
+                    "rate": "5%"
+                },
+                {
+                    "bracket": "3,500,001 - 5,500,000 HTG",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "5,500,001+ HTG",
+                    "rate": "15%"
+                }
+            ],
+            "foreign_income_taxed": true,
+            "exemptions": "First 2,200,000 HTG of income is tax-free.",
+            "social_security": "3.75% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "20% on net profits.",
+            "small_business_rate": "Information not available",
+            "foreign_income_taxed": true,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "15%",
+                "royalties": "20%"
+            },
+            "deductions": "R&D expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "Information not available",
+                    "long_term_rate": "Information not available"
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "Information not available",
+                    "long_term_rate": "Information not available"
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "Information not available",
+                    "long_term_rate": "Information not available"
+                }
+            ],
+            "exemptions": "Information not available."
+        },
+        "vat_gst": {
+            "rate": "10% on most goods and services.",
+            "reduced_rate": "5% on basic food items.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available."
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [
+        {
+            "country": "France",
+            "description": "Avoids double taxation on certain types of income."
+        },
+        {
+            "country": "Canada",
+            "description": "Avoids double taxation on business profits."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Information not available",
+            "capital_gains_rate": "Information not available",
+            "mining_tax": "Information not available"
+        },
+        "nft_tax": {
+            "income_tax_rate": "Information not available",
+            "capital_gains_rate": "Information not available"
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Tax enforcement may be inconsistent due to political instability.",
+        "economic_stability": "High inflation and currency volatility may impact tax calculations.",
+        "legal_system": "Tax disputes may face delays due to an underdeveloped legal system.",
+        "ease_of_doing_business": "Ranked 184th in the World Bank's Ease of Doing Business Index."
+    }
+}

@@ -1,0 +1,127 @@
+{
+    "country": "Turkey",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or domicile.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Turkish Lira (TRY)",
+        "tax_authority": "Turkish Revenue Administration",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No significant restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 32,000 TRY",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "32,001 - 150,000 TRY",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "150,001 - 600,000 TRY",
+                    "rate": "27%"
+                },
+                {
+                    "bracket": "600,001 - 850,000 TRY",
+                    "rate": "35%"
+                },
+                {
+                    "bracket": "850,000+ TRY",
+                    "rate": "40%"
+                }
+            ],
+            "foreign_income_taxed": true,
+            "exemptions": "Basic personal allowance of 45,000 TRY.",
+            "social_security": "Approximately 15% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "20% on net profits.",
+            "small_business_rate": "10% for businesses with annual turnover below 500,000 TRY.",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "15%",
+                "royalties": "15%"
+            },
+            "deductions": "Standard deductions such as depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Shares and Real Estate",
+                    "short_term_rate": "20%",
+                    "long_term_rate": "0%"
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt."
+        },
+        "vat_gst": {
+            "rate": "18% on most goods and services.",
+            "reduced_rate": "8% on basic food items, books, and transportation.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "0.2%-0.6% of assessed value.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "1%-30% on inherited assets, depending on the relationship between the deceased and the beneficiary.",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Minimum income of $1,500 per month.",
+        "tax_benefits": "Nomad tax exemption of 12 months.",
+        "duration": "1 year, renewable."
+    },
+    "special_economic_zones": [
+        {
+            "name": "\u0130zmir Free Zone",
+            "location": "\u0130zmir",
+            "tax_incentives": "0% corporate tax for the first 5 years, duty-free imports.",
+            "business_types": "Manufacturing, logistics.",
+            "setup_requirements": "Minimum investment of \u20ac1 million."
+        },
+        {
+            "name": "Antalya Free Zone",
+            "location": "Antalya",
+            "tax_incentives": "0% corporate tax for the first 5 years, reduced customs duties.",
+            "business_types": "Tourism, healthcare, technology.",
+            "setup_requirements": "Minimum investment of \u20ac2 million."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United Kingdom",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on business profits."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "15% for residents, 20% for non-residents.",
+            "capital_gains_rate": "0%",
+            "mining_tax": "Taxed as business income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "15% for residents, 20% for non-residents.",
+            "capital_gains_rate": "0%"
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Moderate political risks due to the current political climate.",
+        "economic_stability": "Relatively stable economy with moderate inflation.",
+        "legal_system": "Well-developed legal system with a strong focus on tax compliance.",
+        "ease_of_doing_business": "Ranked 43rd in the World Bank's Ease of Doing Business Index."
+    }
+}

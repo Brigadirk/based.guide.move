@@ -1,0 +1,105 @@
+{
+    "country": "Serbia",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or permanent establishment.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Serbian Dinar (RSD)",
+        "tax_authority": "Ministry of Finance",
+        "tax_filing_frequency": "Quarterly for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 24,000 RSD",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "24,001 - 60,000 RSD",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "60,001 - 120,000 RSD",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "120,001+ RSD",
+                    "rate": "25%"
+                }
+            ],
+            "foreign_income_taxed": true,
+            "exemptions": "Exemptions include personal allowance and dependent deductions.",
+            "social_security": "12% of gross salary (employee only)."
+        },
+        "corporate_tax": {
+            "rate": "15% on net profits.",
+            "small_business_rate": "10% for small businesses with revenue under 1 million RSD.",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "20%",
+                "royalties": "15%"
+            },
+            "deductions": "Deductible expenses include business expenses, depreciation, and interest."
+        },
+        "capital_gains_tax": {
+            "rate": "15% on net capital gains.",
+            "exemptions": "Gains from the sale of primary residence are exempt."
+        },
+        "vat_gst": {
+            "rate": "20% on most goods and services.",
+            "reduced_rate": "10% on certain basic items and tourism services.",
+            "exemptions": "Healthcare, education, financial services."
+        },
+        "property_tax": {
+            "rate": "0.3-0.8% of assessed value (varies by municipality).",
+            "exemptions": "Exemptions may apply for certain properties, such as primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "15% on inherited assets.",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "Information not available"
+    },
+    "special_economic_zones": [
+        {
+            "name": "Free Zone Novi Sad",
+            "location": "Novi Sad",
+            "tax_incentives": "Tax holiday for the first 10 years, reduced corporate tax rate of 12%.",
+            "business_types": "Technology, manufacturing, logistics.",
+            "setup_requirements": "Minimum investment of \u20ac50,000."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Russia",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "15% on crypto income.",
+            "capital_gains_rate": "15% on crypto capital gains."
+        },
+        "nft_tax": {
+            "income_tax_rate": "15% on NFT income.",
+            "capital_gains_rate": "15% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Political and economic stability is generally good.",
+        "economic_stability": "Serbia has a relatively stable economy with low inflation.",
+        "legal_system": "The legal system is well-developed and generally efficient.",
+        "ease_of_doing_business": "Ranked 56th in the World Bank's Ease of Doing Business Index."
+    }
+}

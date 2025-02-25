@@ -1,0 +1,43 @@
+Denmark - Corporate - Corporate residence
+×
+1.
+2.
+Unselect All
+Unselect All
+3.
+Include Cover Page
+Cancel
+×
+×
+![](../../-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+×
+![](corporate-residence.html)
+######
+Cancel
+Send
+Overview](../../denmark.html)
+Corporate
+Individual
+# Denmark
+## Corporate - Corporate residence
+Last reviewed - 04 February 2025
+A corporation is resident in Denmark for tax purposes if it is incorporated in Denmark and registered in the Companies Register as having a Danish place of business. Further, foreign companies having their actual place of management in Denmark are also tax resident in Denmark. The actual place of management is typically the place where the management decisions concerning the company’s day-to-day operations are made.
+## Permanent establishment (PE)
+Non-resident companies are liable to tax in Denmark on business profits derived through a PE in Denmark. The existence of a PE is determined according to Danish tax law, which makes either a reference to a specific DTT or to text similar to Article 5 of the OECD Model Convention.
+Denmark has adopted the Multilateral Instrument (MLI), which implies that the updated PE definition of the 2017 version of the OECD Model Convention will be directly applicable as regards Denmark’s DTTs with countries that have also adopted the MLI. As regards Denmark’s DTTs with countries that have not adopted the MLI, the specific PE definition in the respective DTT is still applicable.
+A bill (Bill L48 2019-20) was adopted on 3 December 2020, which aligns the PE definition under Danish domestic tax law with the PE definition of the 2017 version of the OECD Model Convention. Bill L48 included a new definition of PEs by implementing an 'anti-fragmentation rule' into Danish tax law.
+Up until the new legislation was implemented, a PE was deemed to not exist when a place of business was engaged solely in certain activities that were preparatory and auxiliary (such as maintenance of stocks of goods for storage, display, delivery, or processing, and purchasing of goods or merchandise).
+According to the new definition, the exclusion will apply only when these activities are preparatory in relation to the business as a whole. The purpose of the new definition is to prevent the breakup of an operating business into several small business units in order to benefit from the preparatory and auxiliary exemption.
+Furthermore, the Bill expands the scope of the agent rule. Thus the rule also includes situations in which an agent habitually plays the principal role leading to the conclusion of contracts that are routinely concluded without material modification by the enterprise. In such situations, the agent would create a PE.
+As of July 2018, investments in shares and the acquisition of receivables, debt, and financial contracts are exempt from PE taxation if the individual investor’s investments cannot be classified as professionally trading and thus do not carry on business in Denmark that have a link to the partnership’s investment business. The purpose of this amendment was to make it more attractive for foreign investors to invest in Danish private equity funds.
+Furthermore, the comments to OECD’s Model Tax Convention were revised in 2017. The question of the use of subcontractors for the execution of a contract in relation to the existence of a PE for the main contractor has been clarified. According to the revised comments, a PE will only exist for the main contractor if the subcontractors perform the work of the main contractor at a fixed place of business that is at the disposal of the main contractor. This assessment is, in most cases, based on the instruction powers. However, recent Danish case law regarding this revision shows that the Danish Tax Authorities may determine the existence of a fixed place of business for the main contractor on the basis of an evaluation of on whose 'expense and risk' the activities are carried on, as a decisive factor.
+On 1 June 2023, the Danish Parliament enacted legislation to equalise Danish and foreign companies by constituting PE on companies who are engaged in establishing, operating, or otherwise using artificial islands, installations, or facilities when these activities are carried out in Denmark's exclusive economic zone, i.e. outside the 12 nautical mile limit. As a result, these activities become subject to limited tax liability as a consequence of the PE.
+A PE is not established when the activities performed are linked to the establishment and use of submarine cables and pipelines that are used exclusively for transit through Denmark's economic zone.
+![](../../-/media/world-wide-tax-summaries/attachments/denmark---thomas_bjerre.ashx%3Frev=82e26a1f1acf40aea43119d24be1bc9d&revision=82e26a1f-1acf-40ae-a431-19d24be1bc9d&hash=83CC49725A604DE21C4675202994F548F139B0B4)
+Thomas Bjerre
+![](../../-/media/world-wide-tax-summaries/attachments/denmark---soren-jesper-hansen.ashx%3Frev=f6e2aabe62424e24a050890d88b11939&revision=f6e2aabe-6242-4e24-a050-890d88b11939&hash=8D6C7F9A185779F24AF5481016200A038627E549)
+Søren Jesper Hansen
+×
+I understand

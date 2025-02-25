@@ -1,0 +1,126 @@
+{
+    "country": "Guatemala",
+    "overview": {
+        "tax_residency_rules": "Determined by physical presence for more than 183 days in a calendar year or having a permanent home in Guatemala.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Guatemalan quetzal (GTQ)",
+        "tax_authority": "Superintendencia de Administraci\u00f3n Tributaria (SAT)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - GTQ105,000",
+                    "rate": "5%"
+                },
+                {
+                    "bracket": "GTQ105,001 - GTQ200,000",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "GTQ200,001 - GTQ300,000",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "GTQ300,001+",
+                    "rate": "20%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "GTQ12,000 for personal allowances.",
+            "social_security": "4.83% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "25% on net profits.",
+            "small_business_rate": "Information not available",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "5%",
+                "interest": "12.5%",
+                "royalties": "10%"
+            },
+            "deductions": "Interest expenses, depreciation, R&D expenses."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "Information not available",
+                    "long_term_rate": "10%"
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "Information not available",
+                    "long_term_rate": "10%"
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "Information not available",
+                    "long_term_rate": "10%"
+                }
+            ],
+            "exemptions": "Primary residence."
+        },
+        "vat_gst": {
+            "rate": "12%",
+            "reduced_rate": "None",
+            "exemptions": "Healthcare, education, basic food items."
+        },
+        "property_tax": {
+            "rate": "0.25% of assessed value.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [
+        {
+            "name": "ZOLIC",
+            "location": "Escuintla",
+            "tax_incentives": "Duty-free imports, reduced corporate tax rates.",
+            "business_types": "Manufacturing, logistics, tourism.",
+            "setup_requirements": "Minimum investment of $500,000."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "Mexico",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "5-25% depending on income bracket.",
+            "capital_gains_rate": "10%",
+            "mining_tax": "Taxed as income."
+        },
+        "nft_tax": {
+            "income_tax_rate": "5-25% depending on income bracket.",
+            "capital_gains_rate": "10%"
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Guatemala has a history of political instability and corruption.",
+        "economic_stability": "Guatemala experiences high levels of poverty and inequality.",
+        "legal_system": "The legal system can be slow and complex.",
+        "ease_of_doing_business": "Ranked 96th in the World Bank's Ease of Doing Business Index."
+    }
+}

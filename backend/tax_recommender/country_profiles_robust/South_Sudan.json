@@ -1,0 +1,109 @@
+{
+    "country": "South Sudan",
+    "overview": {
+        "tax_residency_rules": "Information not available.",
+        "tax_year": "Information not available.",
+        "currency": "South Sudanese Pound (SSP)",
+        "tax_authority": "South Sudan National Revenue Authority (SSNRA)",
+        "tax_filing_frequency": "Information not available.",
+        "currency_exchange_rules": "Information not available."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - SSP 1,500,000",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "SSP 1,500,001 - SSP 2,500,000",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "SSP 2,500,001 - SSP 4,000,000",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "SSP 4,000,001 - SSP 6,000,000",
+                    "rate": "30%"
+                }
+            ],
+            "foreign_income_taxed": "Information not available.",
+            "exemptions": "Information not available.",
+            "social_security": "Information not available."
+        },
+        "corporate_tax": {
+            "rate": "30% on net profits.",
+            "small_business_rate": "Information not available.",
+            "foreign_income_taxed": "Information not available.",
+            "withholding_taxes": {
+                "dividends": "Information not available.",
+                "interest": "Information not available.",
+                "royalties": "Information not available."
+            },
+            "deductions": "Information not available."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                }
+            ],
+            "exemptions": "Information not available."
+        },
+        "vat_gst": {
+            "rate": "15% on most goods and services.",
+            "reduced_rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "property_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": "Information not available.",
+        "requirements": "Information not available.",
+        "tax_benefits": "Information not available.",
+        "duration": "Information not available."
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available.",
+            "mining_tax": "Information not available."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "High political instability and conflict may impact tax administration.",
+        "economic_stability": "Economic volatility and inflation may impact tax revenues.",
+        "legal_system": "Tax laws are subject to frequent changes and may be inconsistently applied.",
+        "ease_of_doing_business": "Ranked 190th in the World Bank's Ease of Doing Business Index."
+    }
+}

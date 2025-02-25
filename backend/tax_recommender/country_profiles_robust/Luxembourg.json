@@ -1,0 +1,136 @@
+{
+    "country": "Luxembourg",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or domicile.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Euro (EUR)",
+        "tax_authority": "Luxembourg Inland Revenue (ACD)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 11,266 EUR",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "11,267 - 20,940 EUR",
+                    "rate": "8%"
+                },
+                {
+                    "bracket": "20,941 - 31,619 EUR",
+                    "rate": "16%"
+                },
+                {
+                    "bracket": "31,620 - 54,937 EUR",
+                    "rate": "26%"
+                },
+                {
+                    "bracket": "54,938 - 150,000 EUR",
+                    "rate": "34%"
+                },
+                {
+                    "bracket": "150,001+ EUR",
+                    "rate": "40%"
+                }
+            ],
+            "foreign_income_taxed": "Yes, on a worldwide basis.",
+            "exemptions": "Personal allowance of 6,491 EUR.",
+            "social_security": "10.5% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "17% on net profits.",
+            "small_business_rate": "15% for SMEs with revenue under 200,000 EUR.",
+            "foreign_income_taxed": "Yes, on a worldwide basis.",
+            "withholding_taxes": {
+                "dividends": "15% (reduced to 0% for EU/EEA dividends).",
+                "interest": "0%"
+            },
+            "deductions": "Business expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Stocks",
+                    "short_term_rate": "30% (held less than 6 months).",
+                    "long_term_rate": "0% (held more than 6 months)."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "16% (held less than 2 years).",
+                    "long_term_rate": "8% (held more than 2 years)."
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "30% (held less than 5 years).",
+                    "long_term_rate": "0% (held more than 5 years)."
+                }
+            ],
+            "exemptions": "Gains from the sale of primary residence are exempt."
+        },
+        "vat_gst": {
+            "rate": "17% on most goods and services.",
+            "reduced_rate": "8%, 3%, 12%.",
+            "exemptions": "Healthcare, education."
+        },
+        "property_tax": {
+            "rate": "0.7% of assessed value.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "0% on direct-line inheritances.",
+            "exemptions": "Spouse, children."
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Proof of income, health insurance, and suitable accommodation.",
+        "tax_benefits": "50% tax exemption on foreign-source income for up to 5 years.",
+        "duration": "Up to 5 years."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Luxembourg Financial Centre",
+            "location": "Luxembourg City",
+            "tax_incentives": "Favourable tax rates for financial services companies.",
+            "business_types": "Banking, insurance, investment management.",
+            "setup_requirements": "Minimum capital requirements and regulatory approval."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Germany",
+            "description": "Avoids double taxation on business profits and dividends."
+        },
+        {
+            "country": "France",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "17% on crypto income.",
+            "capital_gains_rate": "0% on crypto capital gains."
+        },
+        "nft_tax": {
+            "income_tax_rate": "17% on NFT income.",
+            "capital_gains_rate": "0% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Political stability and strong legal system.",
+        "economic_stability": "Stable and diversified economy.",
+        "legal_system": "Advanced and efficient legal system.",
+        "ease_of_doing_business": "Ranked 20th in the World Bank's Ease of Doing Business Index."
+    }
+}

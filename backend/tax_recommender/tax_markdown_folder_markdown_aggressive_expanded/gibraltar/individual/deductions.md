@@ -1,0 +1,59 @@
+Gibraltar - Individual - Deductions
+×
+1.
+2.
+Unselect All
+Unselect All
+3.
+Include Cover Page
+Cancel
+×
+×
+![](../../-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+×
+![](deductions.html)
+######
+Cancel
+Send
+Overview](../../gibraltar.html)
+Corporate
+Individual
+# Gibraltar
+## Individual - Deductions
+Last reviewed - 25 September 2024
+## Allowance Based System: Personal allowances and deductions
+### Allowance Based System allowances
+| Allowance | GBP |
+| --- | --- |
+| Personal allowance | 3,455 |
+| Spouse | 3,455 |
+| One parent family | 5,800 |
+| Child | 1,190 |
+| First child studying abroad | 1,375 |
+| Disabled individuals | 10,000 |
+| Nursery school allowance | 5,480 |
+| House purchase allowance (1) | 13,000 |
+| Life insurance premiums (3) | 100% |
+| Mortgage interest (4) | 100% |
+Notes:
+1. This is a one-off allowance.
+2. This allowance is restricted to a maximum of GBP 1,000 *per annum*. In addition to any deduction, relief, or allowance, taxpayers with an interest in a building situated in Gibraltar can claim an allowance for approved expenditure on painting, decorating, repairing, or enhancing the frontage of the building.
+3. Allowable premiums up to 1/7 of assessable income or 7% of capital sum assured.
+4. Interest payable on a loan to acquire a Gibraltar property to be used as a taxpayer’s principle residence is allowable on loans up to a value of GBP 350,000. Loan arrangements entered into before 1 July 2008 are eligible for relief on 100% of the loan as long as the loan continues to be secured on the current property and is in the name of the current borrower. The interest on these loans are subject to ‘tapered grandfathering’, whereby the relief on the amount of the loan in excess of GBP 350,000 will be reduced by 1/10 *per annum*.
+### Allowance Based System deductions
+In addition to the above allowances, individuals taxed under the Allowance Based System may also deduct expenses from their assessable income on the following:
+## Gross Income Based System: Deductions
+Persons under the Gross Income Based System may also benefit from deductions from their assessable income, as follows:
+## Business deductions
+There are no significant deductions allowable to individuals not engaged in a trade. Travel to and from work is not regarded as a business expense, nor are moving, motor, or entertainment expenses unless they fall within the guidelines published by the Commissioner of Income Tax.
+![](../../-/media/world-wide-tax-summaries/gibraltarpatrick-pilcherpatrick-photo-2020jpg20211210112342923.ashx%3Frev=b23fe362b86b484d9a775fab8ef0e27d&revision=b23fe362-b86b-484d-9a77-5fab8ef0e27d&hash=FA6179ACA0D8F34E69163BAB5A28177B4D21A3B0)
+Patrick Pilcher
+![](../../-/media/world-wide-tax-summaries/gibraltaredgar-lavarellogibraltar--edgar-lavarellojpg20241210115257678.ashx%3Frev=b3c047415b4d4d07a2c87321b259a22e&revision=b3c04741-5b4d-4d07-a2c8-7321b259a22e&hash=17E2384AF08C32FF0BF3D7FE1CB495F3903BD61D)
+Edgar Lavarello
+![](../../-/media/world-wide-tax-summaries/gibraltarluke-walshgibraltar--luke-walshjpg20241210115345304.ashx%3Frev=69b3d306f30a429f8281aa469c2863c1&revision=69b3d306-f30a-429f-8281-aa469c2863c1&hash=890F5CE495D15EDB97B8CFDCDFB1934D79E8F70B)
+Luke Walsh
+[### Gibraltar Tax Facts 2023/2024
+×
+I understand

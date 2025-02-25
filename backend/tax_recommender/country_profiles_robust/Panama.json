@@ -1,0 +1,120 @@
+{
+    "country": "Panama",
+    "overview": {
+        "tax_residency_rules": "Determined by permanent residence and economic ties.",
+        "tax_year": "Calendar year (January 1 - December 31).",
+        "currency": "Balboa (PAB) (pegged to the US Dollar).",
+        "tax_authority": "Direcci\u00f3n General de Ingresos (DGI)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "Up to PAB 11,538",
+                    "rate": "15%"
+                },
+                {
+                    "bracket": "PAB 11,539 - PAB 50,000",
+                    "rate": "25%"
+                },
+                {
+                    "bracket": "PAB 50,001 - PAB 100,000",
+                    "rate": "30%"
+                },
+                {
+                    "bracket": "Over PAB 100,000",
+                    "rate": "35%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "Basic exemption of PAB 10,265.",
+            "social_security": "9.75% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "25% on net profits.",
+            "small_business_rate": "Information not available",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "12.5%",
+                "royalties": "12.5%"
+            },
+            "deductions": "Standard deductions and expenses related to business activities."
+        },
+        "capital_gains_tax": {
+            "rate": "10% on capital gains.",
+            "exemptions": "Gains from the sale of personal assets and real estate held for more than two years are exempt.",
+            "short_term_rate": "Information not available",
+            "long_term_rate": "Information not available"
+        },
+        "vat_gst": {
+            "rate": "7%",
+            "reduced_rate": "Information not available",
+            "exemptions": "Healthcare, education, and certain basic necessities."
+        },
+        "property_tax": {
+            "rate": "Property tax rates vary depending on the municipality and property value.",
+            "exemptions": "Primary residence and property owned by pensioners.",
+            "additional_notes": "Property tax rates range from 0.5% to 1.5%."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Must work remotely for an employer or business outside of Panama and earn a minimum monthly income of $3,000.",
+        "tax_benefits": "15% flat income tax rate.",
+        "duration": "Two years, renewable."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Col\u00f3n Free Trade Zone",
+            "location": "Col\u00f3n",
+            "tax_incentives": "Duty-free imports and exports, reduced corporate tax rates.",
+            "business_types": "Trading, manufacturing, logistics.",
+            "setup_requirements": "Registration and approval by the Col\u00f3n Free Trade Zone Authority."
+        },
+        {
+            "name": "Panama Pacifico Special Economic Area",
+            "location": "Panama City",
+            "tax_incentives": "15% corporate tax rate, reduced property taxes.",
+            "business_types": "Multinational companies, logistics, manufacturing.",
+            "setup_requirements": "Registration and approval by the Panama Pacifico Authority."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "United States",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Canada",
+            "description": "Avoids double taxation on income and capital gains."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Income from crypto activities is taxed as regular income.",
+            "capital_gains_rate": "Capital gains from crypto assets are taxed at a rate of 10%.",
+            "mining_tax": "Crypto mining is considered a business activity and is taxed accordingly."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Income from NFT sales is taxed as regular income.",
+            "capital_gains_rate": "Capital gains from NFT sales are taxed at a rate of 10%."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Panama has a stable political environment, but the global political climate may impact economic stability.",
+        "economic_stability": "Panama has a strong economy with low inflation and a stable currency (pegged to the US Dollar).",
+        "legal_system": "Panama has a well-developed legal system, but the judicial process can be slow.",
+        "ease_of_doing_business": "Panama is ranked 42nd in the World Bank's Ease of Doing Business Index."
+    }
+}

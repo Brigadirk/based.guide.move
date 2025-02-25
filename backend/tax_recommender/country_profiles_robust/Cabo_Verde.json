@@ -1,0 +1,96 @@
+{
+    "country": "Cabo Verde",
+    "overview": {
+        "tax_residency_rules": "Determined by 183-day rule or permanent establishment.",
+        "tax_year": "Calendar year.",
+        "currency": "Cape Verdean escudo (CVE)",
+        "tax_authority": "Direc\u00e7\u00e3o Nacional de Impostos (DNI)",
+        "tax_filing_frequency": "Annually for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 15,000 CVE",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "15,001 - 40,000 CVE",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "40,001 - 80,000 CVE",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "80,001+ CVE",
+                    "rate": "30%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "Income up to 15,000 CVE per month is tax-free.",
+            "social_security": "5% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "25%",
+            "small_business_rate": "Information not available",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "15%",
+                "interest": "10%",
+                "royalties": "15%"
+            },
+            "deductions": "Standard deductions and business expenses."
+        },
+        "capital_gains_tax": {
+            "rate": "25% on gains from the sale of property and other assets.",
+            "exemptions": "Gains from the sale of primary residence are exempt.",
+            "short_term_rate": "Information not available",
+            "long_term_rate": "Information not available",
+            "asset_type": "Information not available"
+        },
+        "vat_gst": {
+            "rate": "15%",
+            "reduced_rate": "Information not available",
+            "exemptions": "Education, healthcare, and certain food items."
+        },
+        "property_tax": {
+            "rate": "0.5% of assessed value for residential properties, 1% for commercial properties.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        },
+        "wealth_tax": {
+            "rate": "Information not available",
+            "exemptions": "Information not available"
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Proof of income, health insurance, and a valid passport.",
+        "tax_benefits": "5% flat tax on income from digital services.",
+        "duration": "Up to 5 years."
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "25% on crypto income.",
+            "capital_gains_rate": "25% on crypto capital gains.",
+            "mining_tax": "Information not available"
+        },
+        "nft_tax": {
+            "income_tax_rate": "25% on NFT income.",
+            "capital_gains_rate": "25% on NFT capital gains."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Low political risk.",
+        "economic_stability": "Stable economic growth and low inflation.",
+        "legal_system": "Civil law system with a strong legal framework.",
+        "ease_of_doing_business": "Ranked 67th in the World Bank's Ease of Doing Business Index."
+    }
+}

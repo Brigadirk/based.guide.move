@@ -1,0 +1,141 @@
+{
+    "country": "Sri Lanka",
+    "overview": {
+        "tax_residency_rules": "Determined by residency, source of income, and duration of stay.",
+        "tax_year": "April 1 - March 31",
+        "currency": "Sri Lankan Rupee (LKR)",
+        "tax_authority": "Inland Revenue Department of Sri Lanka",
+        "tax_filing_frequency": "Annually by November 30 for individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 250,000 LKR",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "250,001 - 500,000 LKR",
+                    "rate": "12%"
+                },
+                {
+                    "bracket": "500,001 - 1,000,000 LKR",
+                    "rate": "18%"
+                },
+                {
+                    "bracket": "1,000,001 - 2,500,000 LKR",
+                    "rate": "24%"
+                },
+                {
+                    "bracket": "2,500,001+ LKR",
+                    "rate": "30%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "First 2.5 million LKR of income is tax-free for certain individuals.",
+            "social_security": "12% of salary contributed by employer."
+        },
+        "corporate_tax": {
+            "rate": "24% for domestic companies and 40% for foreign companies.",
+            "small_business_rate": "Information not available.",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "15%",
+                "royalties": "15%"
+            },
+            "deductions": "R&D expenses, depreciation, bad debts."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Shares",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "10%"
+                },
+                {
+                    "asset_type": "Other",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                }
+            ],
+            "exemptions": "Sale of a primary residence after 5 years of ownership is exempt."
+        },
+        "vat_gst": {
+            "rate": "15% on most goods and services.",
+            "reduced_rate": "Information not available.",
+            "exemptions": "Healthcare, education, food."
+        },
+        "property_tax": {
+            "rate": "Based on assessed value and property type.",
+            "exemptions": "Primary residence and agricultural land."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": true,
+        "requirements": "Earn a minimum of $1,500 per month from overseas sources.",
+        "tax_benefits": "Tax exemption on foreign income for up to 5 years.",
+        "duration": "Up to 2 years, renewable."
+    },
+    "special_economic_zones": [
+        {
+            "name": "Katunayake Export Processing Zone",
+            "location": "Katunayake",
+            "tax_incentives": "Tax holidays, duty-free imports.",
+            "business_types": "Manufacturing, IT, tourism.",
+            "setup_requirements": "Minimum investment of $100,000."
+        },
+        {
+            "name": "Hambantota Industrial Zone",
+            "location": "Hambantota",
+            "tax_incentives": "Tax concessions, investment incentives.",
+            "business_types": "Heavy industries, logistics, renewable energy.",
+            "setup_requirements": "Minimum investment of $500,000."
+        }
+    ],
+    "double_taxation_agreements": [
+        {
+            "country": "India",
+            "description": "Avoids double taxation on income and capital gains."
+        },
+        {
+            "country": "Pakistan",
+            "description": "Avoids double taxation on income and dividends."
+        },
+        {
+            "country": "China",
+            "description": "Avoids double taxation on income."
+        }
+    ],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available.",
+            "mining_tax": "Information not available."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Tax laws may be subject to change due to political instability.",
+        "economic_stability": "High inflation and currency volatility may impact tax calculations.",
+        "legal_system": "Tax disputes can be time-consuming and complex due to a complex legal system.",
+        "ease_of_doing_business": "Ranked 100th in the World Bank's Ease of Doing Business Index."
+    }
+}

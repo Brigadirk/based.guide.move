@@ -1,0 +1,47 @@
+Slovenia - Corporate - Group taxation
+×
+1.
+2.
+Unselect All
+Unselect All
+3.
+Include Cover Page
+Cancel
+×
+×
+![](../../-/media/world-wide-tax-summaries/attachments/global---chris-wooley.ashx%3Frev=ac5e5f3223b34096b1afc2a6009c7320&revision=ac5e5f32-23b3-4096-b1af-c2a6009c7320&hash=859B7ADC84DC2CBEC9760E9E6EE7DE6D0A8BFCDF)
+CW
+Chris Wooley
+×
+![](group-taxation.html)
+######
+Cancel
+Send
+Overview](../../slovenia.html)
+Corporate
+Individual
+# Slovenia
+## Corporate - Group taxation
+Last reviewed - 23 January 2025
+Group tax returns were abolished with the introduction of the CIT Act on 1 January 2007.
+## Transfer pricing
+Prices between a Slovenian entity and its related parties must be set, for tax purposes, at fair market value using the arm’s-length principle. Broadly speaking, taxpayers are related by direct, indirect, or common shareholdings of over 25%; through a participation in management; or by control through other means, including through contractual terms.
+For transactions between two related Slovenian tax residents, provided neither is in an ‘advantaged’ position (advantaged usually means having unutilised tax losses), there is no actual requirement for the companies to adjust their tax returns to reflect an arm’s-length price.
+Taxable persons must prepare transfer pricing documentation. The Slovenian rules regarding such documentation follow the EU Code of Conduct on transfer pricing documentation for associated enterprises in the EU (EU TPD).
+## Country-by-country (CbC) reporting
+From January 2017 onwards, provisions of the Slovene Tax Procedure Act are in force imposing a CbC reporting obligation on the multinational enterprises with annual consolidated group revenue equal to or exceeding EUR 750 million. The first submission of CbC reporting was thus required for the financial year 2017, whereas the deadline for the submission of CbC reporting was within 12 months after the end of financial year (i.e. 31 December 2017).
+## Thin capitalisation
+There is no thin capitalisation rule in Slovenia. It was abolished as of 1 January 2025.
+## Controlled foreign companies (CFCs)
+CFC rules cover transactions between Slovene companies and related entities that are not taxed under CIT Act-2 and in which the Slovene company by itself, or together with associated enterprises, holds direct or indirect participation of more than 50% of the voting rights, directly or indirectly owns more than 50% of capital, or is entitled to receive more than 50% of the profits of that entity. Such related entity shall be considered a CFC in case the actual CIT paid by the related entity is lower than half the CIT that the entity would be required to pay based on the valid CIT system in Slovenia for such income. Income that falls under the scope of a CFC is so-called passive income, such as interest or other income from financial assets, property rights, or other income arising from intellectual property, dividends, and income from the disposal of shares, income from financial leasing, etc. This shall, however, generally not apply if it is clear from the facts and circumstances that the CFC carries on an economic activity for which it has personnel, equipment, assets, and premises available. Notwithstanding that, if the jurisdiction is included in the list of jurisdictions that do not participate for tax purposes for a minimum of three months in the taxpayer's tax period, the taxpayer's tax base shall be increased with the undivided income of the CFC.
+## Exit taxation
+As of 1 January 2020, implemented provisions of exit taxation to the Slovene tax legislation were put into effect. Exit taxation for cross-border situations is determining when the taxpayer is ought to disclose the hidden reserves for the transferred assets and to include the relevant value in the tax base. The purpose in this regard is to tax the value of possible capital gain that was created in Slovenia when that gain itself had not yet been realised at the time of the exit. The CIT Act defines 'hidden reserves' as the difference between fair and tax value of the transferred assets at the time of the transaction. 'Fair value' is defined as a market value unlike tax value, which represents the amount determined for the relevant asset in the CIT return. If the difference between fair and tax value is negative, hidden reserves shall be deemed as equal to zero. The CIT Act also defines the criteria when and how a taxpayer that is required to include hidden reserves in one's taxable base is eligible to exercise the tax deferral. Particularly, Slovene domestic legislation entitles a taxpayer, if the required conditions are met, to a five-year deferred tax payment.
+## Hybrid Mismatch Rules
+As of 1 January 2020, implemented provisions of Hybrid Mismatch Rules to the Slovene tax legislation have come into effect. Hybrid mismatches arise from interaction between legal systems and, in practice, result in a situation of double deduction, deduction of income in a country without inclusion in the taxable base of another, or non-taxation of the income in a country that is not included in the taxable base of another. A particularity of the hybrid mismatch section of the CIT Act is that the related entities are not defined as in other sections of the CIT Act. Thus, the relevant entities for the purpose of Hybrid Mismatch Rules are defined as the participation of more than 50% (instead of the common participation of 25%).
+Additionally, as of 1 January 2022, the new provision of reverse-hybrid mismatch stipulates that if one or more non-resident entities that together (in)directly participate in at least 50% of voting rights, capital shares, or profit-sharing rights in a hybrid entity in Slovenia and the hybrid entity is located in a jurisdiction that treats the hybrid entity as a taxable person, the hybrid entity shall be treated as a resident of Slovenia and taxed accordingly (provided such income is not otherwise taxable according to Slovene or other tax legislation).
+![](../../-/media/world-wide-tax-summaries/sloveniamojca-bartol-lesarpicture1png20220114030920616.ashx%3Frev=26c1ae906c7548f38fc5d65d3a8e36cf&revision=26c1ae90-6c75-48f3-8fc5-d65d3a8e36cf&hash=CBCB932324761CA10A113370137E763E6D945392)
+Mojca Bartol Lesar
+![](../../-/media/world-wide-tax-summaries/sloveniaaleksander-ferkaferk--photojpg20210802040656673.ashx%3Frev=7f7c937a0ad1405eb78c98c637c37979&revision=7f7c937a-0ad1-405e-b78c-98c637c37979&hash=688AAA56E50DBEE9F920C25B4FAA75DE1230EBCA)
+Aleksander Ferk
+×
+I understand

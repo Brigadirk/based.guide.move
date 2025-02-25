@@ -1,0 +1,109 @@
+{
+    "country": "Niger",
+    "overview": {
+        "tax_residency_rules": "183-day rule.",
+        "tax_year": "Calendar year.",
+        "currency": "West African CFA franc (XOF)",
+        "tax_authority": "Direction G\u00e9n\u00e9rale des Imp\u00f4ts (DGI)",
+        "tax_filing_frequency": "Annually by April 30th for both individuals and businesses.",
+        "currency_exchange_rules": "No restrictions on currency conversion."
+    },
+    "tax_rates": {
+        "personal_income_tax": {
+            "rate": [
+                {
+                    "bracket": "0 - 1,200,000 XOF",
+                    "rate": "0%"
+                },
+                {
+                    "bracket": "1,200,001 - 3,000,000 XOF",
+                    "rate": "10%"
+                },
+                {
+                    "bracket": "3,000,001 - 8,000,000 XOF",
+                    "rate": "20%"
+                },
+                {
+                    "bracket": "8,000,001+ XOF",
+                    "rate": "30%"
+                }
+            ],
+            "foreign_income_taxed": false,
+            "exemptions": "First 100,000 XOF of income is tax-free.",
+            "social_security": "10% of salary (shared between employer and employee)."
+        },
+        "corporate_tax": {
+            "rate": "30% on net profits.",
+            "small_business_rate": "Information not available.",
+            "foreign_income_taxed": false,
+            "withholding_taxes": {
+                "dividends": "10%",
+                "interest": "10%",
+                "royalties": "15%"
+            },
+            "deductions": "R&D expenses, depreciation."
+        },
+        "capital_gains_tax": {
+            "rate": [
+                {
+                    "asset_type": "Shares",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Real Estate",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                },
+                {
+                    "asset_type": "Collectibles/NFTs",
+                    "short_term_rate": "Information not available.",
+                    "long_term_rate": "Information not available."
+                }
+            ],
+            "exemptions": "Information not available."
+        },
+        "vat_gst": {
+            "rate": "19% on most goods and services.",
+            "reduced_rate": "Information not available.",
+            "exemptions": "Education, healthcare, basic food items."
+        },
+        "property_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Primary residence."
+        },
+        "inheritance_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        },
+        "wealth_tax": {
+            "rate": "Information not available.",
+            "exemptions": "Information not available."
+        }
+    },
+    "digital_nomad_visa": {
+        "available": false,
+        "requirements": "N/A",
+        "tax_benefits": "N/A",
+        "duration": "N/A"
+    },
+    "special_economic_zones": [],
+    "double_taxation_agreements": [],
+    "crypto_and_nft_taxation": {
+        "crypto_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available.",
+            "mining_tax": "Information not available."
+        },
+        "nft_tax": {
+            "income_tax_rate": "Information not available.",
+            "capital_gains_rate": "Information not available."
+        }
+    },
+    "additional_notes": {
+        "political_risks": "Tax enforcement may be inconsistent due to political instability.",
+        "economic_stability": "High inflation and currency volatility may impact tax calculations.",
+        "legal_system": "Tax disputes may face delays due to an underdeveloped legal system.",
+        "ease_of_doing_business": "Ranked 151st in the World Bank's Ease of Doing Business Index."
+    }
+}
