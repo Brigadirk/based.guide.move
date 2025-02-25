@@ -1,0 +1,7 @@
+# Montenegro
+## Corporate - Corporate residence
+Last reviewed - 12 June 2024
+A legal entity is considered to be a tax resident if it is incorporated in Montenegro. In addition, a foreign corporation may also be deemed a Montenegrin tax resident if the corporation has a place of effective management in Montenegro. No explicit rules exist for determination of effective management. In practice, it usually is the place where key managerial decisions are made or where the board of directors sits.
+## Permanent establishment (PE)
+Montenegrin tax legislation contains very basic PE rules following, in main features, the guidelines set out in the Organisation for Economic Co-operation and Development (OECD) Model Tax Treaty. PE is defined as a fixed place of business through which a non-resident carries out business in Montenegro. PE is deemed to exist in case of a non-resident having one of the following in Montenegro: place of management, branch office, office, factory, workshop, mine, gas or oil site, stone pit, or any other place of natural resources exploitation in Montenegro. A construction site constitutes a PE only if construction activities last longer than six months.
+PE is not deemed to exist in case of a non-resident having storage of inventory in Montenegro only for the purpose of delivery of goods or having operations in Montenegro that are of a preparatory or auxiliary nature.

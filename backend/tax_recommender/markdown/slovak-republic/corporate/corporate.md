@@ -1,0 +1,8 @@
+# Slovak Republic
+## Corporate - Significant developments
+Last reviewed - 06 February 2025
+Based on the amendment of the Income tax Act (ITA), valid as of 18 April 2023, the withholding taxation of interest and other income from the commercial corporate bonds issued by Slovak issuers has been abolished. Interest and other income from the commercial corporate bonds were subject to the Slovak withholding tax (WHT) from 1 January 2023 to 17 April 2023. 
+European Union (EU) Directive on a global minimum level of taxation was transposed to the Slovak legislation in 2023. According to the adopted legislation, Slovakia has introduced only the qualified domestic minimum top-up tax (QDMTT), applicable form 1 January 2024. For more details please refer to EU Directive on a global minimum tax
+Additionally, the spin-off concept has been introduced into the Slovak commercial law along with the relevant tax provisions. The relevant legislative provisions took effect from 1 March 2024. Generally, the tax rules for spin-offs follows the already existing tax rules for mergers and demergers, i.e. the transaction should be done at fair market value in most cases.
+Note that the tax legislation in the Slovak Republic (Slovakia) is subject to frequent amendments and new official interpretations; consequently, it is advisable to contact PwC Slovakia for up-to-date information.
+As of 1 January, 2025 a new consolidation package will come to effect bringing significant changes to CIT, VAT rates. A new financial transactions tax (FTT) and tax on sweetened soft drinks (Sugar tax) are introduced from 1 January 2025. Please see more information in the relevant sections.

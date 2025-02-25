@@ -1,0 +1,11 @@
+# Switzerland
+## Corporate - Taxes on corporate income
+Last reviewed - 16 January 2025
+Resident companies are subject to Swiss corporate income tax (CIT) on their taxable profits generated in Switzerland. CIT is levied at the federal, cantonal, and communal levels. Foreign-source income attributable to foreign permanent establishments (PEs) or real estate property located abroad is excluded from the Swiss tax base and only taken into account for rate progression purposes in the cantons that apply progressive tax rates.
+Non-resident companies may be subject to Swiss CIT if they (alternatively) have a PE in Switzerland, own real estate property in Switzerland, are partners of a Swiss business, have loan receivables secured by a mortgage on Swiss real estate property, or deal with or act as a broker of Swiss real estate property. Non-resident companies are taxed on their income generated in Switzerland (_see the section_).
+## Federal level
+Switzerland levies a direct federal CIT at a flat rate of 8.5% on profit after tax. Accordingly, CIT is deductible for tax purposes and reduces the applicable tax base (i.e. taxable income), resulting in a direct federal CIT rate on profit before tax of approximately 7.83%. At the federal level, no corporate capital tax is levied.
+## Cantonal/communal levels
+In addition to the direct federal CIT, each canton has its own tax law and levies cantonal and communal corporate income and capital taxes at different rates. Therefore, the tax burden of income (and capital) varies from canton to canton. Some cantonal and communal taxes are imposed at progressive rates.
+## Overall tax rates
+As a general rule, the overall approximate range of the maximum CIT rate on profit before tax for federal, cantonal, and communal taxes is between 11.9% and 20.5%, depending on the company’s location of corporate residence at a specific capital of a canton in Switzerland. With the entry into effect of the Federal Act on Tax Reform and AHV (old-age and survivors' insurance) Financing (TRAF) as of 1 January 2020, the cantons introduced internationally accepted measures, such as an Organisation for Economic Co-operation and Development (OECD) compliant patent box, a research and development (R&D) super deduction, and other measures. These measures can lead to lower effective tax rates.

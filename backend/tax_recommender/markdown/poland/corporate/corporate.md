@@ -1,0 +1,53 @@
+# Poland
+## Corporate - Significant developments
+Last reviewed - 22 July 2024
+During 2024 and in the beginning of 2025 there were little to no changes in regard to new corporate taxation. The changes mostly covered the amending of existing or implementation of already proposed regulations (such as Minimum Income Tax, Pillar 2 regulations, CIT SAF-T file). 
+Also, the regulator has postponed the deadline for mandatory issuing of invoices using the National e-Invoice System (so-called KSeF) until 1 February 2026.
+More changes are expected to be presented during 2025 after the assessment of impact of regulations currently in force and as a part of proposed so-called deregulation initiative.
+## Changes in corporate income tax (CIT)
+### Changes to CIT introduced in 2025
+During 2023, the following significant amendments were introduced that impact CIT:
+  * Polish minimum income tax - tax year 2024 is the first year in which the provisions on local minimum income tax apply. It is payable by taxpayers who incurred a loss from operating activities or achieved low profitability (income not exceeding 2% of the value of revenues) in FY24.
+  * From 1 January 2024, the provisions on the Pillar II Directive introducing a global minimum tax came into force in many European Union countries. In Poland, the act implementing Pillar II entered into force on 1 January 2025. However, transitional provisions provide for the optional possibility of applying the provisions of this act retroactively, from 1 January 2024, based on the choice made.
+  * On 1 January 2025, the regulations regarding the so-called SAF_CIT structures (JPK_CIT in Polish) came into force. These regulations impose on taxpayers the obligation to keep accounting books using computer programs and to send them to the relevant head of the tax office after the end of the tax year. The taxpayers will be obliged to send two new logical SAF structures, which reflect the CIT calculation and the fixed assets register prepared for CIT purposes. Taxpayers subject to the reporting obligation will be required to submit SAF_CIT structures for the first time for the tax/financial year starting after December 31, 2024, by the deadline for filing a CIT return. Therefore, in the case of entities whose tax year coincides with the calendar year, these files will have to be submitted to the relevant tax authority by the end of March 2026.
+  * The amendment to the Commercial Companies Code entered into force on 15 September 2023 and introduced the following changes in restructuring activities, which also have effects in terms of CIT and tax ordinance:
+    * A new method of division as an alternative to contribution-in-kind of a going concern while maintaining tax succession (i.e. division by separation). Such a division is tax neutral provided that the assets taken over and the assets remaining in the company constitute going concerns.
+    * Simplified procedure for a zero-emission merger (i.e. without increasing the share capital [if the same partner/partners hold, directly or indirectly, all shares in the merging companies]).
+    * Regulation on cross-border reorganisations (division, merger, transformation), including clarification of the provisions on tax succession and obligation to obtain the opinion of the Head of the National Tax Administration on the existence of a justified suspicion of tax avoidance or abuse of law, and confirmation that the company's financial obligations towards the authorities are satisfied or secured.
+
+
+## Changes in value-added tax (VAT)
+The main areas of changes in the Polish VAT system for 2025 and subsequent years will be related to digitalisation of reporting obligations (i.e. preparation of mandatory e-invoicing system). Other changes will concern VAT exemption for small enterprises or rules for determining the place of supply of virtual services. 
+There are also some planned changes at the EU level (the so-called ViDA package). 
+In recent years, the majority of amendments (apart from digitalisation such as introduction of Central Electronic System of Payment Information) has focused on simplifications for taxpayers (in particular, implementation of three SLIM VAT legislative packages and introduction of VAT groups).
+### National e-Invoicing System 
+As of 2022, the National e-Invoice System (the so-called KSeF) was launched, which enables issuance of and access to structured invoices. In the initial period, structured invoices have been introduced as one of the acceptable forms of documenting transactions, alongside paper and electronic invoices. Structured invoices as a mandatory solution arewere planned to come into force from 1 February 2026 (for taxpayers whose turnover exceeds 200 M PLN in a preceding year) or 1 April 2026 (for other taxpayers). At the same time, it is planned to introduce a 6-month transitional period (until 30 September 2026) for micro-entrepreneurs who issue single invoices up to PLN 450 and whose total sales value does not exceed PLN 10,000 per month.
+Mandatory e-invoicing will apply (in principle) to all transactions that have been so far documented with invoices (including domestic supplies of goods and services made between entrepreneurs [B2B] and public authorities [B2G]).
+The B2C transactions will be documented on a voluntary basis.
+At the same time, it is planned to completely exclude the obligation to issue structured invoices in relation to the transactions, such as highway tickets, transportation of passengers and certain services exempt from VAT (i.e. insurance and financial services). However, the provisions that regulate this issue are still in the process of consultation.
+On the other hand, the National e-Invoice System will remain optional for other foreign taxpayers who do not have a seat or a fixed establishment for VAT purposes in the territory of Poland.
+_The structured invoices and National e-Invoice System are discussed in more detail in the section._
+### ViDA Package (EU level)
+On November 5, 2024,The Economic and Financial Affairs Council (ECOFIN) approved the VAT in the Digital Age (ViDA) package, in the version published on October 30, 2024. The ViDA package was the subject of intensive discussions throughout 2024, and its adoption was temporarily blocked by Estonia, which particularly expressed concerns regarding the second pillar mentioned below, i.e., the Platform Economy.
+The latest ViDA package includes several compromises and new implementation dates for the various pillars compared to earlier proposals (originally published on December 8, 2022). The implementation of changes will be spread out over the coming years. The main pillars of ViDA concern:
+  * Digital Reporting Requirements (DRR) and mandatory e-invoicing for B2B transactions within the EU - the implementation date is generally July 1, 2030, with the EU e-invoicing standard applying to both intra-community and domestic transactions from 2035.
+  * Platform Economy - new rules may optionally be applied from July 1, 2028, with the obligation to implement them by January 1, 2030.
+  * Introduction of a Single VAT registration - from July 1, 2028.
+
+
+### Central Electronic System of Payment information
+As of 1 January 2024, the payment service providers are required to keep electronic records of payment data for cross-border payments and to exchange these records with a newly established central EU-database, i.e. Central Electronic System of Payment information (the so-called CESOP). The purpose of the new reporting obligation is to combat VAT fraud.
+Under the new reporting requirements, domestic banks, foreign bank branches, credit institutions, payment institutions, and credit unions must maintain, store, and report on cross-border payments to the Head of National Revenue Administration, when the payment service provider makes more than 25 such payments to the same payee per quarter.
+Payment service providers must keep electronic records of cross-border payments for a period of three calendar years from the tax year the payment was made.
+## Other changes to the tax system
+**Customs duties**
+  * A significant legislative update in Polish law will take effect in 2025, targeting customs transactions. This amendment aims to align with EU law, enhance the enforcement of sanctions due to the conflict in Ukraine, and address loopholes that allow sanction circumvention. Notable changes include a requirement for evidence confirming goods are not for use in Russia or Belarus, and proof of customs clearance within 45 days post-EU departure. The customs and tax authorities will have expanded powers to enforce these regulations, including the seizure of non-compliant goods.
+  * Additionally, businesses should note the AIS/IMPORT PLUS system rollout has moved to May 1, 2025. This system will replace AIS/IMPORT, although no data migration is planned, requiring the completion of current operations in the existing system.
+  * The European Union has intensified efforts to protect its internal market, evident from increased anti-dumping duties on imports from countries like China. Recent measures include definitive anti-dumping duties on various goods from China, Egypt, and the United States.
+
+
+**Property tax**
+As of January 1, 2025, businesses in Poland are affected by significant changes in property tax regulations. Key amendments redefine terms such as building, structure, construction facility, construction work, and permanent land attachment, now included in the Local Taxes and Fees Act, eliminating reliance on the Construction Law for these definitions. This may cause some properties to be categorized differently, potentially impacting tax liabilities. Additionally, the deadline for submitting the 2025 RET (Real Estate Tax) return is extended to March 31, provided certain conditions are met. However, payment deadlines for RET remain unchanged, with installments due at the end of January and on the 15th of each subsequent month.
+**Implementation of DAC7 to Polish law**
+As of 1 July 2024, digital platform operators in Poland must adhere to new obligations under the implementation of DAC7 Directive to domestic law, aimed at preventing tax fraud. These operators, who facilitate transactions for sellers, must report seller data and adhere to due diligence procedures concerning sellers' status and information reliability. They are required to report activities such as real estate provision, personal services, goods sales, and transport rentals to the Head of the National Revenue Administration. 
+The first reporting obligation is due by 31 January 2025, covering 2023 and 2024. Subsequent reports should be submitted annually.

@@ -1,0 +1,5 @@
+# Hong Kong SAR
+## Corporate - Branch income
+Last reviewed - 03 January 2025
+The two-tiered tax rates regime that is applicable to corporations is also applicable to branches of foreign corporations in Hong Kong SAR.
+Effective from the year of assessment 2019/20, the Authorised OECD Approach (i.e. the separate enterprises principle) (TP Rule 2) needs to be adopted for attributing income or loss to a PE of a non-Hong Kong resident person (e.g. a branch) in Hong Kong SAR. TP Rule 2 requires the attribution of profits of a non-Hong Kong resident person to its PE in Hong Kong SAR as if the PE were a distinct and separate enterprise, taking into account the functions performed, assets used, and risks assumed by the non-Hong Kong resident person through the PE. After the attribution of profits to the PE, the broad guiding principle (i.e. what has been done to earn the profits in question and where the operations have been performed) would be applied to determine whether the profits are arising in or derived from Hong Kong SAR, hence subject to Hong Kong profits tax.
