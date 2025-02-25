@@ -1,24 +1,25 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+// Add auth-required paths here
+const authRequiredPaths = ['/profile', '/settings', '/products', '/checkout']
+
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')
-  const isAuthPage = request.nextUrl.pathname === '/login' || 
-                     request.nextUrl.pathname === '/signup'
-  
-  // If trying to access auth pages while logged in
-  if (isAuthPage && token) {
-    return NextResponse.redirect(new URL('/profile', request.url))
+  const { pathname } = request.nextUrl
+
+  console.log('Middleware - Request:', { pathname, hasToken: !!token })
+
+  // If trying to access auth-required path without token, redirect to login
+  if (authRequiredPaths.includes(pathname) && !token) {
+    const url = new URL('/login', request.url)
+    url.searchParams.set('returnUrl', pathname)
+    return NextResponse.redirect(url)
   }
 
-  // If trying to access protected pages while logged out
-  const isProtectedRoute = request.nextUrl.pathname.startsWith('/profile') || 
-                          request.nextUrl.pathname.startsWith('/settings')
-  
-  if (isProtectedRoute && !token) {
-    const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('returnUrl', request.nextUrl.pathname)
-    return NextResponse.redirect(loginUrl)
+  // If trying to access login/signup while authenticated, redirect to profile
+  if ((pathname === '/login' || pathname === '/signup') && token) {
+    return NextResponse.redirect(new URL('/profile', request.url))
   }
 
   return NextResponse.next()
@@ -26,9 +27,11 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/profile/:path*',
-    '/settings/:path*',
+    '/profile',
+    '/settings',
     '/login',
-    '/signup'
+    '/signup',
+    '/products',
+    '/checkout'
   ]
 } 

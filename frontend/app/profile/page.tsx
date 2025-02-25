@@ -45,28 +45,23 @@ function calculateProgress(profile: Profile): ProfileProgress {
 }
 
 export default function ProfilePage() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    console.log('Profile Page - Auth State:', { isAuthenticated, isLoading })
-    
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-      console.log('Profile Page - After Timeout:', { isAuthenticated, isLoading: false })
-      
-      if (!isAuthenticated) {
-        console.log('Profile Page - Redirecting to login')
-        router.push('/login?returnUrl=/profile')
-      }
-    }, 100)
+    // Only redirect after we've confirmed auth state
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/login') // Use replace instead of push
+    }
+  }, [isAuthenticated, isLoading, router])
 
-    return () => clearTimeout(timer)
-  }, [isAuthenticated, router])
+  // Don't render anything while checking auth
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
-  if (isLoading || !isAuthenticated) {
-    console.log('Profile Page - Rendering null:', { isLoading, isAuthenticated })
+  // Don't render anything if not authenticated
+  if (!isAuthenticated) {
     return null
   }
 

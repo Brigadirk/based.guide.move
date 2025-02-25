@@ -5,8 +5,32 @@ Second iteration of based.guide
 ## Project Structure
 
 This is a monorepo containing:
-- `backend/`: Python backend service (maintained separately)
+- `backend/`: Python backend service
 - `frontend/`: Next.js frontend application
+
+## Backend Tech Stack
+
+Our backend is built with modern Python technologies:
+
+### Core Technologies
+- **FastAPI** - Modern, fast web framework for building APIs
+- **SQLAlchemy** - SQL toolkit and ORM
+- **Pydantic** - Data validation using Python type annotations
+- **uvicorn** - Lightning-fast ASGI server
+
+### Authentication & Security
+- **JWT** - JSON Web Tokens for session management
+- **bcrypt** - Password hashing
+- **passlib** - Password hashing library
+- **python-jose** - JavaScript Object Signing and Encryption implementation
+
+### Database
+- **PostgreSQL** - Primary database
+- **psycopg2** - PostgreSQL adapter for Python
+
+### Development Tools
+- **python-dotenv** - Environment variable management
+- **email-validator** - Email validation library
 
 ## Frontend Development
 

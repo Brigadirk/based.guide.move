@@ -1,112 +1,115 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useAuth } from '@/lib/auth-context'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-
-type ValidationError = {
-  email?: string;
-  password?: string;
-  general?: string;
-}
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useAuth } from "@/lib/auth-context"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import Link from "next/link"
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [errors, setErrors] = useState<ValidationError>({})
-  const [isLoading, setIsLoading] = useState(false)
-  const { login, isAuthenticated } = useAuth()
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const { login, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
+  console.log('Login Page - Current State:', { isAuthenticated, isLoading })
+
+  // Handle redirect on auth state change
   useEffect(() => {
-    console.log('Login Page - Auth State:', { isAuthenticated })
-    
-    if (isAuthenticated) {
-      console.log('Login Page - Redirecting to profile')
-      router.push('/profile')
+    if (isAuthenticated && !isLoading) {
+      console.log('Login Page - Authenticated, redirecting')
+      const returnUrl = searchParams.get('returnUrl')
+      router.push(returnUrl || '/profile')
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, isLoading, router, searchParams])
+
+  // If still loading auth state, show loading
+  if (isLoading) {
+    console.log('Login Page - Loading State')
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="w-full max-w-md p-6">
+          <div className="text-center">Loading...</div>
+        </Card>
+      </div>
+    )
+  }
+
+  console.log('Login Page - Showing Login Form')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setErrors({})
-    setIsLoading(true)
+    setError(null)
+    setLoading(true)
 
     try {
       await login(email, password)
-    } catch (err: any) {
-      console.error('Login error:', err)
-      if (err.message.includes('email')) {
-        setErrors({ email: err.message })
-      } else if (err.message.includes('password')) {
-        setErrors({ password: err.message })
-      } else {
-        setErrors({ 
-          general: err.message || 'Invalid email or password' 
-        })
-      }
+      // Don't redirect here - let the useEffect handle it
+    } catch (error: any) {
+      console.error('Login error:', error)
+      setError(error.message || 'Failed to login')
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center">
-      <Card className="w-[350px]">
-        <CardHeader>
-          <CardTitle>Welcome back</CardTitle>
-          <CardDescription>Enter your credentials to continue</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className={errors.email ? "border-red-500" : ""}
-              />
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className={errors.password ? "border-red-500" : ""}
-              />
-              {errors.password && (
-                <p className="text-sm text-red-500">{errors.password}</p>
-              )}
-            </div>
-            {errors.general && (
-              <p className="text-sm text-red-500">{errors.general}</p>
-            )}
-            <Button 
-              type="submit" 
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Logging in...' : 'Log in'}
-            </Button>
-            <p className="text-sm text-center text-muted-foreground">
-              Don't have an account?{' '}
-              <Link href="/signup" className="text-primary hover:underline">
-                Sign up
-              </Link>
-            </p>
-          </form>
-        </CardContent>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Card className="w-full max-w-md p-6">
+        <h1 className="text-2xl font-bold mb-6">Login</h1>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="text-red-500 text-sm">{error}</div>
+          )}
+          
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium mb-1">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-2 border rounded"
+              required
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium mb-1">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-2 border rounded"
+              required
+            />
+          </div>
+          
+          <Button 
+            type="submit" 
+            className="w-full"
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </Button>
+        </form>
+
+        <div className="mt-4 text-center text-sm">
+          Don't have an account?{' '}
+          <Link href="/signup" className="text-blue-500 hover:text-blue-600">
+            Sign up
+          </Link>
+        </div>
       </Card>
     </div>
   )

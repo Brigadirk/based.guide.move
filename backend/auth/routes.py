@@ -1,10 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, Annotated
 from backend.database import get_db
 from backend.models import User, Session as UserSession
-from backend.auth.utils import verify_password, get_password_hash, create_access_token
+from backend.auth.utils import (
+    verify_password, 
+    get_password_hash, 
+    create_access_token,
+    get_current_user
+)
 import uuid
 from pydantic import BaseModel, EmailStr, constr
 
@@ -13,7 +18,7 @@ router = APIRouter()
 # Add a model for request validation
 class RegisterRequest(BaseModel):
     email: EmailStr
-    password: constr(min_length=8)
+    password: Annotated[str, constr(min_length=8)]
     first_name: str | None = None
     last_name: str | None = None
 
@@ -84,4 +89,26 @@ async def login(
         )
     
     access_token = create_access_token(data={"sub": user.id})
-    return {"access_token": access_token, "token_type": "bearer"} 
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "isMember": user.is_member,
+            "analysisTokens": user.analysis_tokens
+        }
+    }
+
+@router.get("/me")
+async def get_current_user(
+    current_user: User = Depends(get_current_user)
+):
+    return {
+        "user": {
+            "id": current_user.id,
+            "email": current_user.email,
+            "isMember": current_user.is_member,
+            "analysisTokens": current_user.analysis_tokens
+        }
+    } 

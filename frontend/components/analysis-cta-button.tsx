@@ -2,7 +2,7 @@
 
 import { Button } from "./ui/button"
 import { useRouter } from "next/navigation"
-import { useAuth } from "../lib/auth"
+import { useAuth } from "@/lib/auth-context"
 import { createCheckoutSession } from "../lib/stripe"
 import { useState } from "react"
 

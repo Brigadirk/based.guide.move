@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.auth.routes import router as auth_router
+from backend.products.routes import router as products_router
 from backend.database import engine
 from backend.models import Base
 
@@ -9,14 +10,16 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Based Guide API")
 
-# Add CORS middleware
+# Update CORS middleware with more specific configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Your frontend URL
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
-# Include authentication routes
-app.include_router(auth_router, prefix="/auth", tags=["authentication"]) 
+# Include routers
+app.include_router(auth_router, prefix="/auth", tags=["authentication"])
+app.include_router(products_router, prefix="/products", tags=["products"]) 

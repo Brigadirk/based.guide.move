@@ -4,13 +4,15 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Compass, User, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useAuth } from "@/lib/auth"
+import { useAuth } from "@/lib/auth-context"
 
 export function BottomNav() {
   const pathname = usePathname()
-  const { user, isLoading } = useAuth()
+  const { isAuthenticated } = useAuth()
 
-  if (isLoading || !user) return null
+  if (!isAuthenticated) {
+    return null
+  }
 
   return (
     <div className="fixed bottom-0 left-0 right-0 border-t bg-background py-2 px-8 md:px-16">
