@@ -1,5 +1,36 @@
 {
     "country": "Portugal",
+    "based_score": 78,
+    "visa_accessibility": 85,
+    "population": 10352042,
+    "gdp_per_capita": 24540,
+    "major_cities": [
+        {
+            "name": "Lisbon",
+            "population": 544851,
+            "based_score": 82
+        },
+        {
+            "name": "Porto",
+            "population": 237591,
+            "based_score": 80
+        },
+        {
+            "name": "Vila Nova de Gaia",
+            "population": 186502,
+            "based_score": 75
+        },
+        {
+            "name": "Amadora",
+            "population": 184106,
+            "based_score": 70
+        },
+        {
+            "name": "Braga",
+            "population": 136885,
+            "based_score": 73
+        }
+    ],
     "overview": {
         "tax_residency_rules": "Determined by a habitual residence test considering factors such as permanent home, family ties, and economic interests.",
         "tax_year": "Calendar year (January 1 - December 31).",

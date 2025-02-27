@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <Nav />
-          <main className="container mx-auto px-4 py-8 pb-24">
+          <main className="pb-24">
             {children}
           </main>
           <BottomNav />

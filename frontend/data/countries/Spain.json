@@ -1,5 +1,36 @@
 {
     "country": "Spain",
+    "based_score": 72,
+    "visa_accessibility": 75,
+    "population": 47615034,
+    "gdp_per_capita": 30115,
+    "major_cities": [
+        {
+            "name": "Madrid",
+            "population": 3223334,
+            "based_score": 75
+        },
+        {
+            "name": "Barcelona",
+            "population": 1620343,
+            "based_score": 78
+        },
+        {
+            "name": "Valencia",
+            "population": 791413,
+            "based_score": 73
+        },
+        {
+            "name": "Seville",
+            "population": 688592,
+            "based_score": 70
+        },
+        {
+            "name": "Malaga",
+            "population": 574654,
+            "based_score": 72
+        }
+    ],
     "overview": {
         "tax_residency_rules": "Determined by 183-day rule or economic interests.",
         "tax_year": "Calendar year (January 1 - December 31).",

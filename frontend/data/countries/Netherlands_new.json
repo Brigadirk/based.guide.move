@@ -1,5 +1,36 @@
 {
     "country": "Netherlands",
+    "based_score": 75,
+    "visa_accessibility": 70,
+    "population": 17440000,
+    "gdp_per_capita": 57620,
+    "major_cities": [
+        {
+            "name": "Amsterdam",
+            "population": 872757,
+            "based_score": 78
+        },
+        {
+            "name": "Rotterdam",
+            "population": 651446,
+            "based_score": 75
+        },
+        {
+            "name": "The Hague",
+            "population": 548320,
+            "based_score": 73
+        },
+        {
+            "name": "Utrecht",
+            "population": 359355,
+            "based_score": 76
+        },
+        {
+            "name": "Eindhoven",
+            "population": 234394,
+            "based_score": 74
+        }
+    ],
     "overview": {
       "tax_residency_rules": "For companies: Dutch resident company is subject to CIT on worldwide income. Non-resident entities have limited tax liability on Dutch source income. For individuals: Based on durable ties to the Netherlands, including family, economic, and social connections, or having a permanent home.",
       "tax_year": "Generally calendar year (January 1 - December 31). Corporate taxpayers may adopt a different financial year.",

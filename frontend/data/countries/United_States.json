@@ -1,5 +1,36 @@
 {
     "country": "United States",
+    "based_score": 70,
+    "visa_accessibility": 65,
+    "population": 331900000,
+    "gdp_per_capita": 75180,
+    "major_cities": [
+        {
+            "name": "New York City",
+            "population": 8804190,
+            "based_score": 65
+        },
+        {
+            "name": "Los Angeles",
+            "population": 3898747,
+            "based_score": 60
+        },
+        {
+            "name": "Chicago",
+            "population": 2746388,
+            "based_score": 62
+        },
+        {
+            "name": "Houston",
+            "population": 2313000,
+            "based_score": 68
+        },
+        {
+            "name": "Miami",
+            "population": 442241,
+            "based_score": 72
+        }
+    ],
     "overview": {
         "tax_residency_rules": "Determined by substantial presence test (183 days) or domicile.",
         "tax_year": "Calendar year (January 1 - December 31).",

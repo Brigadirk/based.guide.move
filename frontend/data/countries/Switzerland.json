@@ -1,5 +1,82 @@
 {
     "country": "Switzerland",
+    "based_score": 85,
+    "visa_accessibility": 60,
+    "population": 8703000,
+    "gdp_per_capita": 93720,
+    "major_cities": [
+        {
+            "name": "Zurich",
+            "population": 434008,
+            "based_score": 80
+        },
+        {
+            "name": "Geneva",
+            "population": 203951,
+            "based_score": 70
+        },
+        {
+            "name": "Basel",
+            "population": 173863,
+            "based_score": 75
+        },
+        {
+            "name": "Lausanne",
+            "population": 139111,
+            "based_score": 72
+        },
+        {
+            "name": "Bern",
+            "population": 133883,
+            "based_score": 75
+        }
+    ],
+    "visa_options": [
+        {
+            "type": "Work Visa",
+            "visa_accessibility_score": 70
+        },
+        {
+            "type": "Investor Visa",
+            "visa_accessibility_score": 75
+        },
+        {
+            "type": "Spouse Visa",
+            "visa_accessibility_score": 80
+        },
+        {
+            "type": "Property Owner Visa",
+            "visa_accessibility_score": 50
+        },
+        {
+            "type": "Digital Nomad Visa",
+            "visa_accessibility_score": 0
+        }
+    ],
+    "primary_administrative_division_term": "Canton",
+    "primary_administrative_divisions_can_set_taxes": true,
+    "primary_administrative_divisions": [
+        {
+            "name": "Zurich",
+            "based_score": 80
+        },
+        {
+            "name": "Geneva",
+            "based_score": 70
+        },
+        {
+            "name": "Zug",
+            "based_score": 95
+        },
+        {
+            "name": "Lucerne",
+            "based_score": 85
+        },
+        {
+            "name": "Bern",
+            "based_score": 75
+        }
+    ],
     "overview": {
         "tax_residency_rules": "Determined by domicile or 183-day rule.",
         "tax_year": "Calendar year (January 1 - December 31).",
@@ -24,7 +101,7 @@
                     "rate": "20.92%"
                 },
                 {
-                    "bracket": "77,001 - 127,000 CHF\n",
+                    "bracket": "77,001 - 127,000 CHF",
                     "rate": "26.63%"
                 },
                 {

@@ -1,7 +1,20 @@
-import { getCountry } from "@/lib/api"
+import { getCountry } from "@/lib/server-api"
 import { notFound } from "next/navigation"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AnalysisCtaButton } from "@/components/analysis-cta-button"
+import { CountryScores } from "@/components/country-scores"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Separator } from "@/components/ui/separator"
+import { formatNumber } from "@/lib/utils"
+import Image from "next/image"
+import { CountryDetails } from "@/types/api"
+
+const countryImageMap: Record<string, string> = {
+  'sv': 'el-salvador',
+  'nl': 'netherlands',
+  'pt': 'portugal',
+  'ch': 'switzerland'
+}
 
 interface CountryPageProps {
   params: {
@@ -10,7 +23,8 @@ interface CountryPageProps {
 }
 
 export default async function CountryPage({ params }: CountryPageProps) {
-  const country = await getCountry(params.id)
+  const { id } = params
+  const country = await getCountry(id) as CountryDetails
   // Mock hasAnalysis - in real app this would come from user session/API
   const hasAnalysis = false
   
@@ -18,63 +32,324 @@ export default async function CountryPage({ params }: CountryPageProps) {
     notFound()
   }
 
+  const imageName = countryImageMap[id] || id
+
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-col md:flex-row gap-6 items-start">
-          <h1 className="text-4xl font-bold flex-1">{country.name}</h1>
-          {!hasAnalysis && (
-            <Card className="w-full md:w-auto md:min-w-[300px] p-6">
-              <h3 className="font-semibold mb-2">Want a personalized plan?</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Get a detailed analysis based on your situation
-              </p>
-              <AnalysisCtaButton fullWidth />
-            </Card>
-          )}
-        </div>
-        
-        <div className="grid gap-8">
-          <section className="bg-card p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4">Tax Overview</h2>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="p-4 bg-muted rounded">
-                <div className="text-sm text-muted-foreground">Personal Income Tax</div>
-                <div className="font-medium">{country.taxHighlights.personalIncomeTax}</div>
-              </div>
-              <div className="p-4 bg-muted rounded">
-                <div className="text-sm text-muted-foreground">Corporate Tax</div>
-                <div className="font-medium">{country.taxHighlights.corporateTax}</div>
-              </div>
-              <div className="p-4 bg-muted rounded">
-                <div className="text-sm text-muted-foreground">VAT Rate</div>
-                <div className="font-medium">{country.taxHighlights.vatRate}</div>
-              </div>
-              <div className="p-4 bg-muted rounded">
-                <div className="text-sm text-muted-foreground">Tax Score</div>
-                <div className="font-medium">{country.taxScore}/100</div>
-              </div>
-            </div>
-            <div className="prose max-w-none">
-              <p>{country.taxDescription}</p>
-            </div>
-          </section>
+    <div>
+      {/* Hero Section */}
+      <div className="relative w-full h-[400px] rounded-b-lg overflow-hidden">
+        <Image
+          src={`/data/images/countries/${imageName}.png`}
+          alt={`${country.name} landscape`}
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
 
-          <section className="bg-card p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4">Living Costs</h2>
-            <div className="prose max-w-none">
-              <p className="text-xl mb-4">Average monthly living cost: ${country.livingCost}</p>
-              <p>{country.livingCostDescription}</p>
-            </div>
-          </section>
-
-          <section className="bg-card p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4">Quality of Life</h2>
-            <div className="prose max-w-none">
-              <p>{country.qualityOfLifeDescription}</p>
-            </div>
-          </section>
+      {/* Header Section */}
+      <div className="sticky top-14 z-50 w-full bg-background">
+        <div className="md:container">
+          <Card className="rounded-none md:rounded-lg border-b-0">
+            <CardContent className="py-4 px-4 md:px-6">
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-3">
+                    <Image
+                      src={`https://flagcdn.com/${id}.svg`}
+                      alt={`${country.name} flag`}
+                      width={36}
+                      height={24}
+                      className="rounded"
+                    />
+                    <h1 className="text-2xl font-bold">{country.name}</h1>
+                  </div>
+                  <div className="flex gap-6 border-l pl-6">
+                    <div>
+                      <div className="text-sm text-muted-foreground">Based</div>
+                      <div className="text-xl font-bold">{country.taxScore}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">Visa</div>
+                      <div className="text-xl font-bold">{country.visaAccessibility}</div>
+                    </div>
+                  </div>
+                </div>
+                
+                {!hasAnalysis && (
+                  <div className="ml-auto">
+                    <AnalysisCtaButton />
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
+      </div>
+
+      <div className="md:container">
+        <Tabs defaultValue="overview" className="w-full">
+          <div className="sticky top-[calc(14rem-1px)] z-40 bg-background">
+            <div className="bg-card border-b">
+              <div className="px-4 md:px-6">
+                <TabsList className="w-full justify-start inline-flex">
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="taxes">Taxes</TabsTrigger>
+                  <TabsTrigger value="visa">Visa & Immigration</TabsTrigger>
+                  <TabsTrigger value="living">Living</TabsTrigger>
+                  <TabsTrigger value="business">Business</TabsTrigger>
+                </TabsList>
+              </div>
+            </div>
+          </div>
+
+          {/* Tab content */}
+          <div className="px-4 md:px-6 pt-6 space-y-8">
+            {/* Overview Tab */}
+            <TabsContent value="overview" className="mt-0 space-y-8">
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Key Facts</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-sm text-muted-foreground">Population</div>
+                        <div className="font-medium">{formatNumber(country.population)}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-muted-foreground">GDP per capita</div>
+                        <div className="font-medium">${formatNumber(country.gdpPerCapita)}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-muted-foreground">Currency</div>
+                        <div className="font-medium">{country.overview.currency}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-muted-foreground">Tax Authority</div>
+                        <div className="font-medium">{country.overview.tax_authority}</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Major Cities</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {country.majorCities.map((city) => (
+                        <div key={city.name} className="flex justify-between items-center">
+                          <div>
+                            <div className="font-medium">{city.name}</div>
+                            <div className="text-sm text-muted-foreground">
+                              Pop. {formatNumber(city.population)}
+                            </div>
+                          </div>
+                          <div className="text-sm">
+                            Based Score: {city.based_score}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Quality of Life</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">{country.qualityOfLifeDescription}</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Taxes Tab */}
+            <TabsContent value="taxes" className="space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Tax Overview</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-4 bg-muted rounded-lg">
+                      <div className="text-sm text-muted-foreground">Personal Income Tax</div>
+                      <div className="font-medium">{country.taxHighlights.personalIncomeTax}</div>
+                    </div>
+                    <div className="p-4 bg-muted rounded-lg">
+                      <div className="text-sm text-muted-foreground">Corporate Tax</div>
+                      <div className="font-medium">{country.taxHighlights.corporateTax}</div>
+                    </div>
+                    <div className="p-4 bg-muted rounded-lg">
+                      <div className="text-sm text-muted-foreground">VAT Rate</div>
+                      <div className="font-medium">{country.taxHighlights.vatRate}</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2">Tax Residency Rules</h4>
+                    <p className="text-muted-foreground">{country.overview.tax_residency_rules}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2">Tax Year</h4>
+                    <p className="text-muted-foreground">{country.overview.tax_year}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2">Personal Income Tax Brackets</h4>
+                    <div className="space-y-2">
+                      {country.tax_rates.personal_income_tax.rate.map((bracket, index) => (
+                        <div key={index} className="flex justify-between p-2 bg-muted rounded">
+                          <span>{bracket.bracket}</span>
+                          <span className="font-medium">{bracket.rate}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Corporate Taxation</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <div className="text-sm text-muted-foreground">Corporate Tax Rate</div>
+                      <div className="font-medium">{country.tax_rates.corporate_tax.rate}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">Small Business Rate</div>
+                      <div className="font-medium">{country.tax_rates.corporate_tax.small_business_rate}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">Foreign Income Taxed</div>
+                      <div className="font-medium">{country.tax_rates.corporate_tax.foreign_income_taxed ? "Yes" : "No"}</div>
+                    </div>
+                    <Separator />
+                    <div>
+                      <div className="text-sm font-medium mb-2">Withholding Taxes</div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-sm text-muted-foreground">Dividends</span>
+                          <span>{country.tax_rates.corporate_tax.withholding_taxes.dividends}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-muted-foreground">Interest</span>
+                          <span>{country.tax_rates.corporate_tax.withholding_taxes.interest}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-muted-foreground">Royalties</span>
+                          <span>{country.tax_rates.corporate_tax.withholding_taxes.royalties}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>VAT & Other Taxes</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <div className="text-sm text-muted-foreground">Standard VAT Rate</div>
+                      <div className="font-medium">{country.tax_rates.vat_gst.rate}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">Reduced VAT Rate</div>
+                      <div className="font-medium">{country.tax_rates.vat_gst.reduced_rate}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">VAT Exemptions</div>
+                      <div className="font-medium">{country.tax_rates.vat_gst.exemptions}</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Visa Tab */}
+            <TabsContent value="visa" className="space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Digital Nomad Visa</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {country.digital_nomad_visa ? (
+                    <>
+                      <div>
+                        <div className="text-sm text-muted-foreground">Available</div>
+                        <div className="font-medium">{country.digital_nomad_visa.available ? "Yes" : "No"}</div>
+                      </div>
+                      {country.digital_nomad_visa.available && (
+                        <>
+                          <div>
+                            <div className="text-sm text-muted-foreground">Requirements</div>
+                            <div className="font-medium">{country.digital_nomad_visa.requirements}</div>
+                          </div>
+                          <div>
+                            <div className="text-sm text-muted-foreground">Tax Benefits</div>
+                            <div className="font-medium">{country.digital_nomad_visa.tax_benefits}</div>
+                          </div>
+                          <div>
+                            <div className="text-sm text-muted-foreground">Duration</div>
+                            <div className="font-medium">{country.digital_nomad_visa.duration}</div>
+                          </div>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-muted-foreground">Digital nomad visa information not available.</p>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Living Tab */}
+            <TabsContent value="living" className="space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Cost of Living</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="text-sm text-muted-foreground">Average Monthly Cost</div>
+                      <div className="font-medium">${formatNumber(country.livingCost)}</div>
+                    </div>
+                    <p className="text-muted-foreground">{country.livingCostDescription}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Business Tab */}
+            <TabsContent value="business" className="space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Business Environment</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <div className="text-sm text-muted-foreground">Currency Exchange Rules</div>
+                    <div className="font-medium">{country.overview.currency_exchange_rules}</div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-muted-foreground">Tax Filing Frequency</div>
+                    <div className="font-medium">{country.overview.tax_filing_frequency}</div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </div>
+        </Tabs>
       </div>
     </div>
   )

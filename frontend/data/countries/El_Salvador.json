@@ -1,5 +1,36 @@
 {
     "country": "El Salvador",
+    "based_score": 82,
+    "visa_accessibility": 68,
+    "population": 6486201,
+    "gdp_per_capita": 4187,
+    "major_cities": [
+        {
+            "name": "San Salvador",
+            "population": 238244,
+            "based_score": 80
+        },
+        {
+            "name": "Santa Ana",
+            "population": 176661,
+            "based_score": 75
+        },
+        {
+            "name": "Soyapango",
+            "population": 171768,
+            "based_score": 70
+        },
+        {
+            "name": "San Miguel",
+            "population": 161880,
+            "based_score": 72
+        },
+        {
+            "name": "Mejicanos",
+            "population": 155335,
+            "based_score": 71
+        }
+    ],
     "overview": {
         "tax_residency_rules": "Determined by physical presence or economic ties.",
         "tax_year": "Calendar year (January 1 - December 31).",
