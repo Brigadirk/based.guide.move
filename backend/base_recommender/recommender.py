@@ -129,11 +129,10 @@ def setup_rag_system(countries: Dict[str, CountryTaxData], embeddings_file: Path
     )
     return qa
 
-# Step 7: Main Function to Run the System
-def main():
-    # List available models
-    # list_available_models()
+import argparse  # Add this import
 
+# Step 7: Main Function to Run the System
+def main(query: Optional[str] = None):
     # Path to your tax data folder
     base_folder = Path("tax_data")
 
@@ -146,10 +145,21 @@ def main():
     # Set up the RAG system
     qa = setup_rag_system(countries, embeddings_file)
 
+    # If no query is provided, check for command-line input
+    if query is None:
+        parser = argparse.ArgumentParser(description="Query the RAG system for tax information.")
+        parser.add_argument("query", type=str, help="Your query about tax information.")
+        args = parser.parse_args()
+        query = args.query
+
     # Query the system
-    query = "What is the Asset Regularization Regime in Argentina and which law is that? When was your info last updated on that?"
-    response = qa.invoke({"query": query})  # Use `invoke` instead of `run`
-    print("Response:", response)
+    if query:
+        response = qa.invoke({"query": query})  # Use `invoke` instead of `run`
+        print("Response:", response)
+        return response  # Return the response for use in Streamlit
+    else:
+        print("No query provided.")
+        return None
 
 if __name__ == "__main__":
     main()
