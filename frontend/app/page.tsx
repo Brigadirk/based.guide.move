@@ -23,13 +23,13 @@ export default async function Home() {
 
       <div className="max-w-3xl px-4 mt-10">
         <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl">
-          Find Your Tax Base
+          Find Your New Home
         </h1>
         <p className="mt-4 text-lg text-muted-foreground max-w-[400px] mx-auto">
-          Discover your ideal tax-friendly destination.
+        See if they'll let you in and at what cost.
         </p>
         <div className="mt-6">
-          <Link href="/quiz">
+          <Link href="/products">
             <Button size="lg" className="text-lg px-8">
               Get Your Guide
             </Button>
