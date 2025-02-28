@@ -1,0 +1,9 @@
+{
+    "quickAnalysis": {
+        "mainNationality": "Switzerland",
+        "incomeType": "Self-Employed",
+        "incomeAmount": 100000,
+        "holdingsAmount": 100000,
+        "expectedSaleAmount": 20000
+    }
+}

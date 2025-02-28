@@ -3,12 +3,64 @@ import datetime
 import json
 from countries import ALL_COUNTRIES
 from PIL import Image
+from prompt import prompt_tax_rundown
+import recommender
+
+def return_base_analysis(data):
+    query = prompt_tax_rundown(data)
+    response = recommender.main(query)
+    return response
 
 # Function to save data to a JSON file
-def save_to_json(data, filename="user_data.json"):
+def save_to_json(data, filename=None):
+    if filename is None:
+        filename = f"temp_profiles/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"  # Generate filename with datetime
     with open(filename, "w") as f:
         json.dump(data, f, indent=4)
-    st.success(f"Data saved to {filename}!")
+    st.success(f"Data saved to {filename} as {filename}!")
+
+def quick_and_dirty_analysis():
+    st.subheader("Quick and Dirty Analysis")
+    st.write("Provide the following information for a quick analysis:")
+
+    desired_country = st.selectbox(
+        "Desired country", ALL_COUNTRIES, key="desired_country")
+    main_nationality = st.selectbox(
+        "Main nationality", ALL_COUNTRIES, key="quick_nationality")
+    income_type = st.selectbox(
+        "Income type", ["Self-Employed", "Employer"], key="quick_income_type")
+    income_amount = st.number_input(
+        "Annual income in USD", min_value=0, key="quick_income_amount")
+    holdings_amount = st.number_input(
+        "Total holdings in USD", min_value=0, key="quick_holdings_amount")
+    expected_sale_amount = st.number_input(
+        "Expected net capital gains sale (USD above cost basis)",
+        min_value=0, key="quick_expected_sale_amount")
+
+    if st.button("Submit Quick Analysis"):
+        data = {
+            "quickAnalysis": {
+                "desiredCountry": desired_country,
+                "mainNationality": main_nationality,
+                "incomeType": income_type,
+                "incomeAmount": income_amount,
+                "holdingsAmount": holdings_amount,
+                "expectedSaleAmount": expected_sale_amount
+            }
+        }
+
+        # Get the result from return_base_analysis
+        result = return_base_analysis(data)
+        
+        # Display the result
+        if result and "result" in result:
+            st.subheader("Analysis Result")
+            st.write(result["result"])  # Display the result directly
+        else:
+            st.warning("No result returned from the analysis.")
+        
+        st.success("Saved and returned")
+
 
 def collect_personal_info(prefix=""):
     st.divider()
@@ -331,89 +383,88 @@ def main():
     eligibility for visas. We also need to sort out whether your significant \
     other may join you on your move, and what that means to your bill.")
 
-    personal_info = collect_personal_info()
-    income_sources = collect_income_sources()
-    assets = collect_assets()
-    liabilities = collect_liabilities()
-    st.divider()
-    residency_intentions = collect_residency_intentions()
-    st.divider()
+    # Option for quick and dirty analysis
+    if st.checkbox("Perform a quick and dirty analysis"):
+        quick_and_dirty_analysis()
+    else:
+        # Collect detailed information
+        personal_info = collect_personal_info()
+        income_sources = collect_income_sources()
+        assets = collect_assets()
+        liabilities = collect_liabilities()
+        st.divider()
+        residency_intentions = collect_residency_intentions()
+        st.divider()
 
-    # Calculate annual income from income sources
-    # annual_income, currency = calculate_annual_income(income_sources)
-    # if annual_income is not None:
-    #     st.write(f"Calculated annual income: {annual_income} {currency if currency else 'Currency not specified'}")
-    # st.divider()
+        st.header("Partner Information")
+        has_partner = st.checkbox("Do you have a partner?")
+        partner_personal_info = None
+        partner_income_sources = []
+        partner_assets = {}
+        partner_liabilities = {}
+        partner_residency_intentions = None # Initialize outside the if block
 
-    st.header("Partner Information")
-    has_partner = st.checkbox("Do you have a partner?")
-    partner_personal_info = None
-    partner_income_sources = []
-    partner_assets = {}
-    partner_liabilities = {}
-    partner_residency_intentions = None # Initialize outside the if block
+        if has_partner:
+            partner_personal_info = collect_personal_info("Partner")
+            partner_income_sources = collect_income_sources("Partner")
+            partner_assets = collect_assets("Partner")
+            partner_liabilities = collect_liabilities("Partner")
+            partner_residency_intentions = collect_residency_intentions("Partner")
 
-    if has_partner:
-        partner_personal_info = collect_personal_info("Partner")
-        partner_income_sources = collect_income_sources("Partner")
-        partner_assets = collect_assets("Partner")
-        partner_liabilities = collect_liabilities("Partner")
-        partner_residency_intentions = collect_residency_intentions("Partner")
+        st.header("Dependents information")
+        dependents = []
+        add_dependent = st.checkbox("Add dependent")
+        dependent_counter = 0
+        while add_dependent:
+            dependent_name = st.text_input(f"Dependent name", key=f"dependent_name_{dependent_counter}")
+            dependent_relationship = st.text_input("Dependent relationship", key=f"dependent_relationship_{dependent_counter}")
+            dependent_age = st.number_input("Dependent age", min_value=0, max_value=120, key=f"dependent_age_{dependent_counter}")
+            dependents.append({
+                "name": dependent_name,
+                "relationship": dependent_relationship,
+                "age": dependent_age
+            })
+            dependent_counter += 1
+            add_dependent = st.checkbox("Add another dependent?", key=f"add_another_dependent_{dependent_counter}")
 
-    st.header("Dependents information")
-    dependents = []
-    add_dependent = st.checkbox("Add dependent")
-    dependent_counter = 0
-    while add_dependent:
-        dependent_name = st.text_input(f"Dependent name", key=f"dependent_name_{dependent_counter}")
-        dependent_relationship = st.text_input("Dependent aelationship", key=f"dependent_relationship_{dependent_counter}")
-        dependent_age = st.number_input("Dependent age", min_value=0, max_value=120, key=f"dependent_age_{dependent_counter}")
-        dependents.append({
-            "name": dependent_name,
-            "relationship": dependent_relationship,
-            "age": dependent_age
-        })
-        dependent_counter += 1
-        add_dependent = st.checkbox("Add another dependent?", key=f"add_another_dependent_{dependent_counter}")
+        special_circumstances = st.text_area("Special circumstances (optional)")
 
-    special_circumstances = st.text_area("Special circumstances (optional)")
-
-    # Save data to JSON
-    st.divider()
-    if st.button("Save data"):
-        data = {
-            "individual": {
-                "personalInformation": personal_info,
-                "financialInformation": {
-                    "annualIncome": {
-                        "amount": annual_income,
-                        "currency": currency
+        # Save data to JSON
+        st.divider()
+        if st.button("Save data"):
+            data = {
+                "individual": {
+                    "personalInformation": personal_info,
+                    "financialInformation": {
+                        "annualIncome": {
+                            "amount": calculate_annual_income(income_sources)[0],
+                            "currency": calculate_annual_income(income_sources)[1]
+                        },
+                        "incomeSources": income_sources,
+                        "assets": assets,
+                        "liabilities": liabilities
                     },
-                    "incomeSources": income_sources,
-                    "assets": assets,
-                    "liabilities": liabilities
+                    "residencyIntentions": residency_intentions
                 },
-                "residencyIntentions": residency_intentions
-            },
-            "partner": {
-                "personalInformation": partner_personal_info,
-                "financialInformation": {
-                    "annualIncome": {
-                        "amount": calculate_annual_income(partner_income_sources)[0],
-                        "currency": calculate_annual_income(partner_income_sources)[1]
+                "partner": {
+                    "personalInformation": partner_personal_info,
+                    "financialInformation": {
+                        "annualIncome": {
+                            "amount": calculate_annual_income(partner_income_sources)[0],
+                            "currency": calculate_annual_income(partner_income_sources)[1]
+                        },
+                        "incomeSources": partner_income_sources,
+                        "assets": partner_assets,
+                        "liabilities": partner_liabilities
                     },
-                    "incomeSources": partner_income_sources,
-                    "assets": partner_assets,
-                    "liabilities": partner_liabilities
-                },
-                "residencyIntentions": partner_residency_intentions
-            } if has_partner else None,
-            "additionalInformation": {
-                "dependents": dependents,
-                "specialCircumstances": special_circumstances
+                    "residencyIntentions": partner_residency_intentions
+                } if has_partner else None,
+                "additionalInformation": {
+                    "dependents": dependents,
+                    "specialCircumstances": special_circumstances
+                }
             }
-        }
-        save_to_json(data)
+            save_to_json(data)
 
 # Run the app
 if __name__ == "__main__":
