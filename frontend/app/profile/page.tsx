@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { ProfileProgressBar } from "@/components/profile-progress"
+import { ProfileAlertBanner } from "@/components/profile-alert-banner"
 import Link from "next/link"
 import { Profile, ProfileProgress } from "@/types/profile"
 import { useRouter } from "next/navigation"
@@ -11,28 +12,38 @@ import { useEffect, useState } from "react"
 
 // Mock profile data - replace with real data later
 const mockProfile: Profile = {
-  email: "",
-  income: null,
-  occupation: "",
-  currentCountry: "",
-  interestedCountries: [],
-  taxPreferences: {
-    maxTaxRate: null,
-    corporateTaxImportant: false,
-    vatImportant: false
+  personalInformation: {
+    dateOfBirth: "",
+    nationalities: [],
+    maritalStatus: "Single",
+    currentResidency: {
+      country: "",
+      status: "Citizen"
+    }
   },
-  lifestyle: {
-    remoteWork: false,
-    costOfLiving: null,
-    climatePreference: null
-  }
+  financialInformation: {
+    incomeSources: [],
+    assets: [],
+    liabilities: []
+  },
+  residencyIntentions: {
+    moveType: "Digital Nomad",
+    intendedCountry: "",
+    durationOfStay: "1 year",
+    preferredMaximumStayRequirement: "3 months",
+    notes: ""
+  },
+  dependents: []
 }
 
 function calculateProgress(profile: Profile): ProfileProgress {
   const sections = {
-    basic: Boolean(profile.income && profile.occupation && profile.currentCountry),
-    tax: Boolean(profile.taxPreferences.maxTaxRate),
-    lifestyle: Boolean(profile.lifestyle.costOfLiving && profile.lifestyle.climatePreference)
+    basic: Boolean(
+      profile.personalInformation?.currentResidency?.country &&
+      profile.financialInformation?.incomeSources?.length
+    ),
+    tax: Boolean(profile.financialInformation?.incomeSources?.length),
+    lifestyle: Boolean(profile.residencyIntentions?.intendedCountry)
   }
 
   const completed = Object.values(sections).filter(Boolean).length
@@ -69,74 +80,63 @@ export default function ProfilePage() {
   const progress = calculateProgress(profile)
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Profile</CardTitle>
-          <Link href="/profile/edit">
-            <Button>Edit Profile</Button>
-          </Link>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <ProfileProgressBar progress={progress} />
-          
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-medium">Basic Information</h3>
-              <div className="grid gap-2 mt-2">
-                <div className="flex justify-between py-1 border-b">
-                  <span className="text-muted-foreground">Email</span>
-                  <span>{profile.email}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b">
-                  <span className="text-muted-foreground">Income</span>
-                  <span>{profile.income ? `$${profile.income.toLocaleString()}/year` : "Not set"}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b">
-                  <span className="text-muted-foreground">Occupation</span>
-                  <span>{profile.occupation || "Not set"}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b">
-                  <span className="text-muted-foreground">Current Country</span>
-                  <span>{profile.currentCountry || "Not set"}</span>
+    <>
+      <ProfileAlertBanner />
+      <div className="max-w-2xl mx-auto space-y-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Profile</CardTitle>
+            <Link href="/profile/edit">
+              <Button>Edit Profile</Button>
+            </Link>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <ProfileProgressBar progress={progress} />
+            
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-medium">Basic Information</h3>
+                <div className="grid gap-2 mt-2">
+                  <div className="flex justify-between py-1 border-b">
+                    <span className="text-muted-foreground">Email</span>
+                    <span>{profile.email}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b">
+                    <span className="text-muted-foreground">Income</span>
+                    <span>{profile.financialInformation?.incomeSources?.[0]?.amount ? `$${profile.financialInformation.incomeSources[0].amount.toLocaleString()}/year` : "Not set"}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b">
+                    <span className="text-muted-foreground">Occupation</span>
+                    <span>{profile.financialInformation?.incomeSources?.[0]?.type || "Not set"}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b">
+                    <span className="text-muted-foreground">Current Country</span>
+                    <span>{profile.personalInformation?.currentResidency?.country || "Not set"}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div>
-              <h3 className="font-medium">Tax Preferences</h3>
-              <div className="grid gap-2 mt-2">
-                <div className="flex justify-between py-1 border-b">
-                  <span className="text-muted-foreground">Maximum Tax Rate</span>
-                  <span>{profile.taxPreferences.maxTaxRate ? `${profile.taxPreferences.maxTaxRate}%` : "Not set"}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b">
-                  <span className="text-muted-foreground">Corporate Tax Important</span>
-                  <span>{profile.taxPreferences.corporateTaxImportant ? "Yes" : "No"}</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-medium">Lifestyle Preferences</h3>
-              <div className="grid gap-2 mt-2">
-                <div className="flex justify-between py-1 border-b">
-                  <span className="text-muted-foreground">Remote Work</span>
-                  <span>{profile.lifestyle.remoteWork ? "Yes" : "No"}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b">
-                  <span className="text-muted-foreground">Cost of Living</span>
-                  <span className="capitalize">{profile.lifestyle.costOfLiving || "Not set"}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b">
-                  <span className="text-muted-foreground">Climate Preference</span>
-                  <span className="capitalize">{profile.lifestyle.climatePreference || "Not set"}</span>
+              <div>
+                <h3 className="font-medium">Lifestyle Preferences</h3>
+                <div className="grid gap-2 mt-2">
+                  <div className="flex justify-between py-1 border-b">
+                    <span className="text-muted-foreground">Move Type</span>
+                    <span>{profile.residencyIntentions?.moveType || "Not set"}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b">
+                    <span className="text-muted-foreground">Intended Country</span>
+                    <span className="capitalize">{profile.residencyIntentions?.intendedCountry || "Not set"}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b">
+                    <span className="text-muted-foreground">Duration of Stay</span>
+                    <span className="capitalize">{profile.residencyIntentions?.durationOfStay || "Not set"}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   )
 } 

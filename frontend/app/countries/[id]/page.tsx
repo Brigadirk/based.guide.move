@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { formatNumber, getCountryFlagUrl } from "@/lib/utils"
 import Image from "next/image"
 import { CountryDetails } from "@/types/api"
+import { ProfileAlertBanner } from "@/components/profile-alert-banner"
 
 const countryImageMap: Record<string, string> = {
   'sv': 'el-salvador',
@@ -36,6 +37,7 @@ export default async function CountryPage({ params }: CountryPageProps) {
 
   return (
     <div className="relative w-full">
+      <ProfileAlertBanner />
       {/* Hero Section */}
       <div className="relative w-full h-[400px] rounded-b-lg overflow-hidden z-10">
         <Image

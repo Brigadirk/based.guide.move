@@ -3,6 +3,7 @@
 import { getCountries } from "@/lib/server-api"
 import { CountryCard } from "@/components/country-card"
 import { ExploreFilters } from "@/components/explore-filters"
+import { ProfileAlertBanner } from "@/components/profile-alert-banner"
 import { useState, useEffect } from "react"
 
 export default function ExplorePage() {
@@ -86,6 +87,7 @@ export default function ExplorePage() {
 
   return (
     <div>
+      <ProfileAlertBanner />
       <ExploreFilters onFiltersChange={handleFiltersChange} />
       
       <div className="container max-w-6xl mx-auto px-4 py-6">

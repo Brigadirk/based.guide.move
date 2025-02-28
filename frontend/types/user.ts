@@ -1,3 +1,5 @@
+import { Profile } from './profile'
+
 export interface CountryAnalysis {
   country_id: string;
   personal_tax_rate: number | null;
@@ -12,7 +14,8 @@ export interface CountryAnalysis {
 export interface User {
   id: string;
   email: string;
-  isMember: boolean;
-  analysisTokens: number;
-  analyzedCountries: CountryAnalysis[];
+  isMember?: boolean;
+  analysisTokens?: number;
+  analyzedCountries?: CountryAnalysis[];
+  profile?: Profile;
 } 

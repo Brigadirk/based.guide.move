@@ -5,94 +5,98 @@ import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { ProfileProgressBar } from "@/components/profile-progress"
+import { toast } from "sonner"
+import { Steps } from "./steps"
+import { PersonalInfoForm } from "./steps/personal-info-form"
+import { FinancialInfoForm } from "./steps/financial-info-form"
+import { ResidencyIntentionsForm } from "./steps/residency-intentions-form"
+import { DependentsForm } from "./steps/dependents-form"
+import { PartnerInfoForm } from "./steps/partner-info-form"
 import { Profile } from "@/types/profile"
-import { BasicInfoForm } from "./basic-info-form"
-import { TaxPreferencesForm } from "./tax-preferences-form"
-import { LifestyleForm } from "./lifestyle-form"
 
-const steps = ["Basic Info", "Tax Preferences", "Lifestyle"]
+const STEPS = [
+  { id: "personal", title: "Personal", component: PersonalInfoForm },
+  { id: "financial", title: "Financial", component: FinancialInfoForm },
+  { id: "residency", title: "Residency", component: ResidencyIntentionsForm },
+  { id: "dependents", title: "Dependents", component: DependentsForm },
+  { id: "partner", title: "Partner", component: PartnerInfoForm }
+]
+
+const hasMinimumRequiredInfo = (profile: Partial<Profile>) => {
+  return Boolean(
+    profile.personalInformation?.dateOfBirth &&
+    profile.personalInformation?.currentResidency?.country &&
+    (profile.financialInformation?.incomeSources?.length ?? 0) > 0 &&
+    profile.residencyIntentions?.intendedCountry
+  )
+}
 
 export default function EditProfilePage() {
-  const { user } = useAuth()
+  const { user, updateProfile } = useAuth()
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
-  const [profile, setProfile] = useState<Profile>({
-    email: user?.email || "",
-    income: null,
-    occupation: "",
-    currentCountry: "",
-    interestedCountries: [],
-    taxPreferences: {
-      maxTaxRate: null,
-      corporateTaxImportant: false,
-      vatImportant: false
-    },
-    lifestyle: {
-      remoteWork: false,
-      costOfLiving: null,
-      climatePreference: null
-    }
-  })
+  const [profile, setProfile] = useState<Partial<Profile>>(user?.profile || {})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  if (!user) {
-    router.push('/login')
-    return null
-  }
+  const progress = ((currentStep + 1) / STEPS.length) * 100
 
-  const progress = {
-    total: steps.length,
-    completed: currentStep,
-    sections: {
-      basic: currentStep >= 1,
-      tax: currentStep >= 2,
-      lifestyle: currentStep >= 3
-    }
-  }
+  const CurrentStepComponent = STEPS[currentStep].component
 
   const handleNext = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
+    if (currentStep === STEPS.length - 1) {
+      handleSubmit()
+    } else {
+      setCurrentStep(prev => prev + 1)
+      toast.success("Progress saved!")
+    }
   }
 
   const handleBack = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 0))
+    setCurrentStep(prev => prev - 1)
   }
 
-  const handleComplete = () => {
-    // Here you would typically save the profile data
-    console.log('Profile data:', profile)
-    router.push('/profile')
+  const handleSubmit = async () => {
+    setIsSubmitting(true)
+    try {
+      await updateProfile(profile as Profile)
+      toast.success("Profile updated successfully!")
+      
+      if (hasMinimumRequiredInfo(profile)) {
+        toast.success("Pro Bonobo is now ready to provide personalized recommendations!")
+      }
+      
+      router.push('/profile')
+    } catch (error) {
+      toast.error("Failed to update profile")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-8 p-6">
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold">Complete Your Profile</h1>
+        <p className="text-muted-foreground">
+          Help Pro Bonobo provide personalized recommendations.
+        </p>
+      </div>
+
+      <Steps
+        steps={STEPS}
+        currentStep={currentStep}
+        onStepClick={(index) => setCurrentStep(index)}
+      />
+
       <Card className="p-6">
-        <div className="mb-8">
-          <ProfileProgressBar progress={progress} />
-        </div>
+        <CurrentStepComponent
+          data={profile}
+          onUpdate={(updatedData) => {
+            setProfile(prev => ({ ...prev, ...updatedData }))
+          }}
+        />
 
-        <div className="mb-8">
-          {currentStep === 0 && (
-            <BasicInfoForm
-              profile={profile}
-              onUpdate={setProfile}
-            />
-          )}
-          {currentStep === 1 && (
-            <TaxPreferencesForm
-              profile={profile}
-              onUpdate={setProfile}
-            />
-          )}
-          {currentStep === 2 && (
-            <LifestyleForm
-              profile={profile}
-              onUpdate={setProfile}
-            />
-          )}
-        </div>
-
-        <div className="flex justify-between">
+        <div className="flex justify-between mt-6">
           <Button
             variant="outline"
             onClick={handleBack}
@@ -100,15 +104,12 @@ export default function EditProfilePage() {
           >
             Back
           </Button>
-          {currentStep === steps.length - 1 ? (
-            <Button onClick={handleComplete}>
-              Complete
-            </Button>
-          ) : (
-            <Button onClick={handleNext}>
-              Next
-            </Button>
-          )}
+          <Button
+            onClick={handleNext}
+            disabled={isSubmitting}
+          >
+            {currentStep === STEPS.length - 1 ? "Complete" : "Continue"}
+          </Button>
         </div>
       </Card>
     </div>
