@@ -14,7 +14,7 @@ def return_base_analysis(data):
 # Function to save data to a JSON file
 def save_to_json(data, filename=None):
     if filename is None:
-        filename = f"temp_profiles/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"  # Generate filename with datetime
+        filename = f".backend/base_recommender/temp_profiles/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"  # Generate filename with datetime
     with open(filename, "w") as f:
         json.dump(data, f, indent=4)
     st.success(f"Data saved to {filename} as {filename}!")
@@ -375,7 +375,7 @@ def collect_residency_intentions(prefix=""):
 def main():
     st.title("Based Tax Guide")
 
-    image = Image.open("images/ape.png")
+    image = Image.open("./backend/base_recommender/images/ape.png")
     st.image(image, caption="Mr. Pro Bonobo", use_container_width=True)
 
     st.caption("We're going to need information from you to determine what \
