@@ -1,0 +1,9 @@
+{
+    "quickAnalysis": {
+        "mainNationality": "Netherlands",
+        "incomeType": "Employer",
+        "incomeAmount": 100000,
+        "holdingsAmount": 200000,
+        "expectedSaleAmount": 20000
+    }
+}
