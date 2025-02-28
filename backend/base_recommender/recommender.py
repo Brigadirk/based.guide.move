@@ -134,10 +134,10 @@ import argparse  # Add this import
 # Step 7: Main Function to Run the System
 def main(query: Optional[str] = None):
     # Path to your tax data folder
-    base_folder = Path("tax_data")
+    base_folder = Path("./backend/base_recommender/tax_data")
 
     # Path to save/load embeddings
-    embeddings_file = Path("tax_embeddings")
+    embeddings_file = Path("./backend/base_recommender/tax_embeddings")
 
     # Load all countries' data
     countries = load_all_countries(base_folder)
