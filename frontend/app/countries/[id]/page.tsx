@@ -5,7 +5,7 @@ import { AnalysisCtaButton } from "@/components/analysis-cta-button"
 import { CountryScores } from "@/components/country-scores"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
-import { formatNumber } from "@/lib/utils"
+import { formatNumber, getCountryFlagUrl } from "@/lib/utils"
 import Image from "next/image"
 import { CountryDetails } from "@/types/api"
 
@@ -56,13 +56,14 @@ export default async function CountryPage({ params }: CountryPageProps) {
                 <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
                   <div className="flex items-center gap-6">
                     <div className="flex items-center gap-3">
-                      <Image
-                        src={`https://flagcdn.com/${id}.svg`}
-                        alt={`${country.name} flag`}
-                        width={36}
-                        height={24}
-                        className="rounded"
-                      />
+                      <div className="w-9 h-6 relative">
+                        <Image
+                          src={getCountryFlagUrl(id)}
+                          alt={`${country.name} flag`}
+                          fill
+                          className="object-contain rounded"
+                        />
+                      </div>
                       <h1 className="text-2xl font-bold">{country.name}</h1>
                     </div>
                     <div className="flex gap-6 border-l pl-6">

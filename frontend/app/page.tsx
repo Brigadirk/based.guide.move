@@ -3,6 +3,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { CountryCard } from "@/components/country-card"
 import { getCountries } from "@/lib/server-api"
+import { Country } from "@/types/api"
 
 export default async function Home() {
   // Get all countries and take first 3 for featured section
@@ -26,7 +27,7 @@ export default async function Home() {
           Find Your New Home
         </h1>
         <p className="mt-4 text-lg text-muted-foreground max-w-[400px] mx-auto">
-        See if they'll let you in and at what cost.
+          See if they'll let you in and at what cost.
         </p>
         <div className="mt-6">
           <Link href="/products">
@@ -38,11 +39,18 @@ export default async function Home() {
       </div>
 
       <div className="mt-24 w-full px-4">
-        <h2 className="text-2xl font-semibold mb-8">Popular Destinations</h2>
+        <h2 className="text-2xl font-semibold mb-8">Popular Bases</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-          {featuredCountries.map((country) => (
+          {featuredCountries.map((country: Country) => (
             <CountryCard key={country.id} country={country} />
           ))}
+        </div>
+        <div className="mt-12 text-center">
+          <Link href="/explore">
+            <Button variant="outline" size="lg" className="text-lg px-8">
+              Explore All Bases
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

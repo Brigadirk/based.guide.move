@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from typing import Optional, Annotated
+from typing import Optional, Annotated, List
 from backend.database import get_db
-from backend.models import User, Session as UserSession
+from backend.models import User, Session as UserSession, CountryAnalysis
 from backend.auth.utils import (
     verify_password, 
     get_password_hash, 
@@ -12,8 +12,33 @@ from backend.auth.utils import (
 )
 import uuid
 from pydantic import BaseModel, EmailStr, constr
+from datetime import datetime
 
 router = APIRouter()
+
+# Add models for response validation
+class CountryAnalysisResponse(BaseModel):
+    country_id: str
+    personal_tax_rate: Optional[int]
+    corporate_tax_rate: Optional[int]
+    visa_eligibility: Optional[bool]
+    recommended_visa_type: Optional[str]
+    cost_of_living_adjusted: Optional[int]
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class UserResponse(BaseModel):
+    id: str
+    email: str
+    is_member: bool
+    analysis_tokens: int
+    analyzed_countries: List[CountryAnalysisResponse]
+
+    class Config:
+        from_attributes = True
 
 # Add a model for request validation
 class RegisterRequest(BaseModel):
@@ -88,27 +113,36 @@ async def login(
             detail="Incorrect email or password"
         )
     
+    # Get user's analyses
+    analyses = db.query(CountryAnalysis).filter(CountryAnalysis.user_id == user.id).all()
+    
     access_token = create_access_token(data={"sub": user.id})
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": {
-            "id": user.id,
-            "email": user.email,
-            "isMember": user.is_member,
-            "analysisTokens": user.analysis_tokens
-        }
+        "user": UserResponse(
+            id=user.id,
+            email=user.email,
+            is_member=user.is_member,
+            analysis_tokens=user.analysis_tokens,
+            analyzed_countries=analyses
+        )
     }
 
 @router.get("/me")
 async def get_current_user(
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
+    # Get user's analyses
+    analyses = db.query(CountryAnalysis).filter(CountryAnalysis.user_id == current_user.id).all()
+    
     return {
-        "user": {
-            "id": current_user.id,
-            "email": current_user.email,
-            "isMember": current_user.is_member,
-            "analysisTokens": current_user.analysis_tokens
-        }
+        "user": UserResponse(
+            id=current_user.id,
+            email=current_user.email,
+            is_member=current_user.is_member,
+            analysis_tokens=current_user.analysis_tokens,
+            analyzed_countries=analyses
+        )
     } 

@@ -4,12 +4,15 @@ import { AnalysisCtaButton } from "@/components/analysis-cta-button"
 import { CountryScores } from "@/components/country-scores"
 import Link from "next/link"
 import Image from "next/image"
+import { getCountryFlagUrl } from "@/lib/utils"
 
 const countryImageMap: Record<string, string> = {
-  'sv': 'el-salvador',
-  'nl': 'netherlands',
-  'pt': 'portugal',
-  'ch': 'switzerland'
+  'el': 'el-salvador',
+  'united': 'united-states',
+  'netherlands': 'netherlands',
+  'portugal': 'portugal',
+  'spain': 'spain',
+  'switzerland': 'switzerland'
 }
 
 interface CountryCardProps {
@@ -18,30 +21,31 @@ interface CountryCardProps {
 }
 
 export function CountryCard({ country, hasAnalysis = false }: CountryCardProps) {
-  const imageName = countryImageMap[country.id] || country.id
+  const imageId = countryImageMap[country.id] || country.id
 
   return (
     <Card className="hover:bg-accent transition-colors flex flex-col overflow-hidden">
       <Link href={`/countries/${country.id}`} className="flex-1">
         <div className="relative w-full h-48">
           <Image
-            src={`/data/images/countries/${imageName}.png`}
-            alt={`${country.name} landscape`}
+            src={`/data/images/countries/${imageId}.png`}
+            alt={`${country.name} Flag`}
             fill
             className="object-cover"
             priority
           />
-          <CountryScores basedScore={country.taxScore} visaScore={country.visaAccessibility} />
+          <CountryScores taxScore={country.taxScore} visaScore={country.visaAccessibility} />
         </div>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Image
-              src={`https://flagcdn.com/${country.id}.svg`}
-              alt={`${country.name} flag`}
-              width={20}
-              height={14}
-              className="rounded"
-            />
+            <div className="w-6 h-4 relative">
+              <Image
+                src={getCountryFlagUrl(country.id)}
+                alt={`${country.name} flag`}
+                fill
+                className="object-contain rounded"
+              />
+            </div>
             {country.name}
           </CardTitle>
         </CardHeader>
