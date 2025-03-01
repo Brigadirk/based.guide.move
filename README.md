@@ -10,6 +10,25 @@ TODO:
 IDEAS:
 - Auto tweet each time one of our tax source websites puts in an update
 
+## Quick Start
+
+The easiest way to start development is to use the provided development script:
+
+```bash
+# Make the script executable (first time only)
+chmod +x dev.sh
+
+# Start both frontend and backend servers
+./dev.sh
+```
+
+The script will:
+- Automatically manage Python virtual environment
+- Install all required dependencies
+- Start both frontend and backend servers
+- Handle process management and cleanup
+- Provide clear status messages and URLs
+
 ## Project Structure
 
 This is a monorepo containing:

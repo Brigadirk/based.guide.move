@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { Profile } from "@/types/profile"
+import { Profile, PersonalInformation, FinancialInformation, ResidencyIntentions, IncomeSource } from "@/types/profile"
 import { toast } from "sonner"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -17,14 +17,20 @@ interface PartnerInfoFormProps {
 }
 
 const COUNTRIES = ["United States", "Switzerland", "Portugal", "Spain", "Netherlands", "El Salvador"]
-const RESIDENCY_STATUSES = ["Citizen", "Permanent resident", "Temporary resident"]
-const MARITAL_STATUSES = ["Single", "Married", "Divorced"]
+const RESIDENCY_STATUSES = ["Citizen", "Permanent resident", "Temporary resident"] as const
+const MARITAL_STATUSES = ["Single", "Married", "Divorced"] as const
 const INCOME_TYPES = ["Salary", "Business Income", "Investment Income", "Rental Income", "Pension", "Other"]
 const CURRENCIES = ["USD", "EUR", "CHF", "GBP"]
 
+type RequiredPartnerInfo = {
+  personalInformation: PersonalInformation;
+  financialInformation: FinancialInformation;
+  residencyIntentions: ResidencyIntentions;
+}
+
 export function PartnerInfoForm({ data, onUpdate }: PartnerInfoFormProps) {
   const [hasPartner, setHasPartner] = useState(Boolean(data.partner))
-  const [info, setInfo] = useState(data.partner || {
+  const [info, setInfo] = useState<RequiredPartnerInfo>(data.partner || {
     personalInformation: {
       dateOfBirth: "",
       nationalities: [{ country: "" }],
@@ -35,7 +41,7 @@ export function PartnerInfoForm({ data, onUpdate }: PartnerInfoFormProps) {
       }
     },
     financialInformation: {
-      incomeSources: [],
+      incomeSources: [] as IncomeSource[],
       assets: [],
       liabilities: []
     },
@@ -193,7 +199,7 @@ export function PartnerInfoForm({ data, onUpdate }: PartnerInfoFormProps) {
                           ...info.personalInformation,
                           currentResidency: {
                             ...info.personalInformation.currentResidency,
-                            status: value
+                            status: value as PersonalInformation['currentResidency']['status']
                           }
                         }
                       })
@@ -223,13 +229,19 @@ export function PartnerInfoForm({ data, onUpdate }: PartnerInfoFormProps) {
                     variant="outline"
                     size="sm"
                     onClick={() => {
+                      const newIncomeSource: IncomeSource = {
+                        type: "",
+                        details: {},
+                        amount: 0,
+                        currency: "USD"
+                      }
                       const updated = {
                         ...info,
                         financialInformation: {
                           ...info.financialInformation,
                           incomeSources: [
                             ...info.financialInformation.incomeSources,
-                            { type: "", details: {}, amount: 0, currency: "USD" }
+                            newIncomeSource
                           ]
                         }
                       }
@@ -247,7 +259,11 @@ export function PartnerInfoForm({ data, onUpdate }: PartnerInfoFormProps) {
                         value={source.type}
                         onValueChange={(value) => {
                           const updated = [...info.financialInformation.incomeSources]
-                          updated[index] = { ...source, type: value }
+                          updated[index] = { 
+                            ...source, 
+                            type: value,
+                            details: source.details || {}
+                          }
                           handleUpdate({
                             ...info,
                             financialInformation: {
@@ -275,7 +291,11 @@ export function PartnerInfoForm({ data, onUpdate }: PartnerInfoFormProps) {
                         value={source.amount}
                         onChange={(e) => {
                           const updated = [...info.financialInformation.incomeSources]
-                          updated[index] = { ...source, amount: Number(e.target.value) }
+                          updated[index] = { 
+                            ...source, 
+                            amount: Number(e.target.value),
+                            details: source.details || {}
+                          }
                           handleUpdate({
                             ...info,
                             financialInformation: {
@@ -292,7 +312,11 @@ export function PartnerInfoForm({ data, onUpdate }: PartnerInfoFormProps) {
                         value={source.currency}
                         onValueChange={(value) => {
                           const updated = [...info.financialInformation.incomeSources]
-                          updated[index] = { ...source, currency: value }
+                          updated[index] = { 
+                            ...source, 
+                            currency: value,
+                            details: source.details || {}
+                          }
                           handleUpdate({
                             ...info,
                             financialInformation: {
@@ -325,12 +349,12 @@ export function PartnerInfoForm({ data, onUpdate }: PartnerInfoFormProps) {
                   <Label>Move Type</Label>
                   <Select
                     value={info.residencyIntentions.moveType}
-                    onValueChange={(value: "Permanent" | "Digital Nomad") => {
+                    onValueChange={(value) => {
                       handleUpdate({
                         ...info,
                         residencyIntentions: {
                           ...info.residencyIntentions,
-                          moveType: value
+                          moveType: value as ResidencyIntentions['moveType']
                         }
                       })
                     }}

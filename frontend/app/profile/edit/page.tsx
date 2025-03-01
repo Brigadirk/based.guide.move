@@ -74,44 +74,48 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8 p-6">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold">Complete Your Profile</h1>
+    <div className="max-w-3xl mx-auto">
+      <div className="p-6">
         <p className="text-muted-foreground">
-          Help Pro Bonobo provide personalized recommendations.
+          Complete your profile to help Mr. Pro Bonobo give you recommendations.
         </p>
       </div>
 
-      <Steps
-        steps={STEPS}
-        currentStep={currentStep}
-        onStepClick={(index) => setCurrentStep(index)}
-      />
-
-      <Card className="p-6">
-        <CurrentStepComponent
-          data={profile}
-          onUpdate={(updatedData) => {
-            setProfile(prev => ({ ...prev, ...updatedData }))
-          }}
-        />
-
-        <div className="flex justify-between mt-6">
-          <Button
-            variant="outline"
-            onClick={handleBack}
-            disabled={currentStep === 0}
-          >
-            Back
-          </Button>
-          <Button
-            onClick={handleNext}
-            disabled={isSubmitting}
-          >
-            {currentStep === STEPS.length - 1 ? "Complete" : "Continue"}
-          </Button>
+      <div className="sticky top-14 bg-background z-50 border-b shadow-sm">
+        <div className="px-6 py-4">
+          <Steps
+            currentStep={currentStep}
+            onStepClick={(index) => setCurrentStep(index)}
+          />
         </div>
-      </Card>
+      </div>
+
+      <div className="p-6">
+        <Card className="p-6">
+          <CurrentStepComponent
+            data={profile}
+            onUpdate={(updatedData) => {
+              setProfile(prev => ({ ...prev, ...updatedData }))
+            }}
+          />
+
+          <div className="flex justify-between mt-6">
+            <Button
+              variant="outline"
+              onClick={handleBack}
+              disabled={currentStep === 0}
+            >
+              Back
+            </Button>
+            <Button
+              onClick={handleNext}
+              disabled={isSubmitting}
+            >
+              {currentStep === STEPS.length - 1 ? "Complete" : "Continue"}
+            </Button>
+          </div>
+        </Card>
+      </div>
     </div>
   )
 } 

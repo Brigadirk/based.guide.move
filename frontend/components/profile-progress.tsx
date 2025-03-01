@@ -1,27 +1,35 @@
-import { Progress } from "@/components/ui/progress"
 import { ProfileProgress } from "@/types/profile"
+import { ProgressSteps, Step } from "./progress-steps"
+import { User, Wallet, MapPin } from "lucide-react"
+
+const PROFILE_STEPS: Step[] = [
+  {
+    id: "basic",
+    icon: <User className="h-2.5 w-2.5" />,
+  },
+  {
+    id: "tax",
+    icon: <Wallet className="h-2.5 w-2.5" />,
+  },
+  {
+    id: "lifestyle",
+    icon: <MapPin className="h-2.5 w-2.5" />,
+  }
+]
 
 export function ProfileProgressBar({ progress }: { progress: ProfileProgress }) {
-  const percentage = (progress.completed / progress.total) * 100
+  const steps = PROFILE_STEPS.map(step => ({
+    ...step,
+    completed: progress.sections[step.id as keyof typeof progress.sections]
+  }))
 
   return (
     <div className="space-y-2">
       <div className="flex justify-between text-sm">
         <span>Profile Completion</span>
-        <span>{Math.round(percentage)}%</span>
+        <span>{Math.round((progress.completed / progress.total) * 100)}%</span>
       </div>
-      <Progress value={percentage} />
-      <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground">
-        <div className={progress.sections.basic ? "text-primary" : ""}>
-          Basic Info
-        </div>
-        <div className={progress.sections.tax ? "text-primary" : ""}>
-          Tax Preferences
-        </div>
-        <div className={progress.sections.lifestyle ? "text-primary" : ""}>
-          Lifestyle
-        </div>
-      </div>
+      <ProgressSteps steps={steps} />
     </div>
   )
 } 
