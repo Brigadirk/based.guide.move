@@ -9,12 +9,16 @@ import { formatNumber, getCountryFlagUrl } from "@/lib/utils"
 import Image from "next/image"
 import { CountryDetails } from "@/types/api"
 import { ProfileAlertBanner } from "@/components/profile-alert-banner"
+import { BasedScore } from "@/components/based-score"
+import { VisaScore } from "@/components/visa-score"
 
 const countryImageMap: Record<string, string> = {
-  'sv': 'el-salvador',
-  'nl': 'netherlands',
-  'pt': 'portugal',
-  'ch': 'switzerland'
+  'united': 'united-states',
+  'netherlands': 'netherlands',
+  'portugal': 'portugal',
+  'spain': 'spain',
+  'switzerland': 'switzerland',
+  'el-salvador': 'el-salvador'
 }
 
 interface CountryPageProps {
@@ -24,8 +28,7 @@ interface CountryPageProps {
 }
 
 export default async function CountryPage({ params }: CountryPageProps) {
-  const { id } = await params
-  const country = await getCountry(id) as CountryDetails
+  const country = await getCountry(params.id) as CountryDetails
   // Mock hasAnalysis - in real app this would come from user session/API
   const hasAnalysis = false
   
@@ -33,7 +36,8 @@ export default async function CountryPage({ params }: CountryPageProps) {
     notFound()
   }
 
-  const imageName = countryImageMap[id] || id
+  // Use the same image mapping logic as the card
+  const imageId = countryImageMap[country.id] || country.id
 
   return (
     <div className="relative w-full">
@@ -41,7 +45,7 @@ export default async function CountryPage({ params }: CountryPageProps) {
       {/* Hero Section */}
       <div className="relative w-full h-[400px] rounded-b-lg overflow-hidden z-10">
         <Image
-          src={`/data/images/countries/${imageName}.png`}
+          src={`/data/images/countries/${imageId}.jpg`}
           alt={`${country.name} landscape`}
           fill
           className="object-cover"
@@ -55,34 +59,24 @@ export default async function CountryPage({ params }: CountryPageProps) {
           <div className="max-w-[1400px] mx-auto">
             <Card className="rounded-none shadow-none border-0">
               <CardContent className="py-4 px-4 md:px-6">
-                <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-                  <div className="flex items-center gap-6">
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-6 relative">
+                      <div className="w-7 h-5 relative">
                         <Image
-                          src={getCountryFlagUrl(id)}
+                          src={getCountryFlagUrl(country.id)}
                           alt={`${country.name} flag`}
                           fill
                           className="object-contain rounded"
                         />
                       </div>
-                      <h1 className="text-2xl font-bold">{country.name}</h1>
-                    </div>
-                    <div className="flex gap-6 border-l pl-6">
-                      <div>
-                        <div className="text-sm text-muted-foreground">Based</div>
-                        <div className="text-xl font-bold">{country.taxScore}</div>
-                      </div>
-                      <div>
-                        <div className="text-sm text-muted-foreground">Visa</div>
-                        <div className="text-xl font-bold">{country.visaAccessibility}</div>
-                      </div>
+                      <h1 className="text-xl font-bold">{country.name}</h1>
                     </div>
                   </div>
                   
                   {!hasAnalysis && (
-                    <div className="w-full md:w-auto md:ml-auto">
-                      <AnalysisCtaButton />
+                    <div className="w-full">
+                      <AnalysisCtaButton className="w-full" />
                     </div>
                   )}
                 </div>
@@ -110,7 +104,30 @@ export default async function CountryPage({ params }: CountryPageProps) {
         <div className="max-w-[1400px] mx-auto px-4 md:px-6 pt-6 space-y-8">
           {/* Overview Tab */}
           <TabsContent value="overview" className="mt-0 space-y-8">
-            <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6">
+              <Card className="col-span-1">
+                <CardContent className="p-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col items-center p-3 bg-muted/50 rounded-lg">
+                      <div className="text-xs font-medium text-muted-foreground mb-1">Based Score</div>
+                      <BasedScore 
+                        score={country.taxScore}
+                        className="text-base"
+                        labelClassName="text-xs"
+                      />
+                    </div>
+                    <div className="flex flex-col items-center p-3 bg-muted/50 rounded-lg">
+                      <div className="text-xs font-medium text-muted-foreground mb-1">Visa Access</div>
+                      <VisaScore
+                        score={country.visaAccessibility}
+                        className="text-base"
+                        labelClassName="text-xs"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               <Card>
                 <CardHeader>
                   <CardTitle>Key Facts</CardTitle>

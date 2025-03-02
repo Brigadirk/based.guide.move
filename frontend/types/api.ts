@@ -18,6 +18,7 @@ export interface TaxHighlights {
 export interface Country {
   id: string;
   name: string;
+  basedScore?: number;
   taxScore: number;
   visaAccessibility: number;
   population: number;

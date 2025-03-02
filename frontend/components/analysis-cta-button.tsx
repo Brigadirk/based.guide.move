@@ -47,10 +47,10 @@ export function AnalysisCtaButton({
   }
 
   const getButtonText = () => {
-    if (loading) return 'Processing...'
-    if (!isAuthenticated) return 'Get personalized analysis'
-    if (!user?.analysisTokens || user.analysisTokens <= 0) return 'Get analysis bananas'
-    return 'Analyze with banana'
+    if (loading) return '🔄 Processing...'
+    if (!isAuthenticated) return '🔒 Get personalized analysis'
+    if (!user?.analysisTokens || user.analysisTokens <= 0) return '🍌 Get analysis bananas'
+    return '🍌 Analyze with banana'
   }
 
   return (

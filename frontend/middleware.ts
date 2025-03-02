@@ -2,7 +2,13 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 // Add auth-required paths here
-const authRequiredPaths = ['/profile', '/settings', '/products', '/checkout']
+const authRequiredPaths = [
+  '/profile', 
+  '/settings', 
+  '/products', 
+  '/checkout',
+  '/analyses'
+]
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')
@@ -10,8 +16,13 @@ export function middleware(request: NextRequest) {
 
   console.log('Middleware - Request:', { pathname, hasToken: !!token })
 
+  // Check if the path starts with any of the protected paths
+  const isProtectedPath = authRequiredPaths.some(path => 
+    pathname === path || pathname.startsWith(`${path}/`)
+  )
+
   // If trying to access auth-required path without token, redirect to login
-  if (authRequiredPaths.includes(pathname) && !token) {
+  if (isProtectedPath && !token) {
     const url = new URL('/login', request.url)
     url.searchParams.set('returnUrl', pathname)
     return NextResponse.redirect(url)

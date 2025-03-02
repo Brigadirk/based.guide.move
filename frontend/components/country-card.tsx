@@ -1,13 +1,13 @@
 import { Country } from "@/types/api"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { AnalysisCtaButton } from "@/components/analysis-cta-button"
-import { CountryScores } from "@/components/country-scores"
+import { BasedScore } from "@/components/based-score"
+import { VisaScore } from "@/components/visa-score"
 import Link from "next/link"
 import Image from "next/image"
 import { getCountryFlagUrl } from "@/lib/utils"
 
 const countryImageMap: Record<string, string> = {
-  'el': 'el-salvador',
   'united': 'united-states',
   'netherlands': 'netherlands',
   'portugal': 'portugal',
@@ -28,13 +28,24 @@ export function CountryCard({ country, hasAnalysis = false }: CountryCardProps) 
       <Link href={`/countries/${country.id}`} className="flex-1">
         <div className="relative w-full h-48">
           <Image
-            src={`/data/images/countries/${imageId}.png`}
+            src={`/data/images/countries/${imageId}.jpg`}
             alt={`${country.name} Flag`}
             fill
             className="object-cover"
             priority
           />
-          <CountryScores taxScore={country.taxScore} visaScore={country.visaAccessibility} />
+          <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center">
+            <BasedScore 
+              score={country.taxScore} 
+              variant="white"
+            />
+            {country.visaAccessibility && (
+              <VisaScore
+                score={country.visaAccessibility}
+                variant="white"
+              />
+            )}
+          </div>
         </div>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
