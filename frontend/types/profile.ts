@@ -10,9 +10,9 @@ export interface PersonalInformation {
 
 export interface IncomeSource {
   type: string;
-  details: Record<string, any>;
   amount: number;
   currency: string;
+  frequency: "monthly" | "yearly";
 }
 
 export interface Asset {

@@ -1,5 +1,5 @@
 import { ProfileProgress } from "@/types/profile"
-import { ProgressSteps, Step } from "./progress-steps"
+import { SimpleProgress, Step } from "./progress-steps"
 import { User, Wallet, MapPin } from "lucide-react"
 
 const PROFILE_STEPS: Step[] = [
@@ -29,7 +29,7 @@ export function ProfileProgressBar({ progress }: { progress: ProfileProgress }) 
         <span>Profile Completion</span>
         <span>{Math.round((progress.completed / progress.total) * 100)}%</span>
       </div>
-      <ProgressSteps steps={steps} />
+      <SimpleProgress steps={steps} />
     </div>
   )
 } 

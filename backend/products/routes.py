@@ -14,10 +14,22 @@ class ProductResponse(BaseModel):
     name: str
     type: str
     price: int
-    token_amount: int | None
+    bananaAmount: int | None
 
     class Config:
         from_attributes = True
+
+    @classmethod
+    def from_orm(cls, obj):
+        # Convert token_amount to bananaAmount in the response
+        data = {
+            "id": obj.id,
+            "name": obj.name,
+            "type": obj.type,
+            "price": obj.price,
+            "bananaAmount": obj.token_amount
+        }
+        return cls(**data)
 
 @router.get("/available", response_model=List[ProductResponse])
 async def get_available_products(
@@ -27,16 +39,16 @@ async def get_available_products(
     """
     Returns available products based on user's membership status:
     - Non-members can only see the member bundle
-    - Members can only see token packs
+    - Members can only see banana packs
     """
     query = db.query(Product).filter(Product.is_active == True)
     
     if current_user.is_member:
-        products = query.filter(Product.type == 'token_pack').all()
+        products = query.filter(Product.type == 'banana_pack').all()
     else:
         products = query.filter(Product.type == 'member_bundle').all()
     
-    return products
+    return [ProductResponse.from_orm(product) for product in products]
 
 class PurchaseRequest(BaseModel):
     product_id: str

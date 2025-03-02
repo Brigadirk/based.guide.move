@@ -7,21 +7,22 @@ const FORM_STEPS = [
   { id: "personal", icon: <User className="h-2.5 w-2.5" /> },
   { id: "financial", icon: <Wallet className="h-2.5 w-2.5" /> },
   { id: "residency", icon: <MapPin className="h-2.5 w-2.5" /> },
-  { id: "dependents", icon: <Users className="h-2.5 w-2.5" /> },
-  { id: "partner", icon: <Heart className="h-2.5 w-2.5" />, optional: true }
+  { id: "family", icon: <Users className="h-2.5 w-2.5" /> }
 ]
 
 interface StepsProps {
   currentStep: number
   onStepClick: (index: number) => void
+  stepStatuses: Array<"incomplete" | "complete" | "error" | "warning">
 }
 
-export function Steps({ currentStep, onStepClick }: StepsProps) {
+export function Steps({ currentStep, onStepClick, stepStatuses }: StepsProps) {
   return (
     <ProgressSteps
       steps={FORM_STEPS}
       currentStep={currentStep}
       onStepClick={onStepClick}
+      stepStatuses={stepStatuses}
     />
   )
 } 

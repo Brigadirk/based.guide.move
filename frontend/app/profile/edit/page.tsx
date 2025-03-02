@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -10,24 +10,24 @@ import { Steps } from "./steps"
 import { PersonalInfoForm } from "./steps/personal-info-form"
 import { FinancialInfoForm } from "./steps/financial-info-form"
 import { ResidencyIntentionsForm } from "./steps/residency-intentions-form"
-import { DependentsForm } from "./steps/dependents-form"
-import { PartnerInfoForm } from "./steps/partner-info-form"
+import { FamilyForm } from "./steps/family-form"
 import { Profile } from "@/types/profile"
+import { validateProfile, getStepStatus, StepValidation } from "@/lib/profile-validation"
+import { AlertTriangle } from "lucide-react"
 
 const STEPS = [
-  { id: "personal", title: "Personal", component: PersonalInfoForm },
-  { id: "financial", title: "Financial", component: FinancialInfoForm },
-  { id: "residency", title: "Residency", component: ResidencyIntentionsForm },
-  { id: "dependents", title: "Dependents", component: DependentsForm },
-  { id: "partner", title: "Partner", component: PartnerInfoForm }
+  { id: "personal", title: "Personal Information", component: PersonalInfoForm },
+  { id: "financial", title: "Financial Information", component: FinancialInfoForm },
+  { id: "residency", title: "Residency Intentions", component: ResidencyIntentionsForm },
+  { id: "family", title: "Family Information", component: FamilyForm }
 ]
 
 const hasMinimumRequiredInfo = (profile: Partial<Profile>) => {
-  return Boolean(
-    profile.personalInformation?.dateOfBirth &&
-    profile.personalInformation?.currentResidency?.country &&
-    (profile.financialInformation?.incomeSources?.length ?? 0) > 0 &&
-    profile.residencyIntentions?.intendedCountry
+  const validation = validateProfile(profile)
+  return (
+    validation.personal.isValid &&
+    validation.financial.isValid &&
+    validation.residency.isValid
   )
 }
 
@@ -37,8 +37,19 @@ export default function EditProfilePage() {
   const [currentStep, setCurrentStep] = useState(0)
   const [profile, setProfile] = useState<Partial<Profile>>(user?.profile || {})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [validation, setValidation] = useState<Record<string, StepValidation>>(() => ({
+    personal: { isValid: false, errors: [], warnings: [] },
+    financial: { isValid: false, errors: [], warnings: [] },
+    residency: { isValid: false, errors: [], warnings: [] },
+    family: { isValid: false, errors: [], warnings: [] }
+  }))
 
-  const progress = ((currentStep + 1) / STEPS.length) * 100
+  useEffect(() => {
+    const result = validateProfile(profile)
+    if (result) {
+      setValidation(result)
+    }
+  }, [profile])
 
   const CurrentStepComponent = STEPS[currentStep].component
 
@@ -56,6 +67,11 @@ export default function EditProfilePage() {
   }
 
   const handleSubmit = async () => {
+    if (!hasMinimumRequiredInfo(profile)) {
+      toast.error("Please complete all required information before submitting")
+      return
+    }
+
     setIsSubmitting(true)
     try {
       await updateProfile(profile as Profile)
@@ -73,6 +89,17 @@ export default function EditProfilePage() {
     }
   }
 
+  const getStepValidationStatus = (stepIndex: number) => {
+    const stepId = STEPS[stepIndex].id as keyof ReturnType<typeof validateProfile>
+    if (!validation) return "incomplete"
+    return validation[stepId] ? getStepStatus(validation[stepId]) : "incomplete"
+  }
+
+  const getCurrentStepValidation = () => {
+    const stepId = STEPS[currentStep].id as keyof ReturnType<typeof validateProfile>
+    return validation[stepId]
+  }
+
   return (
     <div className="max-w-3xl mx-auto">
       <div className="p-6">
@@ -85,13 +112,30 @@ export default function EditProfilePage() {
         <div className="px-6 py-4">
           <Steps
             currentStep={currentStep}
-            onStepClick={(index) => setCurrentStep(index)}
+            onStepClick={setCurrentStep}
+            stepStatuses={STEPS.map((_, index) => getStepValidationStatus(index))}
           />
         </div>
       </div>
 
       <div className="p-6">
         <Card className="p-6">
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold tracking-tight">
+              {STEPS[currentStep].title}
+            </h2>
+          </div>
+
+          {!getCurrentStepValidation()?.isValid && (
+            <div className="mb-6 flex items-start gap-2 p-3 text-sm text-destructive bg-destructive/5 rounded-md">
+              <AlertTriangle className="h-4 w-4 mt-0.5" />
+              <div>
+                <p className="font-medium">Required Information Missing</p>
+                <p className="mt-1 text-muted-foreground">Please fill in all required fields in this section for accurate recommendations.</p>
+              </div>
+            </div>
+          )}
+
           <CurrentStepComponent
             data={profile}
             onUpdate={(updatedData) => {

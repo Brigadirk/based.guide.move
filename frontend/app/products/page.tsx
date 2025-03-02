@@ -68,9 +68,16 @@ export default function ProductsPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-8">Available Products</h1>
+      <h1 className="text-3xl font-bold mb-4">Feed Mr Pro Bonobo</h1>
+      
+      <div className="mb-8 prose">
+        <p className="text-lg text-muted-foreground">
+          Meet Mr Pro Bonobo, our brilliant AI analyst who runs on bananas! 🍌 Feed him one banana per country analysis and watch him work his magic.
+        </p>
+      </div>
+
       {availableProducts.length === 0 ? (
-        <div>No products available for {user?.isMember ? 'members' : 'non-members'}.</div>
+        <div>Oops! Mr Pro Bonobo seems to have eaten all the bananas. Check back soon!</div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {availableProducts.map(product => (

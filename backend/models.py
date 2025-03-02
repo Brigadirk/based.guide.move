@@ -20,6 +20,7 @@ class User(Base):
     is_member = Column(Boolean, default=False)
     analysis_tokens = Column(Integer, default=0)
     country_analyses = relationship("CountryAnalysis", back_populates="user")
+    profile = relationship("UserProfile", back_populates="user", uselist=False)
 
 class Session(Base):
     __tablename__ = 'sessions'
@@ -35,17 +36,19 @@ class Product(Base):
     __tablename__ = 'products'
     id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
-    type = Column(String, nullable=False)  # 'member_bundle' or 'token_pack'
+    type = Column(String, nullable=False)  # 'member_bundle' or 'banana_pack'
     price = Column(Integer, nullable=False)  # in cents
-    token_amount = Column(Integer)  # null for member bundle
+    token_amount = Column(Integer)  # renamed to banana_amount in API responses
     is_active = Column(Boolean, default=True)
+    purchases = relationship("Purchase", back_populates="product", cascade="all, delete-orphan")
 
 class Purchase(Base):
     __tablename__ = 'purchases'
     id = Column(String, primary_key=True)
     user_id = Column(String, ForeignKey('users.id'))
-    product_id = Column(String, ForeignKey('products.id'))
+    product_id = Column(String, ForeignKey('products.id', ondelete='CASCADE'))
     created_at = Column(DateTime, default=datetime.utcnow)
+    product = relationship("Product", back_populates="purchases")
 
 class CountryAnalysis(Base):
     __tablename__ = 'country_analyses'
@@ -110,4 +113,40 @@ class CountryProfile(Base):
     digital_nomad_visa = Column(JSON)  # Object containing visa details
     
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow) 
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class UserProfile(Base):
+    __tablename__ = 'user_profiles'
+
+    id = Column(String, primary_key=True)
+    user_id = Column(String, ForeignKey('users.id'), unique=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Personal Information
+    date_of_birth = Column(String)
+    nationalities = Column(JSON)  # Array of country objects
+    marital_status = Column(String)  # "Single", "Married", "Divorced"
+    current_residency = Column(JSON)  # { country: string, status: string }
+
+    # Financial Information
+    income_sources = Column(JSON)  # Array of income source objects
+    assets = Column(JSON)  # Array of asset objects
+    liabilities = Column(JSON)  # Array of liability objects
+
+    # Residency Intentions
+    move_type = Column(String)  # "Permanent" or "Digital Nomad"
+    intended_country = Column(String)
+    duration_of_stay = Column(String)  # "6 months", "1 year", "Indefinite"
+    preferred_maximum_stay_requirement = Column(String)  # "1 month", "3 months", "No requirement"
+    residency_notes = Column(String)
+
+    # Dependents
+    dependents = Column(JSON)  # Array of dependent objects
+    special_circumstances = Column(String)
+
+    # Partner Information (Optional)
+    partner_info = Column(JSON)  # Complete partner profile object
+
+    # Relationships
+    user = relationship("User", back_populates="profile") 

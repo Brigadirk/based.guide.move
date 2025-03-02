@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -8,6 +8,11 @@ import { Button } from "@/components/ui/button"
 import { PersonalInformation } from "@/types/profile"
 import { toast } from "sonner"
 import { X, Plus } from "lucide-react"
+import { DatePicker } from "@/components/date-picker"
+import { InfoDrawer } from "@/components/info-drawer"
+import { validatePersonalInfo, ValidationError } from "@/lib/profile-validation"
+import { cn } from "@/lib/utils"
+import { RequiredLabel } from "@/components/required-label"
 
 interface PersonalInfoFormProps {
   data: { personalInformation?: PersonalInformation }
@@ -31,11 +36,26 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
     }
   )
 
+  const [validation, setValidation] = useState(() => validatePersonalInfo(info))
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    setValidation(validatePersonalInfo(info))
+  }, [info])
+
+  const getFieldError = (field: string): ValidationError | undefined => {
+    return touched[field] ? validation.errors.find(e => e.field === field) : undefined
+  }
+
+  const getFieldWarning = (field: string): ValidationError | undefined => {
+    return touched[field] ? validation.warnings.find(e => e.field === field) : undefined
+  }
+
   const handleChange = (field: keyof PersonalInformation, value: any) => {
     const updatedInfo = { ...info, [field]: value }
     setInfo(updatedInfo)
     onUpdate({ personalInformation: updatedInfo })
-    toast.success(`Updated ${field}`)
+    setTouched(prev => ({ ...prev, [field]: true }))
   }
 
   const addNationality = () => {
@@ -59,17 +79,33 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="dateOfBirth">Date of Birth</Label>
-        <Input
-          id="dateOfBirth"
-          type="date"
-          value={info.dateOfBirth}
-          onChange={(e) => handleChange("dateOfBirth", e.target.value)}
+        <div className="flex items-center gap-2">
+          <RequiredLabel htmlFor="dateOfBirth">Date of Birth</RequiredLabel>
+          <InfoDrawer
+            title="Date of Birth"
+            description="Your date of birth is used to determine eligibility for various visa programs and retirement options."
+            aiContext="Many countries have age restrictions for different visa types. This helps me recommend the most suitable immigration pathways for you."
+          />
+        </div>
+        <DatePicker
+          date={info.dateOfBirth ? new Date(info.dateOfBirth) : undefined}
+          onSelect={(date) => date && handleChange("dateOfBirth", date.toISOString().split('T')[0])}
+          error={getFieldError("dateOfBirth")?.message}
         />
+        {getFieldError("dateOfBirth") && (
+          <p className="text-sm text-destructive mt-1">{getFieldError("dateOfBirth")?.message}</p>
+        )}
       </div>
 
       <div className="space-y-4">
-        <Label>Nationalities</Label>
+        <div className="flex items-center gap-2">
+          <RequiredLabel>Nationalities</RequiredLabel>
+          <InfoDrawer
+            title="Nationalities"
+            description="List all countries where you hold citizenship. This is important for determining your mobility rights and visa requirements."
+            aiContext="Your citizenship(s) significantly impact your global mobility options and tax obligations. This helps me identify the most advantageous pathways for your situation."
+          />
+        </div>
         {info.nationalities.map((nationality, index) => (
           <div key={index} className="flex gap-2">
             <Select
@@ -78,9 +114,12 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
                 const updatedNationalities = [...info.nationalities]
                 updatedNationalities[index] = { country: value }
                 handleChange("nationalities", updatedNationalities)
+                setTouched(prev => ({ ...prev, [`nationalities.${index}`]: true }))
               }}
             >
-              <SelectTrigger>
+              <SelectTrigger className={cn(
+                getFieldError(`nationalities.${index}`) && "border-destructive"
+              )}>
                 <SelectValue placeholder="Select country" />
               </SelectTrigger>
               <SelectContent>
@@ -102,6 +141,9 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
             )}
           </div>
         ))}
+        {getFieldError("nationalities") && (
+          <p className="text-sm text-destructive">{getFieldError("nationalities")?.message}</p>
+        )}
         <Button
           type="button"
           variant="outline"
@@ -115,7 +157,14 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label>Marital Status</Label>
+        <div className="flex items-center gap-2">
+          <RequiredLabel>Marital Status</RequiredLabel>
+          <InfoDrawer
+            title="Marital Status"
+            description="Your marital status can affect visa eligibility and tax implications in different countries."
+            aiContext="This helps me identify family-based immigration options and ensure compliance with local regulations regarding spouse rights and obligations."
+          />
+        </div>
         <Select
           value={info.maritalStatus}
           onValueChange={(value: any) => handleChange("maritalStatus", value)}
@@ -134,10 +183,17 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
       </div>
 
       <div className="space-y-4">
-        <Label>Current Residency</Label>
+        <div className="flex items-center gap-2">
+          <RequiredLabel>Current Residency</RequiredLabel>
+          <InfoDrawer
+            title="Current Residency"
+            description="Your current country of residence and status affect your options for relocation and tax planning."
+            aiContext="This information helps me understand your current situation and identify the most efficient pathways for your desired move, including any special provisions based on your current residency status."
+          />
+        </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label>Country</Label>
+            <RequiredLabel>Country</RequiredLabel>
             <Select
               value={info.currentResidency.country}
               onValueChange={(value) => {
@@ -145,9 +201,12 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
                   ...info.currentResidency,
                   country: value
                 })
+                setTouched(prev => ({ ...prev, "currentResidency.country": true }))
               }}
             >
-              <SelectTrigger>
+              <SelectTrigger className={cn(
+                getFieldError("currentResidency.country") && "border-destructive"
+              )}>
                 <SelectValue placeholder="Select country" />
               </SelectTrigger>
               <SelectContent>
@@ -158,9 +217,14 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
                 ))}
               </SelectContent>
             </Select>
+            {getFieldError("currentResidency.country") && (
+              <p className="text-sm text-destructive mt-1">
+                {getFieldError("currentResidency.country")?.message}
+              </p>
+            )}
           </div>
           <div>
-            <Label>Status</Label>
+            <RequiredLabel>Status</RequiredLabel>
             <Select
               value={info.currentResidency.status}
               onValueChange={(value: any) => {
@@ -168,9 +232,12 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
                   ...info.currentResidency,
                   status: value
                 })
+                setTouched(prev => ({ ...prev, "currentResidency.status": true }))
               }}
             >
-              <SelectTrigger>
+              <SelectTrigger className={cn(
+                getFieldWarning("currentResidency.status") && "border-warning"
+              )}>
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>
@@ -181,6 +248,11 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
                 ))}
               </SelectContent>
             </Select>
+            {getFieldWarning("currentResidency.status") && (
+              <p className="text-sm text-warning mt-1">
+                {getFieldWarning("currentResidency.status")?.message}
+              </p>
+            )}
           </div>
         </div>
       </div>

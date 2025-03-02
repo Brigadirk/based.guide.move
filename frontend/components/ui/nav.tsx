@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Coins } from "lucide-react"
 import { useRouter } from "next/navigation"
+import type { User } from "@/types/user"
 
 export function Nav() {
   const { isAuthenticated, user } = useAuth()
@@ -29,7 +30,7 @@ export function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b bg-background">
       <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="font-semibold">
+        <Link href="/" className="font-chomsky text-3xl tracking-wide hover:opacity-80 transition-opacity">
           based.guide
         </Link>
         <nav>
@@ -49,23 +50,15 @@ export function Nav() {
                 Sign up
               </Button>
             </div>
-          ) : user?.isMember ? (
+          ) : (
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-sm">
-                <Coins className="w-4 h-4" />
-                <span>{user.analysisTokens} tokens</span>
+                <span>🍌</span>
+                <span>{user?.analysisTokens || 0}</span>
               </div>
               <Link href="/products">
                 <Button size="sm" variant="outline">
-                  Get more tokens
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="flex items-center gap-4">
-              <Link href="/products">
-                <Button size="sm">
-                  Get personalized analysis
+                  Get more bananas
                 </Button>
               </Link>
             </div>

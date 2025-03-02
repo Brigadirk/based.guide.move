@@ -3,7 +3,6 @@
 import { Button } from "./ui/button"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
-import { createCheckoutSession } from "../lib/stripe"
 import { useState } from "react"
 
 interface AnalysisCtaButtonProps {
@@ -18,7 +17,7 @@ export function AnalysisCtaButton({
   fullWidth = false 
 }: AnalysisCtaButtonProps) {
   const router = useRouter()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const handleClick = async () => {
@@ -30,24 +29,39 @@ export function AnalysisCtaButton({
         return
       }
 
-      const checkoutUrl = await createCheckoutSession()
-      router.push(checkoutUrl)
+      // If user has no bananas, redirect to products page
+      if (!user?.analysisTokens || user.analysisTokens <= 0) {
+        router.push('/products')
+        return
+      }
+
+      // TODO: Implement analysis flow here
+      // For now, we'll just console.log
+      console.log('Starting analysis with banana...')
+      
     } catch (error) {
-      console.error('Failed to handle checkout:', error)
+      console.error('Failed to handle analysis:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const getButtonText = () => {
+    if (loading) return 'Processing...'
+    if (!isAuthenticated) return 'Get personalized analysis'
+    if (!user?.analysisTokens || user.analysisTokens <= 0) return 'Get analysis bananas'
+    return 'Analyze with banana'
   }
 
   return (
     <Button 
       onClick={handleClick}
       variant={variant}
-      className={`${fullWidth ? 'w-full' : ''} ${className}`}
+      className={`w-full md:w-auto ${fullWidth ? 'w-full' : ''} ${className}`}
       size="lg"
       disabled={loading}
     >
-      {loading ? 'Processing...' : 'Get personalized analysis'}
+      {getButtonText()}
     </Button>
   )
 } 

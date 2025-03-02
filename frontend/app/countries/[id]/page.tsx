@@ -81,7 +81,7 @@ export default async function CountryPage({ params }: CountryPageProps) {
                   </div>
                   
                   {!hasAnalysis && (
-                    <div className="ml-auto">
+                    <div className="w-full md:w-auto md:ml-auto">
                       <AnalysisCtaButton />
                     </div>
                   )}
