@@ -5,9 +5,23 @@ from countries import ALL_COUNTRIES
 from PIL import Image
 from prompt_filter import create_quick_prompt #, create_comprehensive_prompt
 import recommender
+from pathlib import Path
 
-ALL_COUNTRIES = [key for key, value in ALL_COUNTRIES.items() if value != "not-included"]
+# Path to the country_info JSON file
+country_info_path = Path("./backend/base_recommender/country_info/country_info.json")
 
+# Load ALL_COUNTRIES_AND_CURRENCIES from the JSON file
+if country_info_path.exists():
+    with open(country_info_path, "r") as f:
+        ALL_COUNTRIES_AND_CURRENCIES = json.load(f)
+else:
+    raise FileNotFoundError(f"{country_info_path} does not exist.")
+
+# Generate ALL_COUNTRIES by filtering the dictionary
+ALL_COUNTRIES = [
+    key for key, value in ALL_COUNTRIES_AND_CURRENCIES.items()
+    if value.get("embedding_name") != "not-included"
+]
 def return_base_analysis(data, atype):
     if atype == "quick_and_dirty":
         prompt = create_quick_prompt(data)

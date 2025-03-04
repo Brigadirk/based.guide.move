@@ -7,7 +7,8 @@ TODO:
 - Add immigration process info (where get?)
 - Check the scrape for accuracy on 10 different countries (why is significant developments and invididual same)
 - Chat with Mr. Pro Bonobo.
-- Accurate conversion rates.
+- Accurate conversion rates, stored in SQL
+- Request history, in SQL
 
 IDEAS:
 - Auto tweet each time one of our tax source websites puts in an update

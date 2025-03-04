@@ -70,11 +70,38 @@ def generate_country_embeddings(country_folder: Path, embeddings_folder: Path):
     vector_store.save_local(embeddings_file)
     print(f"Embeddings for {country_name} saved to {embeddings_file}")
 
-# Step 5: Load Embeddings for Specific Countries
-def load_country_embeddings(countries: List[str], embeddings_folder: Path):
+def load_exchange_rates_data(exchange_rates_folder: Path) -> str:
+    # Find the markdown file in the exchange_rates folder
+    md_files = list(exchange_rates_folder.glob("*.md"))
+    if not md_files:
+        return "No exchange rates data available."
+    # Assuming there's only one markdown file, take the first one
+    md_file = md_files[0]
+    return read_md_file(md_file) or "No exchange rates data available."
+
+def generate_exchange_rates_embedding(exchange_rates_folder: Path, embeddings_folder: Path):
+    embeddings_file = embeddings_folder / "exchange_rates.faiss"
+    
+    if embeddings_file.exists():
+        return
+
+    print("Generating embeddings for exchange rates...")
+    exchange_rates_data = load_exchange_rates_data(exchange_rates_folder)
+
+    # Create embeddings
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    vector_store = FAISS.from_texts([exchange_rates_data], embeddings)
+
+    # Save embeddings for exchange rates
+    vector_store.save_local(embeddings_file)
+    print(f"Embeddings for exchange rates saved to {embeddings_file}")
+
+# Step 5: Load Embeddings for Specific Countries and Exchange Rates
+def load_embeddings(countries: List[str], embeddings_folder: Path):
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     vector_stores = []
 
+    # Load country embeddings
     for country in countries:
         embeddings_file = embeddings_folder / f"{country}.faiss"
         if embeddings_file.exists():
@@ -83,6 +110,14 @@ def load_country_embeddings(countries: List[str], embeddings_folder: Path):
         else:
             print(f"No embeddings found for {country}.")
 
+    # Load exchange rates embeddings
+    exchange_rates_file = embeddings_folder / "exchange_rates.faiss"
+    if exchange_rates_file.exists():
+        exchange_rates_store = FAISS.load_local(exchange_rates_file, embeddings, allow_dangerous_deserialization=True)
+        vector_stores.append(exchange_rates_store)
+    else:
+        print("No embeddings found for exchange rates.")
+
     # Combine all vector stores into one
     if vector_stores:
         combined_store = vector_stores[0]
@@ -90,7 +125,7 @@ def load_country_embeddings(countries: List[str], embeddings_folder: Path):
             combined_store.merge_from(store)
         return combined_store
     else:
-        raise ValueError("No embeddings found for the specified countries.")
+        raise ValueError("No embeddings found for the specified countries or exchange rates.")
 
 # Step 6: Set Up RAG System
 def setup_rag_system(vector_store: FAISS):
@@ -118,7 +153,6 @@ def setup_rag_system(vector_store: FAISS):
     )
     return qa
 
-
 # Step 7: Extract Countries from Query
 def extract_countries_from_query(query: str, available_countries: List[str]) -> List[str]:
     countries_in_query = []
@@ -127,17 +161,22 @@ def extract_countries_from_query(query: str, available_countries: List[str]) -> 
             countries_in_query.append(country)
     return countries_in_query[:2]  # Limit to 2 countries
 
-
 # Step 8: Main Function
 def main(query: Optional[str] = None, country1: Optional[str] = None, country2: Optional[str] = None):
     base_folder = Path("./backend/base_recommender/tax_data")
-    embeddings_folder = Path("./backend/base_recommender/tax_embeddings")
-    available_countries = [folder.name for folder in base_folder.iterdir() if folder.is_dir()]
+    embeddings_folder = Path("./backend/base_recommender/embeddings")
+    exchange_rates_folder = Path("./backend/base_recommender/exchange_rates")
+
+    available_countries = [folder.name for folder in base_folder.iterdir() if folder.is_dir() and folder.name != "quick-charts"]
 
     # Generate embeddings for all countries (if not already done)
     for country_folder in base_folder.iterdir():
-        if country_folder.is_dir():
+        if country_folder.is_dir() and country_folder.name != "quick-charts":
             generate_country_embeddings(country_folder, embeddings_folder)
+
+    # Generate embeddings for exchange rates
+    if exchange_rates_folder.exists():
+        generate_exchange_rates_embedding(exchange_rates_folder, embeddings_folder)
 
     # If no query is provided, check for command-line input
     if query is None:
@@ -161,8 +200,8 @@ def main(query: Optional[str] = None, country1: Optional[str] = None, country2: 
 
     # Use the provided countries as context
     relevant_countries = [country1, country2]
-    print(f"Loading embeddings for: {', '.join(relevant_countries)}")
-    vector_store = load_country_embeddings(relevant_countries, embeddings_folder)
+    print(f"Loading embeddings for: {', '.join(relevant_countries)} and exchange rates")
+    vector_store = load_embeddings(relevant_countries, embeddings_folder)
 
     # Set up the RAG system
     qa = setup_rag_system(vector_store)

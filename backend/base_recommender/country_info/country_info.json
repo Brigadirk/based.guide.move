@@ -1,0 +1,1166 @@
+{
+    "Afghanistan": {
+        "embedding_name": "not-included",
+        "currency_name": "Afghan Afghani",
+        "currency_shorthand": "AFN",
+        "currency_included": "yes"
+    },
+    "Albania": {
+        "embedding_name": "albania",
+        "currency_name": "Albanian Lek",
+        "currency_shorthand": "ALL",
+        "currency_included": "yes"
+    },
+    "Algeria": {
+        "embedding_name": "algeria",
+        "currency_name": "Algerian Dinar",
+        "currency_shorthand": "DZD",
+        "currency_included": "yes"
+    },
+    "Andorra": {
+        "embedding_name": "not-included",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Angola": {
+        "embedding_name": "angola",
+        "currency_name": "Angolan Kwanza",
+        "currency_shorthand": "AOA",
+        "currency_included": "yes"
+    },
+    "Antigua and Barbuda": {
+        "embedding_name": "not-included",
+        "currency_name": "East Caribbean Dollar",
+        "currency_shorthand": "XCD",
+        "currency_included": "yes"
+    },
+    "Argentina": {
+        "embedding_name": "argentina",
+        "currency_name": "Argentine Peso",
+        "currency_shorthand": "ARS",
+        "currency_included": "yes"
+    },
+    "Armenia": {
+        "embedding_name": "armenia",
+        "currency_name": "Armenian Dram",
+        "currency_shorthand": "AMD",
+        "currency_included": "yes"
+    },
+    "Australia": {
+        "embedding_name": "australia",
+        "currency_name": "Australian Dollar",
+        "currency_shorthand": "AUD",
+        "currency_included": "yes"
+    },
+    "Austria": {
+        "embedding_name": "austria",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Azerbaijan": {
+        "embedding_name": "azerbaijan",
+        "currency_name": "Azerbaijani Manat",
+        "currency_shorthand": "AZN",
+        "currency_included": "yes"
+    },
+    "Bahamas": {
+        "embedding_name": "not-included",
+        "currency_name": "Bahamian Dollar",
+        "currency_shorthand": "BSD",
+        "currency_included": "yes"
+    },
+    "Bahrain": {
+        "embedding_name": "bahrain",
+        "currency_name": "Bahraini Dinar",
+        "currency_shorthand": "BHD",
+        "currency_included": "yes"
+    },
+    "Bangladesh": {
+        "embedding_name": "bangladesh",
+        "currency_name": "Bangladeshi Taka",
+        "currency_shorthand": "BDT",
+        "currency_included": "yes"
+    },
+    "Barbados": {
+        "embedding_name": "barbados",
+        "currency_name": "Barbadian Dollar",
+        "currency_shorthand": "BBD",
+        "currency_included": "yes"
+    },
+    "Belarus": {
+        "embedding_name": "not-included",
+        "currency_name": "Belarusian Ruble",
+        "currency_shorthand": "BYN",
+        "currency_included": "yes"
+    },
+    "Belgium": {
+        "embedding_name": "belgium",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Belize": {
+        "embedding_name": "not-included",
+        "currency_name": "Belize Dollar",
+        "currency_shorthand": "BZD",
+        "currency_included": "yes"
+    },
+    "Benin": {
+        "embedding_name": "not-included",
+        "currency_name": "West African CFA Franc",
+        "currency_shorthand": "XOF",
+        "currency_included": "yes"
+    },
+    "Bhutan": {
+        "embedding_name": "not-included",
+        "currency_name": "Bhutanese Ngultrum",
+        "currency_shorthand": "BTN",
+        "currency_included": "yes"
+    },
+    "Bolivia": {
+        "embedding_name": "bolivia",
+        "currency_name": "Bolivian Boliviano",
+        "currency_shorthand": "BOB",
+        "currency_included": "yes"
+    },
+    "Bosnia and Herzegovina": {
+        "embedding_name": "bosnia-and-herzegovina",
+        "currency_name": "Bosnia-Herzegovina Convertible Mark",
+        "currency_shorthand": "BAM",
+        "currency_included": "yes"
+    },
+    "Botswana": {
+        "embedding_name": "botswana",
+        "currency_name": "Botswana Pula",
+        "currency_shorthand": "BWP",
+        "currency_included": "yes"
+    },
+    "Brazil": {
+        "embedding_name": "brazil",
+        "currency_name": "Brazilian Real",
+        "currency_shorthand": "BRL",
+        "currency_included": "yes"
+    },
+    "Brunei": {
+        "embedding_name": "not-included",
+        "currency_name": "Brunei Dollar",
+        "currency_shorthand": "BND",
+        "currency_included": "yes"
+    },
+    "Bulgaria": {
+        "embedding_name": "bulgaria",
+        "currency_name": "Bulgarian Lev",
+        "currency_shorthand": "BGN",
+        "currency_included": "yes"
+    },
+    "Burkina Faso": {
+        "embedding_name": "not-included",
+        "currency_name": "West African CFA Franc",
+        "currency_shorthand": "XOF",
+        "currency_included": "yes"
+    },
+    "Burundi": {
+        "embedding_name": "not-included",
+        "currency_name": "Burundian Franc",
+        "currency_shorthand": "BIF",
+        "currency_included": "yes"
+    },
+    "C\u00f4te d'Ivoire": {
+        "embedding_name": "ivory-coast",
+        "currency_name": "West African CFA Franc",
+        "currency_shorthand": "XOF",
+        "currency_included": "yes"
+    },
+    "Cabo Verde": {
+        "embedding_name": "cabo-verde",
+        "currency_name": "Cape Verdean Escudo",
+        "currency_shorthand": "CVE",
+        "currency_included": "yes"
+    },
+    "Cambodia": {
+        "embedding_name": "cambodia",
+        "currency_name": "Cambodian Riel",
+        "currency_shorthand": "KHR",
+        "currency_included": "yes"
+    },
+    "Cameroon": {
+        "embedding_name": "republic-of-cameroon",
+        "currency_name": "Central African CFA Franc",
+        "currency_shorthand": "XAF",
+        "currency_included": "yes"
+    },
+    "Canada": {
+        "embedding_name": "canada",
+        "currency_name": "Canadian Dollar",
+        "currency_shorthand": "CAD",
+        "currency_included": "yes"
+    },
+    "Central African Republic": {
+        "embedding_name": "not-included",
+        "currency_name": "Central African CFA Franc",
+        "currency_shorthand": "XAF",
+        "currency_included": "yes"
+    },
+    "Chad": {
+        "embedding_name": "chad",
+        "currency_name": "Central African CFA Franc",
+        "currency_shorthand": "XAF",
+        "currency_included": "yes"
+    },
+    "Chile": {
+        "embedding_name": "chile",
+        "currency_name": "Chilean Peso",
+        "currency_shorthand": "CLP",
+        "currency_included": "yes"
+    },
+    "China": {
+        "embedding_name": "peoples-republic-of-china",
+        "currency_name": "Chinese Yuan",
+        "currency_shorthand": "CNY",
+        "currency_included": "yes"
+    },
+    "Colombia": {
+        "embedding_name": "colombia",
+        "currency_name": "Colombian Peso",
+        "currency_shorthand": "COP",
+        "currency_included": "yes"
+    },
+    "Comoros": {
+        "embedding_name": "not-included",
+        "currency_name": "Comorian Franc",
+        "currency_shorthand": "KMF",
+        "currency_included": "yes"
+    },
+    "Congo (Congo-Brazzaville)": {
+        "embedding_name": "republic-of-congo",
+        "currency_name": "Central African CFA Franc",
+        "currency_shorthand": "XAF",
+        "currency_included": "yes"
+    },
+    "Costa Rica": {
+        "embedding_name": "costa-rica",
+        "currency_name": "Costa Rican Col\u00f3n",
+        "currency_shorthand": "CRC",
+        "currency_included": "yes"
+    },
+    "Croatia": {
+        "embedding_name": "croatia",
+        "currency_name": "Croatian Kuna",
+        "currency_shorthand": "HRK",
+        "currency_included": "yes"
+    },
+    "Cuba": {
+        "embedding_name": "not-included",
+        "currency_name": "Cuban Peso",
+        "currency_shorthand": "CUP",
+        "currency_included": "yes"
+    },
+    "Cyprus": {
+        "embedding_name": "cyprus",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Czechia (Czech Republic)": {
+        "embedding_name": "czech-republic",
+        "currency_name": "Czech Koruna",
+        "currency_shorthand": "CZK",
+        "currency_included": "yes"
+    },
+    "Denmark": {
+        "embedding_name": "denmark",
+        "currency_name": "Danish Krone",
+        "currency_shorthand": "DKK",
+        "currency_included": "yes"
+    },
+    "Djibouti": {
+        "embedding_name": "not-included",
+        "currency_name": "Djiboutian Franc",
+        "currency_shorthand": "DJF",
+        "currency_included": "yes"
+    },
+    "Dominica": {
+        "embedding_name": "not-included",
+        "currency_name": "East Caribbean Dollar",
+        "currency_shorthand": "XCD",
+        "currency_included": "yes"
+    },
+    "Dominican Republic": {
+        "embedding_name": "dominican-republic",
+        "currency_name": "Dominican Peso",
+        "currency_shorthand": "DOP",
+        "currency_included": "yes"
+    },
+    "Ecuador": {
+        "embedding_name": "ecuador",
+        "currency_name": "United States Dollar",
+        "currency_shorthand": "USD",
+        "currency_included": "yes"
+    },
+    "Egypt": {
+        "embedding_name": "egypt",
+        "currency_name": "Egyptian Pound",
+        "currency_shorthand": "EGP",
+        "currency_included": "yes"
+    },
+    "El Salvador": {
+        "embedding_name": "el-salvador",
+        "currency_name": "United States Dollar",
+        "currency_shorthand": "USD",
+        "currency_included": "yes"
+    },
+    "Equatorial Guinea": {
+        "embedding_name": "equatorial-guinea",
+        "currency_name": "Central African CFA Franc",
+        "currency_shorthand": "XAF",
+        "currency_included": "yes"
+    },
+    "Eritrea": {
+        "embedding_name": "not-included",
+        "currency_name": "Eritrean Nakfa",
+        "currency_shorthand": "ERN",
+        "currency_included": "yes"
+    },
+    "Estonia": {
+        "embedding_name": "estonia",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Eswatini (fmr. Swaziland)": {
+        "embedding_name": "eswatini",
+        "currency_name": "Swazi Lilangeni",
+        "currency_shorthand": "SZL",
+        "currency_included": "yes"
+    },
+    "Ethiopia": {
+        "embedding_name": "ethiopia",
+        "currency_name": "Ethiopian Birr",
+        "currency_shorthand": "ETB",
+        "currency_included": "yes"
+    },
+    "Fiji": {
+        "embedding_name": "not-included",
+        "currency_name": "Fijian Dollar",
+        "currency_shorthand": "FJD",
+        "currency_included": "yes"
+    },
+    "Finland": {
+        "embedding_name": "finland",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "France": {
+        "embedding_name": "france",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Gabon": {
+        "embedding_name": "gabon",
+        "currency_name": "Central African CFA Franc",
+        "currency_shorthand": "XAF",
+        "currency_included": "yes"
+    },
+    "Gambia": {
+        "embedding_name": "not-included",
+        "currency_name": "Gambian Dalasi",
+        "currency_shorthand": "GMD",
+        "currency_included": "yes"
+    },
+    "Georgia": {
+        "embedding_name": "georgia",
+        "currency_name": "Georgian Lari",
+        "currency_shorthand": "GEL",
+        "currency_included": "yes"
+    },
+    "Germany": {
+        "embedding_name": "germany",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Ghana": {
+        "embedding_name": "ghana",
+        "currency_name": "Ghanaian Cedi",
+        "currency_shorthand": "GHS",
+        "currency_included": "yes"
+    },
+    "Greece": {
+        "embedding_name": "greece",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Grenada": {
+        "embedding_name": "not-included",
+        "currency_name": "East Caribbean Dollar",
+        "currency_shorthand": "XCD",
+        "currency_included": "yes"
+    },
+    "Guatemala": {
+        "embedding_name": "guatemala",
+        "currency_name": "Guatemalan Quetzal",
+        "currency_shorthand": "GTQ",
+        "currency_included": "yes"
+    },
+    "Guinea": {
+        "embedding_name": "not-included",
+        "currency_name": "Guinean Franc",
+        "currency_shorthand": "GNF",
+        "currency_included": "yes"
+    },
+    "Guinea-Bissau": {
+        "embedding_name": "not-included",
+        "currency_name": "West African CFA Franc",
+        "currency_shorthand": "XOF",
+        "currency_included": "yes"
+    },
+    "Guyana": {
+        "embedding_name": "guyana",
+        "currency_name": "Guyanese Dollar",
+        "currency_shorthand": "GYD",
+        "currency_included": "yes"
+    },
+    "Haiti": {
+        "embedding_name": "not-included",
+        "currency_name": "Haitian Gourde",
+        "currency_shorthand": "HTG",
+        "currency_included": "yes"
+    },
+    "Honduras": {
+        "embedding_name": "honduras",
+        "currency_name": "Honduran Lempira",
+        "currency_shorthand": "HNL",
+        "currency_included": "yes"
+    },
+    "Hungary": {
+        "embedding_name": "hungary",
+        "currency_name": "Hungarian Forint",
+        "currency_shorthand": "HUF",
+        "currency_included": "yes"
+    },
+    "Iceland": {
+        "embedding_name": "iceland",
+        "currency_name": "Icelandic Kr\u00f3na",
+        "currency_shorthand": "ISK",
+        "currency_included": "yes"
+    },
+    "India": {
+        "embedding_name": "india",
+        "currency_name": "Indian Rupee",
+        "currency_shorthand": "INR",
+        "currency_included": "yes"
+    },
+    "Indonesia": {
+        "embedding_name": "indonesia",
+        "currency_name": "Indonesian Rupiah",
+        "currency_shorthand": "IDR",
+        "currency_included": "yes"
+    },
+    "Iran": {
+        "embedding_name": "not-included",
+        "currency_name": "Iranian Rial",
+        "currency_shorthand": "IRR",
+        "currency_included": "yes"
+    },
+    "Iraq": {
+        "embedding_name": "iraq",
+        "currency_name": "Iraqi Dinar",
+        "currency_shorthand": "IQD",
+        "currency_included": "yes"
+    },
+    "Ireland": {
+        "embedding_name": "ireland",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Israel": {
+        "embedding_name": "israel",
+        "currency_name": "Israeli New Shekel",
+        "currency_shorthand": "ILS",
+        "currency_included": "yes"
+    },
+    "Italy": {
+        "embedding_name": "italy",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Jamaica": {
+        "embedding_name": "jamaica",
+        "currency_name": "Jamaican Dollar",
+        "currency_shorthand": "JMD",
+        "currency_included": "yes"
+    },
+    "Japan": {
+        "embedding_name": "japan",
+        "currency_name": "Japanese Yen",
+        "currency_shorthand": "JPY",
+        "currency_included": "yes"
+    },
+    "Jordan": {
+        "embedding_name": "jordan",
+        "currency_name": "Jordanian Dinar",
+        "currency_shorthand": "JOD",
+        "currency_included": "yes"
+    },
+    "Kazakhstan": {
+        "embedding_name": "kazakhstan",
+        "currency_name": "Kazakhstani Tenge",
+        "currency_shorthand": "KZT",
+        "currency_included": "yes"
+    },
+    "Kenya": {
+        "embedding_name": "kenya",
+        "currency_name": "Kenyan Shilling",
+        "currency_shorthand": "KES",
+        "currency_included": "yes"
+    },
+    "Kiribati": {
+        "embedding_name": "not-included",
+        "currency_name": "Australian Dollar",
+        "currency_shorthand": "AUD",
+        "currency_included": "yes"
+    },
+    "Kuwait": {
+        "embedding_name": "kuwait",
+        "currency_name": "Kuwaiti Dinar",
+        "currency_shorthand": "KWD",
+        "currency_included": "yes"
+    },
+    "Kyrgyzstan": {
+        "embedding_name": "not-included",
+        "currency_name": "Kyrgyzstani Som",
+        "currency_shorthand": "KGS",
+        "currency_included": "yes"
+    },
+    "Laos": {
+        "embedding_name": "lao-pdr",
+        "currency_name": "Lao Kip",
+        "currency_shorthand": "LAK",
+        "currency_included": "yes"
+    },
+    "Latvia": {
+        "embedding_name": "latvia",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Lebanon": {
+        "embedding_name": "lebanon",
+        "currency_name": "Lebanese Pound",
+        "currency_shorthand": "LBP",
+        "currency_included": "yes"
+    },
+    "Lesotho": {
+        "embedding_name": "not-included",
+        "currency_name": "Lesotho Loti",
+        "currency_shorthand": "LSL",
+        "currency_included": "yes"
+    },
+    "Liberia": {
+        "embedding_name": "not-included",
+        "currency_name": "Liberian Dollar",
+        "currency_shorthand": "LRD",
+        "currency_included": "yes"
+    },
+    "Libya": {
+        "embedding_name": "libya",
+        "currency_name": "Libyan Dinar",
+        "currency_shorthand": "LYD",
+        "currency_included": "yes"
+    },
+    "Liechtenstein": {
+        "embedding_name": "liechtenstein",
+        "currency_name": "Swiss Franc",
+        "currency_shorthand": "CHF",
+        "currency_included": "yes"
+    },
+    "Lithuania": {
+        "embedding_name": "lithuania",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Luxembourg": {
+        "embedding_name": "luxembourg",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Madagascar": {
+        "embedding_name": "madagascar",
+        "currency_name": "Malagasy Ariary",
+        "currency_shorthand": "MGA",
+        "currency_included": "yes"
+    },
+    "Malawi": {
+        "embedding_name": "not-included",
+        "currency_name": "Malawian Kwacha",
+        "currency_shorthand": "MWK",
+        "currency_included": "yes"
+    },
+    "Malaysia": {
+        "embedding_name": "malaysia",
+        "currency_name": "Malaysian Ringgit",
+        "currency_shorthand": "MYR",
+        "currency_included": "yes"
+    },
+    "Maldives": {
+        "embedding_name": "not-included",
+        "currency_name": "Maldivian Rufiyaa",
+        "currency_shorthand": "MVR",
+        "currency_included": "yes"
+    },
+    "Mali": {
+        "embedding_name": "not-included",
+        "currency_name": "West African CFA Franc",
+        "currency_shorthand": "XOF",
+        "currency_included": "yes"
+    },
+    "Malta": {
+        "embedding_name": "malta",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Marshall Islands": {
+        "embedding_name": "not-included",
+        "currency_name": "United States Dollar",
+        "currency_shorthand": "USD",
+        "currency_included": "yes"
+    },
+    "Mauritania": {
+        "embedding_name": "mauritania",
+        "currency_name": "Mauritanian Ouguiya",
+        "currency_shorthand": "MRU",
+        "currency_included": "yes"
+    },
+    "Mauritius": {
+        "embedding_name": "mauritius",
+        "currency_name": "Mauritian Rupee",
+        "currency_shorthand": "MUR",
+        "currency_included": "yes"
+    },
+    "Mexico": {
+        "embedding_name": "mexico",
+        "currency_name": "Mexican Peso",
+        "currency_shorthand": "MXN",
+        "currency_included": "yes"
+    },
+    "Micronesia": {
+        "embedding_name": "not-included",
+        "currency_name": "United States Dollar",
+        "currency_shorthand": "USD",
+        "currency_included": "yes"
+    },
+    "Moldova": {
+        "embedding_name": "moldova",
+        "currency_name": "Moldovan Leu",
+        "currency_shorthand": "MDL",
+        "currency_included": "yes"
+    },
+    "Monaco": {
+        "embedding_name": "not-included",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Mongolia": {
+        "embedding_name": "mongolia",
+        "currency_name": "Mongolian T\u00f6gr\u00f6g",
+        "currency_shorthand": "MNT",
+        "currency_included": "yes"
+    },
+    "Montenegro": {
+        "embedding_name": "montenegro",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Morocco": {
+        "embedding_name": "morocco",
+        "currency_name": "Moroccan Dirham",
+        "currency_shorthand": "MAD",
+        "currency_included": "yes"
+    },
+    "Mozambique": {
+        "embedding_name": "mozambique",
+        "currency_name": "Mozambican Metical",
+        "currency_shorthand": "MZN",
+        "currency_included": "yes"
+    },
+    "Myanmar (formerly Burma)": {
+        "embedding_name": "myanmar",
+        "currency_name": "Myanmar Kyat",
+        "currency_shorthand": "MMK",
+        "currency_included": "yes"
+    },
+    "Namibia": {
+        "embedding_name": "republic-of-namibia",
+        "currency_name": "Namibian Dollar",
+        "currency_shorthand": "NAD",
+        "currency_included": "yes"
+    },
+    "Nauru": {
+        "embedding_name": "not-included",
+        "currency_name": "Australian Dollar",
+        "currency_shorthand": "AUD",
+        "currency_included": "yes"
+    },
+    "Nepal": {
+        "embedding_name": "not-included",
+        "currency_name": "Nepalese Rupee",
+        "currency_shorthand": "NPR",
+        "currency_included": "yes"
+    },
+    "Netherlands": {
+        "embedding_name": "netherlands",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "New Zealand": {
+        "embedding_name": "new-zealand",
+        "currency_name": "New Zealand Dollar",
+        "currency_shorthand": "NZD",
+        "currency_included": "yes"
+    },
+    "Nicaragua": {
+        "embedding_name": "nicaragua",
+        "currency_name": "Nicaraguan C\u00f3rdoba",
+        "currency_shorthand": "NIO",
+        "currency_included": "yes"
+    },
+    "Niger": {
+        "embedding_name": "not-included",
+        "currency_name": "West African CFA Franc",
+        "currency_shorthand": "XOF",
+        "currency_included": "yes"
+    },
+    "Nigeria": {
+        "embedding_name": "nigeria",
+        "currency_name": "Nigerian Naira",
+        "currency_shorthand": "NGN",
+        "currency_included": "yes"
+    },
+    "North Korea": {
+        "embedding_name": "not-included",
+        "currency_name": "North Korean Won",
+        "currency_shorthand": "KPW",
+        "currency_included": "yes"
+    },
+    "North Macedonia": {
+        "embedding_name": "north-macedonia",
+        "currency_name": "Macedonian Denar",
+        "currency_shorthand": "MKD",
+        "currency_included": "yes"
+    },
+    "Norway": {
+        "embedding_name": "norway",
+        "currency_name": "Norwegian Krone",
+        "currency_shorthand": "NOK",
+        "currency_included": "yes"
+    },
+    "Oman": {
+        "embedding_name": "oman",
+        "currency_name": "Omani Rial",
+        "currency_shorthand": "OMR",
+        "currency_included": "yes"
+    },
+    "Pakistan": {
+        "embedding_name": "pakistan",
+        "currency_name": "Pakistani Rupee",
+        "currency_shorthand": "PKR",
+        "currency_included": "yes"
+    },
+    "Palau": {
+        "embedding_name": "not-included",
+        "currency_name": "United States Dollar",
+        "currency_shorthand": "USD",
+        "currency_included": "yes"
+    },
+    "Palestine State": {
+        "embedding_name": "palestinian-territories",
+        "currency_name": "Israeli New Shekel",
+        "currency_shorthand": "ILS",
+        "currency_included": "yes"
+    },
+    "Panama": {
+        "embedding_name": "panama",
+        "currency_name": "Panamanian Balboa",
+        "currency_shorthand": "PAB",
+        "currency_included": "yes"
+    },
+    "Papua New Guinea": {
+        "embedding_name": "papua-new-guinea",
+        "currency_name": "Papua New Guinean Kina",
+        "currency_shorthand": "PGK",
+        "currency_included": "yes"
+    },
+    "Paraguay": {
+        "embedding_name": "paraguay",
+        "currency_name": "Paraguayan Guaran\u00ed",
+        "currency_shorthand": "PYG",
+        "currency_included": "yes"
+    },
+    "Peru": {
+        "embedding_name": "peru",
+        "currency_name": "Peruvian Sol",
+        "currency_shorthand": "PEN",
+        "currency_included": "yes"
+    },
+    "Philippines": {
+        "embedding_name": "philippines",
+        "currency_name": "Philippine Peso",
+        "currency_shorthand": "PHP",
+        "currency_included": "yes"
+    },
+    "Poland": {
+        "embedding_name": "poland",
+        "currency_name": "Polish Z\u0142oty",
+        "currency_shorthand": "PLN",
+        "currency_included": "yes"
+    },
+    "Portugal": {
+        "embedding_name": "portugal",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Qatar": {
+        "embedding_name": "qatar",
+        "currency_name": "Qatari Riyal",
+        "currency_shorthand": "QAR",
+        "currency_included": "yes"
+    },
+    "Romania": {
+        "embedding_name": "romania",
+        "currency_name": "Romanian Leu",
+        "currency_shorthand": "RON",
+        "currency_included": "yes"
+    },
+    "Russia": {
+        "embedding_name": "not-included",
+        "currency_name": "Russian Ruble",
+        "currency_shorthand": "RUB",
+        "currency_included": "yes"
+    },
+    "Rwanda": {
+        "embedding_name": "rwanda",
+        "currency_name": "Rwandan Franc",
+        "currency_shorthand": "RWF",
+        "currency_included": "yes"
+    },
+    "Saint Kitts and Nevis": {
+        "embedding_name": "not-included",
+        "currency_name": "East Caribbean Dollar",
+        "currency_shorthand": "XCD",
+        "currency_included": "yes"
+    },
+    "Saint Lucia": {
+        "embedding_name": "saint-lucia",
+        "currency_name": "East Caribbean Dollar",
+        "currency_shorthand": "XCD",
+        "currency_included": "yes"
+    },
+    "Saint Vincent and the Grenadines": {
+        "embedding_name": "not-included",
+        "currency_name": "East Caribbean Dollar",
+        "currency_shorthand": "XCD",
+        "currency_included": "yes"
+    },
+    "Samoa": {
+        "embedding_name": "not-included",
+        "currency_name": "Samoan T\u0101l\u0101",
+        "currency_shorthand": "WST",
+        "currency_included": "yes"
+    },
+    "San Marino": {
+        "embedding_name": "not-included",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Sao Tome and Principe": {
+        "embedding_name": "not-included",
+        "currency_name": "S\u00e3o Tom\u00e9 and Pr\u00edncipe Dobra",
+        "currency_shorthand": "STN",
+        "currency_included": "yes"
+    },
+    "Saudi Arabia": {
+        "embedding_name": "saudi-arabia",
+        "currency_name": "Saudi Riyal",
+        "currency_shorthand": "SAR",
+        "currency_included": "yes"
+    },
+    "Senegal": {
+        "embedding_name": "senegal",
+        "currency_name": "West African CFA Franc",
+        "currency_shorthand": "XOF",
+        "currency_included": "yes"
+    },
+    "Serbia": {
+        "embedding_name": "serbia",
+        "currency_name": "Serbian Dinar",
+        "currency_shorthand": "RSD",
+        "currency_included": "yes"
+    },
+    "Seychelles": {
+        "embedding_name": "not-included",
+        "currency_name": "Seychellois Rupee",
+        "currency_shorthand": "SCR",
+        "currency_included": "yes"
+    },
+    "Sierra Leone": {
+        "embedding_name": "not-included",
+        "currency_name": "Sierra Leonean Leone",
+        "currency_shorthand": "SLL",
+        "currency_included": "yes"
+    },
+    "Singapore": {
+        "embedding_name": "singapore",
+        "currency_name": "Singapore Dollar",
+        "currency_shorthand": "SGD",
+        "currency_included": "yes"
+    },
+    "Slovakia": {
+        "embedding_name": "slovak-republic",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Slovenia": {
+        "embedding_name": "slovenia",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Solomon Islands": {
+        "embedding_name": "not-included",
+        "currency_name": "Solomon Islands Dollar",
+        "currency_shorthand": "SBD",
+        "currency_included": "yes"
+    },
+    "Somalia": {
+        "embedding_name": "not-included",
+        "currency_name": "Somali Shilling",
+        "currency_shorthand": "SOS",
+        "currency_included": "yes"
+    },
+    "South Africa": {
+        "embedding_name": "south-africa",
+        "currency_name": "South African Rand",
+        "currency_shorthand": "ZAR",
+        "currency_included": "yes"
+    },
+    "South Korea": {
+        "embedding_name": "republic-of-korea",
+        "currency_name": "South Korean Won",
+        "currency_shorthand": "KRW",
+        "currency_included": "yes"
+    },
+    "South Sudan": {
+        "embedding_name": "not-included",
+        "currency_name": "South Sudanese Pound",
+        "currency_shorthand": "SSP",
+        "currency_included": "yes"
+    },
+    "Spain": {
+        "embedding_name": "spain",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Sri Lanka": {
+        "embedding_name": "not-included",
+        "currency_name": "Sri Lankan Rupee",
+        "currency_shorthand": "LKR",
+        "currency_included": "yes"
+    },
+    "Sudan": {
+        "embedding_name": "not-included",
+        "currency_name": "Sudanese Pound",
+        "currency_shorthand": "SDG",
+        "currency_included": "yes"
+    },
+    "Suriname": {
+        "embedding_name": "not-included",
+        "currency_name": "Surinamese Dollar",
+        "currency_shorthand": "SRD",
+        "currency_included": "yes"
+    },
+    "Sweden": {
+        "embedding_name": "sweden",
+        "currency_name": "Swedish Krona",
+        "currency_shorthand": "SEK",
+        "currency_included": "yes"
+    },
+    "Switzerland": {
+        "embedding_name": "switzerland",
+        "currency_name": "Swiss Franc",
+        "currency_shorthand": "CHF",
+        "currency_included": "yes"
+    },
+    "Syria": {
+        "embedding_name": "not-included",
+        "currency_name": "Syrian Pound",
+        "currency_shorthand": "SYP",
+        "currency_included": "yes"
+    },
+    "Tajikistan": {
+        "embedding_name": "not-included",
+        "currency_name": "Tajikistani Somoni",
+        "currency_shorthand": "TJS",
+        "currency_included": "yes"
+    },
+    "Tanzania": {
+        "embedding_name": "tanzania",
+        "currency_name": "Tanzanian Shilling",
+        "currency_shorthand": "TZS",
+        "currency_included": "yes"
+    },
+    "Thailand": {
+        "embedding_name": "thailand",
+        "currency_name": "Thai Baht",
+        "currency_shorthand": "THB",
+        "currency_included": "yes"
+    },
+    "Timor-Leste": {
+        "embedding_name": "timor-leste",
+        "currency_name": "United States Dollar",
+        "currency_shorthand": "USD",
+        "currency_included": "yes"
+    },
+    "Togo": {
+        "embedding_name": "not-included",
+        "currency_name": "West African CFA Franc",
+        "currency_shorthand": "XOF",
+        "currency_included": "yes"
+    },
+    "Tonga": {
+        "embedding_name": "not-included",
+        "currency_name": "Tongan Pa\u02bbanga",
+        "currency_shorthand": "TOP",
+        "currency_included": "yes"
+    },
+    "Trinidad and Tobago": {
+        "embedding_name": "trinidad-and-tobago",
+        "currency_name": "Trinidad and Tobago Dollar",
+        "currency_shorthand": "TTD",
+        "currency_included": "yes"
+    },
+    "Tunisia": {
+        "embedding_name": "tunisia",
+        "currency_name": "Tunisian Dinar",
+        "currency_shorthand": "TND",
+        "currency_included": "yes"
+    },
+    "Turkey": {
+        "embedding_name": "turkey",
+        "currency_name": "Turkish Lira",
+        "currency_shorthand": "TRY",
+        "currency_included": "yes"
+    },
+    "Turkmenistan": {
+        "embedding_name": "not-included",
+        "currency_name": "Turkmenistan Manat",
+        "currency_shorthand": "TMT",
+        "currency_included": "yes"
+    },
+    "Tuvalu": {
+        "embedding_name": "not-included",
+        "currency_name": "Australian Dollar",
+        "currency_shorthand": "AUD",
+        "currency_included": "yes"
+    },
+    "Uganda": {
+        "embedding_name": "uganda",
+        "currency_name": "Ugandan Shilling",
+        "currency_shorthand": "UGX",
+        "currency_included": "yes"
+    },
+    "Ukraine": {
+        "embedding_name": "ukraine",
+        "currency_name": "Ukrainian Hryvnia",
+        "currency_shorthand": "UAH",
+        "currency_included": "yes"
+    },
+    "United Arab Emirates": {
+        "embedding_name": "united-arab-emirates",
+        "currency_name": "UAE Dirham",
+        "currency_shorthand": "AED",
+        "currency_included": "yes"
+    },
+    "United Kingdom": {
+        "embedding_name": "united-kingdom",
+        "currency_name": "British Pound Sterling",
+        "currency_shorthand": "GBP",
+        "currency_included": "yes"
+    },
+    "United States of America": {
+        "embedding_name": "united-states",
+        "currency_name": "United States Dollar",
+        "currency_shorthand": "USD",
+        "currency_included": "yes"
+    },
+    "Uruguay": {
+        "embedding_name": "uruguay",
+        "currency_name": "Uruguayan Peso",
+        "currency_shorthand": "UYU",
+        "currency_included": "yes"
+    },
+    "Uzbekistan": {
+        "embedding_name": "republic-of-uzbekistan",
+        "currency_name": "Uzbekistani Som",
+        "currency_shorthand": "UZS",
+        "currency_included": "yes"
+    },
+    "Vanuatu": {
+        "embedding_name": "not-included",
+        "currency_name": "Vanuatu Vatu",
+        "currency_shorthand": "VUV",
+        "currency_included": "yes"
+    },
+    "Vatican City": {
+        "embedding_name": "not-included",
+        "currency_name": "Euro",
+        "currency_shorthand": "EUR",
+        "currency_included": "yes"
+    },
+    "Venezuela": {
+        "embedding_name": "venezuela",
+        "currency_name": "Venezuelan Bol\u00edvar",
+        "currency_shorthand": "VES",
+        "currency_included": "yes"
+    },
+    "Vietnam": {
+        "embedding_name": "vietnam",
+        "currency_name": "Vietnamese \u0110\u1ed3ng",
+        "currency_shorthand": "VND",
+        "currency_included": "yes"
+    },
+    "Yemen": {
+        "embedding_name": "not-included",
+        "currency_name": "Yemeni Rial",
+        "currency_shorthand": "YER",
+        "currency_included": "yes"
+    },
+    "Zambia": {
+        "embedding_name": "zambia",
+        "currency_name": "Zambian Kwacha",
+        "currency_shorthand": "ZMW",
+        "currency_included": "yes"
+    },
+    "Zimbabwe": {
+        "embedding_name": "not-included",
+        "currency_name": "Zimbabwean Dollar",
+        "currency_shorthand": "ZWL",
+        "currency_included": "yes"
+    }
+}
