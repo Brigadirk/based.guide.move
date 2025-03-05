@@ -49,6 +49,9 @@ export interface Dependent {
 }
 
 export interface Profile {
+  id: string;
+  nickname: string;
+  avatar?: string;
   personalInformation: PersonalInformation;
   financialInformation: FinancialInformation;
   dependents: Dependent[];

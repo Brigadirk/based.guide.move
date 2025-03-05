@@ -173,9 +173,9 @@ export default function AnalysisResultPage() {
             destination={mockAnalysis.destinationCountry}
             intentions={mockAnalysis.residencyIntentions}
           />
-          {user?.profile && (
+          {user?.profiles?.[0] && (
             <div>
-              <ProfileCard profile={user.profile} showFinancials={false} />
+              <ProfileCard profile={user.profiles[0]} showFinancials={false} />
             </div>
           )}
           <Tabs defaultValue={tabs[0].value} className="w-full">

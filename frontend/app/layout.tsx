@@ -4,6 +4,7 @@ import { Nav } from '@/components/ui/nav'
 import { BottomNav } from '@/components/layout/bottom-nav'
 import { AuthProvider } from '@/lib/auth-context'
 import { chomskyFont } from '@/lib/fonts'
+import { Toaster } from '@/components/ui/sonner'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,6 +27,7 @@ export default function RootLayout({
             {children}
           </main>
           <BottomNav />
+          <Toaster />
         </AuthProvider>
       </body>
     </html>

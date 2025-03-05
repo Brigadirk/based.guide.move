@@ -96,7 +96,7 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
     <div className="space-y-6">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <RequiredLabel htmlFor="dateOfBirth">Date of Birth</RequiredLabel>
+          <Label htmlFor="dateOfBirth">Date of Birth</Label>
           <InfoDrawer
             title="Date of Birth"
             description="Your date of birth is used to determine eligibility for various visa programs and retirement options."
@@ -108,8 +108,8 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
           onSelect={(date) => date && handleChange("dateOfBirth", date.toISOString().split('T')[0])}
           error={getFieldError("dateOfBirth")?.message}
         />
-        {getFieldError("dateOfBirth") && (
-          <p className="text-sm text-destructive mt-1">{getFieldError("dateOfBirth")?.message}</p>
+        {getFieldWarning("dateOfBirth") && (
+          <p className="text-sm text-warning mt-1">{getFieldWarning("dateOfBirth")?.message}</p>
         )}
       </div>
 
@@ -166,7 +166,7 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <RequiredLabel>Marital Status</RequiredLabel>
+          <Label>Marital Status</Label>
           <InfoDrawer
             title="Marital Status"
             description="Your marital status can affect visa eligibility and tax implications in different countries."
@@ -216,7 +216,7 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
             )}
           </div>
           <div>
-            <RequiredLabel>Status</RequiredLabel>
+            <Label>Status</Label>
             <Select
               value={info.currentResidency.status}
               onValueChange={(value: any) => {

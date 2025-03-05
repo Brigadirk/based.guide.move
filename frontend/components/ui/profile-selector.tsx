@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { Check, ChevronsUpDown, Plus, User } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, getCountryFlagUrl } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -11,7 +11,9 @@ import {
 } from "@/components/ui/popover"
 import { useCallback, useEffect, useState } from 'react'
 import { Profile } from '@/types/profile'
-import { Building2, Globe } from 'lucide-react'
+import { Building2, Globe, ArrowRightIcon, Baby, Home } from 'lucide-react'
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import Image from "next/image"
 
 interface ProfileSelectorProps {
   profiles: Profile[]
@@ -30,13 +32,23 @@ export function ProfileSelector({
 }: ProfileSelectorProps) {
   const [open, setOpen] = useState(false)
 
-  const getProfileSummary = (profile: Profile) => {
-    const personalInformation = profile.personalInformation || {}
-    const { currentResidency, nationalities } = personalInformation
+  const getProfileSummary = (profile: Profile | null) => {
+    if (!profile?.personalInformation) {
+      return {
+        country: 'Not set',
+        nationality: 'Not set',
+      }
+    }
+    const { currentResidency, nationalities } = profile.personalInformation
     return {
       country: currentResidency?.country || 'Not set',
       nationality: nationalities?.[0]?.country || 'Not set',
     }
+  }
+
+  const getInitials = (nickname: string | undefined) => {
+    if (!nickname) return 'NA'
+    return nickname.slice(0, 2).toUpperCase()
   }
 
   return (
@@ -53,12 +65,42 @@ export function ProfileSelector({
         >
           {selectedProfile ? (
             <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-muted-foreground" />
+              <Avatar className="h-6 w-6">
+                {selectedProfile.avatar ? (
+                  <AvatarImage src={selectedProfile.avatar} alt={selectedProfile.nickname} />
+                ) : (
+                  <AvatarFallback>
+                    {getInitials(selectedProfile.nickname)}
+                  </AvatarFallback>
+                )}
+              </Avatar>
               <div className="flex flex-col items-start">
-                <span className="font-medium">Profile {profiles.indexOf(selectedProfile) + 1}</span>
-                <span className="text-xs text-muted-foreground">
-                  {getProfileSummary(selectedProfile).nationality} → {getProfileSummary(selectedProfile).country}
-                </span>
+                <span className="font-medium">{selectedProfile.nickname}</span>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <Baby className="h-3 w-3" />
+                    <div className="w-4 h-3 relative">
+                      <Image
+                        src={getCountryFlagUrl(selectedProfile.personalInformation?.nationalities?.[0]?.country?.toLowerCase() || 'un')}
+                        alt={`${selectedProfile.personalInformation?.nationalities?.[0]?.country || 'Unknown'} flag`}
+                        fill
+                        className="object-contain rounded"
+                      />
+                    </div>
+                  </div>
+                  <ArrowRightIcon className="h-3 w-3" />
+                  <div className="flex items-center gap-1">
+                    <Home className="h-3 w-3" />
+                    <div className="w-4 h-3 relative">
+                      <Image
+                        src={getCountryFlagUrl(selectedProfile.personalInformation?.currentResidency?.country?.toLowerCase() || 'un')}
+                        alt={`${selectedProfile.personalInformation?.currentResidency?.country || 'Unknown'} flag`}
+                        fill
+                        className="object-contain rounded"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           ) : (
@@ -73,10 +115,10 @@ export function ProfileSelector({
             const summary = getProfileSummary(profile)
             return (
               <Button
-                key={index}
+                key={profile.id}
                 variant="ghost"
                 className={cn(
-                  "w-full justify-start gap-2 rounded-none",
+                  "w-full justify-start gap-2 rounded-none p-4",
                   selectedProfile === profile && "bg-accent"
                 )}
                 onClick={() => {
@@ -90,17 +132,40 @@ export function ProfileSelector({
                     selectedProfile === profile ? "opacity-100" : "opacity-0"
                   )}
                 />
+                <Avatar className="h-6 w-6">
+                  {profile.avatar ? (
+                    <AvatarImage src={profile.avatar} alt={profile.nickname} />
+                  ) : (
+                    <AvatarFallback>
+                      {getInitials(profile.nickname)}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
                 <div className="flex flex-col items-start">
-                  <span className="font-medium">Profile {index + 1}</span>
+                  <span className="font-medium">{profile.nickname}</span>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
-                      <Globe className="h-3 w-3" />
-                      <span>{summary.nationality}</span>
+                      <Baby className="h-3 w-3" />
+                      <div className="w-4 h-3 relative">
+                        <Image
+                          src={getCountryFlagUrl(profile.personalInformation?.nationalities?.[0]?.country?.toLowerCase() || 'un')}
+                          alt={`${profile.personalInformation?.nationalities?.[0]?.country || 'Unknown'} flag`}
+                          fill
+                          className="object-contain rounded"
+                        />
+                      </div>
                     </div>
-                    <span>→</span>
+                    <ArrowRightIcon className="h-3 w-3" />
                     <div className="flex items-center gap-1">
-                      <Building2 className="h-3 w-3" />
-                      <span>{summary.country}</span>
+                      <Home className="h-3 w-3" />
+                      <div className="w-4 h-3 relative">
+                        <Image
+                          src={getCountryFlagUrl(profile.personalInformation?.currentResidency?.country?.toLowerCase() || 'un')}
+                          alt={`${profile.personalInformation?.currentResidency?.country || 'Unknown'} flag`}
+                          fill
+                          className="object-contain rounded"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -109,7 +174,7 @@ export function ProfileSelector({
           })}
           <Button
             variant="ghost"
-            className="w-full justify-start gap-2 rounded-none border-t"
+            className="w-full justify-start gap-2 rounded-none border-t p-4"
             onClick={() => {
               onCreateNew()
               setOpen(false)

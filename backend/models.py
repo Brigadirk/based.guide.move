@@ -1,34 +1,35 @@
 from datetime import datetime
-from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey, Integer, JSON, Float
+from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey, Integer, JSON, Float, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+import uuid
 
 Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'users'
 
-    id = Column(String, primary_key=True)
-    email = Column(String, unique=True, nullable=False)
-    password_hash = Column(String, nullable=False)
-    first_name = Column(String)
-    last_name = Column(String)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    email = Column(String, unique=True, index=True)
+    password_hash = Column(String)
+    first_name = Column(String, nullable=True)
+    last_name = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     email_verified = Column(Boolean, default=False)
     sessions = relationship("Session", back_populates="user")
     is_member = Column(Boolean, default=False)
-    analysis_tokens = Column(Integer, default=0)
+    analysis_tokens = Column(Integer, default=3)
     country_analyses = relationship("CountryAnalysis", back_populates="user")
-    profile = relationship("UserProfile", back_populates="user", uselist=False)
+    profiles = relationship("UserProfile", back_populates="user")
 
 class Session(Base):
     __tablename__ = 'sessions'
 
-    id = Column(String, primary_key=True)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String, ForeignKey('users.id'))
-    token = Column(String, unique=True, nullable=False)
-    expires_at = Column(DateTime, nullable=False)
+    token = Column(String, unique=True, index=True)
+    expires_at = Column(DateTime)
     created_at = Column(DateTime, default=datetime.utcnow)
     user = relationship("User", back_populates="sessions")
 
@@ -53,24 +54,24 @@ class Purchase(Base):
 class CountryAnalysis(Base):
     __tablename__ = 'country_analyses'
     
-    id = Column(String, primary_key=True)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String, ForeignKey('users.id'))
     country_id = Column(String, nullable=False)  # e.g., 'pt', 'ch', 'sv'
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
     
     # Store the analysis results
-    personal_tax_rate = Column(Integer)  # Calculated personal tax rate
-    corporate_tax_rate = Column(Integer)  # Calculated corporate tax rate if applicable
-    visa_eligibility = Column(Boolean)  # Whether user is eligible for visa
-    recommended_visa_type = Column(String)  # e.g., 'digital_nomad', 'permanent_resident'
-    cost_of_living_adjusted = Column(Integer)  # Adjusted cost of living based on user preferences
+    personal_tax_rate = Column(Integer, nullable=True)  # Calculated personal tax rate
+    corporate_tax_rate = Column(Integer, nullable=True)  # Calculated corporate tax rate if applicable
+    visa_eligibility = Column(Boolean, nullable=True)  # Whether user is eligible for visa
+    recommended_visa_type = Column(String, nullable=True)  # e.g., 'digital_nomad', 'permanent_resident'
+    cost_of_living_adjusted = Column(Integer, nullable=True)  # Adjusted cost of living based on user preferences
     
     # Store the user's input data that was used for the analysis
-    analysis_inputs = Column(JSON)  # Store all user inputs used for the analysis
+    analysis_inputs = Column(JSON, nullable=True)  # Store all user inputs used for the analysis
     
     # Store the detailed analysis results
-    analysis_results = Column(JSON)  # Store detailed breakdown and recommendations
+    analysis_results = Column(JSON, nullable=True)  # Store detailed breakdown and recommendations
     
     # Relationships
     user = relationship("User", back_populates="country_analyses")
@@ -118,21 +119,23 @@ class CountryProfile(Base):
 class UserProfile(Base):
     __tablename__ = 'user_profiles'
 
-    id = Column(String, primary_key=True)
-    user_id = Column(String, ForeignKey('users.id'), unique=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey('users.id'))
+    nickname = Column(String, nullable=True)
+    avatar = Column(String, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
 
     # Personal Information
-    date_of_birth = Column(String)
-    nationalities = Column(JSON)  # Array of country objects
-    marital_status = Column(String)  # "Single", "Married", "Divorced"
-    current_residency = Column(JSON)  # { country: string, status: string }
+    date_of_birth = Column(String, nullable=True)
+    nationalities = Column(JSON, default=list)  # Array of country objects
+    marital_status = Column(String, nullable=True)  # "Single", "Married", "Divorced"
+    current_residency = Column(JSON, nullable=True)  # { country: string, status: string }
 
     # Financial Information
-    income_sources = Column(JSON)  # Array of income source objects
-    assets = Column(JSON)  # Array of asset objects
-    liabilities = Column(JSON)  # Array of liability objects
+    income_sources = Column(JSON, default=list)  # Array of income source objects
+    assets = Column(JSON, default=list)  # Array of asset objects
+    liabilities = Column(JSON, default=list)  # Array of liability objects
 
     # Residency Intentions
     move_type = Column(String)  # "Permanent" or "Digital Nomad"
@@ -142,11 +145,11 @@ class UserProfile(Base):
     residency_notes = Column(String)
 
     # Dependents
-    dependents = Column(JSON)  # Array of dependent objects
-    special_circumstances = Column(String)
+    dependents = Column(JSON, default=list)  # Array of dependent objects
+    special_circumstances = Column(String, nullable=True)
 
     # Partner Information (Optional)
-    partner_info = Column(JSON)  # Complete partner profile object
+    partner_info = Column(JSON, nullable=True)  # Complete partner profile object
 
     # Relationships
-    user = relationship("User", back_populates="profile") 
+    user = relationship("User", back_populates="profiles") 

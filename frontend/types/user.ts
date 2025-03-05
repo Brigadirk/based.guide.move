@@ -14,18 +14,18 @@ export interface CountryAnalysis {
 export interface User {
   id: string;
   email: string;
-  isMember?: boolean;
-  analysisTokens?: number;
+  isMember: boolean;
+  analysisTokens: number;
+  profiles: Profile[];
   analyzedCountries?: CountryAnalysis[];
-  profile?: Profile;
 }
 
 // Type for raw API response
 export interface UserApiResponse {
   id: string;
   email: string;
-  is_member?: boolean;
-  analysis_tokens?: number;
+  is_member: boolean;
+  analysis_tokens: number;
   analyzed_countries?: Array<{
     country_id: string;
     personal_tax_rate: number | null;
@@ -36,5 +36,5 @@ export interface UserApiResponse {
     created_at: string;
     updated_at: string;
   }>;
-  profile?: Profile;
+  profiles: Profile[];
 } 

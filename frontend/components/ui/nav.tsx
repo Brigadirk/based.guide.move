@@ -12,19 +12,13 @@ export function Nav() {
   const { isAuthenticated, user } = useAuth()
   const router = useRouter()
   
-  console.log('Nav rendering:', { isAuthenticated, user })
-
-  console.log('Nav - Current user:', user); // Debug log
-
   const handleLoginClick = (e: React.MouseEvent) => {
     e.preventDefault()
-    console.log('Login clicked, redirecting to /login')
     router.push('/login')
   }
 
   const handleSignupClick = (e: React.MouseEvent) => {
     e.preventDefault()
-    console.log('Signup clicked, redirecting to /signup')
     router.push('/signup')
   }
 
@@ -53,9 +47,9 @@ export function Nav() {
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              {user?.profile && (
+              {user?.profiles?.[0] && (
                 <Link href="/profile">
-                  <ProfileBadge profile={user.profile} variant="xs" />
+                  <ProfileBadge profile={user.profiles[0]} variant="xs" />
                 </Link>
               )}
               <div className="flex items-center gap-2 text-sm">

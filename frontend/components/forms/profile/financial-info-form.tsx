@@ -156,9 +156,7 @@ export function FinancialInfoForm({ data, onUpdate }: FinancialInfoFormProps) {
                     setTouched(prev => ({ ...prev, [`incomeSources.${index}.type`]: true }))
                   }}
                 >
-                  <SelectTrigger className={cn(
-                    getFieldError(`incomeSources.${index}.type`) && "border-destructive"
-                  )}>
+                  <SelectTrigger>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -169,9 +167,9 @@ export function FinancialInfoForm({ data, onUpdate }: FinancialInfoFormProps) {
                     ))}
                   </SelectContent>
                 </Select>
-                {getFieldError(`incomeSources.${index}.type`) && (
-                  <p className="text-sm text-destructive mt-1">
-                    {getFieldError(`incomeSources.${index}.type`)?.message}
+                {getFieldWarning(`incomeSources.${index}.type`) && (
+                  <p className="text-sm text-warning mt-1">
+                    {getFieldWarning(`incomeSources.${index}.type`)?.message}
                   </p>
                 )}
               </div>
@@ -186,13 +184,10 @@ export function FinancialInfoForm({ data, onUpdate }: FinancialInfoFormProps) {
                     handleUpdate({ ...info, incomeSources: updated })
                     setTouched(prev => ({ ...prev, [`incomeSources.${index}.amount`]: true }))
                   }}
-                  className={cn(
-                    getFieldError(`incomeSources.${index}.amount`) && "border-destructive"
-                  )}
                 />
-                {getFieldError(`incomeSources.${index}.amount`) && (
-                  <p className="text-sm text-destructive mt-1">
-                    {getFieldError(`incomeSources.${index}.amount`)?.message}
+                {getFieldWarning(`incomeSources.${index}.amount`) && (
+                  <p className="text-sm text-warning mt-1">
+                    {getFieldWarning(`incomeSources.${index}.amount`)?.message}
                   </p>
                 )}
               </div>
@@ -242,9 +237,9 @@ export function FinancialInfoForm({ data, onUpdate }: FinancialInfoFormProps) {
               No income sources added yet. Click the button above to add one.
             </div>
           )}
-          {getFieldError("incomeSources") && (
-            <p className="text-sm text-destructive">
-              {getFieldError("incomeSources")?.message}
+          {getFieldWarning("incomeSources") && (
+            <p className="text-sm text-warning">
+              {getFieldWarning("incomeSources")?.message}
             </p>
           )}
         </CardContent>
@@ -337,7 +332,7 @@ export function FinancialInfoForm({ data, onUpdate }: FinancialInfoFormProps) {
             </div>
           )}
           {getFieldWarning("assets") && (
-            <p className="text-sm text-yellow-600">
+            <p className="text-sm text-warning">
               {getFieldWarning("assets")?.message}
             </p>
           )}

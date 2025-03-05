@@ -12,6 +12,7 @@ import {
   Heart,
   Users
 } from "lucide-react"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 interface ProfileCardProps {
   profile: Profile
@@ -49,6 +50,23 @@ export function ProfileCard({ profile, className, showFinancials = false }: Prof
     <Card className={cn("w-full", className)}>
       <CardContent className="p-4">
         <div className="space-y-3">
+          {/* Profile Header */}
+          <div className="flex items-center gap-3">
+            <Avatar className="h-10 w-10">
+              {profile.avatar ? (
+                <AvatarImage src={profile.avatar} alt={profile.nickname} />
+              ) : (
+                <AvatarFallback>
+                  {profile.nickname ? profile.nickname.slice(0, 2).toUpperCase() : "NA"}
+                </AvatarFallback>
+              )}
+            </Avatar>
+            <div>
+              <h3 className="font-medium">{profile.nickname || "Unnamed Profile"}</h3>
+              <p className="text-sm text-muted-foreground">Profile ID: {profile.id?.slice(0, 8) || "N/A"}</p>
+            </div>
+          </div>
+
           {/* Basic Info */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
