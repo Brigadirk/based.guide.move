@@ -3,18 +3,39 @@ import datetime
 import json
 from countries import ALL_COUNTRIES
 from PIL import Image
-from prompt import prompt_tax_rundown
+from prompt_filter import create_quick_prompt #, create_comprehensive_prompt
 import recommender
+from pathlib import Path
 
-def return_base_analysis(data):
-    query = prompt_tax_rundown(data)
-    response = recommender.main(query)
+# Path to the country_info JSON file
+country_info_path = Path("./backend/base_recommender/country_info/country_info.json")
+
+# Load ALL_COUNTRIES_AND_CURRENCIES from the JSON file
+if country_info_path.exists():
+    with open(country_info_path, "r") as f:
+        ALL_COUNTRIES_AND_CURRENCIES = json.load(f)
+else:
+    raise FileNotFoundError(f"{country_info_path} does not exist.")
+
+# Generate ALL_COUNTRIES by filtering the dictionary
+ALL_COUNTRIES = [
+    key for key, value in ALL_COUNTRIES_AND_CURRENCIES.items()
+    if value.get("embedding_name") != "not-included"
+]
+def return_base_analysis(data, atype):
+    if atype == "quick_and_dirty":
+        prompt = create_quick_prompt(data)
+    elif atype == "comprehensive":
+        query, country1, country2 = create_comprehensive_prompt(data)
+    response = recommender.main(query=prompt[0], country1=prompt[1], country2=prompt[2])
     return response
 
 # Function to save data to a JSON file
-def save_to_json(data, filename=None):
-    if filename is None:
-        filename = f".backend/base_recommender/temp_profiles/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"  # Generate filename with datetime
+def save_to_json(data, type):
+    if type == "quick_and_dirty":
+        filename = f".backend/base_recommender/temp_profiles/quick_and_dirty/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
+    else:
+        filename = f".backend/base_recommender/temp_profiles/comprehensive/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
     with open(filename, "w") as f:
         json.dump(data, f, indent=4)
     st.success(f"Data saved to {filename} as {filename}!")
@@ -50,7 +71,7 @@ def quick_and_dirty_analysis():
         }
 
         # Get the result from return_base_analysis
-        result = return_base_analysis(data)
+        result = return_base_analysis(data, "quick_and_dirty")
         
         # Display the result
         if result and "result" in result:
