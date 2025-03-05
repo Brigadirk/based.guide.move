@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation"
 import { Compass, User, Settings, FileText } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
+import { ProfileBadge } from "@/components/ui/profile-badge"
 
 export function BottomNav() {
   const pathname = usePathname()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user, selectedProfile } = useAuth()
 
   if (!isAuthenticated) {
     return null
@@ -28,7 +29,12 @@ export function BottomNav() {
     {
       href: '/profile',
       icon: <User size={24} />,
-      label: 'Profile'
+      label: 'Profile',
+      badge: selectedProfile && (
+        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap">
+          <ProfileBadge profile={selectedProfile} variant="xs" />
+        </div>
+      )
     },
     {
       href: '/settings',
@@ -42,7 +48,7 @@ export function BottomNav() {
       <nav className="mx-auto max-w-screen-xl">
         <ul className="flex justify-around items-center">
           {navItems.map((item) => (
-            <li key={item.href}>
+            <li key={item.href} className="relative">
               <Link 
                 href={item.href} 
                 className={cn(
@@ -52,6 +58,7 @@ export function BottomNav() {
               >
                 {item.icon}
                 <span>{item.label}</span>
+                {item.badge}
               </Link>
             </li>
           ))}

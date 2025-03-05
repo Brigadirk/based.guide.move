@@ -23,10 +23,10 @@ interface AnalysisInputProps {
 
 export function AnalysisInput({ origin, destination, intentions }: AnalysisInputProps) {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3 text-lg">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-4 relative">
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 text-base">
+        <div className="flex items-center gap-1.5">
+          <div className="w-5 h-3.5 relative">
             <Image
               src={getCountryFlagUrl(origin.id)}
               alt={`${origin.name} flag`}
@@ -36,9 +36,9 @@ export function AnalysisInput({ origin, destination, intentions }: AnalysisInput
           </div>
           <span className="font-serif">{origin.name}</span>
         </div>
-        <ArrowRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-4 relative">
+        <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+        <div className="flex items-center gap-1.5">
+          <div className="w-5 h-3.5 relative">
             <Image
               src={getCountryFlagUrl(destination.id)}
               alt={`${destination.name} flag`}
@@ -50,7 +50,7 @@ export function AnalysisInput({ origin, destination, intentions }: AnalysisInput
         </div>
       </div>
 
-      <div className="space-y-1.5">
+      <div className="flex gap-4 text-sm">
         <div>
           <span className="text-muted-foreground">Duration:</span>{" "}
           <span>{intentions.duration}</span>

@@ -5,7 +5,6 @@ import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
-import { ProfileAlertBanner } from "@/components/layout/profile-alert-banner"
 import Link from "next/link"
 import { Profile, ProfileProgress } from "@/types/profile"
 import { ScrollableContainer } from "@/components/ui/scrollable-container"
@@ -29,6 +28,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { ProfileSelector } from "@/components/ui/profile-selector"
 import Image from "next/image"
 import { getCountryFlagUrl } from "@/lib/utils"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 function calculateProgress(profile: Profile): ProfileProgress {
   const sections = {
@@ -100,11 +100,12 @@ export default function ProfilePage() {
   const router = useRouter()
 
   useEffect(() => {
+    console.log('[ProfilePage] Auth state:', { isAuthenticated, isLoading, hasUser: !!user, hasProfiles: user?.profiles?.length })
     // Only redirect after we've confirmed auth state
     if (!isLoading && !isAuthenticated) {
       router.replace('/login')
     }
-  }, [isAuthenticated, isLoading, router])
+  }, [isAuthenticated, isLoading, router, user])
 
   // Don't render anything while checking auth
   if (isLoading) {
@@ -202,6 +203,36 @@ export default function ProfilePage() {
     )
   }
 
+  // Show profile selector if no profile is selected
+  if (!selectedProfile && user.profiles.length > 0) {
+    return (
+      <div className="container max-w-2xl py-6 md:py-10">
+        <Card>
+          <CardHeader>
+            <CardTitle>Select a Profile</CardTitle>
+            <CardDescription>Choose a profile to continue</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ProfileSelector
+              profiles={user.profiles}
+              selectedProfile={selectedProfile}
+              onSelect={setSelectedProfile}
+              onCreateNew={handleCreateNewProfile}
+            />
+            <Button 
+              onClick={handleCreateNewProfile}
+              variant="outline"
+              className="w-full mt-4"
+            >
+              Create New Profile
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   // Add null check for selected profile
   if (!selectedProfile) {
     return (
@@ -251,6 +282,21 @@ export default function ProfilePage() {
               <CardTitle>Basic Information</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-6">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16">
+                  {selectedProfile.avatar ? (
+                    <AvatarImage src={selectedProfile.avatar} alt={selectedProfile.nickname} />
+                  ) : (
+                    <AvatarFallback>
+                      {selectedProfile.nickname?.slice(0, 2).toUpperCase() || 'NA'}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div>
+                  <h3 className="text-lg font-semibold">{selectedProfile.nickname}</h3>
+                </div>
+              </div>
+
               <div className="grid gap-6">
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
@@ -412,12 +458,13 @@ export default function ProfilePage() {
   }
 
   return (
-    <>
-      <ProfileAlertBanner />
-      <div className="max-w-5xl mx-auto space-y-6 p-6">
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Select Profile</label>
-          <div className="w-full">
+    <div className="container max-w-2xl py-6 md:py-10">
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="text-sm text-muted-foreground">
+            Select Profile
+          </div>
+          <div className="shrink-0">
             <ProfileSelector
               profiles={user.profiles}
               selectedProfile={selectedProfile}
@@ -427,8 +474,70 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <TabContent />
+        <div className="space-y-6">
+          {progress.completed < progress.total && (
+            <Card className="border-yellow-500">
+              <CardHeader>
+                <CardTitle className="text-lg">Complete Your Profile</CardTitle>
+                <CardDescription>
+                  {progress.completed} of {progress.total} sections completed
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {!progress.sections.basic && (
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border bg-muted">
+                        <User className="h-5 w-5 text-foreground" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium leading-none">
+                          Complete Basic Information
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Add your date of birth and current residency
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {!progress.sections.tax && (
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border bg-muted">
+                        <Wallet className="h-5 w-5 text-foreground" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium leading-none">
+                          Add Financial Information
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Add at least one income source
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {!progress.sections.lifestyle && (
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border bg-muted">
+                        <Users className="h-5 w-5 text-foreground" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium leading-none">
+                          Add Lifestyle Information
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Set your marital status
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          <TabContent />
+        </div>
       </div>
-    </>
+    </div>
   )
 } 

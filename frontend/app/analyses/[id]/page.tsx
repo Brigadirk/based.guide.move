@@ -166,39 +166,41 @@ export default function AnalysisResultPage() {
   return (
     <div className="w-full">
       <Card className="border-0 shadow-none">
-        <AnalysisHeader analysis={mockAnalysis} />
-        <CardContent className="space-y-6">
-          <AnalysisInput
-            origin={mockAnalysis.originCountry}
-            destination={mockAnalysis.destinationCountry}
-            intentions={mockAnalysis.residencyIntentions}
-          />
-          {user?.profiles?.[0] && (
-            <div>
-              <ProfileCard profile={user.profiles[0]} showFinancials={false} />
+        <div className="container max-w-3xl mx-auto">
+          <AnalysisHeader analysis={mockAnalysis} />
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              <AnalysisInput
+                origin={mockAnalysis.originCountry}
+                destination={mockAnalysis.destinationCountry}
+                intentions={mockAnalysis.residencyIntentions}
+              />
+              {user?.profiles?.[0] && (
+                <ProfileCard profile={user.profiles[0]} showFinancials={false} />
+              )}
             </div>
-          )}
-          <Tabs defaultValue={tabs[0].value} className="w-full">
-            <ScrollableContainer className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] bg-muted/50">
-              <div className="container max-w-6xl mx-auto px-4">
-                <TabsList className="flex space-x-2">
-                  {tabs.map((tab) => (
-                    <TabsTrigger key={tab.value} value={tab.value} className="flex-1">
-                      {tab.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
+            <Tabs defaultValue={tabs[0].value} className="w-full">
+              <ScrollableContainer className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] bg-muted/50">
+                <div className="container max-w-3xl mx-auto px-4">
+                  <TabsList className="flex space-x-2">
+                    {tabs.map((tab) => (
+                      <TabsTrigger key={tab.value} value={tab.value} className="flex-1">
+                        {tab.label}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </div>
+              </ScrollableContainer>
+              <div className="mt-4">
+                {tabs.map((tab) => (
+                  <TabsContent key={tab.value} value={tab.value}>
+                    {tab.content}
+                  </TabsContent>
+                ))}
               </div>
-            </ScrollableContainer>
-            <div className="mt-6">
-              {tabs.map((tab) => (
-                <TabsContent key={tab.value} value={tab.value}>
-                  {tab.content}
-                </TabsContent>
-              ))}
-            </div>
-          </Tabs>
-        </CardContent>
+            </Tabs>
+          </CardContent>
+        </div>
       </Card>
     </div>
   )

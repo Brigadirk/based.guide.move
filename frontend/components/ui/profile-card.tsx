@@ -1,7 +1,7 @@
 'use client'
 
 import { Profile } from "@/types/profile"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { 
   User,
@@ -13,6 +13,7 @@ import {
   Users
 } from "lucide-react"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 
 interface ProfileCardProps {
   profile: Profile
@@ -47,104 +48,111 @@ export function ProfileCard({ profile, className, showFinancials = false }: Prof
   const totalIncome = showFinancials ? calculateTotalIncome(financialInformation?.incomeSources) : null
 
   return (
-    <Card className={cn("w-full", className)}>
-      <CardContent className="p-4">
-        <div className="space-y-3">
-          {/* Profile Header */}
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              {profile.avatar ? (
-                <AvatarImage src={profile.avatar} alt={profile.nickname} />
-              ) : (
-                <AvatarFallback>
-                  {profile.nickname ? profile.nickname.slice(0, 2).toUpperCase() : "NA"}
-                </AvatarFallback>
-              )}
-            </Avatar>
-            <div>
-              <h3 className="font-medium">{profile.nickname || "Unnamed Profile"}</h3>
-              <p className="text-sm text-muted-foreground">Profile ID: {profile.id?.slice(0, 8) || "N/A"}</p>
-            </div>
-          </div>
-
-          {/* Basic Info */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-muted-foreground" />
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">
-                  {personalInformation?.nationalities?.[0]?.country || "Not set"}
-                </span>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Globe className="h-3 w-3" />
-                  <span>Nationality</span>
+    <Accordion type="single" collapsible className={cn("w-full", className)}>
+      <AccordionItem value="profile" className="border-none">
+        <Card>
+          <AccordionTrigger className="w-full hover:no-underline">
+            <div className="flex items-center justify-between w-full p-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10">
+                  {profile.avatar ? (
+                    <AvatarImage src={profile.avatar} alt={profile.nickname} />
+                  ) : (
+                    <AvatarFallback>
+                      {profile.nickname ? profile.nickname.slice(0, 2).toUpperCase() : "NA"}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div>
+                  <h3 className="font-medium text-left">{profile.nickname || "Unnamed Profile"}</h3>
+                  <p className="text-sm text-muted-foreground">Profile ID: {profile.id?.slice(0, 8) || "N/A"}</p>
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="flex flex-col items-end">
-                <span className="text-sm font-medium">
-                  {personalInformation?.currentResidency?.country || "Not set"}
-                </span>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Building2 className="h-3 w-3" />
-                  <span>Current</span>
+          </AccordionTrigger>
+          
+          <AccordionContent>
+            <div className="px-4 pb-4 space-y-4">
+              {/* Location Information */}
+              <div className="flex items-center justify-between pt-2 border-t">
+                <div className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">
+                      {personalInformation?.nationalities?.[0]?.country || "Not set"}
+                    </span>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Globe className="h-3 w-3" />
+                      <span>Nationality</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Family Info */}
-          <div className="flex items-center justify-between border-t pt-3">
-            <div className="flex items-center gap-2">
-              <Heart className="h-4 w-4 text-muted-foreground" />
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">
-                  {personalInformation?.maritalStatus || "Not set"}
-                </span>
-                <span className="text-xs text-muted-foreground">Status</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex flex-col items-end">
-                <span className="text-sm font-medium">
-                  {dependents?.length || "No"} {(dependents?.length || 0) === 1 ? "dependent" : "dependents"}
-                </span>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Users className="h-3 w-3" />
-                  <span>Family</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Financial Info - Optional */}
-          {showFinancials && (
-            <div className="flex items-center justify-between border-t pt-3">
-              <div className="flex items-center gap-2">
-                <Briefcase className="h-4 w-4 text-muted-foreground" />
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium">
-                    {financialInformation?.incomeSources?.[0]?.type || "Not set"}
-                  </span>
-                  <span className="text-xs text-muted-foreground">Occupation</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex flex-col items-end">
-                  <span className="text-sm font-medium">
-                    {totalIncome || "Not set"}
-                  </span>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <DollarSign className="h-3 w-3" />
-                    <span>Income</span>
+                <div className="flex items-center gap-2">
+                  <div className="flex flex-col items-end">
+                    <span className="text-sm font-medium">
+                      {personalInformation?.currentResidency?.country || "Not set"}
+                    </span>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Building2 className="h-3 w-3" />
+                      <span>Current</span>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* Family Information */}
+              <div className="flex items-center justify-between pt-2 border-t">
+                <div className="flex items-center gap-2">
+                  <Heart className="h-4 w-4 text-muted-foreground" />
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">
+                      {personalInformation?.maritalStatus || "Not set"}
+                    </span>
+                    <span className="text-xs text-muted-foreground">Status</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex flex-col items-end">
+                    <span className="text-sm font-medium">
+                      {dependents?.length || "No"} {(dependents?.length || 0) === 1 ? "dependent" : "dependents"}
+                    </span>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Users className="h-3 w-3" />
+                      <span>Family</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Financial Information - Optional */}
+              {showFinancials && (
+                <div className="flex items-center justify-between pt-2 border-t">
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">
+                        {financialInformation?.incomeSources?.[0]?.type || "Not set"}
+                      </span>
+                      <span className="text-xs text-muted-foreground">Occupation</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex flex-col items-end">
+                      <span className="text-sm font-medium">
+                        {totalIncome || "Not set"}
+                      </span>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <DollarSign className="h-3 w-3" />
+                        <span>Income</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+          </AccordionContent>
+        </Card>
+      </AccordionItem>
+    </Accordion>
   )
 } 

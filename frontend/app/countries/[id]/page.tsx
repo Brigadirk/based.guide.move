@@ -7,10 +7,13 @@ import { Separator } from "@/components/ui/separator"
 import { formatNumber, getCountryFlagUrl } from "@/lib/utils"
 import Image from "next/image"
 import { CountryDetails } from "@/types/api"
-import { ProfileAlertBanner } from "@/components/layout/profile-alert-banner"
 import { TaxScore, VisaScore } from "@/components/features/scores/score-display"
 import { ScrollableContainer } from "@/components/ui/scrollable-container"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import { CardDescription } from "@/components/ui/card"
+import { useAuth } from "@/lib/auth-context"
+import { useToast } from "@/components/ui/use-toast"
 
 const countryImageMap: Record<string, string> = {
   'united': 'united-states',
@@ -331,7 +334,6 @@ export default async function CountryPage({ params }: CountryPageProps) {
 
   return (
     <div className="relative w-full">
-      <ProfileAlertBanner />
       {/* Hero Section */}
       <div className="relative w-full h-[400px] rounded-b-lg overflow-hidden z-10">
         <Image

@@ -12,10 +12,9 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export default function SettingsPage() {
-  const { isAuthenticated, logout, user } = useAuth()
+  const { isAuthenticated, logout, user, isLoading: authLoading } = useAuth()
   const router = useRouter()
   const { theme, setTheme } = useTheme()
-  const [isLoading, setIsLoading] = useState(true)
   const [email, setEmail] = useState("")
   const [isUpdatingEmail, setIsUpdatingEmail] = useState(false)
   const [isDiscordConnected, setIsDiscordConnected] = useState(false)
@@ -29,20 +28,13 @@ export default function SettingsPage() {
   }, [user])
 
   useEffect(() => {
-    console.log('Settings Page - Auth State:', { isAuthenticated, isLoading })
+    console.log('Settings Page - Auth State:', { isAuthenticated, authLoading })
     
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-      console.log('Settings Page - After Timeout:', { isAuthenticated, isLoading: false })
-      
-      if (!isAuthenticated) {
-        console.log('Settings Page - Redirecting to login')
-        router.push('/login?returnUrl=/settings')
-      }
-    }, 100)
-
-    return () => clearTimeout(timer)
-  }, [isAuthenticated, router])
+    if (!authLoading && !isAuthenticated) {
+      console.log('Settings Page - Redirecting to login')
+      router.push('/login?returnUrl=/settings')
+    }
+  }, [isAuthenticated, authLoading, router])
 
   const handleEmailUpdate = async () => {
     setIsUpdatingEmail(true)
@@ -62,9 +54,15 @@ export default function SettingsPage() {
     window.open('/api/discord/connect', '_blank')
   }
 
-  if (isLoading || !isAuthenticated) {
-    console.log('Settings Page - Rendering null:', { isLoading, isAuthenticated })
-    return null
+  if (authLoading || !isAuthenticated) {
+    console.log('Settings Page - Loading or not authenticated:', { authLoading, isAuthenticated })
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse text-muted-foreground">
+          {authLoading ? "Loading..." : "Please log in"}
+        </div>
+      </div>
+    )
   }
 
   return (

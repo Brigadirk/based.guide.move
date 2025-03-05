@@ -95,12 +95,15 @@ DrawerTitle.displayName = DrawerPrimitive.Title.displayName
 const DrawerDescription = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Description>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <DrawerPrimitive.Description
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}
+    asChild
     {...props}
-  />
+  >
+    <div>{children}</div>
+  </DrawerPrimitive.Description>
 ))
 DrawerDescription.displayName = DrawerPrimitive.Description.displayName
 

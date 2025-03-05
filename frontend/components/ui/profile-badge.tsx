@@ -1,7 +1,7 @@
 'use client'
 
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
+import { cn, getCountryFlagUrl } from "@/lib/utils"
 import { Profile } from "@/types/profile"
 import { Baby, Home } from "lucide-react"
 import { 
@@ -10,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import Image from "next/image"
 
 interface ProfileBadgeProps {
   profile: Pick<Profile, 'personalInformation'> & { name?: string }
@@ -17,36 +18,10 @@ interface ProfileBadgeProps {
   className?: string
 }
 
-const countryToFlag = (countryCode: string) => {
-  // Convert country code to flag emoji (each country code letter is converted to regional indicator symbol)
-  const codePoints = countryCode
-    .toUpperCase()
-    .split('')
-    .map(char => 127397 + char.charCodeAt(0))
-  return String.fromCodePoint(...codePoints)
-}
-
-const getCountryCode = (country: string): string => {
-  // This is a simplified mapping - in a real app, you'd want a complete country-to-code mapping
-  const mapping: Record<string, string> = {
-    'United States': 'US',
-    'Switzerland': 'CH',
-    'Portugal': 'PT',
-    'Spain': 'ES',
-    'Netherlands': 'NL',
-    'El Salvador': 'SV',
-    // Add more as needed
-  }
-  return mapping[country] || 'UN' // UN as fallback
-}
-
 export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadgeProps) {
   const birthCountry = profile.personalInformation?.nationalities?.[0]?.country
   const residenceCountry = profile.personalInformation?.currentResidency?.country
   
-  const birthFlag = birthCountry ? countryToFlag(getCountryCode(birthCountry)) : '🌍'
-  const residenceFlag = residenceCountry ? countryToFlag(getCountryCode(residenceCountry)) : '🌍'
-
   // XS variant - just the flags
   if (variant === 'xs') {
     return (
@@ -57,7 +32,16 @@ export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadg
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="cursor-help">{birthFlag}</span>
+              <span className="cursor-help">
+                <div className="w-4 h-3 relative">
+                  <Image
+                    src={getCountryFlagUrl(birthCountry?.toLowerCase() || 'un')}
+                    alt={`${birthCountry || 'Unknown'} flag`}
+                    fill
+                    className="object-contain rounded"
+                  />
+                </div>
+              </span>
             </TooltipTrigger>
             <TooltipContent>
               <p>Birth country: {birthCountry || 'Unknown'}</p>
@@ -68,7 +52,16 @@ export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadg
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="cursor-help">{residenceFlag}</span>
+              <span className="cursor-help">
+                <div className="w-4 h-3 relative">
+                  <Image
+                    src={getCountryFlagUrl(residenceCountry?.toLowerCase() || 'un')}
+                    alt={`${residenceCountry || 'Unknown'} flag`}
+                    fill
+                    className="object-contain rounded"
+                  />
+                </div>
+              </span>
             </TooltipTrigger>
             <TooltipContent>
               <p>Current residence: {residenceCountry || 'Unknown'}</p>
@@ -91,7 +84,14 @@ export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadg
             <TooltipTrigger asChild>
               <span className="flex items-center gap-1 cursor-help">
                 <Baby className="h-3 w-3" />
-                {birthFlag}
+                <div className="w-4 h-3 relative">
+                  <Image
+                    src={getCountryFlagUrl(birthCountry?.toLowerCase() || 'un')}
+                    alt={`${birthCountry || 'Unknown'} flag`}
+                    fill
+                    className="object-contain rounded"
+                  />
+                </div>
               </span>
             </TooltipTrigger>
             <TooltipContent>
@@ -105,7 +105,14 @@ export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadg
             <TooltipTrigger asChild>
               <span className="flex items-center gap-1 cursor-help">
                 <Home className="h-3 w-3" />
-                {residenceFlag}
+                <div className="w-4 h-3 relative">
+                  <Image
+                    src={getCountryFlagUrl(residenceCountry?.toLowerCase() || 'un')}
+                    alt={`${residenceCountry || 'Unknown'} flag`}
+                    fill
+                    className="object-contain rounded"
+                  />
+                </div>
               </span>
             </TooltipTrigger>
             <TooltipContent>
@@ -135,7 +142,14 @@ export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadg
             <TooltipTrigger asChild>
               <span className="flex items-center gap-1 cursor-help">
                 <Baby className="h-3 w-3" />
-                {birthFlag}
+                <div className="w-4 h-3 relative">
+                  <Image
+                    src={getCountryFlagUrl(birthCountry?.toLowerCase() || 'un')}
+                    alt={`${birthCountry || 'Unknown'} flag`}
+                    fill
+                    className="object-contain rounded"
+                  />
+                </div>
               </span>
             </TooltipTrigger>
             <TooltipContent>
@@ -149,7 +163,14 @@ export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadg
             <TooltipTrigger asChild>
               <span className="flex items-center gap-1 cursor-help">
                 <Home className="h-3 w-3" />
-                {residenceFlag}
+                <div className="w-4 h-3 relative">
+                  <Image
+                    src={getCountryFlagUrl(residenceCountry?.toLowerCase() || 'un')}
+                    alt={`${residenceCountry || 'Unknown'} flag`}
+                    fill
+                    className="object-contain rounded"
+                  />
+                </div>
               </span>
             </TooltipTrigger>
             <TooltipContent>
@@ -179,7 +200,14 @@ export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadg
             <span className="flex items-center gap-1 cursor-help">
               <Baby className="h-3 w-3" />
               <span className="flex items-center gap-1">
-                {birthFlag}
+                <div className="w-4 h-3 relative">
+                  <Image
+                    src={getCountryFlagUrl(birthCountry?.toLowerCase() || 'un')}
+                    alt={`${birthCountry || 'Unknown'} flag`}
+                    fill
+                    className="object-contain rounded"
+                  />
+                </div>
                 <span className="text-sm">{birthCountry || 'Unknown'}</span>
               </span>
             </span>
@@ -196,7 +224,14 @@ export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadg
             <span className="flex items-center gap-1 cursor-help">
               <Home className="h-3 w-3" />
               <span className="flex items-center gap-1">
-                {residenceFlag}
+                <div className="w-4 h-3 relative">
+                  <Image
+                    src={getCountryFlagUrl(residenceCountry?.toLowerCase() || 'un')}
+                    alt={`${residenceCountry || 'Unknown'} flag`}
+                    fill
+                    className="object-contain rounded"
+                  />
+                </div>
                 <span className="text-sm">{residenceCountry || 'Unknown'}</span>
               </span>
             </span>

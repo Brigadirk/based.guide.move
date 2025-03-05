@@ -13,10 +13,10 @@ import { ProfileCard } from "@/components/ui/profile-card"
 
 export default function RequestAnalysisPage() {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, selectedProfile: currentProfile } = useAuth()
   const [formData, setFormData] = useState<{ residencyIntentions?: ResidencyIntentions }>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(user?.profile || null)
+  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(currentProfile || null)
 
   const handleCreateNewProfile = () => {
     router.push('/profile/new')
@@ -27,6 +27,12 @@ export default function RequestAnalysisPage() {
       router.push('/products')
     }
   }, [user, router])
+
+  useEffect(() => {
+    if (currentProfile) {
+      setSelectedProfile(currentProfile)
+    }
+  }, [currentProfile])
 
   const handleSubmit = async () => {
     if (!formData.residencyIntentions) {
@@ -65,7 +71,7 @@ export default function RequestAnalysisPage() {
             </div>
             <div className="space-y-3">
               <ProfileSelector
-                profiles={[user?.profile].filter(Boolean) as Profile[]}
+                profiles={[user?.profiles?.[0]].filter(Boolean) as Profile[]}
                 selectedProfile={selectedProfile}
                 onSelect={setSelectedProfile}
                 onCreateNew={handleCreateNewProfile}

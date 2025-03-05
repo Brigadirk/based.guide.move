@@ -2,10 +2,11 @@
 
 import { getCountries } from "@/lib/server-api"
 import { CountryCard } from "@/components/features/country/country-card"
-import { ProfileAlertBanner } from "@/components/layout/profile-alert-banner"
 import { useState, useEffect } from "react"
 import { Country } from "@/types/api"
 import { ExploreControls } from "@/components/features/explore/explore-controls"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ScrollableContainer } from "@/components/ui/scrollable-container"
 
 export default function ExplorePage() {
   const [countries, setCountries] = useState<Country[]>([])
@@ -95,24 +96,25 @@ export default function ExplorePage() {
   }
 
   return (
-    <div>
-      <ProfileAlertBanner />
-      <ExploreControls
-        selectedCountry={selectedCountry}
-        onCountrySelect={setSelectedCountry}
-        activeFilters={activeFilters}
-        onFiltersChange={handleFiltersChange}
-      />
-      
-      <div className="container max-w-6xl mx-auto px-4 py-6">
-        <p className="text-sm text-muted-foreground mb-6">
-          Found {countries.length} candidate bases
-        </p>
+    <div className="container max-w-7xl py-6 md:py-10">
+      <div className="flex flex-col gap-8">
+        <ExploreControls
+          selectedCountry={selectedCountry}
+          onCountrySelect={setSelectedCountry}
+          activeFilters={activeFilters}
+          onFiltersChange={handleFiltersChange}
+        />
+        
+        <div className="container max-w-6xl mx-auto px-4 py-6">
+          <p className="text-sm text-muted-foreground mb-6">
+            Found {countries.length} candidate bases
+          </p>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {countries.map((country) => (
-            <CountryCard key={country.id} country={country} />
-          ))}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {countries.map((country) => (
+              <CountryCard key={country.id} country={country} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
