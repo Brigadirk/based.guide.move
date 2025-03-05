@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
-import { CountryCard } from "@/components/country-card"
+import { CountryCard } from "@/components/features/country/country-card"
 import { getCountries } from "@/lib/server-api"
 import { Country } from "@/types/api"
 

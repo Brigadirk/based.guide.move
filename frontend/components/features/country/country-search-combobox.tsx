@@ -5,7 +5,7 @@ import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { BasedScore } from "@/components/based-score"
+import { TaxScore } from "@/components/features/scores/score-display"
 import {
   Popover,
   PopoverContent,
@@ -18,7 +18,7 @@ import Fuse from 'fuse.js'
 import Image from 'next/image'
 import { getCountryFlagUrl } from "@/lib/utils"
 
-interface CountrySearchProps {
+interface CountrySearchComboboxProps {
   onSelect: (country: Country) => void
   className?: string
   placeholder?: string
@@ -39,7 +39,7 @@ const COUNTRY_ALIASES: Record<string, string[]> = {
   // Add more as needed
 }
 
-export function CountrySearch({ onSelect, className, placeholder = "Search for a country..." }: CountrySearchProps) {
+export function CountrySearchCombobox({ onSelect, className, placeholder = "Search for a country..." }: CountrySearchComboboxProps) {
   const [open, setOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [countries, setCountries] = useState<EnhancedCountry[]>([])
@@ -171,9 +171,10 @@ export function CountrySearch({ onSelect, className, placeholder = "Search for a
                       <div className="flex items-center justify-between w-full gap-2">
                         <span className="truncate">{country.name}</span>
                         {country.taxScore !== undefined && (
-                          <BasedScore 
+                          <TaxScore 
                             score={country.taxScore} 
-                            className="text-sm"
+                            size="sm"
+                            showLabel={false}
                           />
                         )}
                       </div>

@@ -6,11 +6,10 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { toast } from "sonner"
-import { Steps } from "./steps"
-import { PersonalInfoForm } from "./steps/personal-info-form"
-import { FinancialInfoForm } from "./steps/financial-info-form"
-import { ResidencyIntentionsForm } from "./steps/residency-intentions-form"
-import { FamilyForm } from "./steps/family-form"
+import { Steps } from "@/components/features/profile/steps"
+import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form"
+import { FinancialInfoForm } from "@/components/forms/profile/financial-info-form"
+import { FamilyForm } from "@/components/forms/profile/family-form"
 import { Profile } from "@/types/profile"
 import { validateProfile, getStepStatus, StepValidation } from "@/lib/profile-validation"
 import { AlertTriangle } from "lucide-react"
@@ -18,7 +17,6 @@ import { AlertTriangle } from "lucide-react"
 const STEPS = [
   { id: "personal", title: "Personal Information", component: PersonalInfoForm },
   { id: "financial", title: "Financial Information", component: FinancialInfoForm },
-  { id: "residency", title: "Residency Intentions", component: ResidencyIntentionsForm },
   { id: "family", title: "Family Information", component: FamilyForm }
 ]
 
@@ -26,8 +24,7 @@ const hasMinimumRequiredInfo = (profile: Partial<Profile>) => {
   const validation = validateProfile(profile)
   return (
     validation.personal.isValid &&
-    validation.financial.isValid &&
-    validation.residency.isValid
+    validation.financial.isValid
   )
 }
 
@@ -40,7 +37,6 @@ export default function EditProfilePage() {
   const [validation, setValidation] = useState<Record<string, StepValidation>>(() => ({
     personal: { isValid: false, errors: [], warnings: [] },
     financial: { isValid: false, errors: [], warnings: [] },
-    residency: { isValid: false, errors: [], warnings: [] },
     family: { isValid: false, errors: [], warnings: [] }
   }))
 

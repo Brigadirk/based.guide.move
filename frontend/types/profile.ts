@@ -51,7 +51,6 @@ export interface Dependent {
 export interface Profile {
   personalInformation: PersonalInformation;
   financialInformation: FinancialInformation;
-  residencyIntentions: ResidencyIntentions;
   dependents: Dependent[];
   specialCircumstances?: string;
   
@@ -59,7 +58,6 @@ export interface Profile {
   partner?: {
     personalInformation: PersonalInformation;
     financialInformation: FinancialInformation;
-    residencyIntentions: ResidencyIntentions;
   };
 }
 

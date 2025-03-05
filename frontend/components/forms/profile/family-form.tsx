@@ -65,7 +65,10 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
 
   useEffect(() => {
     if (data.partner) {
-      setInfo(data.partner)
+      setInfo({
+        ...info,
+        ...data.partner
+      })
     }
   }, [data.partner])
 

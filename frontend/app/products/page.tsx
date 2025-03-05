@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { products, Product } from "@/lib/api"
-import { ProductCard } from "@/components/product-card"
+import { ProductCard } from "@/components/features/products/product-card"
 import { useAuth } from "@/lib/auth-context"
 
 export default function ProductsPage() {

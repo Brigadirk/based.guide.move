@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from "./ui/button"
+import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { useState } from "react"
@@ -35,9 +35,8 @@ export function AnalysisCtaButton({
         return
       }
 
-      // TODO: Implement analysis flow here
-      // For now, we'll just console.log
-      console.log('Starting analysis with banana...')
+      // Redirect to order analysis page
+      router.push('/analyses/request')
       
     } catch (error) {
       console.error('Failed to handle analysis:', error)

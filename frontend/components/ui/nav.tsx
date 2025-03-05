@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Coins } from "lucide-react"
 import { useRouter } from "next/navigation"
 import type { User } from "@/types/user"
+import { ProfileBadge } from "@/components/ui/profile-badge"
 
 export function Nav() {
   const { isAuthenticated, user } = useAuth()
@@ -52,6 +53,11 @@ export function Nav() {
             </div>
           ) : (
             <div className="flex items-center gap-4">
+              {user?.profile && (
+                <Link href="/profile">
+                  <ProfileBadge profile={user.profile} variant="xs" />
+                </Link>
+              )}
               <div className="flex items-center gap-2 text-sm">
                 <span>🍌</span>
                 <span>{user?.analysisTokens || 0}</span>

@@ -9,7 +9,7 @@ import { Profile, FinancialInformation } from "@/types/profile"
 import { toast } from "sonner"
 import { X, Plus } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { InfoDrawer } from "@/components/info-drawer"
+import { InfoDrawer } from "@/components/ui/info-drawer"
 import { validateFinancialInfo, ValidationError } from "@/lib/profile-validation"
 import { cn } from "@/lib/utils"
 

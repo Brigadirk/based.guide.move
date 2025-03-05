@@ -1,8 +1,7 @@
 import { Country } from "@/types/api"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
-import { AnalysisCtaButton } from "@/components/analysis-cta-button"
-import { BasedScore } from "@/components/based-score"
-import { VisaScore } from "@/components/visa-score"
+import { AnalysisCtaButton } from "@/components/features/analysis/analysis-cta-button"
+import { TaxScore, VisaScore } from "@/components/features/scores/score-display"
 import Link from "next/link"
 import Image from "next/image"
 import { getCountryFlagUrl } from "@/lib/utils"
@@ -35,14 +34,18 @@ export function CountryCard({ country, hasAnalysis = false }: CountryCardProps) 
             priority
           />
           <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center">
-            <BasedScore 
+            <TaxScore 
               score={country.taxScore} 
-              variant="white"
+              size="sm"
+              showLabel={false}
+              className="backdrop-blur-sm"
             />
             {country.visaAccessibility && (
               <VisaScore
                 score={country.visaAccessibility}
-                variant="white"
+                size="sm"
+                showLabel={false}
+                className="backdrop-blur-sm"
               />
             )}
           </div>

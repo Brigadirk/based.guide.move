@@ -8,18 +8,19 @@ import { Button } from "@/components/ui/button"
 import { PersonalInformation } from "@/types/profile"
 import { toast } from "sonner"
 import { X, Plus } from "lucide-react"
-import { DatePicker } from "@/components/date-picker"
-import { InfoDrawer } from "@/components/info-drawer"
+import { DatePicker } from "@/components/ui/date-picker"
+import { InfoDrawer } from "@/components/ui/info-drawer"
 import { validatePersonalInfo, ValidationError } from "@/lib/profile-validation"
 import { cn } from "@/lib/utils"
 import { RequiredLabel } from "@/components/required-label"
+import { CountrySearchCombobox } from "@/components/features/country/country-search-combobox"
+import { Country } from "@/types/api"
 
 interface PersonalInfoFormProps {
   data: { personalInformation?: PersonalInformation }
   onUpdate: (data: { personalInformation: PersonalInformation }) => void
 }
 
-const COUNTRIES = ["United States", "Switzerland", "Portugal", "Spain", "Netherlands", "El Salvador"]
 const RESIDENCY_STATUSES = ["Citizen", "Permanent resident", "Temporary resident"]
 const MARITAL_STATUSES = ["Single", "Married", "Divorced"]
 
@@ -76,6 +77,21 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
     onUpdate({ personalInformation: updatedInfo })
   }
 
+  const handleNationalitySelect = (index: number, country: Country) => {
+    const updatedNationalities = [...info.nationalities]
+    updatedNationalities[index] = { country: country.name }
+    handleChange("nationalities", updatedNationalities)
+    setTouched(prev => ({ ...prev, [`nationalities.${index}`]: true }))
+  }
+
+  const handleResidencyCountrySelect = (country: Country) => {
+    handleChange("currentResidency", {
+      ...info.currentResidency,
+      country: country.name
+    })
+    setTouched(prev => ({ ...prev, "currentResidency.country": true }))
+  }
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -108,28 +124,20 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
         </div>
         {info.nationalities.map((nationality, index) => (
           <div key={index} className="flex gap-2">
-            <Select
-              value={nationality.country}
-              onValueChange={(value) => {
-                const updatedNationalities = [...info.nationalities]
-                updatedNationalities[index] = { country: value }
-                handleChange("nationalities", updatedNationalities)
-                setTouched(prev => ({ ...prev, [`nationalities.${index}`]: true }))
-              }}
-            >
-              <SelectTrigger className={cn(
-                getFieldError(`nationalities.${index}`) && "border-destructive"
-              )}>
-                <SelectValue placeholder="Select country" />
-              </SelectTrigger>
-              <SelectContent>
-                {COUNTRIES.map((country) => (
-                  <SelectItem key={country} value={country}>
-                    {country}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex-1">
+              <CountrySearchCombobox
+                onSelect={(country) => handleNationalitySelect(index, country)}
+                placeholder="Select country..."
+                className={cn(
+                  getFieldError(`nationalities.${index}`) && "border-destructive"
+                )}
+              />
+              {getFieldError(`nationalities.${index}`) && (
+                <p className="text-sm text-destructive mt-1">
+                  {getFieldError(`nationalities.${index}`)?.message}
+                </p>
+              )}
+            </div>
             {index > 0 && (
               <Button
                 variant="outline"
@@ -194,29 +202,13 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <RequiredLabel>Country</RequiredLabel>
-            <Select
-              value={info.currentResidency.country}
-              onValueChange={(value) => {
-                handleChange("currentResidency", {
-                  ...info.currentResidency,
-                  country: value
-                })
-                setTouched(prev => ({ ...prev, "currentResidency.country": true }))
-              }}
-            >
-              <SelectTrigger className={cn(
+            <CountrySearchCombobox
+              onSelect={handleResidencyCountrySelect}
+              placeholder="Select country..."
+              className={cn(
                 getFieldError("currentResidency.country") && "border-destructive"
-              )}>
-                <SelectValue placeholder="Select country" />
-              </SelectTrigger>
-              <SelectContent>
-                {COUNTRIES.map((country) => (
-                  <SelectItem key={country} value={country}>
-                    {country}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              )}
+            />
             {getFieldError("currentResidency.country") && (
               <p className="text-sm text-destructive mt-1">
                 {getFieldError("currentResidency.country")?.message}

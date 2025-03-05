@@ -1,16 +1,18 @@
 "use client"
 
 import { getCountries } from "@/lib/server-api"
-import { CountryCard } from "@/components/country-card"
-import { ExploreFilters } from "@/components/explore-filters"
-import { ProfileAlertBanner } from "@/components/profile-alert-banner"
+import { CountryCard } from "@/components/features/country/country-card"
+import { ProfileAlertBanner } from "@/components/layout/profile-alert-banner"
 import { useState, useEffect } from "react"
+import { Country } from "@/types/api"
+import { ExploreControls } from "@/components/features/explore/explore-controls"
 
 export default function ExplorePage() {
-  const [countries, setCountries] = useState<any[]>([])
+  const [countries, setCountries] = useState<Country[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [activeFilters, setActiveFilters] = useState<any>(null)
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null)
 
   const fetchCountries = async (filters: any) => {
     setIsLoading(true)
@@ -18,8 +20,8 @@ export default function ExplorePage() {
       // Construct query parameters
       const params = new URLSearchParams()
       
-      if (filters?.search) {
-        params.append('search', filters.search)
+      if (selectedCountry) {
+        params.append('search', selectedCountry.name)
       }
       
       if (filters?.temperature?.isActive) {
@@ -64,6 +66,13 @@ export default function ExplorePage() {
     fetchCountries(filters)
   }
 
+  // Effect to refetch when selected country changes
+  useEffect(() => {
+    if (activeFilters) {
+      fetchCountries(activeFilters)
+    }
+  }, [selectedCountry])
+
   // Initial load
   useEffect(() => {
     fetchCountries(null)
@@ -88,7 +97,12 @@ export default function ExplorePage() {
   return (
     <div>
       <ProfileAlertBanner />
-      <ExploreFilters onFiltersChange={handleFiltersChange} />
+      <ExploreControls
+        selectedCountry={selectedCountry}
+        onCountrySelect={setSelectedCountry}
+        activeFilters={activeFilters}
+        onFiltersChange={handleFiltersChange}
+      />
       
       <div className="container max-w-6xl mx-auto px-4 py-6">
         <p className="text-sm text-muted-foreground mb-6">

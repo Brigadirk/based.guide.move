@@ -35,12 +35,12 @@ export function InfoDrawer({ title, description, aiContext }: InfoDrawerProps) {
         <DrawerContent>
           <DrawerHeader className="text-left">
             <DrawerTitle>{title}</DrawerTitle>
-            <DrawerDescription className="mt-4">
-              {description}
+            <DrawerDescription>
+              <span className="block mt-4">{description}</span>
               {aiContext && (
                 <div className="mt-4 p-4 rounded-lg bg-muted">
-                  <p className="font-medium mb-2">Why Mr. Pro Bonobo needs this:</p>
-                  <p className="text-muted-foreground">{aiContext}</p>
+                  <span className="block font-medium mb-2">Why Mr. Pro Bonobo needs this:</span>
+                  <span className="block text-muted-foreground">{aiContext}</span>
                 </div>
               )}
             </DrawerDescription>

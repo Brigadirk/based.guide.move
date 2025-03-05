@@ -1,12 +1,11 @@
 'use client'
 
-import { ProgressSteps } from "@/components/progress-steps"
-import { User, Wallet, MapPin, Users, Heart } from "lucide-react"
+import { ProgressSteps } from "./progress-steps"
+import { User, Wallet, Users } from "lucide-react"
 
 const FORM_STEPS = [
   { id: "personal", icon: <User className="h-2.5 w-2.5" /> },
   { id: "financial", icon: <Wallet className="h-2.5 w-2.5" /> },
-  { id: "residency", icon: <MapPin className="h-2.5 w-2.5" /> },
   { id: "family", icon: <Users className="h-2.5 w-2.5" /> }
 ]
 
