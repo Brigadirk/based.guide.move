@@ -1,6 +1,6 @@
 'use client'
 
-import { ResidencyIntentionsForm } from "@/components/forms/analysis/residency-intentions-form"
+import { ResidencyIntentionsForm } from "@/components/features/analysis/forms/residency-intentions-form"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/lib/auth-context"

@@ -1,7 +1,7 @@
 'use client'
 
 import { Badge } from "@/components/ui/badge"
-import { cn, getCountryFlagUrl } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 import { Profile } from "@/types/profile"
 import { Baby, Home } from "lucide-react"
 import { 
@@ -10,7 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import Image from "next/image"
+import { CountryFlag } from "@/components/features/country/CountryFlag"
 
 interface ProfileBadgeProps {
   profile: Pick<Profile, 'personalInformation'> & { name?: string }
@@ -29,45 +29,37 @@ export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadg
         variant="outline" 
         className={cn("gap-1 px-2 py-0.5", className)}
       >
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="cursor-help">
-                <div className="w-4 h-3 relative">
-                  <Image
-                    src={getCountryFlagUrl(birthCountry?.toLowerCase() || 'un')}
-                    alt={`${birthCountry || 'Unknown'} flag`}
-                    fill
-                    className="object-contain rounded"
-                  />
-                </div>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Birth country: {birthCountry || 'Unknown'}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <span className="text-muted-foreground">•</span>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="cursor-help">
-                <div className="w-4 h-3 relative">
-                  <Image
-                    src={getCountryFlagUrl(residenceCountry?.toLowerCase() || 'un')}
-                    alt={`${residenceCountry || 'Unknown'} flag`}
-                    fill
-                    className="object-contain rounded"
-                  />
-                </div>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Current residence: {residenceCountry || 'Unknown'}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        {birthCountry && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="cursor-help">
+                  <CountryFlag countryCode={birthCountry} size="xs" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Birth country: {birthCountry}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+        {birthCountry && residenceCountry && (
+          <span className="text-muted-foreground">•</span>
+        )}
+        {residenceCountry && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="cursor-help">
+                  <CountryFlag countryCode={residenceCountry} size="xs" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Current residence: {residenceCountry}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </Badge>
     )
   }
@@ -79,47 +71,39 @@ export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadg
         variant="outline" 
         className={cn("gap-2 px-3", className)}
       >
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="flex items-center gap-1 cursor-help">
-                <Baby className="h-3 w-3" />
-                <div className="w-4 h-3 relative">
-                  <Image
-                    src={getCountryFlagUrl(birthCountry?.toLowerCase() || 'un')}
-                    alt={`${birthCountry || 'Unknown'} flag`}
-                    fill
-                    className="object-contain rounded"
-                  />
-                </div>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Birth country: {birthCountry || 'Unknown'}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <span className="text-muted-foreground">•</span>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="flex items-center gap-1 cursor-help">
-                <Home className="h-3 w-3" />
-                <div className="w-4 h-3 relative">
-                  <Image
-                    src={getCountryFlagUrl(residenceCountry?.toLowerCase() || 'un')}
-                    alt={`${residenceCountry || 'Unknown'} flag`}
-                    fill
-                    className="object-contain rounded"
-                  />
-                </div>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Current residence: {residenceCountry || 'Unknown'}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        {birthCountry && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex items-center gap-1 cursor-help">
+                  <Baby className="h-3 w-3" />
+                  <CountryFlag countryCode={birthCountry} size="xs" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Birth country: {birthCountry}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+        {birthCountry && residenceCountry && (
+          <span className="text-muted-foreground">•</span>
+        )}
+        {residenceCountry && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex items-center gap-1 cursor-help">
+                  <Home className="h-3 w-3" />
+                  <CountryFlag countryCode={residenceCountry} size="xs" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Current residence: {residenceCountry}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </Badge>
     )
   }
@@ -137,47 +121,39 @@ export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadg
             <span className="text-muted-foreground">•</span>
           </>
         )}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="flex items-center gap-1 cursor-help">
-                <Baby className="h-3 w-3" />
-                <div className="w-4 h-3 relative">
-                  <Image
-                    src={getCountryFlagUrl(birthCountry?.toLowerCase() || 'un')}
-                    alt={`${birthCountry || 'Unknown'} flag`}
-                    fill
-                    className="object-contain rounded"
-                  />
-                </div>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Birth country: {birthCountry || 'Unknown'}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <span className="text-muted-foreground">•</span>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="flex items-center gap-1 cursor-help">
-                <Home className="h-3 w-3" />
-                <div className="w-4 h-3 relative">
-                  <Image
-                    src={getCountryFlagUrl(residenceCountry?.toLowerCase() || 'un')}
-                    alt={`${residenceCountry || 'Unknown'} flag`}
-                    fill
-                    className="object-contain rounded"
-                  />
-                </div>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Current residence: {residenceCountry || 'Unknown'}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        {birthCountry && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex items-center gap-1 cursor-help">
+                  <Baby className="h-3 w-3" />
+                  <CountryFlag countryCode={birthCountry} size="xs" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Birth country: {birthCountry}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+        {birthCountry && residenceCountry && (
+          <span className="text-muted-foreground">•</span>
+        )}
+        {residenceCountry && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex items-center gap-1 cursor-help">
+                  <Home className="h-3 w-3" />
+                  <CountryFlag countryCode={residenceCountry} size="xs" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Current residence: {residenceCountry}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </Badge>
     )
   }
@@ -194,53 +170,45 @@ export function ProfileBadge({ profile, variant = 'md', className }: ProfileBadg
           <span className="text-muted-foreground">•</span>
         </>
       )}
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="flex items-center gap-1 cursor-help">
-              <Baby className="h-3 w-3" />
-              <span className="flex items-center gap-1">
-                <div className="w-4 h-3 relative">
-                  <Image
-                    src={getCountryFlagUrl(birthCountry?.toLowerCase() || 'un')}
-                    alt={`${birthCountry || 'Unknown'} flag`}
-                    fill
-                    className="object-contain rounded"
-                  />
-                </div>
-                <span className="text-sm">{birthCountry || 'Unknown'}</span>
+      {birthCountry && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="flex items-center gap-1 cursor-help">
+                <Baby className="h-3 w-3" />
+                <span className="flex items-center gap-1">
+                  <CountryFlag countryCode={birthCountry} size="xs" />
+                  <span className="text-sm">{birthCountry}</span>
+                </span>
               </span>
-            </span>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Birth country: {birthCountry || 'Unknown'}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <span className="text-muted-foreground">•</span>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="flex items-center gap-1 cursor-help">
-              <Home className="h-3 w-3" />
-              <span className="flex items-center gap-1">
-                <div className="w-4 h-3 relative">
-                  <Image
-                    src={getCountryFlagUrl(residenceCountry?.toLowerCase() || 'un')}
-                    alt={`${residenceCountry || 'Unknown'} flag`}
-                    fill
-                    className="object-contain rounded"
-                  />
-                </div>
-                <span className="text-sm">{residenceCountry || 'Unknown'}</span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Birth country: {birthCountry}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+      {birthCountry && residenceCountry && (
+        <span className="text-muted-foreground">•</span>
+      )}
+      {residenceCountry && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="flex items-center gap-1 cursor-help">
+                <Home className="h-3 w-3" />
+                <span className="flex items-center gap-1">
+                  <CountryFlag countryCode={residenceCountry} size="xs" />
+                  <span className="text-sm">{residenceCountry}</span>
+                </span>
               </span>
-            </span>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Current residence: {residenceCountry || 'Unknown'}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Current residence: {residenceCountry}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </Badge>
   )
 } 

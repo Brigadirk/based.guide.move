@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { createProfile } from "@/lib/api-client"
-import { ProfileForm } from "@/components/forms/profile/profile-form"
+import { ProfileForm } from "@/components/features/profile/forms/profile-form"
 import { Profile } from "@/types/profile"
 
 export default function NewProfilePage() {

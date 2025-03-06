@@ -15,8 +15,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Country } from '@/types/api'
 import { getCountries } from '@/lib/server-api'
 import Fuse from 'fuse.js'
-import Image from 'next/image'
-import { getCountryFlagUrl } from "@/lib/utils"
+import { CountryFlag } from "@/components/features/country/CountryFlag"
 
 interface CountrySearchComboboxProps {
   onSelect: (country: Country) => void
@@ -108,14 +107,7 @@ export function CountrySearchCombobox({ onSelect, className, placeholder = "Sear
         >
           {selectedCountry ? (
             <div className="flex items-center gap-2">
-              <div className="w-6 h-4 relative">
-                <Image
-                  src={getCountryFlagUrl(selectedCountry.id)}
-                  alt=""
-                  fill
-                  className="object-contain rounded"
-                />
-              </div>
+              <CountryFlag countryCode={selectedCountry.id} size="sm" />
               <span>{selectedCountry.name}</span>
             </div>
           ) : (
@@ -159,14 +151,7 @@ export function CountrySearchCombobox({ onSelect, className, placeholder = "Sear
                     )}
                   />
                   <div className="flex items-center gap-3 w-full">
-                    <div className="w-6 h-4 relative flex-shrink-0">
-                      <Image
-                        src={getCountryFlagUrl(country.id)}
-                        alt=""
-                        fill
-                        className="object-contain rounded"
-                      />
-                    </div>
+                    <CountryFlag countryCode={country.id} size="sm" />
                     <div className="flex flex-col items-start flex-1 min-w-0">
                       <div className="flex items-center justify-between w-full gap-2">
                         <span className="truncate">{country.name}</span>

@@ -13,7 +13,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { CardDescription } from "@/components/ui/card"
 import { useAuth } from "@/lib/auth-context"
-import { useToast } from "@/components/ui/use-toast"
+import { CountryFlag } from "@/components/features/country/CountryFlag"
 
 const countryImageMap: Record<string, string> = {
   'united': 'united-states',
@@ -350,14 +350,7 @@ export default async function CountryPage({ params }: CountryPageProps) {
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-7 h-5 relative">
-                  <Image
-                    src={getCountryFlagUrl(country.id)}
-                    alt={`${country.name} flag`}
-                    fill
-                    className="object-contain rounded"
-                  />
-                </div>
+                <CountryFlag countryCode={country.id} size="md" />
                 <h1 className="text-xl font-bold">{country.name}</h1>
               </div>
             </div>

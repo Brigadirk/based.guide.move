@@ -29,6 +29,7 @@ import { ProfileSelector } from "@/components/ui/profile-selector"
 import Image from "next/image"
 import { getCountryFlagUrl } from "@/lib/utils"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { CountryFlag } from "@/components/features/country/CountryFlag"
 
 function calculateProgress(profile: Profile): ProfileProgress {
   const sections = {
@@ -306,32 +307,22 @@ export default function ProfilePage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Baby className="h-4 w-4 text-muted-foreground" />
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-4 relative">
-                          <Image
-                            src={getCountryFlagUrl(birthCountry?.toLowerCase() || 'un')}
-                            alt={`${birthCountry || 'Unknown'} flag`}
-                            fill
-                            className="object-contain rounded"
-                          />
+                      {birthCountry ? (
+                        <div className="flex items-center gap-2">
+                          <CountryFlag countryCode={birthCountry} size="sm" />
+                          <span className="text-sm font-medium">{birthCountry}</span>
                         </div>
-                        <span className="text-sm font-medium">{birthCountry || 'Unknown'}</span>
-                      </div>
+                      ) : null}
                     </div>
                     <ArrowRightIcon className="h-4 w-4 text-muted-foreground" />
                     <div className="flex items-center gap-2">
                       <Home className="h-4 w-4 text-muted-foreground" />
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-4 relative">
-                          <Image
-                            src={getCountryFlagUrl(residenceCountry?.toLowerCase() || 'un')}
-                            alt={`${residenceCountry || 'Unknown'} flag`}
-                            fill
-                            className="object-contain rounded"
-                          />
+                      {residenceCountry ? (
+                        <div className="flex items-center gap-2">
+                          <CountryFlag countryCode={residenceCountry} size="sm" />
+                          <span className="text-sm font-medium">{residenceCountry}</span>
                         </div>
-                        <span className="text-sm font-medium">{residenceCountry || 'Unknown'}</span>
-                      </div>
+                      ) : null}
                     </div>
                   </div>
                 </div>

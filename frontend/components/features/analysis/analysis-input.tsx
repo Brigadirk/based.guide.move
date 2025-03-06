@@ -1,8 +1,7 @@
 'use client'
 
-import Image from "next/image"
 import { ArrowRight } from "lucide-react"
-import { getCountryFlagUrl } from "@/lib/utils"
+import { CountryFlag } from "@/components/features/country/CountryFlag"
 
 interface Country {
   id: string
@@ -26,26 +25,12 @@ export function AnalysisInput({ origin, destination, intentions }: AnalysisInput
     <div className="space-y-2">
       <div className="flex items-center gap-2 text-base">
         <div className="flex items-center gap-1.5">
-          <div className="w-5 h-3.5 relative">
-            <Image
-              src={getCountryFlagUrl(origin.id)}
-              alt={`${origin.name} flag`}
-              fill
-              className="object-contain rounded"
-            />
-          </div>
+          <CountryFlag countryCode={origin.id} size="xs" />
           <span className="font-serif">{origin.name}</span>
         </div>
         <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
         <div className="flex items-center gap-1.5">
-          <div className="w-5 h-3.5 relative">
-            <Image
-              src={getCountryFlagUrl(destination.id)}
-              alt={`${destination.name} flag`}
-              fill
-              className="object-contain rounded"
-            />
-          </div>
+          <CountryFlag countryCode={destination.id} size="xs" />
           <span className="font-serif">{destination.name}</span>
         </div>
       </div>

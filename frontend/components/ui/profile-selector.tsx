@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { Check, ChevronsUpDown, Plus, User } from "lucide-react"
-import { cn, getCountryFlagUrl } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Profile } from '@/types/profile'
 import { Building2, Globe, ArrowRightIcon, Baby, Home } from 'lucide-react'
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { CountryFlag } from "@/components/features/country/CountryFlag"
 import Image from "next/image"
 
 interface ProfileSelectorProps {
@@ -79,26 +80,18 @@ export function ProfileSelector({
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Baby className="h-3 w-3" />
-                    <div className="w-4 h-3 relative">
-                      <Image
-                        src={getCountryFlagUrl(selectedProfile.personalInformation?.nationalities?.[0]?.country?.toLowerCase() || 'un')}
-                        alt={`${selectedProfile.personalInformation?.nationalities?.[0]?.country || 'Unknown'} flag`}
-                        fill
-                        className="object-contain rounded"
-                      />
-                    </div>
+                    <CountryFlag 
+                      countryCode={selectedProfile.personalInformation?.nationalities?.[0]?.country}
+                      size="xs"
+                    />
                   </div>
                   <ArrowRightIcon className="h-3 w-3" />
                   <div className="flex items-center gap-1">
                     <Home className="h-3 w-3" />
-                    <div className="w-4 h-3 relative">
-                      <Image
-                        src={getCountryFlagUrl(selectedProfile.personalInformation?.currentResidency?.country?.toLowerCase() || 'un')}
-                        alt={`${selectedProfile.personalInformation?.currentResidency?.country || 'Unknown'} flag`}
-                        fill
-                        className="object-contain rounded"
-                      />
-                    </div>
+                    <CountryFlag 
+                      countryCode={selectedProfile.personalInformation?.currentResidency?.country}
+                      size="xs"
+                    />
                   </div>
                 </div>
               </div>
@@ -146,26 +139,18 @@ export function ProfileSelector({
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Baby className="h-3 w-3" />
-                      <div className="w-4 h-3 relative">
-                        <Image
-                          src={getCountryFlagUrl(profile.personalInformation?.nationalities?.[0]?.country?.toLowerCase() || 'un')}
-                          alt={`${profile.personalInformation?.nationalities?.[0]?.country || 'Unknown'} flag`}
-                          fill
-                          className="object-contain rounded"
-                        />
-                      </div>
+                      <CountryFlag 
+                        countryCode={profile.personalInformation?.nationalities?.[0]?.country}
+                        size="xs"
+                      />
                     </div>
                     <ArrowRightIcon className="h-3 w-3" />
                     <div className="flex items-center gap-1">
                       <Home className="h-3 w-3" />
-                      <div className="w-4 h-3 relative">
-                        <Image
-                          src={getCountryFlagUrl(profile.personalInformation?.currentResidency?.country?.toLowerCase() || 'un')}
-                          alt={`${profile.personalInformation?.currentResidency?.country || 'Unknown'} flag`}
-                          fill
-                          className="object-contain rounded"
-                        />
-                      </div>
+                      <CountryFlag 
+                        countryCode={profile.personalInformation?.currentResidency?.country}
+                        size="xs"
+                      />
                     </div>
                   </div>
                 </div>

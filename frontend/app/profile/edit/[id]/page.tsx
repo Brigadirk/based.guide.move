@@ -4,7 +4,7 @@ import { useState, useEffect, use } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { ProfileForm } from "@/components/forms/profile/profile-form"
+import { ProfileForm } from "@/components/features/profile/forms/profile-form"
 import { Profile } from "@/types/profile"
 
 export default function EditProfilePage({ params }: { params: Promise<{ id: string }> }) {

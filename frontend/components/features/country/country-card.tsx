@@ -4,6 +4,7 @@ import { AnalysisCtaButton } from "@/components/features/analysis/analysis-cta-b
 import { TaxScore, VisaScore } from "@/components/features/scores/score-display"
 import Link from "next/link"
 import Image from "next/image"
+import { CountryFlag } from "@/components/features/country/CountryFlag"
 import { getCountryFlagUrl } from "@/lib/utils"
 
 const countryImageMap: Record<string, string> = {
@@ -52,14 +53,7 @@ export function CountryCard({ country, hasAnalysis = false }: CountryCardProps) 
         </div>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <div className="w-6 h-4 relative">
-              <Image
-                src={getCountryFlagUrl(country.id)}
-                alt={`${country.name} flag`}
-                fill
-                className="object-contain rounded"
-              />
-            </div>
+            <CountryFlag countryCode={country.id} size="sm" />
             {country.name}
           </CardTitle>
         </CardHeader>
