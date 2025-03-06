@@ -250,16 +250,7 @@ export default function ProfilePage() {
     selectedProfile.financialInformation?.liabilities || []
   )
 
-  const EditProfileButton = () => (
-    <div className="px-6 pb-6 mt-6">
-      <Link href={`/profile/edit/${selectedProfile?.id}`} className="w-full">
-        <Button className="w-full">
-          Edit Profile
-          <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
-      </Link>
-    </div>
-  )
+  const EditProfileButton = () => null;
 
   const TabContent = () => {
     // Re-calculate these values whenever the component re-renders
@@ -345,7 +336,6 @@ export default function ProfilePage() {
                 </div>
               </div>
             </CardContent>
-            <EditProfileButton />
           </Card>
         )
       },
@@ -381,7 +371,6 @@ export default function ProfilePage() {
                 </p>
               </div>
             </CardContent>
-            <EditProfileButton />
           </Card>
         )
       },
@@ -423,7 +412,6 @@ export default function ProfilePage() {
                 )}
               </div>
             </CardContent>
-            <EditProfileButton />
           </Card>
         )
       }
@@ -467,58 +455,47 @@ export default function ProfilePage() {
 
         <div className="space-y-6">
           {progress.completed < progress.total && (
-            <Card className="border-yellow-500">
-              <CardHeader>
-                <CardTitle className="text-lg">Complete Your Profile</CardTitle>
-                <CardDescription>
-                  {progress.completed} of {progress.total} sections completed
-                </CardDescription>
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-m">Complete Your Profile</CardTitle>
+                    <CardDescription>
+                      {progress.completed} of {progress.total} sections completed
+                    </CardDescription>
+                  </div>
+                  <Link href={`/profile/edit/${selectedProfile?.id}`}>
+                    <Button>
+                      Edit Profile
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+              <CardContent className="pt-0">
+                <div className="space-y-2">
                   {!progress.sections.basic && (
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border bg-muted">
-                        <User className="h-5 w-5 text-foreground" />
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          Complete Basic Information
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Add your date of birth and current residency
-                        </p>
-                      </div>
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">
+                        Add your date of birth and current residency
+                      </p>
                     </div>
                   )}
                   {!progress.sections.tax && (
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border bg-muted">
-                        <Wallet className="h-5 w-5 text-foreground" />
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          Add Financial Information
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Add at least one income source
-                        </p>
-                      </div>
+                      <Wallet className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">
+                        Add at least one income source
+                      </p>
                     </div>
                   )}
                   {!progress.sections.lifestyle && (
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border bg-muted">
-                        <Users className="h-5 w-5 text-foreground" />
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          Add Lifestyle Information
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Set your marital status
-                        </p>
-                      </div>
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">
+                        Set your marital status
+                      </p>
                     </div>
                   )}
                 </div>
