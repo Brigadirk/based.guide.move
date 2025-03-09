@@ -166,37 +166,11 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <Label>Marital Status</Label>
-          <InfoDrawer
-            title="Marital Status"
-            description="Your marital status can affect visa eligibility and tax implications in different countries."
-            aiContext="This helps me identify family-based immigration options and ensure compliance with local regulations regarding spouse rights and obligations."
-          />
-        </div>
-        <Select
-          value={info.maritalStatus}
-          onValueChange={(value: any) => handleChange("maritalStatus", value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select status" />
-          </SelectTrigger>
-          <SelectContent>
-            {MARITAL_STATUSES.map((status) => (
-              <SelectItem key={status} value={status}>
-                {status}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <RequiredLabel>Current Residency</RequiredLabel>
+          <Label>Current Residency</Label>
           <InfoDrawer
             title="Current Residency"
-            description="Your current country of residence and status affect your options for relocation and tax planning."
-            aiContext="This information helps me understand your current situation and identify the most efficient pathways for your desired move, including any special provisions based on your current residency status."
+            description="Your current country of residence and residency status."
+            aiContext="This helps me understand your current tax obligations and identify potential tax implications of moving to a new country."
           />
         </div>
         <div className="grid grid-cols-2 gap-4">

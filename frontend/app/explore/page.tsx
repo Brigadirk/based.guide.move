@@ -81,7 +81,7 @@ export default function ExplorePage() {
 
   if (error) {
     return (
-      <div className="container max-w-6xl mx-auto px-4 py-6">
+      <div className="max-w-6xl mx-auto px-4 py-6">
         <p>{error}</p>
       </div>
     )
@@ -89,23 +89,25 @@ export default function ExplorePage() {
 
   if (isLoading && !activeFilters) {
     return (
-      <div className="container max-w-6xl mx-auto px-4 py-6">
+      <div className="max-w-6xl mx-auto px-4 py-6">
         <p>Loading...</p>
       </div>
     )
   }
 
   return (
-    <div className="container max-w-7xl py-6 md:py-10">
+    <div className="max-w-7xl mx-auto md:px-4 py-6 md:py-10">
       <div className="flex flex-col gap-8">
-        <ExploreControls
-          selectedCountry={selectedCountry}
-          onCountrySelect={setSelectedCountry}
-          activeFilters={activeFilters}
-          onFiltersChange={handleFiltersChange}
-        />
+        <div className="-mx-4 md:mx-0">
+          <ExploreControls
+            selectedCountry={selectedCountry}
+            onCountrySelect={setSelectedCountry}
+            activeFilters={activeFilters}
+            onFiltersChange={handleFiltersChange}
+          />
+        </div>
         
-        <div className="container max-w-6xl mx-auto px-4 py-6">
+        <div className="px-4 md:px-0">
           <p className="text-sm text-muted-foreground mb-6">
             Found {countries.length} candidate bases
           </p>

@@ -6,20 +6,23 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
-import { Profile, PersonalInformation, FinancialInformation, ResidencyIntentions, Dependent, IncomeSource } from "@/types/profile"
+import { Profile, PersonalInformation, FinancialInformation, Dependent, IncomeSource } from "@/types/profile"
 import { toast } from "sonner"
 import { X, Plus, Users, Heart } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { InfoDrawer } from "@/components/ui/info-drawer"
 
 interface FamilyFormProps {
   data: { 
     partner?: Profile['partner'],
-    dependents?: Dependent[]
+    dependents?: Dependent[],
+    personalInformation?: PersonalInformation
   }
   onUpdate: (data: { 
     partner?: Profile['partner'],
-    dependents: Dependent[]
+    dependents: Dependent[],
+    personalInformation: PersonalInformation
   }) => void
 }
 
@@ -33,7 +36,6 @@ const RELATIONSHIPS = ["Child", "Parent", "Sibling", "Other"]
 type PartnerInfo = {
   personalInformation: PersonalInformation;
   financialInformation: FinancialInformation;
-  residencyIntentions: ResidencyIntentions;
 }
 
 export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
@@ -52,39 +54,45 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
       incomeSources: [],
       assets: [],
       liabilities: []
-    },
-    residencyIntentions: {
-      moveType: "Digital Nomad",
-      intendedCountry: "",
-      durationOfStay: "1 year",
-      preferredMaximumStayRequirement: "3 months",
-      notes: ""
     }
   })
   const [dependents, setDependents] = useState<Dependent[]>(data.dependents || [])
+  const [maritalStatus, setMaritalStatus] = useState<PersonalInformation['maritalStatus']>(
+    data.personalInformation?.maritalStatus || "Single"
+  )
 
   useEffect(() => {
     if (data.partner) {
       setInfo({
-        ...info,
-        ...data.partner
+        personalInformation: data.partner.personalInformation,
+        financialInformation: data.partner.financialInformation
       })
     }
   }, [data.partner])
 
-  const handleUpdate = (updatedInfo: typeof info, updatedDependents: typeof dependents) => {
-    setInfo(updatedInfo)
-    setDependents(updatedDependents)
-    onUpdate({ 
-      partner: hasPartner ? updatedInfo : undefined,
-      dependents: updatedDependents 
+  const handleUpdate = (partner: Profile['partner'] | undefined, newDependents: Dependent[]) => {
+    onUpdate({
+      partner: hasPartner ? {
+        personalInformation: info.personalInformation,
+        financialInformation: info.financialInformation
+      } : undefined,
+      dependents: newDependents,
+      personalInformation: {
+        dateOfBirth: data.personalInformation?.dateOfBirth || "",
+        nationalities: data.personalInformation?.nationalities || [{ country: "" }],
+        maritalStatus,
+        currentResidency: data.personalInformation?.currentResidency || {
+          country: "",
+          status: "Citizen"
+        }
+      }
     })
   }
 
   const togglePartner = (enabled: boolean) => {
     setHasPartner(enabled)
     if (!enabled) {
-      handleUpdate(info, dependents)
+      handleUpdate(undefined, dependents)
       toast.success("Partner information removed")
     }
   }
@@ -94,20 +102,20 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
       ...dependents,
       { name: "", relationship: "", age: 0 }
     ]
-    handleUpdate(info, updatedDependents)
+    handleUpdate(data.partner, updatedDependents)
     toast.success("Added new dependent")
   }
 
   const removeDependent = (index: number) => {
     const updatedDependents = dependents.filter((_, i) => i !== index)
-    handleUpdate(info, updatedDependents)
+    handleUpdate(data.partner, updatedDependents)
     toast.success("Removed dependent")
   }
 
   const updateDependent = (index: number, field: keyof Dependent, value: any) => {
     const updatedDependents = [...dependents]
     updatedDependents[index] = { ...updatedDependents[index], [field]: value }
-    handleUpdate(info, updatedDependents)
+    handleUpdate(data.partner, updatedDependents)
   }
 
   return (
@@ -131,11 +139,10 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
         </CardHeader>
         {hasPartner && (
           <CardContent>
-            <Tabs defaultValue="personal" className="space-y-4">
-              <TabsList>
+            <Tabs defaultValue="personal" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="personal">Personal</TabsTrigger>
                 <TabsTrigger value="financial">Financial</TabsTrigger>
-                <TabsTrigger value="residency">Residency</TabsTrigger>
               </TabsList>
 
               <TabsContent value="personal" className="space-y-4">
@@ -366,61 +373,6 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                   ))}
                 </div>
               </TabsContent>
-
-              <TabsContent value="residency" className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Move Type</Label>
-                    <Select
-                      value={info.residencyIntentions.moveType}
-                      onValueChange={(value) => {
-                        handleUpdate({
-                          ...info,
-                          residencyIntentions: {
-                            ...info.residencyIntentions,
-                            moveType: value as ResidencyIntentions['moveType']
-                          }
-                        }, dependents)
-                      }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Permanent">Permanent</SelectItem>
-                        <SelectItem value="Digital Nomad">Digital Nomad</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Intended Country</Label>
-                    <Select
-                      value={info.residencyIntentions.intendedCountry}
-                      onValueChange={(value) => {
-                        handleUpdate({
-                          ...info,
-                          residencyIntentions: {
-                            ...info.residencyIntentions,
-                            intendedCountry: value
-                          }
-                        }, dependents)
-                      }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select country" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {COUNTRIES.map((country) => (
-                          <SelectItem key={country} value={country}>
-                            {country}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </TabsContent>
             </Tabs>
           </CardContent>
         )}
@@ -503,6 +455,35 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
           )}
         </CardContent>
       </Card>
+
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Label>Marital Status</Label>
+          <InfoDrawer
+            title="Marital Status"
+            description="Your marital status can affect visa eligibility and tax implications in different countries."
+            aiContext="This helps me identify family-based immigration options and ensure compliance with local regulations regarding spouse rights and obligations."
+          />
+        </div>
+        <Select
+          value={maritalStatus}
+          onValueChange={(value: PersonalInformation['maritalStatus']) => {
+            setMaritalStatus(value)
+            handleUpdate(data.partner, dependents)
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select status" />
+          </SelectTrigger>
+          <SelectContent>
+            {MARITAL_STATUSES.map((status) => (
+              <SelectItem key={status} value={status}>
+                {status}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   )
 } 

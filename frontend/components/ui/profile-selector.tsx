@@ -75,24 +75,22 @@ export function ProfileSelector({
                   </AvatarFallback>
                 )}
               </Avatar>
-              <div className="flex flex-col items-start">
-                <span className="font-medium">{selectedProfile.nickname}</span>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Baby className="h-3 w-3" />
-                    <CountryFlag 
-                      countryCode={selectedProfile.personalInformation?.nationalities?.[0]?.country}
-                      size="xs"
-                    />
-                  </div>
-                  <ArrowRightIcon className="h-3 w-3" />
-                  <div className="flex items-center gap-1">
-                    <Home className="h-3 w-3" />
-                    <CountryFlag 
-                      countryCode={selectedProfile.personalInformation?.currentResidency?.country}
-                      size="xs"
-                    />
-                  </div>
+              <span className="font-medium">{selectedProfile.nickname}</span>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Baby className="h-3 w-3" />
+                  <CountryFlag 
+                    countryCode={selectedProfile.personalInformation?.nationalities?.[0]?.country}
+                    size="xs"
+                  />
+                </div>
+                <ArrowRightIcon className="h-3 w-3" />
+                <div className="flex items-center gap-1">
+                  <Home className="h-3 w-3" />
+                  <CountryFlag 
+                    countryCode={selectedProfile.personalInformation?.currentResidency?.country}
+                    size="xs"
+                  />
                 </div>
               </div>
             </div>

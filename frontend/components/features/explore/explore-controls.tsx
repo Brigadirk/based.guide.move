@@ -22,9 +22,9 @@ export function ExploreControls({
 }: ExploreTabsProps) {
   return (
     <div className="sticky top-14 z-40 bg-background border-b">
-      <div>
-        <div className="container max-w-6xl mx-auto px-4">
-          <div className="py-3">
+      <div className="max-w-7xl mx-auto">
+        <div className="px-4">
+          <div className="py-2">
             <div className="flex items-center gap-4">
               <CountrySearchCombobox
                 className="flex-1"
@@ -52,7 +52,13 @@ export function ExploreControls({
         </div>
       </div>
       <ScrollableContainer background>
-        <ExploreFilters onFiltersChange={onFiltersChange} />
+        <div className="max-w-7xl mx-auto">
+          <div className="px-4">
+            <div className="flex gap-2 overflow-x-auto py-2">
+              <ExploreFilters onFiltersChange={onFiltersChange} />
+            </div>
+          </div>
+        </div>
       </ScrollableContainer>
     </div>
   )

@@ -270,10 +270,7 @@ export default function ProfilePage() {
         icon: <User className="h-4 w-4" />,
         content: (
           <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-6">
+            <CardContent className="grid gap-6 m-4">
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
                   {selectedProfile.avatar ? (
@@ -326,13 +323,6 @@ export default function ProfilePage() {
                       {selectedProfile.personalInformation?.dateOfBirth || "Not set"}
                     </p>
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-sm text-muted-foreground">Marital Status</label>
-                    <p className="font-medium flex items-center gap-2">
-                      <Heart className="h-4 w-4 text-muted-foreground" />
-                      {selectedProfile.personalInformation?.maritalStatus || "Not set"}
-                    </p>
-                  </div>
                 </div>
               </div>
             </CardContent>
@@ -341,14 +331,11 @@ export default function ProfilePage() {
       },
       {
         value: "financial",
-        label: "Financial",
+        label: "Finances",
         icon: <Wallet className="h-4 w-4" />,
         content: (
           <Card>
-            <CardHeader>
-              <CardTitle>Financial Overview</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-2">
+            <CardContent className="grid gap-4 sm:grid-cols-2 m-4">
               <div className="space-y-1">
                 <label className="text-sm text-muted-foreground">Total Annual Income</label>
                 <p className="font-medium flex items-center gap-2">
@@ -380,10 +367,7 @@ export default function ProfilePage() {
         icon: <Users className="h-4 w-4" />,
         content: (
           <Card>
-            <CardHeader>
-              <CardTitle>Family Information</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4">
+            <CardContent className="grid gap-4 m-4">
               <div className="space-y-1">
                 <label className="text-sm text-muted-foreground">Marital Status</label>
                 <p className="font-medium flex items-center gap-2">
@@ -428,7 +412,7 @@ export default function ProfilePage() {
           ))}
         </TabsList>
         {tabs.map((tab) => (
-          <TabsContent key={tab.value} value={tab.value}>
+          <TabsContent key={tab.value} value={tab.value} className="pt-4">
             {tab.content}
           </TabsContent>
         ))}
@@ -437,7 +421,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container max-w-2xl py-6 md:py-10">
+    <div className="container max-w-2xl mx-auto py-4 px-4 space-y-6">
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="text-sm text-muted-foreground">
@@ -457,47 +441,46 @@ export default function ProfilePage() {
           {progress.completed < progress.total && (
             <Card>
               <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-m">Complete Your Profile</CardTitle>
-                    <CardDescription>
-                      {progress.completed} of {progress.total} sections completed
-                    </CardDescription>
-                  </div>
-                  <Link href={`/profile/edit/${selectedProfile?.id}`}>
-                    <Button>
-                      Edit Profile
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
+                <div>
+                  <CardDescription>
+                    {progress.completed} of {progress.total} sections completed
+                  </CardDescription>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="space-y-2">
-                  {!progress.sections.basic && (
-                    <div className="flex items-center gap-3">
-                      <User className="h-4 w-4 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        Add your date of birth and current residency
-                      </p>
-                    </div>
-                  )}
-                  {!progress.sections.tax && (
-                    <div className="flex items-center gap-3">
-                      <Wallet className="h-4 w-4 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        Add at least one income source
-                      </p>
-                    </div>
-                  )}
-                  {!progress.sections.lifestyle && (
-                    <div className="flex items-center gap-3">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        Set your marital status
-                      </p>
-                    </div>
-                  )}
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    {!progress.sections.basic && (
+                      <div className="flex items-center gap-3">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">
+                          Add your date of birth and current residency
+                        </p>
+                      </div>
+                    )}
+                    {!progress.sections.tax && (
+                      <div className="flex items-center gap-3">
+                        <Wallet className="h-4 w-4 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">
+                          Add at least one income source
+                        </p>
+                      </div>
+                    )}
+                    {!progress.sections.lifestyle && (
+                      <div className="flex items-center gap-3">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">
+                          Set your marital status
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  <Link href={`/profile/edit/${selectedProfile?.id}`} className="w-full block">
+                    <Button className="w-full">
+                      Complete Profile
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
