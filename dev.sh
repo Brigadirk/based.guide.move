@@ -68,11 +68,8 @@ cd $ROOT_DIR
 
 # Start backend
 echo -e "\n${BLUE}Starting backend server...${NC}"
-cd backend
-export PYTHONPATH="${ROOT_DIR}"
-uvicorn api:app --reload --port 8000 --host 0.0.0.0 & 
+python run_server.py &
 BACKEND_PID=$!
-cd $ROOT_DIR
 
 # Start frontend
 echo -e "\n${BLUE}Starting frontend server...${NC}"
