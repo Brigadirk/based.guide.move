@@ -15,7 +15,12 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (email: string, password: string) => {
+  const handleSubmit = async (email: string, password?: string) => {
+    if (!password) {
+      setError("Password is required for login")
+      return
+    }
+    
     setIsLoading(true)
     setError(null)
 
@@ -47,6 +52,10 @@ export default function LoginPage() {
           text: "Don't have an account?",
           href: "/signup",
           linkText: "Sign up"
+        }}
+        forgotPassword={{
+          href: "/reset-password",
+          text: ""
         }}
       />
     </AuthCard>

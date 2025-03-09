@@ -15,6 +15,10 @@ interface AuthFormProps {
     linkText: string
   }
   emailOnly?: boolean
+  forgotPassword?: {
+    href: string
+    text: string
+  }
 }
 
 export function AuthForm({ 
@@ -23,7 +27,8 @@ export function AuthForm({
   error, 
   submitText,
   alternateLink,
-  emailOnly = false
+  emailOnly = false,
+  forgotPassword
 }: AuthFormProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -75,12 +80,23 @@ export function AuthForm({
         {isLoading ? `${submitText}...` : submitText}
       </Button>
 
-      <p className="text-center mt-4 text-sm text-muted-foreground">
-        {alternateLink.text}{" "}
-        <Link href={alternateLink.href} className="text-primary hover:underline">
-          {alternateLink.linkText}
-        </Link>
-      </p>
+      <div className="space-y-2 text-center mt-4 text-sm">
+        {forgotPassword && (
+          <p className="text-muted-foreground">
+            Forgot or didn't set password?{" "}
+            <Link href={forgotPassword.href} className="text-primary hover:underline">
+              Reset Password
+            </Link>
+          </p>
+        )}
+
+        <p className="text-muted-foreground">
+          {alternateLink.text}{" "}
+          <Link href={alternateLink.href} className="text-primary hover:underline">
+            {alternateLink.linkText}
+          </Link>
+        </p>
+      </div>
     </form>
   )
 } 
