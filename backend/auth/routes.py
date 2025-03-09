@@ -13,6 +13,17 @@ from backend.auth.utils import (
 import uuid
 from pydantic import BaseModel, EmailStr, constr, Field
 from datetime import datetime
+import stripe
+from backend.stripe.config import (
+    STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET,
+    MEMBERSHIP_PRICE_ID,
+    PAYMENT_SUCCESS_URL,
+    PAYMENT_CANCEL_URL
+)
+
+# Initialize Stripe with our secret key
+stripe.api_key = STRIPE_SECRET_KEY
 
 router = APIRouter()
 
@@ -105,9 +116,6 @@ class ProfileResponse(BaseModel):
 # Add a model for request validation
 class RegisterRequest(BaseModel):
     email: EmailStr
-    password: Annotated[str, constr(min_length=8)]
-    first_name: str | None = None
-    last_name: str | None = None
 
 class UserResponse(BaseModel):
     id: str
@@ -119,6 +127,11 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+# Add a model for set password request
+class SetPasswordRequest(BaseModel):
+    email: EmailStr
+    password: Annotated[str, constr(min_length=8)]
 
 def transform_profile(profile: UserProfile) -> Dict[str, Any]:
     """Transform database model to API response format"""
@@ -162,40 +175,39 @@ async def register(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
-    
-    # Password strength validation (you might want to add more rules)
-    if not any(c.isupper() for c in data.password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must contain at least one uppercase letter"
-        )
-    if not any(c.islower() for c in data.password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must contain at least one lowercase letter"
-        )
-    if not any(c.isdigit() for c in data.password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must contain at least one number"
-        )
 
     try:
-        # Create new user
-        user = User(
+        # Create temporary user without password
+        temp_user = User(
             id=str(uuid.uuid4()),
             email=data.email,
-            password_hash=get_password_hash(data.password),
-            first_name=data.first_name,
-            last_name=data.last_name
+            is_member=False  # Will be set to True after successful payment
         )
-        db.add(user)
+        db.add(temp_user)
         db.commit()
-        db.refresh(user)
+        db.refresh(temp_user)
         
-        # Create access token
-        access_token = create_access_token(data={"sub": user.id})
-        return {"access_token": access_token, "token_type": "bearer"}
+        # Create Stripe checkout session using the latest API
+        session = stripe.checkout.Session.create(
+            customer_email=data.email,
+            client_reference_id=temp_user.id,
+            payment_method_types=['card'],
+            line_items=[{
+                'price': MEMBERSHIP_PRICE_ID,
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url=PAYMENT_SUCCESS_URL + "?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=PAYMENT_CANCEL_URL,
+            metadata={
+                'temp_user_id': temp_user.id
+            }
+        )
+        
+        return {
+            "checkout_url": session.url,
+            "temp_user_id": temp_user.id
+        }
     except Exception as e:
         print(f"Error during registration: {str(e)}")
         raise HTTPException(
@@ -481,4 +493,47 @@ async def get_current_user_info(
             analyzed_countries=analyses,
             profiles=profile_responses
         )
-    } 
+    }
+
+@router.post("/set-password")
+async def set_password(
+    data: SetPasswordRequest,
+    db: Session = Depends(get_db)
+):
+    # Find the user
+    user = db.query(User).filter(User.email == data.email).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    # Validate password strength
+    if not any(c.isupper() for c in data.password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must contain at least one uppercase letter"
+        )
+    if not any(c.islower() for c in data.password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must contain at least one lowercase letter"
+        )
+    if not any(c.isdigit() for c in data.password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must contain at least one number"
+        )
+
+    try:
+        # Set the password
+        user.password_hash = get_password_hash(data.password)
+        db.commit()
+        
+        return {"message": "Password set successfully"}
+    except Exception as e:
+        print(f"Error setting password: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        ) 

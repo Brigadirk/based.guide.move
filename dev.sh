@@ -69,13 +69,8 @@ cd $ROOT_DIR
 # Start backend
 echo -e "\n${BLUE}Starting backend server...${NC}"
 cd backend
-export PYTHONPATH="${ROOT_DIR}:${PYTHONPATH}"
-python -c "import backend" 2>/dev/null || {
-    echo -e "${RED}Python path is not set correctly. Trying alternative configuration...${NC}"
-    export PYTHONPATH="${ROOT_DIR}/backend:${PYTHONPATH}"
-}
-
-uvicorn api:app --reload --port 8000 & 
+export PYTHONPATH="${ROOT_DIR}"
+uvicorn api:app --reload --port 8000 --host 0.0.0.0 & 
 BACKEND_PID=$!
 cd $ROOT_DIR
 

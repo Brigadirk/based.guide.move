@@ -22,6 +22,10 @@ class User(Base):
     analysis_tokens = Column(Integer, default=3)
     country_analyses = relationship("CountryAnalysis", back_populates="user")
     profiles = relationship("UserProfile", back_populates="user")
+    stripe_customer_id = Column(String, unique=True, nullable=True)
+    subscription_id = Column(String, unique=True, nullable=True)
+    subscription_status = Column(String, nullable=True)  # active, canceled, past_due, etc.
+    payments = relationship("Payment", back_populates="user")
 
 class Session(Base):
     __tablename__ = 'sessions'
@@ -152,4 +156,17 @@ class UserProfile(Base):
     partner_info = Column(JSON, nullable=True)  # Complete partner profile object
 
     # Relationships
-    user = relationship("User", back_populates="profiles") 
+    user = relationship("User", back_populates="profiles")
+
+class Payment(Base):
+    __tablename__ = 'payments'
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey('users.id'))
+    stripe_payment_id = Column(String, unique=True)
+    amount = Column(Integer)  # Amount in cents
+    currency = Column(String)
+    status = Column(String)  # succeeded, pending, failed
+    created_at = Column(DateTime, default=datetime.utcnow)
+    payment_method = Column(String)  # card, bank_transfer, etc.
+    user = relationship("User", back_populates="payments") 

@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 
 interface AuthFormProps {
-  onSubmit: (email: string, password: string) => Promise<void>
+  onSubmit: (email: string, password?: string) => Promise<void>
   isLoading: boolean
   error?: string | null
   submitText: string
@@ -14,6 +14,7 @@ interface AuthFormProps {
     href: string
     linkText: string
   }
+  emailOnly?: boolean
 }
 
 export function AuthForm({ 
@@ -21,14 +22,15 @@ export function AuthForm({
   isLoading, 
   error, 
   submitText,
-  alternateLink 
+  alternateLink,
+  emailOnly = false
 }: AuthFormProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await onSubmit(email, password)
+    await onSubmit(email, emailOnly ? undefined : password)
   }
 
   return (
@@ -51,17 +53,19 @@ export function AuthForm({
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          disabled={isLoading}
-        />
-      </div>
+      {!emailOnly && (
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+        </div>
+      )}
 
       <Button
         type="submit"

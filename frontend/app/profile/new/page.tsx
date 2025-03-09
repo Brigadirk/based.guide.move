@@ -6,15 +6,18 @@ import { toast } from "sonner"
 import { createProfile } from "@/lib/api-client"
 import { ProfileForm } from "@/components/features/profile/forms/profile-form"
 import { Profile } from "@/types/profile"
+import { useAuth } from "@/lib/auth-context"
 
 export default function NewProfilePage() {
   const router = useRouter()
+  const { updateUserData } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async (profile: Partial<Profile>) => {
     setIsSubmitting(true)
     try {
       await createProfile(profile)
+      await updateUserData()
       toast.success("Profile created! Let's fill in your details.")
       router.push('/profile')
     } catch (error) {
