@@ -59,14 +59,14 @@ export default function RequestAnalysisPage() {
   }
 
   return (
-    <div className="container max-w-3xl py-8 space-y-6">
+    <div className="w-full py-8 px-4 space-y-6">
       <Card>
         <CardHeader>
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div>
               <CardTitle>Request Analysis</CardTitle>
-              <CardDescription>
-                Tell us about your move intentions to get personalized analysis
+              <CardDescription className="mt-3">
+                Tell Mr. Pro Bonobo about your move intentions to get personalized analysis
               </CardDescription>
             </div>
             <div className="space-y-3">

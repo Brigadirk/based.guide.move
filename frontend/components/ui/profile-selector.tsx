@@ -132,7 +132,7 @@ export function ProfileSelector({
                     </AvatarFallback>
                   )}
                 </Avatar>
-                <div className="flex flex-col items-start">
+                <div className="flex items-center justify-between w-full">
                   <span className="font-medium">{profile.nickname}</span>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
