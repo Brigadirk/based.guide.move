@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = [".env", "backend/.env"]
         env_file_encoding = "utf-8"
+        extra = "allow"  # Allow extra fields in environment variables
 
 # Print current directory and env file existence for debugging
 print("Current directory:", os.getcwd())
@@ -37,6 +38,4 @@ print("STRIPE_MEMBERSHIP_PRICE_ID:", settings.STRIPE_MEMBERSHIP_PRICE_ID)
 
 @lru_cache()
 def get_settings():
-    return Settings()
-
-settings = Settings() 
+    return Settings() 

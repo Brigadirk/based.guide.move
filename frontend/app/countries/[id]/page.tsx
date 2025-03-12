@@ -12,7 +12,7 @@ import { ScrollableContainer } from "@/components/ui/scrollable-container"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { CardDescription } from "@/components/ui/card"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/lib/auth/auth-context"
 import { CountryFlag } from "@/components/features/country/CountryFlag"
 
 const countryImageMap: Record<string, string> = {

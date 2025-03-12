@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/lib/auth/auth-context"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { AnalysisCard } from "@/components/features/analysis/analysis-card"

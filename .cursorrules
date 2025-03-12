@@ -1,0 +1,124 @@
+# Project Stack and Conventions
+
+## Backend (Python)
+- Framework: FastAPI
+- Database: PostgreSQL with SQLAlchemy ORM
+- Authentication: JWT with python-jose
+- Email: Postmark with postmarker client
+- Environment: python-dotenv
+- Testing: pytest
+- Code style: black, flake8
+
+## Frontend (Next.js)
+- Framework: Next.js 14 with App Router
+- Styling: Tailwind CSS
+- UI Components: shadcn/ui
+- State Management: React Query
+- Forms: react-hook-form with zod validation
+- Icons: Lucide Icons
+- HTTP Client: Axios
+
+## Project Structure
+/
+├── backend/
+│   ├── alembic/         # Database migrations
+│   ├── app/             # Application code
+│   ├── tests/           # Test files
+│   └── config.py        # Configuration
+├── frontend/
+│   ├── app/             # Next.js app directory
+│   ├── components/      # React components
+│   ├── lib/             # Utility functions
+│   └── styles/          # Global styles
+└── docs/               # Documentation
+
+## Code Conventions
+
+### Python
+- Use type hints
+- Follow PEP 8
+- Use async/await for database and external API calls
+- Document functions with docstrings
+- Use environment variables for configuration
+- Handle errors with try/except blocks
+- Log errors and important events
+
+### TypeScript/Next.js
+- Use TypeScript strict mode
+- Follow ESLint and Prettier rules
+- Use server and client components appropriately
+- Implement error boundaries
+- Use loading and error states
+- Follow atomic design for components
+- Use CSS modules or Tailwind for styling
+
+### Database
+- Use migrations for schema changes
+- Follow naming conventions:
+  - Tables: lowercase, plural, snake_case
+  - Columns: snake_case
+  - Foreign keys: singular_table_id
+- Include created_at and updated_at timestamps
+- Use UUIDs for primary keys
+
+### API Endpoints
+- RESTful conventions
+- Version prefix: /api/v1
+- Use proper HTTP methods and status codes
+- Validate request bodies with Pydantic
+- Document with OpenAPI/Swagger
+- Rate limit sensitive endpoints
+
+### Environment Variables
+- Backend: .env file with python-dotenv
+- Frontend: .env.local with Next.js
+- Never commit sensitive values
+- Use example.env for documentation
+
+### Testing
+- Backend: pytest with coverage
+- Frontend: Jest and React Testing Library
+- Write unit tests for utilities
+- Write integration tests for API endpoints
+- Test components in isolation
+
+### Security
+- CORS configuration
+- CSP headers
+- Rate limiting
+- Input validation
+- Secure session handling
+- Password hashing with bcrypt
+- JWT token management
+
+### Performance
+- Database indexing
+- Query optimization
+- Caching strategy
+- Image optimization
+- Code splitting
+- Bundle size monitoring
+
+### Monitoring
+- Error tracking
+- Performance monitoring
+- API metrics
+- Database query performance
+- Email delivery status
+
+## Development Workflow
+1. Use feature branches
+2. Write tests before implementation
+3. Follow commit message conventions
+4. Review code before merging
+5. Run linters and tests locally
+6. Document API changes
+7. Update dependencies regularly
+
+## Deployment
+- Use Docker containers
+- Implement CI/CD pipeline
+- Follow zero-downtime deployment
+- Monitor application health
+- Back up database regularly
+- Log deployment events 

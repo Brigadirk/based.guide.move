@@ -6,7 +6,7 @@ import { toast } from "sonner"
 import { createProfile } from "@/lib/api-client"
 import { ProfileForm } from "@/components/features/profile/forms/profile-form"
 import { Profile } from "@/types/profile"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/lib/auth/auth-context"
 
 export default function NewProfilePage() {
   const router = useRouter()

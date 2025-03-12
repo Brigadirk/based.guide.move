@@ -16,7 +16,7 @@ import {
 import { VisaEligibilityTab, TaxesTab } from "@/components/features/analysis/tabs"
 import { mockAnalysis, Analysis, AnalysisCategory } from './mockData'
 import { Progress } from "@/components/ui/progress"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/lib/auth/auth-context"
 import { ProfileCard } from "@/components/ui/profile-card"
 
 export default function AnalysisResultPage() {

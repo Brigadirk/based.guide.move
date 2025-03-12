@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { AuthCard } from '@/components/features/auth/auth-card'
+import { AuthCard } from '@/components/auth/AuthCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useAuth } from '@/lib/auth-context'
+import { useAuth } from '@/lib/auth/auth-context'
+import { resetPasswordSchema } from '@/lib/auth/validation'
 
 export default function SetPasswordPage() {
   const [password, setPassword] = useState('')
@@ -23,43 +24,15 @@ export default function SetPasswordPage() {
     return null
   }
 
-  const validatePassword = (password: string): string | null => {
-    if (password.length < 8) {
-      return 'Password must be at least 8 characters'
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'Password must contain at least one uppercase letter'
-    }
-    if (!/[a-z]/.test(password)) {
-      return 'Password must contain at least one lowercase letter'
-    }
-    if (!/[0-9]/.test(password)) {
-      return 'Password must contain at least one number'
-    }
-    return null
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setIsLoading(true)
 
-    // Validate passwords match
-    if (password !== confirmPassword) {
-      setError('Passwords do not match')
-      setIsLoading(false)
-      return
-    }
-
-    // Validate password strength
-    const validationError = validatePassword(password)
-    if (validationError) {
-      setError(validationError)
-      setIsLoading(false)
-      return
-    }
-
     try {
+      // Validate password using Zod schema
+      resetPasswordSchema.parse({ password, confirmPassword })
+
       const response = await fetch('/api/auth/set-password', {
         method: 'POST',
         headers: {

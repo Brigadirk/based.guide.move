@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, use } from "react"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/lib/auth/auth-context"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { ProfileForm } from "@/components/features/profile/forms/profile-form"

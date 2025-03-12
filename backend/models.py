@@ -17,6 +17,7 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     email_verified = Column(Boolean, default=False)
+    last_verification_email_sent = Column(DateTime, nullable=True)
     sessions = relationship("Session", back_populates="user")
     is_member = Column(Boolean, default=False)
     analysis_tokens = Column(Integer, default=3)

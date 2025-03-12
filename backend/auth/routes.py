@@ -181,7 +181,8 @@ async def register(
         temp_user = User(
             id=str(uuid.uuid4()),
             email=data.email,
-            is_member=False  # Will be set to True after successful payment
+            is_member=False,  # Will be set to True after successful payment
+            email_verified=False  # Using the correct field name
         )
         db.add(temp_user)
         db.commit()
@@ -215,49 +216,71 @@ async def register(
             detail=str(e)
         )
 
+@router.post("/set-password")
+async def set_password(
+    data: SetPasswordRequest,
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.email == data.email).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    # Set the password
+    user.hashed_password = get_password_hash(data.password)
+    db.commit()
+
+    return {"message": "Password set successfully"}
+
 @router.post("/login")
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
-    try:
-        user = db.query(User).filter(User.email == form_data.username).first()
-        if not user or not verify_password(form_data.password, user.password_hash):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect email or password"
-            )
-        
-        # Get user's analyses
-        analyses = db.query(CountryAnalysis).filter(CountryAnalysis.user_id == user.id).all()
-        
-        # Get all user's profiles
-        profiles = db.query(UserProfile).filter(UserProfile.user_id == user.id).all()
-        
-        # Convert profiles to ProfileResponse if they exist
-        profile_responses = [ProfileResponse.model_validate(profile) for profile in profiles] if profiles else []
-        
-        access_token = create_access_token(data={"sub": user.id})
-        return {
-            "access_token": access_token,
-            "token_type": "bearer",
-            "user": UserResponse(
-                id=user.id,
-                email=user.email,
-                is_member=user.is_member,
-                analysis_tokens=user.analysis_tokens,
-                analyzed_countries=analyses,
-                profiles=profile_responses
-            )
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        print(f"Login error: {str(e)}")
+    user = db.query(User).filter(User.email == form_data.username).first()
+    if not user:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while processing your request"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password"
         )
+
+    if not user.hashed_password:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Password not set"
+        )
+
+    if not verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password"
+        )
+
+    # Create a new session
+    session = UserSession(
+        id=str(uuid.uuid4()),
+        user_id=user.id,
+        expires_at=datetime.utcnow()  # This will be updated by the token creation
+    )
+    db.add(session)
+    db.commit()
+
+    # Create access token
+    access_token = create_access_token(
+        data={"sub": user.id, "session": session.id}
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "is_member": user.is_member
+        }
+    }
 
 @router.post("/profiles")
 async def create_profile(
@@ -265,81 +288,38 @@ async def create_profile(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    print("Received profile data:", profile_data.model_dump())
-    try:
-        # Convert camelCase to snake_case for database
-        profile_dict = {
-            "nickname": profile_data.nickname,
-            "avatar": profile_data.avatar
-        }
-        
-        if profile_data.personalInformation:
-            profile_dict.update({
-                "date_of_birth": profile_data.personalInformation.dateOfBirth,
-                "nationalities": [n.model_dump() for n in profile_data.personalInformation.nationalities],
-                "marital_status": profile_data.personalInformation.maritalStatus,
-                "current_residency": profile_data.personalInformation.currentResidency.model_dump() if profile_data.personalInformation.currentResidency else None,
-            })
-            
-        if profile_data.financialInformation:
-            profile_dict.update({
-                "income_sources": [s.model_dump() for s in profile_data.financialInformation.incomeSources],
-                "assets": [a.model_dump() for a in profile_data.financialInformation.assets],
-                "liabilities": [l.model_dump() for l in profile_data.financialInformation.liabilities],
-            })
-            
-        if profile_data.residencyIntentions:
-            profile_dict.update({
-                "move_type": profile_data.residencyIntentions.moveType,
-                "intended_country": profile_data.residencyIntentions.intendedCountry,
-                "duration_of_stay": profile_data.residencyIntentions.durationOfStay,
-                "preferred_maximum_stay_requirement": profile_data.residencyIntentions.preferredMaximumStayRequirement,
-                "residency_notes": profile_data.residencyIntentions.notes,
-            })
-            
-        profile_dict.update({
-            "dependents": [d.model_dump() for d in profile_data.dependents] if profile_data.dependents else [],
-            "special_circumstances": profile_data.specialCircumstances,
-            "partner_info": profile_data.partner
-        })
-        
-    except Exception as e:
-        print("Validation error details:", str(e))
-        raise HTTPException(status_code=422, detail=str(e))
-
     # Create new profile
-    profile = UserProfile(
+    new_profile = UserProfile(
         id=str(uuid.uuid4()),
         user_id=current_user.id,
-        **profile_dict
+        nickname=profile_data.nickname,
+        avatar=profile_data.avatar,
+        # Personal Information
+        date_of_birth=profile_data.personalInformation.dateOfBirth if profile_data.personalInformation else None,
+        nationalities=profile_data.personalInformation.nationalities if profile_data.personalInformation else None,
+        marital_status=profile_data.personalInformation.maritalStatus if profile_data.personalInformation else None,
+        current_residency=profile_data.personalInformation.currentResidency.dict() if profile_data.personalInformation and profile_data.personalInformation.currentResidency else None,
+        # Financial Information
+        income_sources=[source.dict() for source in profile_data.financialInformation.incomeSources] if profile_data.financialInformation else None,
+        assets=[asset.dict() for asset in profile_data.financialInformation.assets] if profile_data.financialInformation else None,
+        liabilities=[liability.dict() for liability in profile_data.financialInformation.liabilities] if profile_data.financialInformation else None,
+        # Residency Intentions
+        move_type=profile_data.residencyIntentions.moveType if profile_data.residencyIntentions else None,
+        intended_country=profile_data.residencyIntentions.intendedCountry if profile_data.residencyIntentions else None,
+        duration_of_stay=profile_data.residencyIntentions.durationOfStay if profile_data.residencyIntentions else None,
+        preferred_maximum_stay_requirement=profile_data.residencyIntentions.preferredMaximumStayRequirement if profile_data.residencyIntentions else None,
+        residency_notes=profile_data.residencyIntentions.notes if profile_data.residencyIntentions else None,
+        # Other fields
+        dependents=[dependent.dict() for dependent in profile_data.dependents] if profile_data.dependents else None,
+        special_circumstances=profile_data.specialCircumstances,
+        partner_info=profile_data.partner
     )
-    db.add(profile)
 
-    try:
-        db.commit()
-        db.refresh(profile)
-    except Exception as e:
-        print("Error saving profile:", str(e))
-        db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+    db.add(new_profile)
+    db.commit()
+    db.refresh(new_profile)
 
-    # Get user's analyses for the response
-    analyses = db.query(CountryAnalysis).filter(CountryAnalysis.user_id == current_user.id).all()
-    
-    # Get all user's profiles
-    profiles = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).all()
-    profile_responses = [transform_profile(p) for p in profiles]
-
-    return {
-        "user": UserResponse(
-            id=current_user.id,
-            email=current_user.email,
-            is_member=current_user.is_member,
-            analysis_tokens=current_user.analysis_tokens,
-            analyzed_countries=analyses,
-            profiles=profile_responses
-        )
-    }
+    return transform_profile(new_profile)
 
 @router.put("/profiles/{profile_id}")
 async def update_profile(
@@ -353,78 +333,62 @@ async def update_profile(
         UserProfile.id == profile_id,
         UserProfile.user_id == current_user.id
     ).first()
-    
+
     if not profile:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Profile not found"
         )
 
-    try:
-        # Convert camelCase to snake_case for database
-        profile_dict = {
-            "nickname": profile_data.nickname,
-            "avatar": profile_data.avatar
-        }
-        
-        if profile_data.personalInformation:
-            profile_dict.update({
-                "date_of_birth": profile_data.personalInformation.dateOfBirth,
-                "nationalities": [n.model_dump() for n in profile_data.personalInformation.nationalities],
-                "marital_status": profile_data.personalInformation.maritalStatus,
-                "current_residency": profile_data.personalInformation.currentResidency.model_dump() if profile_data.personalInformation.currentResidency else None,
-            })
-            
-        if profile_data.financialInformation:
-            profile_dict.update({
-                "income_sources": [s.model_dump() for s in profile_data.financialInformation.incomeSources],
-                "assets": [a.model_dump() for a in profile_data.financialInformation.assets],
-                "liabilities": [l.model_dump() for l in profile_data.financialInformation.liabilities],
-            })
-            
-        if profile_data.residencyIntentions:
-            profile_dict.update({
-                "move_type": profile_data.residencyIntentions.moveType,
-                "intended_country": profile_data.residencyIntentions.intendedCountry,
-                "duration_of_stay": profile_data.residencyIntentions.durationOfStay,
-                "preferred_maximum_stay_requirement": profile_data.residencyIntentions.preferredMaximumStayRequirement,
-                "residency_notes": profile_data.residencyIntentions.notes,
-            })
-            
-        profile_dict.update({
-            "dependents": [d.model_dump() for d in profile_data.dependents] if profile_data.dependents else [],
-            "special_circumstances": profile_data.specialCircumstances,
-            "partner_info": profile_data.partner
-        })
+    # Update profile fields
+    profile.nickname = profile_data.nickname
+    profile.avatar = profile_data.avatar
 
-        # Update profile fields
-        for key, value in profile_dict.items():
-            setattr(profile, key, value)
+    # Update Personal Information
+    if profile_data.personalInformation:
+        profile.date_of_birth = profile_data.personalInformation.dateOfBirth
+        profile.nationalities = profile_data.personalInformation.nationalities
+        profile.marital_status = profile_data.personalInformation.maritalStatus
+        profile.current_residency = profile_data.personalInformation.currentResidency.dict() if profile_data.personalInformation.currentResidency else None
+    else:
+        profile.date_of_birth = None
+        profile.nationalities = None
+        profile.marital_status = None
+        profile.current_residency = None
 
-        db.commit()
-        db.refresh(profile)
-    except Exception as e:
-        print("Error updating profile:", str(e))
-        db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+    # Update Financial Information
+    if profile_data.financialInformation:
+        profile.income_sources = [source.dict() for source in profile_data.financialInformation.incomeSources]
+        profile.assets = [asset.dict() for asset in profile_data.financialInformation.assets]
+        profile.liabilities = [liability.dict() for liability in profile_data.financialInformation.liabilities]
+    else:
+        profile.income_sources = None
+        profile.assets = None
+        profile.liabilities = None
 
-    # Get user's analyses for the response
-    analyses = db.query(CountryAnalysis).filter(CountryAnalysis.user_id == current_user.id).all()
-    
-    # Get all user's profiles
-    profiles = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).all()
-    profile_responses = [transform_profile(p) for p in profiles]
+    # Update Residency Intentions
+    if profile_data.residencyIntentions:
+        profile.move_type = profile_data.residencyIntentions.moveType
+        profile.intended_country = profile_data.residencyIntentions.intendedCountry
+        profile.duration_of_stay = profile_data.residencyIntentions.durationOfStay
+        profile.preferred_maximum_stay_requirement = profile_data.residencyIntentions.preferredMaximumStayRequirement
+        profile.residency_notes = profile_data.residencyIntentions.notes
+    else:
+        profile.move_type = None
+        profile.intended_country = None
+        profile.duration_of_stay = None
+        profile.preferred_maximum_stay_requirement = None
+        profile.residency_notes = None
 
-    return {
-        "user": UserResponse(
-            id=current_user.id,
-            email=current_user.email,
-            is_member=current_user.is_member,
-            analysis_tokens=current_user.analysis_tokens,
-            analyzed_countries=analyses,
-            profiles=profile_responses
-        )
-    }
+    # Update other fields
+    profile.dependents = [dependent.dict() for dependent in profile_data.dependents] if profile_data.dependents else None
+    profile.special_circumstances = profile_data.specialCircumstances
+    profile.partner_info = profile_data.partner
+
+    db.commit()
+    db.refresh(profile)
+
+    return transform_profile(profile)
 
 @router.delete("/profiles/{profile_id}")
 async def delete_profile(
@@ -437,38 +401,18 @@ async def delete_profile(
         UserProfile.id == profile_id,
         UserProfile.user_id == current_user.id
     ).first()
-    
+
     if not profile:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Profile not found"
         )
 
-    try:
-        db.delete(profile)
-        db.commit()
-    except Exception as e:
-        print("Error deleting profile:", str(e))
-        db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+    # Delete the profile
+    db.delete(profile)
+    db.commit()
 
-    # Get user's analyses for the response
-    analyses = db.query(CountryAnalysis).filter(CountryAnalysis.user_id == current_user.id).all()
-    
-    # Get remaining profiles
-    profiles = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).all()
-    profile_responses = [transform_profile(p) for p in profiles]
-
-    return {
-        "user": UserResponse(
-            id=current_user.id,
-            email=current_user.email,
-            is_member=current_user.is_member,
-            analysis_tokens=current_user.analysis_tokens,
-            analyzed_countries=analyses,
-            profiles=profile_responses
-        )
-    }
+    return {"message": "Profile deleted successfully"}
 
 @router.get("/me")
 async def get_current_user_info(
@@ -476,64 +420,20 @@ async def get_current_user_info(
     db: Session = Depends(get_db)
 ):
     # Get user's analyses
-    analyses = db.query(CountryAnalysis).filter(CountryAnalysis.user_id == current_user.id).all()
-    
-    # Get all user's profiles
-    profiles = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).all()
-    
-    # Convert profiles to ProfileResponse if they exist
-    profile_responses = [transform_profile(p) for p in profiles] if profiles else []
-    
-    return {
-        "user": UserResponse(
-            id=current_user.id,
-            email=current_user.email,
-            is_member=current_user.is_member,
-            analysis_tokens=current_user.analysis_tokens,
-            analyzed_countries=analyses,
-            profiles=profile_responses
-        )
-    }
+    analyses = db.query(CountryAnalysis).filter(
+        CountryAnalysis.user_id == current_user.id
+    ).all()
 
-@router.post("/set-password")
-async def set_password(
-    data: SetPasswordRequest,
-    db: Session = Depends(get_db)
-):
-    # Find the user
-    user = db.query(User).filter(User.email == data.email).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
-        )
+    # Get user's profiles
+    profiles = db.query(UserProfile).filter(
+        UserProfile.user_id == current_user.id
+    ).all()
 
-    # Validate password strength
-    if not any(c.isupper() for c in data.password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must contain at least one uppercase letter"
-        )
-    if not any(c.islower() for c in data.password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must contain at least one lowercase letter"
-        )
-    if not any(c.isdigit() for c in data.password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must contain at least one number"
-        )
-
-    try:
-        # Set the password
-        user.password_hash = get_password_hash(data.password)
-        db.commit()
-        
-        return {"message": "Password set successfully"}
-    except Exception as e:
-        print(f"Error setting password: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        ) 
+    return UserResponse(
+        id=current_user.id,
+        email=current_user.email,
+        is_member=current_user.is_member,
+        analysis_tokens=current_user.analysis_tokens,
+        analyzed_countries=[CountryAnalysisResponse.from_orm(a) for a in analyses],
+        profiles=[ProfileResponse.from_orm(p) for p in profiles]
+    ) 

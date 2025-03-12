@@ -11,6 +11,14 @@ setup(
         "pydantic",
         "python-jose[cryptography]",
         "passlib[bcrypt]",
-        "python-multipart"
-    ]
+        "python-multipart",
+        "python-postmark>=0.6.0"
+    ],
+    extras_require={
+        'test': [
+            'pytest>=7.0.0',
+            'pytest-asyncio>=0.21.0',
+            'pytest-cov>=4.0.0',
+        ]
+    }
 ) 

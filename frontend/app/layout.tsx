@@ -2,7 +2,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import { Nav } from '@/components/ui/nav'
 import { BottomNav } from '@/components/layout/bottom-nav'
-import { AuthProvider } from '@/lib/auth-context'
+import { AuthProvider } from '@/lib/auth/auth-context'
 import { chomskyFont } from '@/lib/fonts'
 import { Toaster } from '@/components/ui/sonner'
 

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { products, Product } from "@/lib/api"
 import { ProductCard } from "@/components/features/products/product-card"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/lib/auth/auth-context"
 
 export default function ProductsPage() {
   const [availableProducts, setAvailableProducts] = useState<Product[]>([])

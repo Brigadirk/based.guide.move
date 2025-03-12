@@ -50,48 +50,41 @@ async def create_checkout_session(
 @router.post("/webhook")
 async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
     try:
-        # Get the webhook data
-        payload = await request.body()
-        sig_header = request.headers.get('stripe-signature')
-        
+        body = await request.body()
+        sig_header = request.headers.get("stripe-signature")
+
         try:
             event = stripe.Webhook.construct_event(
-                payload, sig_header, STRIPE_WEBHOOK_SECRET
+                body,
+                sig_header,
+                STRIPE_WEBHOOK_SECRET
             )
-        except stripe.error.SignatureVerificationError:
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail="Invalid payload")
+        except stripe.error.SignatureVerificationError as e:
             raise HTTPException(status_code=400, detail="Invalid signature")
-        
-        # Handle the event
-        if event['type'] == 'checkout.session.completed':
-            session = event['data']['object']
-            
-            # Get the temporary user ID from metadata
-            temp_user_id = session.get('metadata', {}).get('temp_user_id')
-            if not temp_user_id:
-                raise HTTPException(status_code=400, detail="No temp_user_id found")
-            
-            # Get the customer ID and payment intent
-            customer_id = session.get('customer')
-            payment_intent = session.get('payment_intent')
-            
-            # Update the user record
+
+        if event["type"] == "checkout.session.completed":
+            session = event["data"]["object"]
+            temp_user_id = session["metadata"]["temp_user_id"]
+
+            # Update user's membership status
             user = db.query(User).filter(User.id == temp_user_id).first()
             if user:
-                user.stripe_customer_id = customer_id
                 user.is_member = True
-                
+                user.analysis_tokens = 5  # Give them 5 tokens to start with
+
                 # Create payment record
                 payment = Payment(
+                    id=session["id"],
                     user_id=user.id,
-                    stripe_payment_id=payment_intent,
-                    amount=session.get('amount_total'),
-                    currency=session.get('currency'),
-                    status='succeeded',
-                    payment_method='card'
+                    amount=session["amount_total"],
+                    currency=session["currency"],
+                    status=session["payment_status"]
                 )
                 db.add(payment)
                 db.commit()
-        
+
         return {"status": "success"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -103,23 +96,22 @@ async def get_subscription_status(
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
     
-    if not user.subscription_id:
-        return {"status": "no_subscription"}
-    
-    try:
-        subscription = stripe.Subscription.retrieve(user.subscription_id)
-        return {"status": subscription.status}
-    except stripe.error.StripeError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return {
+        "is_member": user.is_member,
+        "analysis_tokens": user.analysis_tokens
+    }
 
 class VerifySessionRequest(BaseModel):
     session_id: str
 
 def generate_temp_password(length=12):
     alphabet = string.ascii_letters + string.digits
-    return ''.join(secrets.choice(alphabet) for _ in range(length))
+    return ''.join(secrets.choice(alphabet) for i in range(length))
 
 @router.post("/verify-session")
 async def verify_session(
@@ -127,29 +119,52 @@ async def verify_session(
     db: Session = Depends(get_db)
 ):
     try:
-        print(f"Verifying session: {data.session_id}")
         # Retrieve the session from Stripe
         session = stripe.checkout.Session.retrieve(data.session_id)
-        print(f"Retrieved session from Stripe: {session}")
         
-        # Get the temporary user ID from metadata
-        temp_user_id = session.get('metadata', {}).get('temp_user_id')
-        print(f"Temp user ID from metadata: {temp_user_id}")
-        if not temp_user_id:
-            raise HTTPException(status_code=400, detail="No temp_user_id found")
+        if not session:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Session not found"
+            )
         
-        # Get the user
-        user = db.query(User).filter(User.id == temp_user_id).first()
-        print(f"Found user: {user.email if user else None}")
+        if session.payment_status != "paid":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Payment not completed"
+            )
+        
+        # Get the user from our database
+        user = db.query(User).filter(User.id == session.metadata["temp_user_id"]).first()
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
         
-        # Set user as member
-        user.is_member = True
-        db.commit()
+        # Update user status if not already done by webhook
+        if not user.is_member:
+            user.is_member = True
+            user.analysis_tokens = 5  # Give them 5 tokens to start with
+            db.commit()
         
-        # Return user email
-        return {"email": user.email}
+        return {
+            "status": "success",
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "is_member": user.is_member,
+                "analysis_tokens": user.analysis_tokens
+            }
+        }
+        
+    except stripe.error.StripeError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
     except Exception as e:
-        print(f"Error in verify-session: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e)) 
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        ) 

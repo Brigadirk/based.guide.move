@@ -2,9 +2,10 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Compass, User, Settings, FileText } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useAuth } from "@/lib/auth-context"
+import { Compass, User, Settings, FileText } from "lucide-react"
+import { useAuth } from "@/lib/auth/auth-context"
 import { ProfileBadge } from "@/components/ui/profile-badge"
 
 export function BottomNav() {

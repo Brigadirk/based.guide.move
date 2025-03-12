@@ -4,7 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/lib/auth/auth-context"
 
 export default function SuccessPage() {
   const searchParams = useSearchParams()

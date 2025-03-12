@@ -3,7 +3,7 @@
 import { ResidencyIntentionsForm } from "@/components/features/analysis/forms/residency-intentions-form"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/lib/auth/auth-context"
 import { ResidencyIntentions, Profile } from "@/types/profile"
 import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
