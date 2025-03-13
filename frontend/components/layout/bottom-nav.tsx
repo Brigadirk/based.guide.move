@@ -5,14 +5,14 @@ import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Compass, User, Settings, FileText } from "lucide-react"
-import { useAuth } from "@/lib/auth/auth-context"
+import { useAuth } from "@/lib/hooks/use-auth"
 import { ProfileBadge } from "@/components/ui/profile-badge"
 
 export function BottomNav() {
   const pathname = usePathname()
-  const { isAuthenticated, user, selectedProfile } = useAuth()
+  const { user } = useAuth()
 
-  if (!isAuthenticated) {
+  if (!user) {
     return null
   }
 
@@ -31,9 +31,9 @@ export function BottomNav() {
       href: '/profile',
       icon: <User size={24} />,
       label: 'Profile',
-      badge: selectedProfile && (
+      badge: user.user_metadata.selectedProfile && (
         <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap">
-          <ProfileBadge profile={selectedProfile} variant="xs" />
+          <ProfileBadge profile={user.user_metadata.selectedProfile} variant="xs" />
         </div>
       )
     },

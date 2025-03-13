@@ -1,16 +1,24 @@
 'use client'
 
 import Link from "next/link"
-import { useAuth } from "@/lib/auth/auth-context"
+import { useAuth } from "@/lib/hooks/use-auth"
 import { Button } from "@/components/ui/button"
-import { Coins } from "lucide-react"
 import { useRouter } from "next/navigation"
-import type { User } from "@/types/user"
+import { useEffect } from "react"
 
 export function Nav() {
-  const { isAuthenticated, user } = useAuth()
+  const { user } = useAuth()
   const router = useRouter()
   
+  useEffect(() => {
+    console.log('Nav auth state:', {
+      isAuthenticated: !!user,
+      userId: user?.id,
+      email: user?.email,
+      metadata: user?.user_metadata
+    })
+  }, [user])
+
   const handleLoginClick = (e: React.MouseEvent) => {
     e.preventDefault()
     router.push('/login')
@@ -28,7 +36,7 @@ export function Nav() {
           based.guide
         </Link>
         <nav>
-          {!isAuthenticated ? (
+          {!user ? (
             <div className="space-x-2">
               <Button 
                 variant="ghost" 
@@ -48,7 +56,7 @@ export function Nav() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-sm">
                 <span>🍌</span>
-                <span>{user?.analysisTokens || 0}</span>
+                <span>{user.user_metadata.analysisTokens || 0}</span>
               </div>
               <Link href="/products">
                 <Button size="sm" variant="outline">

@@ -1,48 +1,28 @@
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Add auth-required paths here
-const authRequiredPaths = [
-  '/profile', 
-  '/settings', 
-  '/products', 
-  '/checkout',
-  '/analyses'
-]
+export async function middleware(request: NextRequest) {
+  const res = NextResponse.next()
+  const supabase = createMiddlewareClient({ req: request, res })
 
-export function middleware(request: NextRequest) {
-  const token = request.cookies.get('token')
-  const { pathname } = request.nextUrl
+  // Refresh session if expired
+  await supabase.auth.getSession()
 
-  console.log('Middleware - Request:', { pathname, hasToken: !!token })
-
-  // Check if the path starts with any of the protected paths
-  const isProtectedPath = authRequiredPaths.some(path => 
-    pathname === path || pathname.startsWith(`${path}/`)
-  )
-
-  // If trying to access auth-required path without token, redirect to login
-  if (isProtectedPath && !token) {
-    const url = new URL('/login', request.url)
-    url.searchParams.set('returnUrl', pathname)
-    return NextResponse.redirect(url)
-  }
-
-  // If trying to access login/signup while authenticated, redirect to profile
-  if ((pathname === '/login' || pathname === '/signup') && token) {
-    return NextResponse.redirect(new URL('/profile', request.url))
-  }
-
-  return NextResponse.next()
+  return res
 }
 
+// Ensure the middleware is only called for relevant paths
 export const config = {
   matcher: [
-    '/profile',
-    '/settings',
-    '/login',
-    '/signup',
-    '/products',
-    '/checkout'
-  ]
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     * - api routes
+     */
+    '/((?!_next/static|_next/image|favicon.ico|public|api).*)',
+  ],
 } 

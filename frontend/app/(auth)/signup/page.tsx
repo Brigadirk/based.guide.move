@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from "react"
-import { useAuth } from "@/lib/auth/auth-context"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { AuthCard } from "@/components/auth/AuthCard"
@@ -9,7 +8,6 @@ import { SignupForm } from "@/components/auth/forms/SignupForm"
 import type { SignupFormData } from "@/lib/auth/validation"
 
 export default function SignupPage() {
-  const { signup } = useAuth()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -19,12 +17,24 @@ export default function SignupPage() {
     setError(null)
 
     try {
-      await signup(data.email, data.password)
-      toast.success("Account created successfully! Please check your email to verify your account.")
-      router.push('/login')
+      const response = await fetch('/api/payment/create-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: data.email }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to create checkout session')
+      }
+
+      const { url } = await response.json()
+      router.push(url)
     } catch (error: any) {
       console.error('Signup error:', error)
-      const errorMessage = error.message || error.detail?.message || "Failed to create account. Please try again."
+      const errorMessage = error.message || "Failed to create account. Please try again."
       setError(errorMessage)
       toast.error(errorMessage)
     } finally {
@@ -35,7 +45,7 @@ export default function SignupPage() {
   return (
     <AuthCard
       title="Create an account"
-      description="Enter your details to create your account"
+      description="Enter your email to get started"
     >
       <SignupForm
         onSubmit={handleSubmit}

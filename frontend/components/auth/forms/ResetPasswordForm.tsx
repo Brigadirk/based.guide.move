@@ -10,9 +10,10 @@ interface ResetPasswordFormProps {
   onSubmit: (data: ResetPasswordFormData) => Promise<void>
   isLoading?: boolean
   error?: React.ReactNode
+  submitLabel?: string
 }
 
-export function ResetPasswordForm({ onSubmit, isLoading, error }: ResetPasswordFormProps) {
+export function ResetPasswordForm({ onSubmit, isLoading, error, submitLabel = "Reset Password" }: ResetPasswordFormProps) {
   const form = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
@@ -47,7 +48,7 @@ export function ResetPasswordForm({ onSubmit, isLoading, error }: ResetPasswordF
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm New Password</FormLabel>
+              <FormLabel>Confirm Password</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -66,7 +67,7 @@ export function ResetPasswordForm({ onSubmit, isLoading, error }: ResetPasswordF
         )}
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Resetting..." : "Reset Password"}
+          {isLoading ? "Setting password..." : submitLabel}
         </Button>
       </div>
     </AuthForm>

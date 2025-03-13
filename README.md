@@ -1,19 +1,83 @@
 # based.guide.move
 
-Second iteration of based.guide
+Second iteration of based.guide - A comprehensive guide to global mobility and taxation.
 
-TODO:
-- Add special economic zones like prospera
-- Add immigration process info (where get?)
-- Check the scrape for accuracy on 10 different countries (why is significant developments and invididual same)
-- Chat with Mr. Pro Bonobo.
-- Accurate conversion rates, stored in SQL
-- Request history, in SQL
+## Tech Stack
 
-IDEAS:
-- Auto tweet each time one of our tax source websites puts in an update
+### Frontend (Next.js)
+- Framework: Next.js 14 with App Router
+- Database & Auth: Supabase
+- Styling: Tailwind CSS
+- UI Components: shadcn/ui
+- State Management: React Query
+- Forms: react-hook-form with zod validation
+- Icons: Lucide Icons
+- HTTP Client: Axios
+- Hosting: Vercel
+
+### Backend (Python)
+- Framework: FastAPI
+- Tasks: Cron jobs, LLM processing, Tax analysis
+- Testing: pytest
+- Code style: black, flake8
+- Hosting: TBD
+
+## Project Structure
+```
+/
+├── frontend/
+│   ├── app/             # Next.js app directory
+│   ├── components/      # React components
+│   ├── lib/            
+│   │   ├── supabase/   # Supabase client & utils
+│   │   ├── api/        # API client & endpoints
+│   │   └── utils/      # Utility functions
+│   └── styles/         # Global styles
+│
+├── backend/
+│   ├── app/           
+│   │   ├── core/       # Core functionality
+│   │   ├── tasks/      # Cron jobs & tasks
+│   │   ├── services/   # External services integration
+│   │   └── api/        # API endpoints
+│   └── tests/          # Test files
+│
+└── docs/              # Documentation
+```
 
 ## Quick Start
+
+### Prerequisites
+- Node.js 18+
+- Python 3.11+
+- Supabase CLI (optional)
+
+### Environment Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/based.guide.move.git
+cd based.guide.move
+```
+
+2. Frontend setup:
+```bash
+cd frontend
+cp .env.example .env.local  # Configure your env variables
+npm install
+npm run dev
+```
+
+3. Backend setup:
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # or `venv\Scripts\activate` on Windows
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+### Development
 
 The easiest way to start development is to use the provided development script:
 
@@ -25,69 +89,34 @@ chmod +x dev.sh
 ./dev.sh
 ```
 
-The script will:
-- Automatically manage Python virtual environment
-- Install all required dependencies
-- Start both frontend and backend servers
-- Handle process management and cleanup
-- Provide clear status messages and URLs
+## Environment Variables
 
-## Project Structure
+### Frontend (.env.local)
+```
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
 
-This is a monorepo containing:
-- `backend/`: Python backend service
-- `frontend/`: Next.js frontend application
+### Backend (.env)
+```
+OPENAI_API_KEY=your-api-key
+# Add other necessary API keys and configuration
+```
 
-## Backend Tech Stack
+## Contributing
 
-Our backend is built with modern Python technologies:
+1. Create a feature branch
+2. Make your changes
+3. Run tests
+4. Submit a pull request
 
-### Core Technologies
-- **FastAPI** - Modern, fast web framework for building APIs
-- **SQLAlchemy** - SQL toolkit and ORM
-- **Pydantic** - Data validation using Python type annotations
-- **uvicorn** - Lightning-fast ASGI server
+## License
 
-### Authentication & Security
-- **JWT** - JSON Web Tokens for session management
-- **bcrypt** - Password hashing
-- **passlib** - Password hashing library
-- **python-jose** - JavaScript Object Signing and Encryption implementation
+[License Type] - See LICENSE file for details
 
-### Database
-- **PostgreSQL** - Primary database
-- **psycopg2** - PostgreSQL adapter for Python
+## TODO
+- Add special economic zones like Prospera
+- Add immigration process info
+- Check the scrape for accuracy on 10 different countries
+- Chat with Mr. Pro Bonobo
 
-### Development Tools
-- **python-dotenv** - Environment variable management
-- **email-validator** - Email validation library
-
-## Frontend Development
-
-## Frontend Tech Stack
-
-Our frontend is built with modern web technologies:
-
-### Core Technologies
-- **Next.js 14** - React framework with server and client components
-- **TypeScript** - For type-safe code
-- **Tailwind CSS** - Utility-first CSS framework for styling
-
-### UI Components
-- **shadcn/ui** - Reusable component library built on Radix UI
-- **Lucide Icons** - Modern icon set
-
-### Authentication & Security
-- **JWT** - JSON Web Tokens for session management
-- **bcrypt** - Password hashing
-- **PostgreSQL** - Database for user management
-- **Prisma** - Type-safe ORM for database operations
-
-### Data Management & API
-- **React Query** - For server state management and data fetching
-- **Axios** - HTTP client for API requests
-
-### Development Tools
-- **ESLint** - Code linting
-- **Prettier** - Code formatting
-- **Husky** - Git hooks for code quality

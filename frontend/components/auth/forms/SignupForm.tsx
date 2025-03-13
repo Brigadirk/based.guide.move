@@ -18,8 +18,6 @@ export function SignupForm({ onSubmit, isLoading, error }: SignupFormProps) {
     resolver: zodResolver(signupSchema),
     defaultValues: {
       email: "",
-      password: "",
-      confirmPassword: "",
     },
   })
 
@@ -44,49 +42,13 @@ export function SignupForm({ onSubmit, isLoading, error }: SignupFormProps) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  type="password"
-                  placeholder="••••••••"
-                  disabled={isLoading}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  type="password"
-                  placeholder="••••••••"
-                  disabled={isLoading}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         
         {error && (
           <div className="text-sm text-destructive">{error}</div>
         )}
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Creating account..." : "Create account"}
+          {isLoading ? "Creating account..." : "Continue to payment"}
         </Button>
 
         <div className="text-center text-sm">

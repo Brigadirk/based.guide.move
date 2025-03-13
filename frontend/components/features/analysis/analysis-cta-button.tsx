@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/lib/auth/auth-context"
+import { useSupabaseAuth } from "@/components/providers/supabase-auth-provider"
+import { supabase } from "@/lib/supabase/client"
 import { useState } from "react"
 
 interface AnalysisCtaButtonProps {
@@ -17,20 +18,26 @@ export function AnalysisCtaButton({
   fullWidth = false 
 }: AnalysisCtaButtonProps) {
   const router = useRouter()
-  const { isAuthenticated, user } = useAuth()
+  const { user } = useSupabaseAuth()
   const [loading, setLoading] = useState(false)
 
   const handleClick = async () => {
     setLoading(true)
     
     try {
-      if (!isAuthenticated) {
+      if (!user) {
         router.push(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`)
         return
       }
 
+      const { data: userData } = await supabase
+        .from('profiles')
+        .select('analysis_tokens')
+        .eq('id', user.id)
+        .single()
+
       // If user has no bananas, redirect to products page
-      if (!user?.analysisTokens || user.analysisTokens <= 0) {
+      if (!userData?.analysis_tokens || userData.analysis_tokens <= 0) {
         router.push('/products')
         return
       }
@@ -47,8 +54,7 @@ export function AnalysisCtaButton({
 
   const getButtonText = () => {
     if (loading) return '🔄 Processing...'
-    if (!isAuthenticated) return '🔒 Get personalized analysis'
-    if (!user?.analysisTokens || user.analysisTokens <= 0) return '🍌 Get analysis bananas'
+    if (!user) return '🔒 Get personalized analysis'
     return '🍌 Analyze with banana'
   }
 
