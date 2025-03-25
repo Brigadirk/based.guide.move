@@ -11,10 +11,6 @@
         {
           "description": "Details of the individual's nationalities, including country and tax implications.",
           "country": "string", // mandatory
-          "taxImplications": {
-            "worldwideTaxation": "boolean", // mandatory if country imposes worldwide taxation (e.g., U.S., Eritrea)
-            "taxTreatyApplicable": "boolean" // mandatory if a tax treaty applies
-          }
         }
       ],
       "maritalStatus": "string", // mandatory
@@ -23,18 +19,6 @@
         "country": "string", // mandatory
         "status": "string" // mandatory
       },
-      "passportDetails": [
-        {
-          "description": "Details of the individual's passports, including country of issue and expiry date.",
-          "countryOfIssue": "string", // mandatory
-          "expiryDate": "YYYY-MM-DD" // mandatory
-        }
-      ],
-      "contactInformation": {
-        "description": "Contact details of the primary individual.",
-        "email": "string", // optional
-        "phoneNumber": "string" // optional
-      }
     },
     "financialInformation": {
       "description": "Financial details of the primary individual, including income, assets, liabilities, and net worth.",
@@ -115,10 +99,23 @@
     "residencyIntentions": {
       "description": "Details about the primary individual's intended relocation, including type of move, intended country, and preferences for stay requirements.",
       "moveType": "string", // mandatory (e.g., permanent, digital nomad)
+      "reasons_for_moving": ["work", "business", "retire", "study", "family", "lifestyle", "other"],
+      "open_to_investment": "boolean", // mandatory
+      "open_to_resigning_citizenship": "boolean'",
+      "investment_details": {
+        "types": ["real_estate", "business", "government_bonds"],
+        "amount_range": "range"
+      },
+      "time_in_other_countries": [
+        {
+          "country": "country_name",
+          "days_per_year": 0,
+          "purpose": "business|personal|both"
+        }
+      ]
       "intendedCountry": "string", // mandatory
       "durationOfStay": "string", // mandatory (e.g., 6 months, 1 year, indefinite)
-      "visaType": "string", // optional (if known)
-      "preferredMaximumStayRequirement": "string", // mandatory (e.g., "1 month", "3 months", "no requirement")
+      "preferredMaximumMinimumStayRequirement": "string", // mandatory (e.g., "1 month", "3 months", "no requirement")
       "familyReunificationEligibility": "boolean", // optional (only if family reunification is desired)
       "healthInsuranceRequirement": "string", // optional (e.g., "must have health insurance")
       "visaSponsorship": "string", // optional (e.g., employer-sponsored, self-sponsored)
@@ -166,24 +163,7 @@
           "annualIncome": "number", // mandatory (if freelance income exists)
           "currency": "string" // mandatory (if freelance income exists)
         }
-      ], // optional (only if freelance income exists)
-      "coworkingSpaceMemberships": [
-        {
-          "description": "Details of coworking space memberships, including location and cost.",
-          "location": "string", // mandatory (if coworking space is used)
-          "cost": "number", // mandatory (if coworking space is used)
-          "currency": "string" // mandatory (if coworking space is used)
-        }
-      ], // optional (only if coworking space is used)
-      "remoteWorkTools": [
-        {
-          "description": "Details of remote work tools, such as VPNs or software subscriptions.",
-          "type": "string", // mandatory (if tools are used)
-          "cost": "number", // mandatory (if tools are used)
-          "currency": "string" // mandatory (if tools are used)
-        }
-      ], // optional (only if tools are used)
-      "timeZonePreferences": "string" // optional (e.g., "prefer working in GMT+2")
+      ], 
     },
     "taxDeductionsAndCredits": {
       "description": "Potential tax deductions and credits applicable to the primary individual.",
@@ -269,76 +249,8 @@
         "description": "Current country of residency and residency status of the partner.",
         "country": "string", // mandatory
         "status": "string" // mandatory
-      },
-      "contactInformation": {
-        "description": "Contact details of the partner.",
-        "email": "string", // optional
-        "phoneNumber": "string" // optional
       }
     },
-    "financialInformation": {
-      "description": "Financial details of the partner, including income, assets, and liabilities.",
-      "annualIncome": {
-        "description": "Total annual income of the partner, including currency.",
-        "amount": "number", // mandatory
-        "currency": "string" // mandatory
-      },
-      "incomeSources": [
-        {
-          "description": "Details of each income source of the partner, including type, country of origin, amount, currency, and tax-related information.",
-          "type": "string", // mandatory (e.g., employment, freelance, investments)
-          "country": "string", // mandatory
-          "amount": "number", // mandatory
-          "currency": "string" // mandatory
-        }
-      ], // optional (only if income exists)
-      "assets": {
-        "description": "Details of the partner's assets, including real estate and investments.",
-        "realEstate": [
-          {
-            "description": "Details of real estate owned by the partner, including location, value, and currency.",
-            "location": "string", // mandatory (if real estate is owned)
-            "value": "number", // mandatory (if real estate is owned)
-            "currency": "string" // mandatory (if real estate is owned)
-          }
-        ], // optional (only if real estate is owned)
-        "investments": [
-          {
-            "description": "Details of investments owned by the partner, including type, value, and currency.",
-            "type": "string", // mandatory (if investments exist)
-            "value": "number", // mandatory (if investments exist)
-            "currency": "string" // mandatory (if investments exist)
-          }
-        ] // optional (only if investments exist)
-      },
-      "liabilities": {
-        "description": "Details of the partner's liabilities, including loans and other debts.",
-        "loans": [
-          {
-            "description": "Details of loans held by the partner, including type, amount, and currency.",
-            "type": "string", // mandatory (if loans exist)
-            "amount": "number", // mandatory (if loans exist)
-            "currency": "string" // mandatory (if loans exist)
-          }
-        ] // optional (only if loans exist)
-      }
-    },
-    "residencyIntentions": {
-      "description": "Details about the partner's intended relocation, including type of move, intended country, and preferences for stay requirements.",
-      "moveType": "string", // mandatory (e.g., permanent, digital nomad)
-      "intendedCountry": "string", // mandatory
-      "durationOfStay": "string", // mandatory (e.g., 6 months, 1 year, indefinite)
-      "visaType": "string", // optional (if known)
-      "preferredMaximumStayRequirement": "string", // mandatory (e.g., "1 month", "3 months", "no requirement")
-      "notes": "string" // optional (additional context)
-    },
-    "employmentStatus": {
-      "description": "Details of the partner's employment status.",
-      "status": "string", // mandatory (e.g., employed, unemployed, student)
-      "potentialIncome": "number", // optional (only if employed or potential income exists)
-      "currency": "string" // optional (only if employed or potential income exists)
-    }
-  },
   "additionalInformation": {
     "description": "Additional context that may impact tax or migration decisions, including dependents, special circumstances, and tax treaty information.",
     "dependents": [
@@ -353,13 +265,6 @@
       "description": "Any special circumstances that may affect tax or migration, such as dual citizenship or tax treaties.",
       "details": "string" // optional (only if special circumstances exist)
     },
-    "taxTreatyCountries": [
-      {
-        "description": "Details of countries with which the individual or partner has a tax treaty.",
-        "country": "string", // mandatory (if tax treaty exists)
-        "treatyDetails": "string" // mandatory (if tax treaty exists)
-      }
-    ], // optional (only if tax treaties exist)
     "languageProficiency": [
       {
         "description": "Details of language proficiency, including language and level.",
@@ -367,14 +272,128 @@
         "level": "string" // mandatory (if language proficiency is relevant)
       }
     ], // optional (only if language proficiency is relevant)
-    "culturalPreferences": {
-      "description": "Details of cultural preferences, such as climate or lifestyle preferences.",
-      "preferences": "string" // optional
-    },
     "criminalRecord": {
       "description": "Details of any criminal record, which could affect visa applications.",
       "hasRecord": "boolean", // mandatory
       "details": "string" // optional (only if hasRecord is true)
     }
   }
-}```
+}
+```
+
+Latest suggestions:
+
+```json
+{
+  "individual": {
+    "financialInformation": {
+      "assets": {
+        "realEstate": [
+          {
+            "description": "Details of real estate owned by the individual.",
+            "location": "string", // Property location determines property tax jurisdiction
+            "value": "number", // Current market value for wealth tax calculations
+            "currency": "string", // Currency for conversion calculations
+            
+            // New fields for capital gains calculation
+            "acquisitionDate": "YYYY-MM-DD", // Date purchased - determines holding period
+            "acquisitionPrice": "number", // Original purchase price - basis for capital gain
+            "intendToSell": "boolean", // Whether they plan to sell this asset
+            "plannedSaleDetails": {
+              "expectedSalePrice": "number", // Projected selling price
+              "expectedSaleDate": "YYYY-MM-DD", // Planned sale timing (before/after move)
+              "sellBeforeMoving": "boolean", // Critical for determining which country taxes the gain
+              "holdingPeriodBreakdown": {
+                "percentageLongTerm": "number", // Percentage qualifying as long-term (lower tax rates)
+                "percentageShortTerm": "number" // Percentage qualifying as short-term (higher tax rates)
+              }
+            }
+          }
+        ],
+        "investments": [
+          {
+            "description": "Details of investments owned by the individual.",
+            "type": "string", // Investment type affects tax treatment
+            "value": "number", // Current market value
+            "currency": "string", // For accurate currency conversion
+            
+            // New fields for capital gains calculation
+            "acquisitionDate": "YYYY-MM-DD", // Date acquired - determines holding period
+            "acquisitionPrice": "number", // Original purchase price - basis for capital gain
+            "intendToSell": "boolean", // Whether they plan to sell this investment
+            "plannedSaleDetails": {
+              "expectedSalePrice": "number", // Projected selling price
+              "expectedSaleDate": "YYYY-MM-DD", // Planned sale timing
+              "sellBeforeMoving": "boolean", // Critical for determining which country taxes the gain
+              "holdingPeriodBreakdown": {
+                "percentageLongTerm": "number", // Percentage qualifying as long-term (lower tax rates)
+                "percentageShortTerm": "number" // Percentage qualifying as short-term (higher tax rates)
+              }
+            }
+          }
+        ],
+        "cryptocurrencyHoldings": [
+          {
+            "description": "Details of cryptocurrency holdings.",
+            "type": "string", // Crypto type affects tax treatment in some jurisdictions
+            "value": "number", // Current market value
+            "currency": "string", // Currency for valuation
+            
+            // New fields for capital gains calculation
+            "acquisitionDetails": [
+              {
+                "percentageOfHolding": "number", // What percentage of total holding this lot represents
+                "acquisitionDate": "YYYY-MM-DD", // Purchase date of this lot
+                "acquisitionPrice": "number", // Purchase price of this lot
+                "currency": "string" // Currency used for purchase
+              }
+            ],
+            "intendToSell": "boolean", // Whether they plan to sell crypto
+            "plannedSaleDetails": {
+              "percentageToSell": "number", // Percentage of total holdings they plan to sell
+              "expectedSalePrice": "number", // Projected average selling price
+              "expectedSaleDate": "YYYY-MM-DD", // Planned sale timing
+              "sellBeforeMoving": "boolean", // Critical for determining which country taxes the gain
+              "holdingPeriodBreakdown": {
+                "percentageLongTerm": "number", // Percentage qualifying as long-term
+                "percentageShortTerm": "number" // Percentage qualifying as short-term
+              }
+            }
+          }
+        ],
+        "retirementAccounts": [
+          {
+            "description": "Details of retirement accounts owned by the individual.",
+            "type": "string", // Account type affects tax treatment
+            "value": "number", // Current value
+            "currency": "string", // For accurate currency conversion
+            "countryOfEstablishment": "string", // Country where account is established affects tax treatment
+            
+            // New fields for distribution/withdrawal planning
+            "contributionType": "string", // Pre-tax or after-tax contributions
+            "intendToWithdraw": "boolean", // Whether they plan to take distributions
+            "plannedWithdrawalDetails": {
+              "amountToWithdraw": "number", // How much they plan to withdraw
+              "expectedWithdrawalDate": "YYYY-MM-DD", // When they plan to withdraw
+              "withdrawBeforeMoving": "boolean", // Critical for determining which country taxes the distribution
+              "earlyWithdrawalPenalties": "boolean" // Whether penalties might apply
+            }
+          }
+        ]
+      },
+      
+      // New summary section for capital gains overview
+      "capitalGainsSummary": {
+        "totalExpectedCapitalGains": "number", // Sum of all expected capital gains
+        "currency": "string", // Base currency for calculations
+        "percentageRealizedBeforeMove": "number", // What percentage will be realized before relocating
+        "percentageRealizedAfterMove": "number", // What percentage will be realized after relocating
+        "holdingPeriodSummary": {
+          "percentageLongTerm": "number", // Overall percentage of gains that are long-term
+          "percentageShortTerm": "number" // Overall percentage of gains that are short-term
+        }
+      }
+    }
+  }
+}
+```

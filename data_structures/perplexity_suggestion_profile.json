@@ -1,0 +1,60 @@
+{
+    "questionnaire_version": "quick|extensive",
+    "personal_info": {
+      "citizenship": ["country1", "country2"],
+      "age": 0,
+      "current_country": "country",
+      "destination_country": "country",
+      "time_in_other_countries": [
+        {
+          "country": "country_name",
+          "days_per_year": 0,
+          "purpose": "business|personal|both"
+        }
+      ]
+    },
+    "relocation_info": {
+      "reasons_for_moving": ["work", "business", "retire", "study", "family", "lifestyle", "other"],
+      "other_reason": "text",
+      "open_to_investment": true,
+      "investment_details": {
+        "types": ["real_estate", "business", "government_bonds"],
+        "amount_range": "range"
+      },
+      "job_status": {
+        "has_job_offer": true,
+        "job_type": "remote|local",
+        "employer_country": "country",
+        "employment_contract": "type"
+      },
+      "family_in_destination": {
+        "has_family": true,
+        "relationship": "text"
+      },
+      "moving_timeline": "timeline",
+      "intended_stay": "duration"
+    },
+    "income_sources": {
+      "employment": {
+        "has_employment_income": true,
+        "employer_name": "text",
+        "annual_salary": {
+          "amount": 0.0,
+          "currency": "currency_code"
+        }
+      },
+      "self_employment": {},
+      "rental": {},
+      "investments": {},
+      "royalties": {},
+      "retirement": {},
+      "government_benefits": {},
+      "foreign_income": {}
+    },
+    "family": {},
+    "assets": {},
+    "tax_obligations": {},
+    "deductions": {},
+    "special_circumstances": {}
+  }
+  
