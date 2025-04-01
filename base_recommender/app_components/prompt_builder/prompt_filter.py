@@ -52,37 +52,3 @@ def create_quick_prompt(data):
 
     # Return the required tuple
     return [prompt_template, desired_country_embedding_name, main_nationality_embedding_name]
-
-# def extract_comprehensive_json(json):
-#     pass
-
-# def create_quick_prompt(json_extract):
-#     pass
-
-# def create_comprehensive_prompt(json):
-#     pass
-
-# def prompt_tax_rundown(tax_profile_json):
-#     """
-#     Generates a detailed prompt for an LLM 
-#     to provide a tax rundown based on a JSON tax profile.
-
-#     Args:
-#         tax_profile_json (str): A JSON string 
-#         representing the tax profile of an individual.
-
-#     Returns:
-#         str: A formatted prompt string ready to be used with an LLM.
-#     """
-
-#     prompt_template = f"""
-
-#     Based on the users information: ```json {tax_profile_json}``` they want to 
-#     move to "desiredCountry". Give them a rough and tough estimation of taxes
-#     paid given the information in the tax profile. Only base your answer on both
-#     the input parameters of the user as well as the tax information available
-#     in your context.
-
-#     If the desiredCountry is not available, tell me which countries are available.
-
-#     """

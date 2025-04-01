@@ -3,7 +3,7 @@ import datetime
 import json
 from countries import ALL_COUNTRIES
 from PIL import Image
-from prompt_filter import create_quick_prompt #, create_comprehensive_prompt
+from base_recommender.prompt_builder.prompt_filter import create_quick_prompt #, create_comprehensive_prompt
 import recommender
 from pathlib import Path
 

@@ -9,16 +9,16 @@ def display_sidebar():
         image = Image.open("./base_recommender/app_components/images/ape.png")
         st.image(image, use_container_width=True)
 
-        st.header("Navigation")
-
         headers = [
+            "Information",
+            "Destination",
             "Personal Information",
-            "Assets",
-            "Employment Information",
             "Residency Intentions",
-            "Tax History",
+            "Employment Information",
+            "Assets",
+            "Tax Compliance History",
             "Social Security & Pensions",
-            "Tax Planning",
+            "Tax Deductions and Credits",
             "Future Financial Plans",
             "Partner Information",
             "Additional Information",
@@ -26,7 +26,7 @@ def display_sidebar():
         ]
 
         icons = [
-            "person", "bank", "briefcase", "airplane", "file-earmark-text",
+            "lightbulb", "airplane", "person", "bank", "briefcase", "file-earmark-text",
             "shield-check", "calculator", "graph-up-arrow", 
             "people", "info-circle", "download"
         ]

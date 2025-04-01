@@ -1,155 +1,175 @@
 import streamlit as st
 from app_components.helpers import get_data, update_data, get_country_list
+import json
+import plotly.express as px
 
-# Step 5: Employment Information Section with enhanced structure
+# Helper function to validate inputs
+def filled_in_correctly(employment_information):
+    required_fields = [
+        "status.currentStatus",
+        "incomeSource",
+        "annualIncome.amount",
+        "annualIncome.currency"
+    ]
+    for field in required_fields:
+        if not get_data(f"individual.employmentInformation.{field}", None):
+            return False
+    return True
 
-def employment():
+# # Function to determine employment status
+# def determine_employment_status():
+#     employment_status = st.selectbox(
+#         "What is your current employment status?",
+#         options=["Employed", "Self-Employed", "Business Owner", "Unemployed", "Retired"],
+#         index=0
+#     )
+#     update_data("individual.employmentInformation.status.currentStatus", employment_status)
+#     return employment_status
 
-    if st.session_state.current_step == 5:
-        # st.header("Employment Information")
-        st.write("Your employment status affects both your income tax obligations and visa/residency options.")
+# Function to collect income source details
+def collect_income_sources():
+    income_source = st.radio(
+        "What is the source of your income?",
+        options=["Domestic (within current country)", "Foreign (outside current country)", "Both domestic and foreign"],
+        index=0
+    )
+    update_data("individual.employmentInformation.incomeSources", income_source)
+
+    # col1, col2 = st.columns(2)
+    # with col1:
+    #     annual_income = st.number_input("Annual Income", min_value=0, value=0, step=1000)
+    # with col2:
+    #     income_currency = st.selectbox("Currency", options=st.session_state.currencies)
+    # update_data("individual.employmentInformation.annualIncome.amount", annual_income)
+    # update_data("individual.employmentInformation.annualIncome.currency", income_currency)
+
+# Function to handle employed users
+def handle_employed():
+    employer_name = st.text_input("Current Employer Name")
+    update_data("individual.employmentInformation.employerName", employer_name)
+
+    job_title = st.text_input("Job Title")
+    update_data("individual.employmentInformation.jobTitle", job_title)
+
+    employment_duration = st.number_input("Years with current employer", min_value=0, value=0, step=1)
+    update_data("individual.employmentInformation.employmentDuration", employment_duration)
+
+    has_job_offer = st.checkbox("I have a job offer in the target country")
+    update_data("individual.employmentInformation.jobOffer.hasOffer", has_job_offer)
+
+    if has_job_offer:
+        offer_employer = st.text_input("Name of offering employer")
+        update_data("individual.employmentInformation.jobOffer.offerEmployer", offer_employer)
+
+        offer_job_title = st.text_input("Offered Job Title")
+        update_data("individual.employmentInformation.jobOffer.offerJobTitle", offer_job_title)
+
+# Function to handle self-employed users
+def handle_self_employed():
+    business_type = st.text_input("Type of business or profession")
+    update_data("individual.employmentInformation.selfEmployment.businessType", business_type)
+
+    years_self_employed = st.number_input("Years of self-employment", min_value=0, value=0, step=1)
+    update_data("individual.employmentInformation.selfEmployment.yearsSelfEmployed", years_self_employed)
+
+# Function to handle business owners
+def handle_business_owner():
+    company_name = st.text_input("Company Name")
+    update_data("individual.employmentInformation.corporateOwnership.companyName", company_name)
+
+    industry = st.text_input("Industry")
+    update_data("individual.employmentInformation.corporateOwnership.industry", industry)
+
+    num_employees = st.number_input("Number of Employees", min_value=0, value=0, step=1)
+    update_data("individual.employmentInformation.corporateOwnership.numEmployees", num_employees)
+
+    relocating_business = st.radio(
+        "Do you plan to relocate your business?",
+        options=[
+            "Keep the entity where it is",
+            "Open a new entity",
+            "Both",
+            "Open to whatever is most advantageous"
+        ],
+        index=3
+    )
+    update_data("individual.employmentInformation.corporateOwnership.relocatingBusiness", relocating_business)
+
+# Function to handle unemployed users
+def handle_unemployed():
+    seeking_employment = st.checkbox("I am actively seeking employment in the target country")
+    update_data("individual.employmentInformation.status.seekingEmployment", seeking_employment)
+
+# Function to handle retired users
+def handle_retired():
+    retirement_income = st.number_input("Annual Retirement Income", min_value=0, value=0, step=1000)
+    retirement_income_currency = st.selectbox(
+        "Retirement Income Currency",
+        options=st.session_state.currencies
+    )
+    update_data("individual.employmentInformation.retirement.retirementIncome.amount", retirement_income)
+    update_data("individual.employmentInformation.retirement.retirementIncome.currency", retirement_income_currency)
+
+# Function to collect cryptocurrency payment details
+def collect_crypto_details():
+    crypto_paid = st.checkbox(
+        "Are you paid in cryptocurrency? If yes, please provide the equivalent value in a dominant currency."
+    )
+    if crypto_paid:
+        crypto_value = st.number_input(
+            "Equivalent Annual Income in Dominant Currency",
+            min_value=0,
+            value=0,
+            step=1000
+        )
+        crypto_currency = st.selectbox(
+            "Dominant Currency",
+            options=st.session_state.currencies
+        )
+        update_data(
+            "individual.employmentInformation.annualIncome.paidInCryptoCurrency",
+            {"amount": crypto_value, "currency": crypto_currency}
+        )
+
+# Function to display income source pie chart
+def display_income_pie_chart():
+    income_sources = get_data("individual.employmentInformation.incomeSources", [])
     
-        # Current Employment Status
-        st.subheader("Current Employment")
+    if income_sources:
+        countries = [source["incomeSourceCountry"] for source in income_sources]
+        amounts = [source["annualIncome"]["amount"] for source in income_sources]
         
-        currently_employed = st.checkbox(
-            "I am currently employed", 
-            value=get_data("individual.employmentInformation.currentEmploymentStatus.isCurrentlyEmployed", False),
-            help="If you're currently working for an employer"
-        )
-        update_data("individual.employmentInformation.currentEmploymentStatus.isCurrentlyEmployed", currently_employed)
+        fig = px.pie(values=amounts, names=countries, title="Income Sources by Country")
+        st.plotly_chart(fig)
         
-        if currently_employed:
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                employer_name = st.text_input(
-                    "Employer Name",
-                    value=get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.employerName", ""),
-                    help="Name of your current employer - needed for tax documentation"
-                )
-                update_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.employerName", employer_name)
-                
-                employer_country = st.selectbox(
-                    "Employer Country",
-                    options=[""] + get_country_list(),
-                    index=0 if not get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.employerCountry") 
-                        else (get_country_list().index(get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.employerCountry")) + 1 
-                                if get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.employerCountry") in get_country_list() else 0),
-                    help="Country where your employer is based - affects source of income for tax purposes"
-                )
-                update_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.employerCountry", employer_country)
-            
-            with col2:
-                annual_salary = st.number_input(
-                    "Annual Salary",
-                    min_value=0,
-                    value=get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.annualSalary", 0),
-                    help="Your annual salary before taxes - primary basis for income tax calculation"
-                )
-                update_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.annualSalary", annual_salary)
-                
-                salary_currency = st.text_input(
-                    "Salary Currency",
-                    value=get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.currency", ""),
-                    help="Currency code (USD, EUR, etc.)"
-                )
-                update_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.currency", salary_currency)
-            
-            st.subheader("Remote Work")
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                can_work_remotely = st.checkbox(
-                    "I can work remotely",
-                    value=get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.remoteWorkOption.canWorkRemotely", False),
-                    help="Whether your job can be performed remotely"
-                )
-                update_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.remoteWorkOption.canWorkRemotely", can_work_remotely)
-            
-            with col2:
-                if can_work_remotely:
-                    allows_working_abroad = st.checkbox(
-                        "My employer allows working from abroad",
-                        value=get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.remoteWorkOption.employerAllowsWorkingFromAbroad", False),
-                        help="Whether your employer permits working from another country - critical for planning international moves"
-                    )
-                    update_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.remoteWorkOption.employerAllowsWorkingFromAbroad", allows_working_abroad)
-                    
-                    eor_option = st.checkbox(
-                        "My employer would use an Employer of Record (EOR) service",
-                        value=get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.remoteWorkOption.employerWillingToUseEOR", False),
-                        help="EOR services can simplify international employment compliance"
-                    )
-                    update_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.remoteWorkOption.employerWillingToUseEOR", eor_option)
-            
-            st.subheader("Tax Withholding")
-            
-            tax_withholding_country = st.selectbox(
-                "Country currently withholding taxes",
-                options=[""] + get_country_list(),
-                index=0 if not get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.taxWithholding.country") 
-                    else (get_country_list().index(get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.taxWithholding.country")) + 1 
-                            if get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.taxWithholding.country") in get_country_list() else 0),
-                help="Where your employer currently withholds taxes - important for tax credits and agreements"
-            )
-            update_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.taxWithholding.country", tax_withholding_country)
-            
-            continue_withholding = st.checkbox(
-                "Employer will continue withholding taxes after I move",
-                value=get_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.taxWithholding.willContinueWithholdingAfterMove", False),
-                help="Whether tax withholding will continue in origin country - affects potential double taxation"
-            )
-            update_data("individual.employmentInformation.currentEmploymentStatus.employerDetails.taxWithholding.willContinueWithholdingAfterMove", continue_withholding)
+# Main Employment Section Function
+def employment():
+    st.header("Employment Information")
+
+    # employment_status = determine_employment_status()
+
+    if employment_status in ["Employed", "Self-Employed", "Business Owner"]:
+        collect_income_sources()
         
-        # Potential Employment
-        st.subheader("Job Offer in Target Country")
+        if employment_status == "Employed":
+            handle_employed()
         
-        has_job_offer = st.checkbox(
-            "I have a job offer in my target country",
-            value=get_data("individual.employmentInformation.potentialEmployment.hasJobOfferInTargetCountry", False),
-            help="Whether you have employment already lined up in your destination country"
-        )
-        update_data("individual.employmentInformation.potentialEmployment.hasJobOfferInTargetCountry", has_job_offer)
+        elif employment_status == "Self-Employed":
+            handle_self_employed()
         
-        if has_job_offer:
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                offer_employer = st.text_input(
-                    "Potential Employer Name",
-                    value=get_data("individual.employmentInformation.potentialEmployment.jobOfferDetails.employerName", ""),
-                    help="Name of the company offering employment"
-                )
-                update_data("individual.employmentInformation.potentialEmployment.jobOfferDetails.employerName", offer_employer)
-                
-                offer_position = st.text_input(
-                    "Offered Position",
-                    value=get_data("individual.employmentInformation.potentialEmployment.jobOfferDetails.offeredPosition", ""),
-                    help="Your job title or role - may affect work permit eligibility"
-                )
-                update_data("individual.employmentInformation.potentialEmployment.jobOfferDetails.offeredPosition", offer_position)
-            
-            with col2:
-                offer_salary = st.number_input(
-                    "Offered Annual Salary",
-                    min_value=0,
-                    value=get_data("individual.employmentInformation.potentialEmployment.jobOfferDetails.annualSalary", 0),
-                    help="Expected salary in target country - basis for future tax calculations"
-                )
-                update_data("individual.employmentInformation.potentialEmployment.jobOfferDetails.annualSalary", offer_salary)
-                
-                offer_currency = st.text_input(
-                    "Salary Currency",
-                    value=get_data("individual.employmentInformation.potentialEmployment.jobOfferDetails.currency", ""),
-                    help="Currency code for your future salary"
-                )
-                update_data("individual.employmentInformation.potentialEmployment.jobOfferDetails.currency", offer_currency)
-            
-            offer_tax_handling = st.checkbox(
-                "New employer will handle tax withholding/payment",
-                value=get_data("individual.employmentInformation.potentialEmployment.jobOfferDetails.employerWillHandleTaxes", False),
-                help="Whether your new employer will handle tax compliance - affects your administrative burden"
-            )
-            update_data("individual.employmentInformation.potentialEmployment.jobOfferDetails.employerWillHandleTaxes", offer_tax_handling)
+        elif employment_status == "Business Owner":
+            handle_business_owner()
+
+        collect_crypto_details()
+
+    elif employment_status == "Unemployed":
+        handle_unemployed()
+
+    elif employment_status == "Retired":
+        handle_retired()
+
+    # Display pie chart for income sources
+    display_income_pie_chart()
+
+# # Run the Employment Section
+# employment_section()

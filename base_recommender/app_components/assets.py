@@ -1,109 +1,164 @@
 import streamlit as st
-from app_components.helpers import get_data, update_data
+from app_components.helpers import get_data, update_data, get_country_list
+from datetime import datetime
+import json
 
-# Simplified version of the Assets section focusing on capital gains capture
 def assets():
-    if st.session_state.current_step == 3:
-        # st.header("Assets")
+    st.header("Asset Portfolio", anchor="assets")
+    
+    asset_tabs = st.tabs(["Real Estate", "Securities", "Cryptocurrency", "Business Assets"])
+    
+    # Real Estate Tab
+    with asset_tabs[0]:
+        real_estate = get_data("individual.financialInformation.assets.realEstate", [])
         
-        asset_tabs = st.tabs(["Real Estate", "Investments", "Cryptocurrency", "Retirement"])
+        with st.expander("Add Real Estate Property"):
+            with st.form("real_estate_form"):
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    prop_name = st.text_input("Property Name")
+                    prop_country = st.selectbox("Country", options=get_country_list())
+                    purchase_date = st.date_input("Purchase Date", max_value=datetime.today())
+                
+                with col2:
+                    purchase_price = st.number_input("Purchase Price", min_value=0, step=1000)
+                    current_value = st.number_input("Current Market Value", min_value=0, step=1000)
+                    generates_income = st.checkbox("Generates Rental Income")
+                
+                if st.form_submit_button("Add Property"):
+                    real_estate.append({
+                        "name": prop_name,
+                        "country": prop_country,
+                        "purchaseDate": purchase_date.strftime("%Y-%m-%d"),
+                        "purchasePrice": purchase_price,
+                        "currentValue": current_value,
+                        "rentalIncome": generates_income
+                    })
+                    update_data("individual.financialInformation.assets.realEstate", real_estate)
         
-        # Real Estate Assets Tab
-        with asset_tabs[0]:
-            st.subheader("Real Estate Properties")
-            
-            real_estate = get_data("individual.financialInformation.assets.realEstate", [])
-            
-            with st.expander("Add Real Estate Property", expanded=True):
-                with st.form("add_real_estate"):
-                    col1, col2 = st.columns(2)
-                    
-                    with col1:
-                        re_location = st.text_input("Property Location (City, Country)", 
-                                                help="Where the property is located determines property tax jurisdiction")
-                        re_value = st.number_input("Current Market Value", min_value=0, step=1000,
-                                                help="Current market value for wealth tax calculations")
-                        re_currency = st.text_input("Currency", help="Currency code (USD, EUR, etc.)")
-                    
-                    with col2:
-                        re_acquisition_date = st.date_input("Acquisition Date", max_value=datetime.today(),
-                                                        help="When you purchased the property - affects holding period")
-                        re_acquisition_price = st.number_input("Original Purchase Price", min_value=0, step=1000,
-                                                            help="What you paid for the property - basis for capital gain")
-                        re_intend_to_sell = st.checkbox("I plan to sell this property",
-                                                    help="Capital gains tax applies when you sell property")
-                    
-                    # Only show sale details if they plan to sell
-                    if re_intend_to_sell:
-                        st.subheader("Sale Details")
-                        col3, col4 = st.columns(2)
-                        
-                        with col3:
-                            re_expected_price = st.number_input("Expected Sale Price", min_value=0, step=1000,
-                                                            help="Projected selling price determines capital gain amount")
-                            re_sell_before_moving = st.checkbox("Sell before moving abroad",
-                                                            help="Critical for determining which country taxes the gain")
-                        
-                        with col4:
-                            re_expected_date = st.date_input("Expected Sale Date", min_value=datetime.today(),
-                                                        help="Timing of sale affects which country has taxation rights")
-                            re_pct_long_term = st.slider("Percentage as Long-Term Holding", 0, 100, 100,
-                                                    help="Long-term holdings often qualify for lower tax rates")
-                            re_pct_short_term = 100 - re_pct_long_term
-                    
-                    submit_re = st.form_submit_button("Add Property")
-                    
-                    if submit_re and re_location and re_value > 0 and re_currency:
-                        property_data = {
-                            "location": re_location,
-                            "value": re_value,
-                            "currency": re_currency,
-                            "acquisitionDate": re_acquisition_date.strftime("%Y-%m-%d"),
-                            "acquisitionPrice": re_acquisition_price,
-                            "intendToSell": re_intend_to_sell
-                        }
-                        
-                        if re_intend_to_sell:
-                            property_data["plannedSaleDetails"] = {
-                                "expectedSalePrice": re_expected_price,
-                                "expectedSaleDate": re_expected_date.strftime("%Y-%m-%d"),
-                                "sellBeforeMoving": re_sell_before_moving,
-                                "holdingPeriodBreakdown": {
-                                    "percentageLongTerm": re_pct_long_term,
-                                    "percentageShortTerm": re_pct_short_term
-                                }
-                            }
-                        
-                        real_estate.append(property_data)
-                        update_data("individual.financialInformation.assets.realEstate", real_estate)
-            
-            # Display existing properties
-            if real_estate:
-                st.write("Your Properties:")
-                for i, prop in enumerate(real_estate):
-                    with st.expander(f"Property in {prop['location']} - {prop['currency']} {prop['value']:,}"):
-                        col1, col2 = st.columns(2)
-                        
-                        with col1:
-                            st.write(f"**Location:** {prop['location']}")
-                            st.write(f"**Current Value:** {prop['currency']} {prop['value']:,}")
-                            st.write(f"**Purchase Date:** {prop['acquisitionDate']}")
-                            st.write(f"**Purchase Price:** {prop['currency']} {prop['acquisitionPrice']:,}")
-                        
-                        with col2:
-                            if prop['intendToSell']:
-                                sale = prop['plannedSaleDetails']
-                                st.write("**Sale Plans:**")
-                                st.write(f"Expected Price: {prop['currency']} {sale['expectedSalePrice']:,}")
-                                st.write(f"Expected Date: {sale['expectedSaleDate']}")
-                                st.write(f"Sell before moving: {'Yes' if sale['sellBeforeMoving'] else 'No'}")
-                                st.write(f"Long-term holding: {sale['holdingPeriodBreakdown']['percentageLongTerm']}%")
-                                st.write(f"Short-term holding: {sale['holdingPeriodBreakdown']['percentageShortTerm']}%")
-                                
-                                # Calculate and display capital gain
-                                gain = sale['expectedSalePrice'] - prop['acquisitionPrice']
-                                st.metric("Potential Capital Gain", f"{prop['currency']} {gain:,}")
-                        
-                        if st.button("Remove Property", key=f"remove_re_{i}"):
-                            real_estate.pop(i)
-                            update_data("individual.financialInformation.assets.realEstate", real_estate)
+        # Display existing properties
+        for i, prop in enumerate(real_estate):
+            with st.expander(f"{prop['name']} ({prop['country']})"):
+                st.write(f"**Purchase Date:** {prop['purchaseDate']}")
+                st.write(f"**Purchase Price:** ${prop['purchasePrice']:,}")
+                st.write(f"**Current Value:** ${prop['currentValue']:,}")
+                st.write(f"**Rental Income:** {'Yes' if prop['rentalIncome'] else 'No'}")
+    
+    # Securities Tab
+    with asset_tabs[1]:
+        securities = get_data("individual.financialInformation.assets.securities", [])
+        
+        with st.expander("Add Security Holding"):
+            with st.form("securities_form"):
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    security_type = st.selectbox("Asset Type", ["Stocks", "Bonds", "ETFs", "Mutual Funds"])
+                    purchase_date = st.date_input("Purchase Date")
+                    quantity = st.number_input("Shares/Units", min_value=0)
+                
+                with col2:
+                    cost_basis = st.number_input("Cost Basis per Unit", min_value=0.0)
+                    dividend_history = st.checkbox("Pays Regular Dividends")
+                    frequency = st.selectbox("Dividend Frequency", ["Monthly", "Quarterly", "Annually"]) if dividend_history else None
+                
+                if st.form_submit_button("Add Holding"):
+                    securities.append({
+                        "type": security_type,
+                        "purchaseDate": purchase_date.strftime("%Y-%m-%d"),
+                        "quantity": quantity,
+                        "costBasis": cost_basis,
+                        "dividends": {
+                            "paysDividends": dividend_history,
+                            "frequency": frequency
+                        } if dividend_history else None
+                    })
+                    update_data("individual.financialInformation.assets.securities", securities)
+        
+        # Display securities
+        for i, security in enumerate(securities):
+            with st.expander(f"{security['type']} Holding"):
+                st.write(f"**Purchase Date:** {security['purchaseDate']}")
+                st.write(f"**Quantity:** {security['quantity']}")
+                st.write(f"**Cost Basis:** ${security['costBasis']:,.2f}/unit")
+                if security.get('dividends'):
+                    st.write(f"**Dividends:** {security['dividends']['frequency']}")
+
+    # Cryptocurrency Tab
+    with asset_tabs[2]:
+        crypto = get_data("individual.financialInformation.assets.crypto", [])
+        
+        with st.expander("Add Cryptocurrency"):
+            with st.form("crypto_form"):
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    coin = st.selectbox("Coin Type", ["Bitcoin", "Ethereum", "Other Altcoin"])
+                    purchase_date = st.date_input("Acquisition Date")
+                
+                with col2:
+                    quantity = st.number_input("Quantity", min_value=0.0)
+                    staking_rewards = st.checkbox("Earns Staking Rewards")
+                
+                if st.form_submit_button("Add Holding"):
+                    crypto.append({
+                        "coin": coin,
+                        "purchaseDate": purchase_date.strftime("%Y-%m-%d"),
+                        "quantity": quantity,
+                        "stakingRewards": staking_rewards
+                    })
+                    update_data("individual.financialInformation.assets.crypto", crypto)
+        
+        # Display crypto
+        for i, holding in enumerate(crypto):
+            with st.expander(f"{holding['coin']} Holdings"):
+                st.write(f"**Acquisition Date:** {holding['purchaseDate']}")
+                st.write(f"**Quantity:** {holding['quantity']}")
+                st.write(f"**Staking Rewards:** {'Yes' if holding['stakingRewards'] else 'No'}")
+
+    # Business Assets Tab
+    with asset_tabs[3]:
+        businesses = get_data("individual.financialInformation.assets.businesses", [])
+        
+        with st.expander("Add Business Asset"):
+            with st.form("business_form"):
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    business_name = st.text_input("Business Name")
+                    incorporation_date = st.date_input("Incorporation Date")
+                
+                with col2:
+                    business_value = st.number_input("Valuation", min_value=0)
+                    distributes_profits = st.checkbox("Distributes Profits")
+                
+                if st.form_submit_button("Add Business"):
+                    businesses.append({
+                        "name": business_name,
+                        "incorporationDate": incorporation_date.strftime("%Y-%m-%d"),
+                        "valuation": business_value,
+                        "profitDistribution": distributes_profits
+                    })
+                    update_data("individual.financialInformation.assets.businesses", businesses)
+        
+        # Display businesses
+        for i, business in enumerate(businesses):
+            with st.expander(f"{business['name']}"):
+                st.write(f"**Incorporation Date:** {business['incorporationDate']}")
+                st.write(f"**Valuation:** ${business['valuation']:,}")
+                st.write(f"**Profit Distributions:** {'Yes' if business['profitDistribution'] else 'No'}")
+
+    # Total Net Worth Summary
+    with st.expander("Total Asset Summary"):
+        total_assets = sum(
+            prop["currentValue"] for prop in 
+            get_data("individual.financialInformation.assets.realEstate", [])
+        ) + sum(
+            security["quantity"] * security["costBasis"] 
+            for security in get_data("individual.financialInformation.assets.securities", [])
+        ) + sum(
+            business["valuation"] 
+            for business in get_data("individual.financialInformation.assets.businesses", [])
+        )
+        st.metric("Estimated Total Asset Value", f"${total_assets:,.2f}")

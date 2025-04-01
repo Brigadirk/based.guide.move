@@ -2,29 +2,36 @@ import streamlit as st
 import json
 from pathlib import Path
 
-def get_data(path, default=None):
-    """Get value from nested dictionary using a path string."""
-    parts = path.split('.')
-    d = st.session_state.data
-    for part in parts:
-        if part.isdigit():
-            part = int(part)
-        if part not in d:
-            return default
-        d = d[part]
-    return d
+def get_data(path: str):
+    """
+    Retrieve data from the session state using a dot-notation path.
+    Returns None if the path doesn't exist.
+    """
+    keys = path.split('.')
+    data = st.session_state.data
+    
+    for key in keys:
+        if isinstance(data, dict) and key in data:
+            data = data[key]
+        elif isinstance(data, list) and key.isdigit() and int(key) < len(data):
+            data = data[int(key)]
+        else:
+            return None
+    
+    return data
 
 def update_data(path, value):
-    """Update nested dictionary using a path string."""
-    parts = path.split('.')
-    d = st.session_state.data
-    for part in parts[:-1]:
-        if part.isdigit():
-            part = int(part)
-        if part not in d:
-            d[part] = {}
-        d = d[part]
-    d[parts[-1]] = value
+    keys = path.split('.')
+    data = st.session_state.data
+    for key in keys[:-1]:
+        if key.isdigit():
+            key = int(key)
+        if key not in data:
+            raise KeyError(f"Field '{key}' not in state")
+        data = data[key]
+    if keys[-1] not in data:
+        raise KeyError(f"Field '{keys[-1]}' not in state")
+    data[keys[-1]] = value
 
 def navigate_to(header):
     """Navigate to a specific header."""
