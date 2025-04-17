@@ -58,3 +58,124 @@ def get_country_list():
     ]
 
     return countries
+
+def get_country_regions(country: str) -> list[str] | None:
+    """Get list of regions for a given country.
+    
+    Args:
+        country: Name of the country to get regions for
+        
+    Returns:
+        List of regions including "I don't know" if regions exist, None if no regions
+    """
+    # Path to the country_info JSON file
+    country_info_path = Path(
+        "./base_recommender/app_components/country_info/country_info.json")
+
+    # Load country info from the JSON file
+    if country_info_path.exists():
+        with open(country_info_path, "r") as f:
+            country_info = json.load(f)
+    else:
+        raise FileNotFoundError(f"{country_info_path} does not exist.")
+
+    # Get regions for the country
+    if country not in country_info:
+        return None
+        
+    regions = country_info[country].get("regions")
+    if not regions:
+        return None
+
+    # Handle different region formats
+    if isinstance(regions, list):
+        region_list = regions
+    elif isinstance(regions, dict):
+        # For nested structures like US with States/Territories or
+        # countries with region-specific languages
+        region_list = []
+        for key, value in regions.items():
+            if isinstance(value, list):
+                # For cases where regions is a dict mapping directly to language lists
+                region_list.append(key)
+            elif isinstance(value, dict):
+                # For nested structures like US
+                region_list.extend(value)
+
+    # Add "I don't know" option
+    region_list.insert(0, "I don't know yet")
+    
+    return region_list
+
+def get_languages(country: str, region: str | None = None) -> dict[str, list[str]]:
+    """Get languages for a country and optionally a specific region.
+    
+    Args:
+        country: Name of the country
+        region: Optional name of the region within the country
+        
+    Returns:
+        Dictionary with keys 'country_languages' and optionally 'region_languages'
+        containing lists of languages. Returns empty dict if country not found.
+    """
+    # Path to the country_info JSON file
+    country_info_path = Path(
+        "./base_recommender/app_components/country_info/country_info.json")
+
+    # Load country info from the JSON file
+    if country_info_path.exists():
+        with open(country_info_path, "r") as f:
+            country_info = json.load(f)
+    else:
+        raise FileNotFoundError(f"{country_info_path} does not exist.")
+
+    # Initialize result dictionary
+    result = {}
+    
+    # Get country info
+    if country not in country_info:
+        return result
+    
+    country_data = country_info[country]
+    
+    # Get country-level languages
+    result["country_languages"] = country_data.get("dominant_language", [])
+    
+    # If region specified, try to get region-specific languages
+    if region and region != "I don't know yet":
+        regions = country_data.get("regions", {})
+        
+        # Handle different region formats
+        if isinstance(regions, dict):
+            # For countries with region-specific languages
+            if region in regions:
+                region_langs = regions[region]
+                if isinstance(region_langs, list):
+                    result["region_languages"] = region_langs
+                elif isinstance(region_langs, dict) and "languages" in region_langs:
+                    result["region_languages"] = region_langs["languages"]
+        
+    return result
+
+def get_language_proficiency_levels():
+    """Returns standardized language proficiency levels."""
+    return {
+        1: "Basic/Beginner (A1)",
+        2: "Elementary (A2)",
+        3: "Intermediate (B1-B2)",
+        4: "Advanced (C1)",
+        5: "Native/Bilingual (C2)"
+    }
+
+def display_section(section_key, state):
+    # Initialize visibility state in session_state if not already set
+    if f"{section_key}_visible" not in st.session_state:
+        st.session_state[f"{section_key}_visible"] = False
+
+    # Toggle visibility state when button is pressed
+    if st.button("View section state", key=f"toggle_{section_key}"):
+        st.session_state[f"{section_key}_visible"] = not st.session_state[f"{section_key}_visible"]
+
+    # Display or hide JSON based on visibility state
+    if st.session_state[f"{section_key}_visible"]:
+        st.json(json.dumps(state, indent=2))

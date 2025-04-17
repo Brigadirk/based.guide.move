@@ -35,6 +35,7 @@ def init_session_state():
                     "relocationPartner": False,
                     "relocationPartnerInfo": {
                         "relationshipType": "",
+                        "sameSex": "",
                         "fullRelationshipDuration": 0.0,
                         "officialRelationshipDuration": 0.0,
                         "partnerNationalities": [],
@@ -52,6 +53,7 @@ def init_session_state():
                 "residencyIntentions": {
                     "destinationCountry": {
                         "country": "",
+                        "region": "",
                         "citizenshipStatus": False,
                         "moveType": "Permanent", # Options: "Permanent", "Temporary", "Digital Nomad"
                         "intendedTemporaryDurationOfStay": 0.0,
@@ -81,79 +83,18 @@ def init_session_state():
                             "amount": 0,
                             "currency": "USD"
                         }
-                    }
-                },
-                "employmentInformation": {
-                    "status": {
-                        "currentStatus": "",  
-                        "seekingEmployment": False  
                     },
-                    "selfEmployment": {
-                        "businessType": "",  
-                        "sector": "",  
-                        "yearsSelfEmployed": 0 
+                    "languageProficiency": {
+                        "individual": {},
+                        "partner": {},
+                        "dependents": [],
+                        "willing_to_learn": [],
+                        "can_teach": {},
+                        "other_languages": {}
                     },
-                    "corporateOwnership": {
-                        "companyName": "",  
-                        "industry": "", 
-                        "numEmployees": 0,  
-                        "relocatingBusiness": "" 
-                    },
-                    "jobOffer": {
-                        "hasOffer": False,  
-                        "offerEmployer": "",  
-                        "offerJobTitle": ""  
-                    },
-                    "incomeSources": [  
-                    {
-                        "employerName": "",  
-                        "jobTitle": "", 
-                        "responsibilities": "",  
-                        "employmentDuration": 0,  
-                        "employmentConstruction": "", 
-                        "incomeSourceCountry": "",  
-                        "benefits": "", 
-                        "annualIncome": {
-                        "amount": 0.0,  
-                        "currency": "", 
-                        "paidInCryptoCurrency": False 
-                        }
-                    }
-                    ],
-                    "totalCompensation": {
-                        "amount": 0.0,  
-                        "currency": ""  
-                    },
-                    "retirement": {
-                    "retirementIncome": {
-                        "amount": 0.0, 
-                        "currency": "" 
-                    }
-                    },
-                    "alimonyPayments": { 
-                    "amount": 0.0,   
-                    "currency": ""   
-                    }
-                },
-                "assetInformation": {
-                    "assets": {
-                        "realEstate": [],
-                        "securities": [],
-                        "crypto": [],
-                        "businesses": [],
-                        # Tax-specific containers
-                        "capitalGainsData": {
-                            "realEstateSales": [],
-                            "securitySales": [],
-                            "cryptoSales": [],
-                            "businessSales": []
-                        },
-                        "incomeStreams": {
-                            "rentalProperties": [],
-                            "dividendStocks": [],
-                            "stakingAssets": [],
-                            "businessDistributions": []
-                        }
+                    "centerOfLife": {
+                        "maintainsSignificantTies": False,
+                        "tiesDescription": "",
                     }
                 },
                 "taxComplianceHistory": {
@@ -188,7 +129,9 @@ def init_session_state():
                         "form8938Filings": {
                         "hasFiled": False,
                         "yearsFiled": []
-                        }
+                        },
+                        "foreignEntityCompliance": True,
+                        "foreignEntities": {},
                     },
                     "auditHistory": [
                         {
@@ -199,9 +142,69 @@ def init_session_state():
                         }
                     ]
                 },
+                "socialSecurityAndPensions": {
+                    "currentCountryContributions": {
+                        "isContributing": False,
+                        "country": "",
+                        "yearsOfContribution": 0.0
+                    },
+                    "futurePensionContributions": {
+                        "isPlanning": True,
+                        "details": []
+                    },
+                    "existingPlans": {
+                        "hasPlans": False,
+                        "details": []
+                    }
+                },
                 "taxDeductionsAndCredits": {
                     "potentialDeductions": [
                     ]
-                }
+                },
+                "finance": {
+                    "incomeSources": [
+                        # Example entry:
+                        # {
+                        # "type": "Employment",
+                        # "employer": "Tech Corp",
+                        # "role": "Software Engineer",
+                        # "country": "US",
+                        # "currency": "USD",
+                        # "annual_income": 120000,
+                        # "start_date": "2020-01-01",
+                        # "remote": True,
+                        # "continue_in_destination": True,
+                        # "status": "Current"  # or "Job Offer", "Future Search"
+                        # }
+                    ],
+                    "expectedEmployment": [
+                        # Example:
+                        # {
+                        #   "country": "DE",
+                        #   "employer": "EuroTech",
+                        #   "role": "Lead Developer",
+                        #   "salary": 80000,
+                        #   "currency": "EUR",
+                        #   "hours_per_week": 40,
+                        #   "is_real_offer": True,  # True if real offer, False if estimate
+                        #   "notes": "Offer valid until June 2025"
+                        # }
+                    ],
+                    "assets": {
+                        "realEstate": [],
+                        "financial": [],
+                        "taxAdvantagedAccounts": [],
+                        "cryptocurrency": []
+                    },
+                    "liabilities": [],
+                    "capitalGains": {
+                        "hasGains": False,
+                        "details": []
+                    }
+                },
+                "additionalInformation" : {
+                    "specialSections": [],
+                    "generalNotes": ""
+                },
             }
         }
