@@ -1,7 +1,6 @@
 import streamlit as st
 import textwrap
 from app_components.helpers import update_data, get_data, display_section, get_country_list
-from app_components.prompt_builder import social_security
 
 def social_security_pensions(anchor):
     """
@@ -258,6 +257,4 @@ def social_security_pensions(anchor):
     # ======================= SECTION SUMMARY =======================
     display_section("individual.socialSecurityAndPensions", 
         get_data("individual.socialSecurityAndPensions"))
-    with st.container(border=True):
-        social_security.write_out()
 

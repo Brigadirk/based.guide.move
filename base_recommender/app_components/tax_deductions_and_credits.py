@@ -1,6 +1,5 @@
 import streamlit as st
 import datetime
-from app_components.prompt_builder import tax_deductions
 from app_components.helpers import (
     update_data, get_data, display_section, get_country_list)
 
@@ -36,9 +35,6 @@ def tax_deductions_and_credits(anchor):
     state = get_data("individual.taxDeductionsAndCredits")
     display_section("individual.taxDeductionsAndCredits", state)
     
-    with st.container(border=True):
-        tax_deductions.write_out()
-            
     return filled_in_correctly(state)
 
 def deductions_section():

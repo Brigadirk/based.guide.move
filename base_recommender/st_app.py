@@ -41,48 +41,47 @@ def main():
     init_session_state()
     display_sidebar()
 
+    # Done
     # display_disclaimer_intro("Disclaimer")
 
-    # st.divider()
+    st.divider()
 
-    # select_destination_country("Desired Destination")
+    # Will have to keep because it affects other sections
+    select_destination_country("Desired Destination")
 
-    # st.divider()
+    st.divider()
 
-    # personal("Personal Information")
+    personal("Personal Information")
 
-    # st.divider()
+    st.divider()
     
-    # residency_intentions("Residency Intentions")
-    
-    # employment()
-    # assets()
-    
+    residency_intentions("Residency Intentions")
+      
     finance("Income and Assets")
     
     st.divider()
     
-    # tax_compliance_history("Tax Compliance History")
+    tax_compliance_history("Tax Compliance History")
     
-    # st.divider()
+    st.divider()
 
-    # social_security_pensions("Social Security and Pensions")
+    social_security_pensions("Social Security and Pensions")
     
-    # st.divider()
+    st.divider()
 
-    # tax_deductions_and_credits("Tax Deductions and Credits")
+    tax_deductions_and_credits("Tax Deductions and Credits")
     
-    # st.divider()
+    st.divider()
 
-    # future_financial_plans("Future Financial Plans")
+    future_financial_plans("Future Financial Plans")
 
-    # st.divider()
+    st.divider()
 
-    # additional_information("Additional Information")
+    additional_information("Additional Information")
 
-    # st.divider()
+    st.divider()
 
-    # display_review_export("Review and Export")
+    display_review_export("Review and Export")
 
     # TODO: DO partner (probably beyond the MVP)
     # Figure out where and how we get partner info

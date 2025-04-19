@@ -5,14 +5,23 @@ import streamlit as st
 def init_session_state():
     if 'currencies' not in st.session_state:
         try:
-            exchange_rates_dir = os.path.join('./base_recommender/app_components/exchange_rate_fetcher', 'exchange_rates')
-            json_files = [f for f in os.listdir(exchange_rates_dir) if f.endswith('.json')]
+            # Path to the country info JSON file
+            country_info_path = os.path.join("base_recommender", "app_components", "country_info", "country_info.json")
+            with open(country_info_path, "r") as f:
+                country_data = json.load(f)
             
-            if json_files:
-                with open(os.path.join(exchange_rates_dir, json_files[0]), 'r') as f:
-                    rates_data = json.load(f)
-                    currencies = list(rates_data['rates'].keys())
-                    st.session_state.currencies = sorted(currencies)
+            # Use a set to avoid duplicate currency codes
+            currency_set = set()
+            for country, info in country_data.items():
+                # Only include currencies where "currency_included" is "yes"
+                if info.get("currency_included", "").lower() == "yes":
+                    shorthand = info.get("currency_shorthand")
+                    if shorthand:
+                        currency_set.add(shorthand)
+            
+            # If we found any currencies, sort them; otherwise fall back to defaults
+            if currency_set:
+                st.session_state.currencies = sorted(currency_set)
             else:
                 st.session_state.currencies = ["USD", "EUR", "GBP"]
         except Exception as e:
