@@ -22,7 +22,9 @@ def future_financial_plans(anchor):
                     "Investment type",
                     ["Stocks", "Bonds", "Real Estate", "Cryptocurrency", "Mutual Funds", "Other"]
                 )
-                other_investment_type = st.text_input("If Other, specify")
+                other_investment_type = ""
+                if investment_type == "Other":
+                    other_investment_type = st.text_input("If Other, specify")
                 country = st.text_input("Country of Investment")
                 estimated_value = st.number_input("Estimated Value (in local currency)", min_value=0.0)
                 
@@ -74,7 +76,9 @@ def future_financial_plans(anchor):
                     "Retirement Account Type",
                     ["401(k)", "IRA/Roth IRA", "Pension Plan", "Other"]
                 )
-                other_account_type = st.text_input("If Other, specify")
+                other_account_type = ""
+                if account_type == "Other":
+                    other_account_type = st.text_input("If Other, specify")
                 country = st.text_input("Country of Account")
                 contribution_amount = st.number_input(
                     "Planned Contribution Amount (in local currency)", 
@@ -127,6 +131,5 @@ def future_financial_plans(anchor):
                 st.write(business_change)
 
     st.divider()
-    state = get_data("individual.futureFinancialPlans")  # Retrieve section data)
-    display_section("individual.futureFinancialPlans", state)    
+    display_section("individual.futureFinancialPlans", "Future Financial Plans")    
     st.divider()

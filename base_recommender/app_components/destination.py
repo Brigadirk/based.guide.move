@@ -62,9 +62,7 @@ def select_destination_country(anchor):
                                     else 0)
         update_data("individual.residencyIntentions.destinationCountry.region", 
                 destination_region)
+    
         
-        # DISPLAY SELECTION SUMMARY
-        if destination_region:
-            st.success(f"✅ You have selected **{destination_region}**, **{destination}** as your destination")
     
     

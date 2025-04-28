@@ -43,8 +43,7 @@ def finance(anchor):
     capital_gains()
 
     # ======================= SECTION SUMMARY =======================
-    state = get_data("individual.finance")
-    display_section("individual.finance", state)
+    display_section("individual.finance", "Finance")
 
 def income_checker():
     INCOME_CASES = {

@@ -7,8 +7,6 @@ from app_components.personal \
     import personal
 from app_components.residency_intentions \
     import residency_intentions
-from app_components.tax_compliance_history \
-    import tax_compliance_history
 from app_components.social_security_pensions \
     import social_security_pensions
 from app_components.tax_deductions_and_credits \
@@ -29,6 +27,8 @@ from app_components.summary \
     import display_review_export
 from app_components.finance \
     import finance
+from app_components.education \
+    import education
 
 def set_page_config():
     st.set_page_config(
@@ -55,14 +55,16 @@ def main():
 
     st.divider()
     
+    education("Education")
+
+    st.divider()
+
     residency_intentions("Residency Intentions")
+
+    st.divider()
       
     finance("Income and Assets")
-    
-    st.divider()
-    
-    tax_compliance_history("Tax Compliance History")
-    
+        
     st.divider()
 
     social_security_pensions("Social Security and Pensions")
@@ -82,12 +84,6 @@ def main():
     st.divider()
 
     display_review_export("Review and Export")
-
-    # TODO: DO partner (probably beyond the MVP)
-    # Figure out where and how we get partner info
-    # if st.session_state.has_partner:
-    #     partner_information()
-    #     st.divider()
 
 if __name__ == "__main__":
     project_dir = os.path.join(os.path.dirname(__file__), 'base_recommender')

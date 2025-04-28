@@ -33,13 +33,15 @@ def init_session_state():
             "individual": {
                 "personalInformation": {
                     "dateOfBirth": "",
-                    "nationalities": [],
+                    "nationalities": [
+                        # Example:
+                        # {"country": "Germany", "willingToRenounce": False}
+                    ],
                     "maritalStatus": "",
                     "enduringMaritalStatusInfo": "",
                     "currentResidency": {
                         "country": "",
                         "status": "",
-                        "duration": 0.0,
                     },
                     "relocationPartner": False,
                     "relocationPartnerInfo": {
@@ -47,17 +49,32 @@ def init_session_state():
                         "sameSex": "",
                         "fullRelationshipDuration": 0.0,
                         "officialRelationshipDuration": 0.0,
-                        "partnerNationalities": [],
+                        "partnerNationalities": [
+                            # Example:
+                            # {"country": "France", "willingToRenounce": False}
+                        ],
                     },
                     "numRelocationDependents": 0,
                     "relocationDependents": [
                         {
                             "dateOfBirth": "",
-                            "nationalities": [],
+                            "nationalities": [
+                                # Example:
+                                # {"country": "Italy", "willingToRenounce": False}
+                            ],
                             "relationship": "",
-                            "isStudent": ""
+                            "isStudent": False
                         }
                     ],
+                },
+                "education": {
+                    "isStudent": False,
+                    "currentSchool": "",
+                    "previousEducation": "",
+                    "interestedInStudying": False,  # renamed and clarified
+                    "schoolInterestDetails": "",
+                    "schoolOffers": [],             # now a list of offers
+                    "visaTaxRelevance": ""
                 },
                 "residencyIntentions": {
                     "destinationCountry": {
@@ -104,52 +121,9 @@ def init_session_state():
                     "centerOfLife": {
                         "maintainsSignificantTies": False,
                         "tiesDescription": "",
-                    }
-                },
-                "taxComplianceHistory": {
-                    "residencyHistory": [
-                        {
-                        "country": "",
-                        "dates": {
-                            "start": "",
-                            "end": ""
-                        },
-                        "taxStatus": "",
-                        "taxIdentificationNumber": "",
-                        "primaryTaxResidence": False,
-                        "compliance": {
-                            "returnsFiled": False,
-                            "audits": [],
-                            "treatyClaims": [],
-                            "outstandingLiabilities": 0.0
-                        }
-                        }
-                    ],
-                    "disclosurePrograms": {
-                        "streamlinedProcedures": False,
-                        "ovdiParticipation": False,
-                        "otherDisclosures": []
                     },
-                    "internationalDisclosures": {
-                        "fbarFilings": {
-                        "hasFiled": False,
-                        "yearsFiled": []
-                        },
-                        "form8938Filings": {
-                        "hasFiled": False,
-                        "yearsFiled": []
-                        },
-                        "foreignEntityCompliance": True,
-                        "foreignEntities": {},
-                    },
-                    "auditHistory": [
-                        {
-                        "year": 0,
-                        "jurisdiction": "",
-                        "type": "",
-                        "result": ""
-                        }
-                    ]
+                    "moveMotivation": "",
+                    "taxCompliantEverywhere": True,               
                 },
                 "socialSecurityAndPensions": {
                     "currentCountryContributions": {
@@ -217,3 +191,20 @@ def init_session_state():
                 },
             }
         }
+    else:
+        # PATCH: Ensure new education fields exist
+        edu = st.session_state.data["individual"].setdefault("education", {})
+        if "isStudent" not in edu:
+            edu["isStudent"] = False
+        if "currentSchool" not in edu:
+            edu["currentSchool"] = ""
+        if "previousEducation" not in edu:
+            edu["previousEducation"] = ""
+        if "interestedInStudying" not in edu:
+            edu["interestedInStudying"] = False
+        if "schoolInterestDetails" not in edu:
+            edu["schoolInterestDetails"] = ""
+        if "schoolOffers" not in edu:
+            edu["schoolOffers"] = []
+        if "visaTaxRelevance" not in edu:
+            edu["visaTaxRelevance"] = ""

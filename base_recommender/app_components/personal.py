@@ -92,17 +92,24 @@ def personal(anchor):
     current_status = get_data("individual.personalInformation.currentResidency.status")
     current_country = get_data("individual.personalInformation.currentResidency.country")
 
-    # CONSISTENT NATIONALITY MANAGEMENT
-    if current_country and current_country not in nationalities and current_status == "Citizen":
-        nationalities.insert(0, current_country)
-    if current_country and current_country in nationalities and current_status == "Citizen":
-        nationalities.remove(current_country)
-        nationalities.insert(0, current_country)
-    if current_country and current_country in nationalities and current_status != "Citizen":
-        nationalities.remove(current_country)
+    # Convert old format (list of strings) to new format (list of dicts)
+    if nationalities and isinstance(nationalities[0], str):
+        nationalities = [{"country": nat, "willingToRenounce": False} for nat in nationalities]
 
-    # Remove any empty strings from the list
-    nationalities = [nat for nat in nationalities if nat]
+    # Ensure current country is handled as before, but with new structure
+    def nationality_in_list(country):
+        return any(n["country"] == country for n in nationalities)
+
+    if current_country and not nationality_in_list(current_country) and current_status == "Citizen":
+        nationalities.insert(0, {"country": current_country, "willingToRenounce": False})
+    if current_country and nationality_in_list(current_country) and current_status == "Citizen":
+        nationalities = [n for n in nationalities if n["country"] != current_country]
+        nationalities.insert(0, {"country": current_country, "willingToRenounce": False})
+    if current_country and nationality_in_list(current_country) and current_status != "Citizen":
+        nationalities = [n for n in nationalities if n["country"] != current_country]
+
+    # Remove any empty strings or empty country fields
+    nationalities = [n for n in nationalities if n.get("country")]
     update_data("individual.personalInformation.nationalities", nationalities)
 
     # -------------------- ADD NEW ITEM PATTERN --------------------
@@ -112,13 +119,10 @@ def personal(anchor):
             options=[""] + get_country_list(),
             help="Select each country where you hold citizenship."
         )
-            
         submitted = st.form_submit_button("💾 Add nationality")
-        
         if submitted and new_nationality:
-            # Validate and add the new nationality
-            if new_nationality != "" and new_nationality not in nationalities:
-                nationalities.append(new_nationality)
+            if new_nationality != "" and not nationality_in_list(new_nationality):
+                nationalities.append({"country": new_nationality, "willingToRenounce": False})
                 update_data(
                     "individual.personalInformation.nationalities",
                     nationalities
@@ -128,14 +132,23 @@ def personal(anchor):
     # -------------------- DISPLAY ITEMS PATTERN --------------------
     if nationalities:
         for nat in nationalities:
-            col_nat, col_remove = st.columns([0.7, 0.3])
+            col_nat, col_renounce, col_remove = st.columns([0.5, 0.3, 0.2])
             with col_nat:
-                st.write(f"- {nat}")
+                st.write(f"- {nat['country']}")
+            with col_renounce:
+                renounce = st.checkbox(
+                    "Willing to give up?",
+                    value=nat.get("willingToRenounce", False),
+                    key=f"renounce_{nat['country']}"
+                )
+                if renounce != nat.get("willingToRenounce", False):
+                    nat["willingToRenounce"] = renounce
+                    update_data("individual.personalInformation.nationalities", nationalities)
             with col_remove:
                 # Prevent removal of the current country
-                if nat != current_country or current_status != "Citizen":
-                    if st.button(f"❌ Remove", key=f"remove_nat_{nat}"):
-                        updated_nationalities = [n for n in nationalities if n != nat]
+                if nat["country"] != current_country or current_status != "Citizen":
+                    if st.button(f"❌", key=f"remove_nat_{nat['country']}"):
+                        updated_nationalities = [n for n in nationalities if n["country"] != nat["country"]]
                         update_data(
                             "individual.personalInformation.nationalities",
                             updated_nationalities
@@ -223,10 +236,16 @@ def personal(anchor):
             "Other"
         ]
 
+        # Default to "Spouse" if married and no relationship type set yet
+        if current_marital_status == "Married" and not current_relationship_type:
+            default_relationship = "Spouse"
+        else:
+            default_relationship = current_relationship_type or relationship_options[0]
+
         new_relationship_type = st.selectbox(
             "Partner relationship type *",
             options=relationship_options,
-            index=relationship_options.index(current_relationship_type) if current_relationship_type in relationship_options else 0,
+            index=relationship_options.index(default_relationship) if default_relationship in relationship_options else 0,
             help="Select the legal nature of your relationship"
         )
 
@@ -394,10 +413,15 @@ def personal(anchor):
 
         # -------------------- PARTNER NATIONALITIES --------------------
         st.subheader("🌍 Partner nationalities *")
-        partner_nationalities = \
-            get_data("individual.personalInformation.relocationPartnerInfo.partnerNationalities") or []
-        
-        # -------------------- ADD NEW ITEM PATTERN --------------------
+        partner_nationalities = get_data("individual.personalInformation.relocationPartnerInfo.partnerNationalities") or []
+
+        # Convert old format (list of strings) to new format (list of dicts)
+        if partner_nationalities and isinstance(partner_nationalities[0], str):
+            partner_nationalities = [{"country": nat, "willingToRenounce": False} for nat in partner_nationalities]
+
+        def partner_nat_in_list(country):
+            return any(n["country"] == country for n in partner_nationalities)
+
         with st.form("add_partner_nationality"):
             new_nat = st.selectbox(
                 "Partner citizenship",
@@ -405,23 +429,29 @@ def personal(anchor):
                 help="Select all nationalities held by partner"
             )
             if st.form_submit_button("💾 Add nationality") and new_nat:
-                partner_nationalities.append(new_nat)
-                update_data(
-                    "individual.personalInformation.relocationPartnerInfo.partnerNationalities", 
-                    list(set(partner_nationalities)))
+                if new_nat and not partner_nat_in_list(new_nat):
+                    partner_nationalities.append({"country": new_nat, "willingToRenounce": False})
+                    update_data(
+                        "individual.personalInformation.relocationPartnerInfo.partnerNationalities", 
+                        partner_nationalities)
+                    st.rerun()
+
+        for i, nat in enumerate(partner_nationalities):
+            cols = st.columns([4, 2, 1])
+            cols[0].write(f"- {nat['country']}")
+            renounce = cols[1].checkbox(
+                "Willing to give up?",
+                value=nat.get("willingToRenounce", False),
+                key=f"partner_renounce_{nat['country']}"
+            )
+            if renounce != nat.get("willingToRenounce", False):
+                nat["willingToRenounce"] = renounce
+                update_data("individual.personalInformation.relocationPartnerInfo.partnerNationalities", partner_nationalities)
+            if cols[2].button("❌", key=f"partner_nat_{nat['country']}_{i}"):
+                partner_nationalities.pop(i)
+                update_data("individual.personalInformation.relocationPartnerInfo.partnerNationalities", partner_nationalities)
                 st.rerun()
-        
-        # -------------------- DISPLAY ITEMS PATTERN --------------------
-        for i, nat in enumerate(list(set(partner_nationalities))):
-            cols = st.columns([4,1])
-            cols[0].write(f"- {nat}")
-            if cols[1].button("❌ Remove", key=f"partner_nat_{i}"):
-                partner_nationalities.remove(nat)
-                update_data(
-                    "individual.personalInformation.relocationPartnerInfo.partnerNationalities",
-                    list(set(partner_nationalities)))
-                st.rerun()
-        
+
         if not partner_nationalities:
             st.warning("⚠️ Your partner must have at least one nationality")
 
@@ -429,7 +459,8 @@ def personal(anchor):
     has_dependents = st.checkbox(
         "I have dependents who will relocate with me",
         value=get_data("individual.personalInformation.numRelocationDependents") > 0,
-        help="Include information about dependents relocating with you.")
+        help="Include information about dependents relocating with you."
+    )
     
     if has_dependents:
         update_data("individual.personalInformation.numRelocationDependents", 1)
@@ -440,7 +471,8 @@ def personal(anchor):
             "Number of Relocating Dependents *",
             min_value=0,
             max_value=10,
-            value=int(get_data("individual.personalInformation.numRelocationDependents") or 1))
+            value=int(get_data("individual.personalInformation.numRelocationDependents") or 1)
+        )
         update_data("individual.personalInformation.numRelocationDependents", num_dependents)
         
         # DATA INITIALIZATION PATTERN
@@ -475,13 +507,67 @@ def personal(anchor):
                     )
                     dependents[i]["dateOfBirth"] = date_of_birth.isoformat()
                     
-                    nationalities = set(dependents[i]["nationalities"])
-                                    
+                    # Convert old format to new format
+                    if dependents[i]["nationalities"] and isinstance(dependents[i]["nationalities"][0], str):
+                        dependents[i]["nationalities"] = [
+                            {"country": nat, "willingToRenounce": False} for nat in dependents[i]["nationalities"]
+                        ]
+                    nationalities = dependents[i]["nationalities"]
+
+                    def dep_nat_in_list(country):
+                        return any(n["country"] == country for n in nationalities)
+
                     new_nat = st.selectbox(
                         "Add citizenship *",
-                        [""] + [c for c in get_country_list() if c not in nationalities],
+                        [""] + [c for c in get_country_list() if not dep_nat_in_list(c)],
                         key=f"dep_{i}_nat_select"
                     )
                     if st.button("💾 Add nationality", key=f"dep_{i}_add_nat"):
-                        if new_nat and new_nat not in nationalities:
-                            nationalities.add(new_nat)
+                        if new_nat and not dep_nat_in_list(new_nat):
+                            nationalities.append({"country": new_nat, "willingToRenounce": False})
+                    dependents[i]["nationalities"] = nationalities
+
+                    # Display existing nationalities with remove and renounce option
+                    for j, nat in enumerate(list(nationalities)):
+                        cols = st.columns([3, 2, 1])
+                        cols[0].write(f"- {nat['country']}")
+                        renounce = cols[1].checkbox(
+                            "Willing to give up?",
+                            value=nat.get("willingToRenounce", False),
+                            key=f"dep_{i}_renounce_{nat['country']}"
+                        )
+                        if renounce != nat.get("willingToRenounce", False):
+                            nat["willingToRenounce"] = renounce
+                            update_data("individual.personalInformation.relocationDependents", dependents)
+                        if cols[2].button("❌", key=f"dep_{i}_remove_nat_{nat['country']}_{j}"):
+                            nationalities.pop(j)
+                            dependents[i]["nationalities"] = nationalities
+                            update_data("individual.personalInformation.relocationDependents", dependents)
+                            st.rerun()
+                
+                with col2:
+                    # Relationship to dependent
+                    relationship_options = [
+                        "Child", "Parent", "Sibling", "Legal Ward (I am)", "Other"
+                    ]
+                    relationship = st.selectbox(
+                        "Relationship to dependent *",
+                        options=relationship_options,
+                        index=relationship_options.index(dependents[i]["relationship"]) if dependents[i]["relationship"] in relationship_options else 0,
+                        key=f"dep_{i}_relationship"
+                    )
+                    dependents[i]["relationship"] = relationship
+
+                    st.markdown("\n")
+                    is_student = st.checkbox(
+                        "Is a student",
+                        value=dependents[i]["isStudent"],
+                        key=f"dep_{i}_is_student"
+                    )
+                    dependents[i]["isStudent"] = is_student
+    
+        update_data("individual.personalInformation.relocationDependents", dependents)
+
+    st.divider()
+    display_section("individual.personalInformation", "Personal Information")
+    

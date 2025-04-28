@@ -41,12 +41,11 @@ def tax_compliance_history(anchor):
     audit_history_section()
                     
     # ======================= SECTION SUMMARY =======================
-    state = get_data("individual.taxComplianceHistory")
-    display_section("individual.taxComplianceHistory", state)      
+    display_section("individual.taxComplianceHistory", "Tax Compliance History")      
     
     # VISUAL SECTION SEPARATOR
     st.divider()
-    return filled_in_correctly(state)
+    return filled_in_correctly(get_data("individual.taxComplianceHistory"))
 
 def residency_history_section():
     """Handle tax residency history with data binding"""

@@ -167,14 +167,20 @@ def get_language_proficiency_levels():
         5: "Native/Bilingual (C2)"
     }
 
-def display_section(section_key, state):
+def display_section(section_key, section_name):
+
+    state = get_data(section_key)
+
     # Initialize visibility state in session_state if not already set
     if f"{section_key}_visible" not in st.session_state:
         st.session_state[f"{section_key}_visible"] = False
 
-    # Toggle visibility state when button is pressed
-    if st.button("View section state", key=f"toggle_{section_key}"):
-        st.session_state[f"{section_key}_visible"] = not st.session_state[f"{section_key}_visible"]
+    cols = st.columns([3,2,3])
+
+    with cols[1]:
+        # Toggle visibility state when button is pressed
+        if st.button(f"View {section_name} state", key=f"toggle_{section_key}"):
+            st.session_state[f"{section_key}_visible"] = not st.session_state[f"{section_key}_visible"]
 
     # Display or hide JSON based on visibility state
     if st.session_state[f"{section_key}_visible"]:

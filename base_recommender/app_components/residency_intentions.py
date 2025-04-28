@@ -82,13 +82,23 @@ def residency_intentions(anchor):
     # ======================= CENTER OF LIFE SECTION =======================
     center_of_life()
 
+    # ======================= MOTIVATION FOR MOVE =======================
+    move_motivation_section()
+
+    # ======================= TAX COMPLIANCE CHECKBOX =======================
+    tax_compliant = st.checkbox(
+        "I have been fully tax compliant in every country I have lived in",
+        value=get_data("individual.residencyIntentions.taxCompliantEverywhere") if get_data("individual.residencyIntentions.taxCompliantEverywhere") is not None else True,
+        help="Check this if you have always filed and paid taxes as required in every country where you have lived."
+    )
+    update_data("individual.residencyIntentions.taxCompliantEverywhere", tax_compliant)
+
     # ======================= SECTION SUMMARY =======================
-    state = get_data("individual.residencyIntentions")
-    display_section("individual.residencyIntentions", state)    
+    st.divider()
+    display_section("individual.residencyIntentions", "Residency Intentions") 
     
     # VISUAL SECTION SEPARATOR
-    st.divider()
-    return filled_in_correctly(state)
+    return filled_in_correctly(get_data("individual.residencyIntentions"))
 
 def select_move_type():
     """Handle move type selection with data binding"""
@@ -442,7 +452,6 @@ def language_proficiency():
             dependents_proficiency.append(dependent_langs)
     
     # -------------------- LANGUAGE LEARNING WILLINGNESS --------------------
-    st.markdown("**📚 Language Learning**")
     willing_to_learn = []
     for lang in all_languages:
         if lang not in individual_proficiency or individual_proficiency[lang] < 3:
@@ -550,7 +559,7 @@ def center_of_life():
     
     # CONSISTENT CHECKBOX PATTERN
     has_other_ties = st.checkbox(
-        "I will maintain significant ties with my current country after moving",
+        "I will maintain significant ties with my current country, or another country that is not the destination country, after moving",
         key="has_other_ties",
         value=get_data("individual.residencyIntentions.centerOfLife.maintainsSignificantTies"),
         help="Check if you'll keep a home, business, or spend substantial time in your current country"
@@ -566,6 +575,16 @@ def center_of_life():
             placeholder="E.g., I will keep my house and visit family for 2 months each year"
         )
         update_data("individual.residencyIntentions.centerOfLife.tiesDescription", ties_description)
+
+def move_motivation_section():
+    """Textbox for user's motivation to move to the country, with state binding."""
+    st.subheader("✍️ Why do you want to move?")
+    move_motivation = st.text_area(
+        "Briefly describe your motivation for moving",
+        value=get_data("individual.residencyIntentions.moveMotivation") or "",
+        help="This can help tailor advice to your personal goals and may be relevant for visa applications."
+    )
+    update_data("individual.residencyIntentions.moveMotivation", move_motivation)
 
 def filled_in_correctly(state):
     """Validate that all required fields are filled in correctly"""

@@ -121,6 +121,5 @@ def additional_information(anchor):
     update_data("individual.additionalInformation.generalNotes", general_notes)
     
     # ======================= SECTION SUMMARY =======================
-    state = get_data("individual.additionalInformation")
-    display_section("individual.additionalInformation", state)
+    display_section("individual.additionalInformation", "Additional Information")
     

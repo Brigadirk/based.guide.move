@@ -1,0 +1,124 @@
+{
+    "personalInformation": {
+        "dateOfBirth": "1995-05-05",
+        "nationalities": [],
+        "maritalStatus": "",
+        "enduringMaritalStatusInfo": "",
+        "currentResidency": {
+            "country": "",
+            "status": "Citizen"
+        },
+        "relocationPartner": false,
+        "relocationPartnerInfo": {
+            "relationshipType": "",
+            "sameSex": "",
+            "fullRelationshipDuration": 0.0,
+            "officialRelationshipDuration": 0.0,
+            "partnerNationalities": []
+        },
+        "numRelocationDependents": 0,
+        "relocationDependents": [
+            {
+                "dateOfBirth": "",
+                "nationalities": [],
+                "relationship": "",
+                "isStudent": false
+            }
+        ]
+    },
+    "education": {
+        "isStudent": false,
+        "currentSchool": "",
+        "previousEducation": "",
+        "interestedInStudying": false,
+        "schoolInterestDetails": "",
+        "schoolOffers": [],
+        "visaTaxRelevance": ""
+    },
+    "residencyIntentions": {
+        "destinationCountry": {
+            "country": "",
+            "region": "",
+            "citizenshipStatus": false,
+            "moveType": "Permanent",
+            "intendedTemporaryDurationOfStay": 0.0
+        },
+        "residencyPlans": {
+            "applyForResidency": false,
+            "maxMonthsWillingToReside": 6,
+            "openToVisiting": false
+        },
+        "citizenshipPlans": {
+            "interestedInCitizenship": false,
+            "familyTies": {
+                "hasConnections": false,
+                "closestRelation": ""
+            },
+            "militaryService": {
+                "willing": false,
+                "maxServiceYears": 2
+            },
+            "investment": {
+                "willing": false,
+                "amount": 0,
+                "currency": "USD"
+            },
+            "donation": {
+                "willing": false,
+                "amount": 0,
+                "currency": "USD"
+            }
+        },
+        "languageProficiency": {
+            "individual": {},
+            "partner": {},
+            "dependents": [],
+            "willing_to_learn": [],
+            "can_teach": {},
+            "other_languages": {}
+        },
+        "centerOfLife": {
+            "maintainsSignificantTies": false,
+            "tiesDescription": ""
+        },
+        "moveMotivation": "",
+        "taxCompliantEverywhere": true
+    },
+    "socialSecurityAndPensions": {
+        "currentCountryContributions": {
+            "isContributing": false,
+            "country": "",
+            "yearsOfContribution": 0.0
+        },
+        "futurePensionContributions": {
+            "isPlanning": true,
+            "details": []
+        },
+        "existingPlans": {
+            "hasPlans": false,
+            "details": []
+        }
+    },
+    "taxDeductionsAndCredits": {
+        "potentialDeductions": []
+    },
+    "finance": {
+        "incomeSources": [],
+        "expectedEmployment": [],
+        "assets": {
+            "realEstate": [],
+            "financial": [],
+            "taxAdvantagedAccounts": [],
+            "cryptocurrency": []
+        },
+        "liabilities": [],
+        "capitalGains": {
+            "hasGains": false,
+            "details": []
+        }
+    },
+    "additionalInformation": {
+        "specialSections": [],
+        "generalNotes": ""
+    }
+}

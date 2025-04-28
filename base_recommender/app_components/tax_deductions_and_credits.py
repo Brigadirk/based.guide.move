@@ -32,10 +32,9 @@ def tax_deductions_and_credits(anchor):
     deductions_section()
                     
     # ======================= SECTION SUMMARY =======================
-    state = get_data("individual.taxDeductionsAndCredits")
-    display_section("individual.taxDeductionsAndCredits", state)
+    display_section("individual.taxDeductionsAndCredits", "Tax Deductions and Credits")
     
-    return filled_in_correctly(state)
+    return filled_in_correctly(get_data("individual.taxDeductionsAndCredits"))
 
 def deductions_section():
     """Handles adding and displaying potential tax deductions with international support."""

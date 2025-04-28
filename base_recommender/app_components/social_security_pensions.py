@@ -255,6 +255,6 @@ def social_security_pensions(anchor):
                                 st.rerun()
 
     # ======================= SECTION SUMMARY =======================
-    display_section("individual.socialSecurityAndPensions", 
-        get_data("individual.socialSecurityAndPensions"))
+    display_section("individual.socialSecurityAndPensions", "Social Security and Pensions")
+        
 
