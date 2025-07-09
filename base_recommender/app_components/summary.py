@@ -22,6 +22,15 @@ def display_review_export(anchor):
 
     st.success(f"Data has been saved to {json_file_path}")
 
+    # -------------------- DOWNLOAD BUTTON --------------------
+    st.download_button(
+        "⬇️ Download my JSON",
+        data=json.dumps(json_data, indent=2),
+        file_name="tax_migration_profile.json",
+        mime="application/json",
+        help="Save a copy of your answers."
+    )
+
     # personal_data = get_data("individual.personalInformation", {})
     # financial_data = get_data("individual.financialInformation", {})
     

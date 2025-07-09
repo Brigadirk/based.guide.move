@@ -1,6 +1,6 @@
 import streamlit as st
 from PIL import Image
-#from streamlit_scroll_navigation import scroll_navbar
+from streamlit_scroll_navigation import scroll_navbar
 
 def display_sidebar():
     """Display the sidebar with navigation and image."""
@@ -16,7 +16,6 @@ def display_sidebar():
             'Education': 'book',
             'Residency Intentions': 'airplane',
             'Income and Assets': 'bank',
-            'Tax Compliance History': 'shield-check',
             'Social Security and Pensions': 'briefcase',
             'Tax Deductions and Credits': 'calculator',
             'Future Financial Plans': 'graph-up-arrow',
@@ -25,10 +24,10 @@ def display_sidebar():
             }
 
         # Correct usage without unsupported 'selected' parameter
-        # scroll_navbar(
-        #     anchor_ids=list(headers.keys()),
-        #     anchor_labels=list(headers.keys()),
-        #     anchor_icons=list(headers.values()),
-        #     orientation='vertical',
-        #     key="main_navbar"
-        # )
+        scroll_navbar(
+            anchor_ids=list(headers.keys()),
+            anchor_labels=list(headers.keys()),
+            anchor_icons=list(headers.values()),
+            orientation='vertical',
+            key="main_navbar"
+        )

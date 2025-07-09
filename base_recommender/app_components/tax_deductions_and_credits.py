@@ -9,7 +9,14 @@ def tax_deductions_and_credits(anchor):
     """
 
     # ======================= SECTION HEADER =======================
-    st.header(f"🪙 {anchor}", anchor=anchor, divider="rainbow")
+    if st.session_state.get("skip_tax_sections"):
+        st.header(f"🪙 {anchor}", anchor=anchor, divider="rainbow")
+        st.info("🚀 Detailed deduction / credit inputs skipped per your earlier choice.")
+        display_section("individual.taxDeductionsAndCredits", "Tax Deductions & Credits (Summary Only)")
+        return
+
+    # ======================= SECTION HEADER =======================
+    st.header(f"📉 {anchor}", anchor=anchor, divider="rainbow")
     
     # -------------------- VISIBILITY TOGGLE --------------------
     if not st.toggle(f"📋 Show {anchor}", value=True, key=f"show_{anchor}"):

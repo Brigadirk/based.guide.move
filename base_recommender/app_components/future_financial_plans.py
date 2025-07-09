@@ -3,6 +3,13 @@ from app_components.helpers import (
     update_data, get_data, display_section)
 
 def future_financial_plans(anchor):
+    # Respect global "skip all tax detail" flag ----------------------------
+    if st.session_state.get("skip_tax_sections"):
+        st.header(f"🏡 {anchor}", anchor=anchor, divider="rainbow")
+        st.info("🚀 Future-financial-plans inputs skipped per your earlier choice.")
+        display_section("individual.futureFinancialPlans", "Future Financial Plans (Summary Only)")
+        return
+    
     st.header(f"🏡 {anchor}", anchor=anchor, divider="rainbow")    
     if not st.toggle(f"Show {anchor}", value=True, key=f"show_{anchor}"):
         st.info(f"{anchor} section is hidden. Toggle to show. Your previously entered data is preserved.")

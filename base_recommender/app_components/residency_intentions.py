@@ -2,7 +2,7 @@ import streamlit as st
 from app_components.helpers import (
     update_data, get_data, get_country_list, 
     get_country_regions, get_languages,
-    get_language_proficiency_levels, display_section)
+    get_language_proficiency_levels, display_section, format_country_name)
 
 def residency_intentions(anchor):
     """
@@ -34,6 +34,7 @@ def residency_intentions(anchor):
     
     with st.container():
         destination = get_data("individual.residencyIntentions.destinationCountry.country")
+        dest_label = format_country_name(destination) if destination else ""
         if destination:         
             # CONSISTENT OPTION SELECTION
             move_type = select_move_type()
@@ -50,8 +51,8 @@ def residency_intentions(anchor):
             
                 # CONSISTENT CAPTION STYLING
                 nota_bene = "N.B. For most countries, being a resident (and taxpayer) for some number of years is a way to obtain citizenship. I will inform you whether this is so for "
-                if destination:
-                    st.caption(f"{nota_bene}{destination}.")
+                if dest_label:
+                    st.caption(f"{nota_bene}{dest_label}.")
 
                 if apply_for_residency:
                     maximum_minimum_stay()
@@ -79,9 +80,6 @@ def residency_intentions(anchor):
     # ======================= LANGUAGE SECTION =======================
     language_proficiency()
     
-    # ======================= CENTER OF LIFE SECTION =======================
-    center_of_life()
-
     # ======================= MOTIVATION FOR MOVE =======================
     move_motivation_section()
 
@@ -135,13 +133,15 @@ def citizen_status(destination):
     # CONDITIONAL DISPLAY PATTERN
     if destination in get_data("individual.personalInformation.nationalities") or []:
         # Automatically set citizen_status to "Yes" and make it unchangeable
-        st.success(f"✅ You are already a citizen of {destination}.")
+        dest_label = format_country_name(destination)
+        st.success(f"✅ You are already a citizen of {dest_label}.")
         citizen_status = "Yes"
         update_data("individual.residencyIntentions.destinationCountry.citizenshipStatus", True)
     else:
         # CONSISTENT RADIO BUTTON PATTERN
+        dest_label = format_country_name(destination)
         citizen_status = st.radio(
-            f"Are you already a citizen of {destination}, OR on track for citizenship?",
+            f"Are you already a citizen of {dest_label}, OR on track for citizenship?",
             options=["Yes", "No"],
             index=1 if not get_data("individual.residencyIntentions.destinationCountry.citizenshipStatus") else 0,
             horizontal=True,
@@ -154,8 +154,9 @@ def citizen_status(destination):
 def residency(destination):
     """Handle residency application checkbox with data binding"""
     # CONSISTENT CHECKBOX PATTERN
+    dest_label = format_country_name(destination)
     apply_for_residency = st.checkbox(
-        f"I want to apply for residency in {destination}", 
+        f"I want to apply for residency in {dest_label}", 
         value=get_data("individual.residencyIntentions.residencyPlans.applyForResidency"),
         help="Check this if you plan to apply for formal residency status")
     update_data(
@@ -166,8 +167,9 @@ def residency(destination):
 def citizenship(destination):
     """Handle citizenship interest checkbox with data binding"""
     # CONSISTENT CHECKBOX PATTERN
+    dest_label = format_country_name(destination)
     interested_in_citizenship = st.checkbox(
-        f"I am interested in becoming a citizen of {destination}", 
+        f"I am interested in becoming a citizen of {dest_label}", 
         value=get_data("individual.residencyIntentions.citizenshipPlans.interestedInCitizenship"),
         help="Check this if you're interested in eventually obtaining citizenship")
     update_data(
@@ -218,6 +220,10 @@ def maximum_minimum_stay():
     
     if max_months <= 6:
         st.info("ℹ️ Limited physical presence may trigger 'Center of Life' tax issues in other countries. See section below.")
+
+    # -------------------- CENTER OF LIFE (moved here) --------------------
+    # Always show it immediately after the warning so users can act on it
+    center_of_life()
 
 def citizenship_by_family():
     """Handle family-based citizenship options with data binding"""
@@ -559,7 +565,7 @@ def center_of_life():
     
     # CONSISTENT CHECKBOX PATTERN
     has_other_ties = st.checkbox(
-        "I will maintain significant ties with my current country, or another country that is not the destination country, after moving",
+        "I will maintain significant ties with my current country, or another country that is not the destination country, after moving.",
         key="has_other_ties",
         value=get_data("individual.residencyIntentions.centerOfLife.maintainsSignificantTies"),
         help="Check if you'll keep a home, business, or spend substantial time in your current country"

@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 from pathlib import Path
+import re
 
 def get_data(path: str):
     """
@@ -32,6 +33,13 @@ def update_data(path, value):
     if keys[-1] not in data:
         raise KeyError(f"Field '{keys[-1]}' not in state")
     data[keys[-1]] = value
+
+    # -------------------- AUDIT SUPPORT --------------------
+    # Record every path that gets updated so we can later
+    # verify that each leaf in the session-state schema
+    # is touched by at least one component.
+    updated = st.session_state.setdefault("_updated_paths", set())
+    updated.add(path)
 
 def navigate_to(header):
     """Navigate to a specific header."""
@@ -185,3 +193,108 @@ def display_section(section_key, section_name):
     # Display or hide JSON based on visibility state
     if st.session_state[f"{section_key}_visible"]:
         st.json(json.dumps(state, indent=2))
+
+# ---------------------------------------------------------------------
+# TEXT SUBSTITUTION UTILITIES
+# ---------------------------------------------------------------------
+
+# ---------- First-person conversion (inputs only) ----------
+# We only convert when the *prompt begins* with these phrases, so
+# mid-sentence occurrences like "describe your motivation ..." stay intact.
+_FP_REPLACEMENTS = [
+    (r"^(?:[Aa]re)\s+you\b",            "I am"),
+    (r"^(?:[Dd]o)\s+you\s+have\b",      "I have"),
+    (r"^(?:[Dd]o)\s+you\b",             "I"),
+    (r"^(?:[Ww]ill)\s+you\b",           "I will"),
+    (r"^(?:[Hh]ave)\s+you\b",           "I have"),
+    (r"^(?:[Yy]our)\b",                 "My"),
+    (r"^(?:[Yy]ou)\b",                  "I"),
+]
+_FP_CACHE: dict[str, str] = {}
+
+def _to_first_person(text: str) -> str:
+    if text in _FP_CACHE:
+        return _FP_CACHE[text]
+    converted = text
+    for pat, repl in _FP_REPLACEMENTS:
+        converted = re.sub(pat, repl, converted)
+    if converted.strip().endswith("?"):
+        converted = converted.rstrip(" ?") + "."
+    _FP_CACHE[text] = converted
+    return converted
+
+# ---------- Destination insertion (all widgets) ----------
+_DEST_CACHE: dict[str, str] = {}
+
+# ---------------------------------------------------------------------
+# Countries that conventionally take the definite article
+# (source: English style-guides and quick scan of country_info.json)
+# ---------------------------------------------------------------------
+_COUNTRIES_WITH_ARTICLE = {
+    "Netherlands",
+    "United States",
+    "United Kingdom",
+    "Philippines",
+    "Czech Republic",
+    "Dominican Republic",
+    "United Arab Emirates",
+    "Central African Republic",
+    "Democratic Republic of the Congo",
+    "Republic of the Congo",
+    "Maldives",
+    "Seychelles",
+    "Gambia",
+    "Bahamas",
+}
+
+def format_country_name(country: str | None) -> str:
+    """Return 'the X' for countries that need an article."""
+    if not country:
+        return ""
+    return f"the {country}" if country in _COUNTRIES_WITH_ARTICLE else country
+
+def _destination_full() -> str | None:
+    """Return 'Region, Country' or 'Country' (cached)."""
+    key = "dest_full"
+    if key in _DEST_CACHE:
+        return _DEST_CACHE[key]
+
+    country = get_data("individual.residencyIntentions.destinationCountry.country")
+    if not country:
+        return None
+    region  = get_data("individual.residencyIntentions.destinationCountry.region")
+    country_fmt = format_country_name(country)
+    full = f"{region}, {country_fmt}" if region and region != "I don't know" else country_fmt
+    _DEST_CACHE[key] = full
+    return full
+
+# ---------- Widget patch factory ----------
+def _patch_widget(method_name: str, first_person: bool):
+    original = getattr(st, method_name)
+    def wrapper(*args, **kwargs):
+        if args and isinstance(args[0], str):
+            txt = args[0]
+            if first_person:
+                txt = _to_first_person(txt)
+            args = (txt, *args[1:])
+        return original(*args, **kwargs)
+    return wrapper
+
+# ---------- Apply patches once ----------
+if not hasattr(st, "_text_sub_patched"):
+    INPUT_WIDGETS = [
+        "checkbox", "radio", "selectbox", "select_slider",
+        "slider", "number_input", "text_input", "text_area",
+    ]
+    ALL_WIDGETS = INPUT_WIDGETS + [
+        "subheader", "caption", "markdown", "info",
+        "warning", "success", "error",
+    ]
+    for w in ALL_WIDGETS:
+        if hasattr(st, w):
+            setattr(
+                st,
+                w,
+                _patch_widget(w, first_person=(w in INPUT_WIDGETS))
+            )
+    st._text_sub_patched = True

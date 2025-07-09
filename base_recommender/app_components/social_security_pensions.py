@@ -7,7 +7,13 @@ def social_security_pensions(anchor):
     Social Security and Pensions Section with distinctive styling
     """
     # ======================= SECTION HEADER =======================
-    st.header(f"🏥 {anchor}", anchor=anchor, divider="rainbow")
+    if st.session_state.get("skip_tax_sections"):
+        st.header(f"🏥 {anchor}", anchor=anchor, divider="rainbow")
+        st.info("🚀 Detailed Social-Security / Pension inputs skipped per your earlier choice.")
+        display_section("individual.socialSecurityAndPensions", "Social Security & Pensions (Summary Only)")
+        return
+
+    st.header(f"⚖️ {anchor}", anchor=anchor, divider="rainbow")
 
     # -------------------- VISIBILITY TOGGLE --------------------
     if not st.toggle(f"📋 Show {anchor}", value=True, key=f"show_{anchor}"):

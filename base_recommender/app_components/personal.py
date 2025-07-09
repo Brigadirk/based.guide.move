@@ -84,8 +84,8 @@ def personal(anchor):
             "individual.personalInformation.currentResidency.duration",
             years_at_residence)
 
-    # ======================= NATIONALITIES =======================
-    st.subheader("🌍 Nationalities *")
+    # ======================= CITIZENSHIPS =======================
+    st.subheader("🌍 Citizenship(s) *")
     
     # DATA INITIALIZATION PATTERN
     nationalities = get_data("individual.personalInformation.nationalities") or []
@@ -113,16 +113,16 @@ def personal(anchor):
     update_data("individual.personalInformation.nationalities", nationalities)
 
     # -------------------- ADD NEW ITEM PATTERN --------------------
-    with st.form("add_nationality_form", clear_on_submit=True):
-        new_nationality = st.selectbox(
-            "Country of citizenship",
+    with st.form("add_citizenship_form", clear_on_submit=True):
+        new_citizenship = st.selectbox(
+            "Citizenship",
             options=[""] + get_country_list(),
             help="Select each country where you hold citizenship."
         )
-        submitted = st.form_submit_button("💾 Add nationality")
-        if submitted and new_nationality:
-            if new_nationality != "" and not nationality_in_list(new_nationality):
-                nationalities.append({"country": new_nationality, "willingToRenounce": False})
+        submitted = st.form_submit_button("💾 Add citizenship")
+        if submitted and new_citizenship:
+            if new_citizenship != "" and not nationality_in_list(new_citizenship):
+                nationalities.append({"country": new_citizenship, "willingToRenounce": False})
                 update_data(
                     "individual.personalInformation.nationalities",
                     nationalities
@@ -139,7 +139,10 @@ def personal(anchor):
                 renounce = st.checkbox(
                     "Willing to give up?",
                     value=nat.get("willingToRenounce", False),
-                    key=f"renounce_{nat['country']}"
+                    key=f"renounce_{nat['country']}",
+                    help="Renouncing a citizenship can remove obligations such as military service "
+                         "or **citizenship-based taxation**. For example, the United States taxes its "
+                         "citizens on worldwide income even when they live abroad, creating double-tax exposure."
                 )
                 if renounce != nat.get("willingToRenounce", False):
                     nat["willingToRenounce"] = renounce
@@ -277,7 +280,6 @@ def personal(anchor):
             st.rerun()
 
         # SAME-SEX PARTNERSHIP INFO
-        st.caption("If you are in same-sex union, some countries may not recognise it.")
         current_same_sex = get_data("individual.personalInformation.relocationPartnerInfo.sameSex")
         same_sex_partnership = st.checkbox(
             "This is a same-sex relationship",
@@ -411,8 +413,8 @@ def personal(anchor):
                         "individual.personalInformation.relocationPartnerInfo.officialRelationshipDuration",
                         official_duration)
 
-        # -------------------- PARTNER NATIONALITIES --------------------
-        st.subheader("🌍 Partner nationalities *")
+        # -------------------- PARTNER CITIZENSHIPS --------------------
+        st.subheader("🌍 Partner citizenships *")
         partner_nationalities = get_data("individual.personalInformation.relocationPartnerInfo.partnerNationalities") or []
 
         # Convert old format (list of strings) to new format (list of dicts)
@@ -422,13 +424,13 @@ def personal(anchor):
         def partner_nat_in_list(country):
             return any(n["country"] == country for n in partner_nationalities)
 
-        with st.form("add_partner_nationality"):
+        with st.form("add_partner_citizenship"):
             new_nat = st.selectbox(
                 "Partner citizenship",
                 options=[""] + get_country_list(),
                 help="Select all nationalities held by partner"
             )
-            if st.form_submit_button("💾 Add nationality") and new_nat:
+            if st.form_submit_button("💾 Add citizenship") and new_nat:
                 if new_nat and not partner_nat_in_list(new_nat):
                     partner_nationalities.append({"country": new_nat, "willingToRenounce": False})
                     update_data(
@@ -442,7 +444,10 @@ def personal(anchor):
             renounce = cols[1].checkbox(
                 "Willing to give up?",
                 value=nat.get("willingToRenounce", False),
-                key=f"partner_renounce_{nat['country']}"
+                key=f"partner_renounce_{nat['country']}",
+                help="Renouncing a citizenship can remove obligations such as military service "
+                     "or **citizenship-based taxation**. For example, the United States taxes its "
+                     "citizens on worldwide income even when they live abroad."
             )
             if renounce != nat.get("willingToRenounce", False):
                 nat["willingToRenounce"] = renounce
@@ -453,7 +458,7 @@ def personal(anchor):
                 st.rerun()
 
         if not partner_nationalities:
-            st.warning("⚠️ Your partner must have at least one nationality")
+            st.warning("⚠️ Your partner must have at least one citizenship")
 
     # ======================= DEPENDENTS =======================
     has_dependents = st.checkbox(
@@ -522,7 +527,7 @@ def personal(anchor):
                         [""] + [c for c in get_country_list() if not dep_nat_in_list(c)],
                         key=f"dep_{i}_nat_select"
                     )
-                    if st.button("💾 Add nationality", key=f"dep_{i}_add_nat"):
+                    if st.button("💾 Add citizenship", key=f"dep_{i}_add_nat"):
                         if new_nat and not dep_nat_in_list(new_nat):
                             nationalities.append({"country": new_nat, "willingToRenounce": False})
                     dependents[i]["nationalities"] = nationalities
@@ -534,7 +539,9 @@ def personal(anchor):
                         renounce = cols[1].checkbox(
                             "Willing to give up?",
                             value=nat.get("willingToRenounce", False),
-                            key=f"dep_{i}_renounce_{nat['country']}"
+                            key=f"dep_{i}_renounce_{nat['country']}",
+                            help="Renouncing a citizenship can remove obligations such as military service "
+                                 "or **citizenship-based taxation** (e.g., the U.S. worldwide-income tax)."
                         )
                         if renounce != nat.get("willingToRenounce", False):
                             nat["willingToRenounce"] = renounce

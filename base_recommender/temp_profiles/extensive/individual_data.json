@@ -1,6 +1,6 @@
 {
     "personalInformation": {
-        "dateOfBirth": "1995-05-05",
+        "dateOfBirth": "1995-07-17",
         "nationalities": [],
         "maritalStatus": "",
         "enduringMaritalStatusInfo": "",
@@ -29,16 +29,17 @@
     "education": {
         "isStudent": false,
         "currentSchool": "",
-        "previousEducation": "",
+        "currentFieldOfStudy": "",
+        "previousDegrees": [],
+        "visaSkills": [],
         "interestedInStudying": false,
         "schoolInterestDetails": "",
-        "schoolOffers": [],
-        "visaTaxRelevance": ""
+        "schoolOffers": []
     },
     "residencyIntentions": {
         "destinationCountry": {
-            "country": "",
-            "region": "",
+            "country": "Argentina",
+            "region": "I don't know yet",
             "citizenshipStatus": false,
             "moveType": "Permanent",
             "intendedTemporaryDurationOfStay": 0.0
@@ -114,8 +115,10 @@
         "liabilities": [],
         "capitalGains": {
             "hasGains": false,
-            "details": []
-        }
+            "details": [],
+            "futureSales": []
+        },
+        "totalWealth": {}
     },
     "additionalInformation": {
         "specialSections": [],

@@ -20,7 +20,7 @@ from app_components.sidebar.sidebar \
 from app_components.disclaimer \
     import display_disclaimer_intro
 from app_components.state.state \
-    import init_session_state
+    import init_session_state, audit_state
 from app_components.destination \
     import select_destination_country
 from app_components.summary \
@@ -29,6 +29,8 @@ from app_components.finance \
     import finance
 from app_components.education \
     import education
+from app_components.helpers \
+    import get_data
 
 def set_page_config():
     st.set_page_config(
@@ -42,12 +44,18 @@ def main():
     display_sidebar()
 
     # Done
-    # display_disclaimer_intro("Disclaimer")
+    display_disclaimer_intro("Disclaimer")
 
     st.divider()
 
     # Will have to keep because it affects other sections
     select_destination_country("Desired Destination")
+
+    # ---------------- REQUIRE DESTINATION BEFORE CONTINUING -------------
+    destination = get_data("individual.residencyIntentions.destinationCountry.country")
+    if not destination:
+        st.warning("👉 Please choose your destination country above to continue with the questionnaire.")
+        st.stop()
 
     st.divider()
 
@@ -84,6 +92,11 @@ def main():
     st.divider()
 
     display_review_export("Review and Export")
+
+    # ---------------- AUDIT STATE CONSISTENCY ----------------
+    # Show warnings if any leaf of the schema was never touched.
+    # Set prune=True if you wish to auto-delete untouched leaves.
+    audit_state(prune=False)
 
 if __name__ == "__main__":
     project_dir = os.path.join(os.path.dirname(__file__), 'base_recommender')
