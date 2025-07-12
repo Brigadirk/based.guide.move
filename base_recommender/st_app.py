@@ -20,7 +20,7 @@ from app_components.sidebar.sidebar \
 from app_components.disclaimer \
     import display_disclaimer_intro
 from app_components.state.state \
-    import init_session_state, audit_state
+    import init_session_state
 from app_components.destination \
     import select_destination_country
 from app_components.summary \
@@ -92,11 +92,6 @@ def main():
     st.divider()
 
     display_review_export("Review and Export")
-
-    # ---------------- AUDIT STATE CONSISTENCY ----------------
-    # Show warnings if any leaf of the schema was never touched.
-    # Set prune=True if you wish to auto-delete untouched leaves.
-    audit_state(prune=False)
 
 if __name__ == "__main__":
     project_dir = os.path.join(os.path.dirname(__file__), 'base_recommender')

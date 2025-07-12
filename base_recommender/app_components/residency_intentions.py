@@ -483,7 +483,7 @@ def language_proficiency():
                 can_teach[lang] = teaching_ability
     
     # -------------------- OTHER LANGUAGES --------------------
-    st.markdown("**🔤 Other languages you speak (and could teach)**")
+    st.markdown("#### 🔤 Other languages you speak (and could teach)")
     st.caption("Add any other languages you can teach that aren't listed above")
     
     # Get or initialize other_languages
@@ -497,7 +497,7 @@ def language_proficiency():
         with col2:
                 teaching_level = st.radio(
                     "Teaching capability",
-                    ["Informally", "Formally with credentials"],
+                    ["Not interested", "Informally", "Formally with credentials"],
                     horizontal=True
                 )
             

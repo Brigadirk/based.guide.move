@@ -43,11 +43,12 @@ def init_session_state():
                     "currentResidency": {
                         "country": "",
                         "status": "",
+                        "duration": 0.0  # Years at current residence (for temporary residents)
                     },
                     "relocationPartner": False,
                     "relocationPartnerInfo": {
                         "relationshipType": "",
-                        "sameSex": "",
+                        "sameSex": False,  # Changed from string to boolean
                         "fullRelationshipDuration": 0.0,
                         "officialRelationshipDuration": 0.0,
                         "partnerNationalities": [
@@ -78,20 +79,32 @@ def init_session_state():
                         #     "degree": "Bachelor of Science",
                         #     "institution": "University of Technology",
                         #     "field": "Computer Science",
-                        #     "year": "2020"
+                        #     "start_year": "2018",
+                        #     "end_year": "2022",
+                        #     "in_progress": False
                         # }
                     ],
                     "visaSkills": [
                         # Example entry:
                         # {
                         #     "skill": "Python Development",
-                        #     "credentials": True,
                         #     "credential_name": "AWS Certified Developer",
                         #     "credential_institute": "Amazon Web Services"
                         # }
                     ],
                     "interestedInStudying": False,
                     "schoolInterestDetails": "",
+                    "learningInterests": [
+                        # Example entry:
+                        # {
+                        #     "skill": "Data Science",
+                        #     "status": "planned",  # "planned" or "open"
+                        #     "institute": "Tech Bootcamp",
+                        #     "months": 6,
+                        #     "hours_per_week": 20,
+                        #     "funding_status": "Have funds"
+                        # }
+                    ],
                     "schoolOffers": [
                         # Example entry:
                         # {
@@ -159,186 +172,159 @@ def init_session_state():
                     },
                     "futurePensionContributions": {
                         "isPlanning": True,
-                        "details": []
+                        "details": [
+                            # Example entry:
+                            # {
+                            #     "pensionType": "Employer-sponsored plan",  # "Employer-sponsored plan", "Personal retirement account", "National voluntary scheme", "Industry-wide plan", "Cross-border pension", or custom type
+                            #     "contributionAmount": 25000.0,
+                            #     "currency": "USD",
+                            #     "country": "United States"
+                            # }
+                        ]
                     },
                     "existingPlans": {
                         "hasPlans": False,
-                        "details": []
+                        "details": [
+                            # Example entry:
+                            # {
+                            #     "planType": "Defined benefit plan",  # "Defined benefit plan", "Defined contribution plan", "National social security entitlement", "Portable retirement account", "Annuity contract", "Other"
+                            #     "currency": "USD", 
+                            #     "currentValue": 150000.0,
+                            #     "country": "United States"
+                            # }
+                        ]
                     }
                 },
                 "taxDeductionsAndCredits": {
                     "potentialDeductions": [
+                        # Example entry for general deductions:
+                        # {
+                        #     "type": "Charitable Donations",  # "Charitable Donations", "Medical Expenses", "Education Costs", "Work-Related Expenses", "Retirement Contributions", or custom type
+                        #     "amount": 5000.0,
+                        #     "currency": "USD",
+                        #     "country": "United States"
+                        # }
+                        # 
+                        # Example entry for alimony:
+                        # {
+                        #     "type": "Alimony Paid",  # "Alimony Paid" or "Alimony Received"
+                        #     "amount": 24000.0,
+                        #     "currency": "USD",
+                        #     "country": "United States",
+                        #     "date": "2023-01-15",  # ISO format date string
+                        #     "notes": "Governed by United States law"
+                        # }
                     ]
                 },
                 "finance": {
+                    "totalWealth": {
+                        # Example:
+                        # {
+                        #     "currency": "USD",
+                        #     "total": 500000.0,
+                        #     "primary_residence": 300000.0
+                        # }
+                    },
                     "incomeSources": [
                         # Example entry:
                         # {
-                        # "type": "Employment",
-                        # "employer": "Tech Corp",
-                        # "role": "Software Engineer",
-                        # "country": "US",
-                        # "currency": "USD",
-                        # "annual_income": 120000,
-                        # "start_date": "2020-01-01",
-                        # "remote": True,
-                        # "continue_in_destination": True,
-                        # "status": "Current"  # or "Job Offer", "Future Search"
+                        #     "category": "Employment",  # "Employment", "Self-Employment", "Investments", "Rental Income", "Other"
+                        #     "fields": {
+                        #         "employer": "Tech Corp",
+                        #         "role": "Software Engineer"
+                        #     },
+                        #     "country": "US",
+                        #     "amount": 120000.0,
+                        #     "currency": "USD",
+                        #     "continue_in_destination": True
                         # }
                     ],
                     "expectedEmployment": [
-                        # Example:
+                        # Note: This array exists in schema but no corresponding function in finance.py
+                        # May be legacy code - keeping for compatibility
+                    ],
+                    "liabilities": [
+                        # Example entry:
                         # {
-                        #   "country": "DE",
-                        #   "employer": "EuroTech",
-                        #   "role": "Lead Developer",
-                        #   "salary": 80000,
-                        #   "currency": "EUR",
-                        #   "hours_per_week": 40,
-                        #   "is_real_offer": True,  # True if real offer, False if estimate
-                        #   "notes": "Offer valid until June 2025"
+                        #     "category": "Mortgage",  # "Mortgage", "Loan", "Credit Card", "Other"
+                        #     "fields": {
+                        #         "property_description": "Primary residence",
+                        #         "property_type": "Residential"
+                        #     },
+                        #     "country": "US",
+                        #     "amount": 250000.0,
+                        #     "currency": "USD"
                         # }
                     ],
+                    "capitalGains": {
+                        "hasGains": False,
+                        "details": [],
+                        "futureSales": [
+                            # Example entry:
+                            # {
+                            #     "asset": "Apple Stock",
+                            #     "type": "Stocks/ETFs",
+                            #     "holding_time": "2 – 3 years",
+                            #     "surplus_value": 15000.0,
+                            #     "currency": "USD",
+                            #     "reason": "Need cash for relocation"
+                            # }
+                        ]
+                    },
+                    # Note: The following assets structure is not used in current finance.py
                     "assets": {
                         "realEstate": [],
                         "financial": [],
                         "taxAdvantagedAccounts": [],
                         "cryptocurrency": []
-                    },
-                    "liabilities": [],
-                    "capitalGains": {
-                        "hasGains": False,
-                        "details": []
                     }
                 },
+                "futureFinancialPlans": {
+                    "plannedInvestments": [
+                        # Example entry:
+                        # {
+                        #     "type": "Stocks",  # "Stocks", "Bonds", "Real Estate", "Cryptocurrency", "Mutual Funds", or custom type
+                        #     "country": "United States",
+                        #     "estimatedValue": 50000.0
+                        # }
+                    ],
+                    "plannedPropertyTransactions": [
+                        # Example entry:
+                        # {
+                        #     "transactionType": "Buy",  # "Buy", "Sell", "Rent Out"
+                        #     "country": "Canada",
+                        #     "estimatedValue": 400000.0
+                        # }
+                    ],
+                    "plannedRetirementContributions": [
+                        # Example entry:
+                        # {
+                        #     "accountType": "401(k)",  # "401(k)", "IRA/Roth IRA", "Pension Plan", or custom type
+                        #     "country": "United States",
+                        #     "contributionAmount": 20000.0
+                        # }
+                    ],
+                    "plannedBusinessChanges": [
+                        # Example entry:
+                        # {
+                        #     "changeType": "Start New Business",  # "Start New Business", "Sell Existing Business", "Expand Business to Another Country"
+                        #     "country": "Germany",
+                        #     "estimatedValueImpact": 100000.0
+                        # }
+                    ]
+                },
                 "additionalInformation" : {
-                    "specialSections": [],
+                    "specialSections": [
+                        # Example entry:
+                        # {
+                        #     "theme": "Special Circumstances",
+                        #     "content": "Detailed explanation of unique situation...",
+                        #     "dateAdded": "2024-01-15",      # ISO date string
+                        #     "dateUpdated": "2024-02-01"     # ISO date string (optional)
+                        # }
+                    ],
                     "generalNotes": ""
                 },
             }
         }
 
-# ==========================================================
-#  UTILITIES FOR STATE AUDITING
-# ==========================================================
-def _list_leaf_paths(node, prefix=""):
-    """Return every leaf-node path in dot-notation."""
-    paths = []
-    if isinstance(node, dict):
-        for k, v in node.items():
-            new_prefix = f"{prefix}.{k}" if prefix else k
-            paths.extend(_list_leaf_paths(v, new_prefix))
-    elif isinstance(node, list):
-        # Treat list element indices as literal digits (0,1,2…)
-        for i, v in enumerate(node):
-            new_prefix = f"{prefix}.{i}" if prefix else str(i)
-            paths.extend(_list_leaf_paths(v, new_prefix))
-    else:  # primitive leaf
-        paths.append(prefix)
-    return paths
-
-def audit_state(prune: bool = False):
-    """
-    1. Confirm that every leaf path in st.session_state.data
-       was updated by *some* component.
-    2. Optionally delete "orphan" keys that were never updated.
-    """
-    updated = st.session_state.get("_updated_paths", set())
-    all_leaves = set(_list_leaf_paths(st.session_state.data))
-
-    missing_updates = sorted(all_leaves - updated)
-    # Helper: does the *dot-path* exist anywhere in the schema?
-    # Treat containers (dict / list nodes) as valid – they may legitimately be
-    # updated even when they contain no leaf values yet.
-    def _path_exists_in_schema(path: str) -> bool:
-        node = st.session_state.data
-        for key in path.split("."):
-            if isinstance(node, dict):
-                node = node.get(key)
-            elif isinstance(node, list) and key.isdigit():
-                idx = int(key)
-                if idx >= len(node):
-                    return False
-                node = node[idx]
-            else:
-                return False
-            if node is None:
-                return False
-        return True
-
-    orphan_paths = []
-    for p in updated - all_leaves:
-        # Skip if p is an ancestor of any real leaf OR if the exact path exists
-        # in the schema (even as an empty container).
-        if any(l.startswith(f"{p}.") for l in all_leaves) or _path_exists_in_schema(p):
-            continue
-        orphan_paths.append(p)
-
-    if missing_updates:
-        # ---------- build a readable tree ----------
-        from collections import defaultdict
-
-        def _pretty(token: str) -> str:
-            """snake_orCamelCase → Title Case; digit -> #n"""
-            if token.isdigit():
-                return f"#{int(token)+1}"
-            token = token.replace("_", " ")
-            token = re.sub(r"([a-z])([A-Z])", r"\1 \2", token)
-            return token.capitalize()
-
-        tree: dict[str, list[str]] = defaultdict(list)
-        for path in missing_updates:
-            parts = path.split(".")
-            if parts and parts[0] == "individual":
-                parts = parts[1:]
-            if not parts:
-                continue
-            section = _pretty(parts[0])
-            field   = " – ".join(_pretty(p) for p in parts[1:]) or "_"
-            tree[section].append(field)
-
-        # ---------- display ----------
-        # Use collapsible <details> blocks for a tidier, more approachable list
-        warn_box = st.warning("", icon="⚠️")  # yellow call-out container
-
-        with warn_box:
-            # Header
-            st.markdown(
-                f"<h4 style='margin-top:0'>🚧 You still have "
-                f"<strong>{len(missing_updates)}</strong> unanswered fields:</h4>",
-                unsafe_allow_html=True,
-            )
-
-            for section in sorted(tree):
-                # Sanitise section name for potential anchor linking elsewhere
-                anchor = re.sub(r"[^a-z0-9]+", "-", section.lower()).strip("-")
-
-                # Build the HTML list of fields for this section
-                items_html = "".join(
-                    f"<li>{field}</li>" for field in sorted(tree[section])
-                )
-
-                # One collapsible block per section
-                section_html = (
-                    f"<details>"
-                    f"<summary><strong>{section}</strong></summary>"
-                    f"<ul style='margin-top:0.25rem'>{items_html}</ul>"
-                    f"</details>"
-                )
-                st.markdown(section_html, unsafe_allow_html=True)
-
-    if orphan_paths:
-        st.error(
-            "🔥 Some paths were updated but are not present in the schema:"
-            + "\n".join(orphan_paths)
-        )
-
-    if prune and missing_updates:
-        for path in missing_updates:
-            # Walk to the parent dict and delete the key
-            keys = path.split(".")
-            ref  = st.session_state.data
-            for k in keys[:-1]:
-                ref = ref[int(k) if k.isdigit() else k]
-            ref.pop(int(keys[-1]) if keys[-1].isdigit() else keys[-1], None)
-        st.info("🧹 Orphan leaf paths pruned from session state.")
