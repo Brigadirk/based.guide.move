@@ -1,0 +1,8 @@
+Rebrand analysis tokens to bananas and update product/profile flows
+
+- Convert token-related terminology to banana-themed language
+- Update product models, routes, and frontend components to use "bananas"
+- Modify seed script to rename token packs to banana packs
+- Refactor user profile and product purchase flows
+- Add playful banana-related messaging and icons
+- Update frontend types and components to reflect new banana system
