@@ -190,3 +190,14 @@ cython_debug/
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
 /frontend/.env*.local
+
+# Next.js for base_recommender_next_js
+/base_recommender_next_js/.next/
+/base_recommender_next_js/out/
+/base_recommender_next_js/node_modules/
+/base_recommender_next_js/build
+/base_recommender_next_js/.vercel
+/base_recommender_next_js/npm-debug.log*
+/base_recommender_next_js/yarn-debug.log*
+/base_recommender_next_js/yarn-error.log*
+/base_recommender_next_js/.env*.local
