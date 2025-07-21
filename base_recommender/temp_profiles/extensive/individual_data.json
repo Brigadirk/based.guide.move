@@ -1,17 +1,23 @@
 {
     "personalInformation": {
-        "dateOfBirth": "1995-07-17",
-        "nationalities": [],
+        "dateOfBirth": "1995-07-25",
+        "nationalities": [
+            {
+                "country": "Algeria",
+                "willingToRenounce": false
+            }
+        ],
         "maritalStatus": "",
         "enduringMaritalStatusInfo": "",
         "currentResidency": {
-            "country": "",
-            "status": "Citizen"
+            "country": "Algeria",
+            "status": "Citizen",
+            "duration": 0.0
         },
-        "relocationPartner": false,
+        "relocationPartner": true,
         "relocationPartnerInfo": {
-            "relationshipType": "",
-            "sameSex": "",
+            "relationshipType": "Unmarried Partner",
+            "sameSex": false,
             "fullRelationshipDuration": 0.0,
             "officialRelationshipDuration": 0.0,
             "partnerNationalities": []
@@ -32,14 +38,15 @@
         "currentFieldOfStudy": "",
         "previousDegrees": [],
         "visaSkills": [],
-        "interestedInStudying": true,
+        "interestedInStudying": false,
         "schoolInterestDetails": "",
+        "learningInterests": [],
         "schoolOffers": []
     },
     "residencyIntentions": {
         "destinationCountry": {
             "country": "Argentina",
-            "region": "I don't know yet",
+            "region": "Buenos Aires",
             "citizenshipStatus": false,
             "moveType": "Permanent",
             "intendedTemporaryDurationOfStay": 0.0
@@ -104,21 +111,27 @@
         "potentialDeductions": []
     },
     "finance": {
+        "totalWealth": {},
         "incomeSources": [],
         "expectedEmployment": [],
-        "assets": {
-            "realEstate": [],
-            "financial": [],
-            "taxAdvantagedAccounts": [],
-            "cryptocurrency": []
-        },
         "liabilities": [],
         "capitalGains": {
             "hasGains": false,
             "details": [],
             "futureSales": []
         },
-        "totalWealth": {}
+        "assets": {
+            "realEstate": [],
+            "financial": [],
+            "taxAdvantagedAccounts": [],
+            "cryptocurrency": []
+        }
+    },
+    "futureFinancialPlans": {
+        "plannedInvestments": [],
+        "plannedPropertyTransactions": [],
+        "plannedRetirementContributions": [],
+        "plannedBusinessChanges": []
     },
     "additionalInformation": {
         "specialSections": [],

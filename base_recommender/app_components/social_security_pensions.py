@@ -50,13 +50,21 @@ def social_security_pensions(anchor):
         if contributing_to_social_security:
             col1, col2 = st.columns(2)
             with col1:
+                # Get current residence country as default
+                current_residence = get_data("individual.personalInformation.currentResidency.country")
+                current_contribution_country = get_data("individual.socialSecurityAndPensions.currentCountryContributions.country")
+                
+                # Use current residence as default if no contribution country is set yet
+                default_country = current_contribution_country if current_contribution_country else current_residence
+                
                 # COUNTRY SELECTION WITH DATA BINDING
                 contribution_country = st.selectbox(
                     "Country of contribution",
                     options=[""] + get_country_list(),
-                    index=get_country_list().index(get_data("individual.socialSecurityAndPensions.currentCountryContributions.country")) + 1 
-                    if get_data("individual.socialSecurityAndPensions.currentCountryContributions.country") in get_country_list() else 0,
-                    help="Select country where you're currently contributing")
+                    index=get_country_list().index(default_country) + 1 
+                    if default_country in get_country_list() else 0,
+                    help="Select country where you're currently contributing"
+                )
                 update_data(
                     "individual.socialSecurityAndPensions.currentCountryContributions.country",
                     contribution_country)

@@ -180,17 +180,37 @@ def capital_gains():
             st.rerun()
 
     if sales:
-        st.markdown("**📋 Your planned / future sales**")
+        st.markdown("**📋 Your Planned Asset Sales**")
         for i, s in enumerate(sales):
-            cols = st.columns([3, 1, 1, 2, 0.3])
-            cols[0].write(f"**{s['asset']}** ({s['type']})")
-            cols[1].write(f"Hold: {s['holding_time']}")
-            cols[2].metric("Profit", f"{s['currency']} {s['surplus_value']:,.2f}")
-            cols[3].write(f"Reason: {s['reason'] or '—'}")
-            if cols[4].button("❌", key=f"remove_sale_{i}"):
-                sales.pop(i)
-                update_data("individual.finance.capitalGains.futureSales", sales)
-                st.rerun()
+            with st.container(border=True):
+                col1, col2, col3, col4, col5 = st.columns([2.5, 1.2, 1.5, 1.8, 0.8])
+                
+                with col1:
+                    st.markdown(f"**{s['asset']}**")
+                    st.caption(f"Type: {s['type']}")
+                
+                with col2:
+                    st.markdown(f"**Holding Period**")
+                    st.write(s['holding_time'])
+                
+                with col3:
+                    st.markdown(f"**Expected Profit**")
+                    st.metric(
+                        "", 
+                        f"{s['currency']} {s['surplus_value']:,.0f}",
+                        label_visibility="collapsed"
+                    )
+                
+                with col4:
+                    st.markdown(f"**Reason**")
+                    st.write(s['reason'] or "—")
+                
+                with col5:
+                    st.markdown("&nbsp;")  # Spacer
+                    if st.button("🗑️", key=f"remove_sale_{i}", help="Remove this planned sale"):
+                        sales.pop(i)
+                        update_data("individual.finance.capitalGains.futureSales", sales)
+                        st.rerun()
 
 def income_checker():
     """
@@ -344,24 +364,45 @@ def income_and_employment():
                 st.rerun()
 
     if income_sources:
-        st.markdown("**📋 Your income sources**")
+        st.markdown("**📋 Your Income Sources**")
         for i, source in enumerate(income_sources):
-            cols = st.columns([3, 1, 1, 2, 0.3])
-            cols[0].write(f"**{source['category']}**")
-            cols[1].write(f"Country: {source['country']}")
-            cols[2].metric("Amount", f"{source['currency']} {source['amount']:,.2f}")
-            cols[3].write(
-                "Timing: "
-                + (
-                    "Current / continuing"
-                    if source.get("continue_in_destination", True)
-                    else "Hypothetical / future"
-                )
-            )
-            if cols[4].button("❌", key=f"remove_source_{i}"):
-                income_sources.pop(i)
-                update_data("individual.finance.incomeSources", income_sources)
-                st.rerun()
+            with st.container(border=True):
+                col1, col2, col3, col4, col5 = st.columns([2.5, 1.2, 1.5, 1.8, 0.8])
+                
+                with col1:
+                    st.markdown(f"**{source['category']}**")
+                    # Show relevant field details
+                    if source['fields']:
+                        field_details = []
+                        for key, value in source['fields'].items():
+                            if value:  # Only show non-empty fields
+                                field_details.append(f"{key.replace('_', ' ').title()}: {value}")
+                        if field_details:
+                            st.caption(" • ".join(field_details))
+                
+                with col2:
+                    st.markdown(f"**Country**")
+                    st.write(source['country'] or "—")
+                
+                with col3:
+                    st.markdown(f"**Annual Amount**")
+                    st.metric(
+                        "", 
+                        f"{source['currency']} {source['amount']:,.0f}",
+                        label_visibility="collapsed"
+                    )
+                
+                with col4:
+                    st.markdown(f"**Status**")
+                    status_text = "Current" if source.get("continue_in_destination", True) else "Future"
+                    st.write(status_text)
+                
+                with col5:
+                    st.markdown("&nbsp;")  # Spacer
+                    if st.button("🗑️", key=f"remove_source_{i}", help="Remove this income source"):
+                        income_sources.pop(i)
+                        update_data("individual.finance.incomeSources", income_sources)
+                        st.rerun()
 
 def liabilities():
     """
@@ -431,6 +472,28 @@ def liabilities():
             usd_idx = currency_list.index("USD") if "USD" in currency_list else 0
             currency = cols[1].selectbox("Currency", currency_list, index=usd_idx)
 
+            # Add payback timeline and interest rate fields
+            st.markdown("---")
+            cols = st.columns([1, 1])
+            with cols[0]:
+                payback_years = st.number_input(
+                    "Payback timeline (years)",
+                    min_value=0.0,
+                    max_value=50.0,
+                    value=0.0,
+                    step=0.5,
+                    help="How many years until this debt is fully paid off"
+                )
+            with cols[1]:
+                interest_rate = st.number_input(
+                    "Interest rate (%)",
+                    min_value=0.0,
+                    max_value=100.0,
+                    value=0.0,
+                    step=0.1,
+                    help="Annual interest rate on this debt"
+                )
+
             if st.form_submit_button("💾 Save Liability"):
                 liabilities.append(
                     {
@@ -439,6 +502,8 @@ def liabilities():
                         "country": country,
                         "amount": amount,
                         "currency": currency,
+                        "payback_years": payback_years,
+                        "interest_rate": interest_rate,
                     }
                 )
                 update_data("individual.finance.liabilities", liabilities)
@@ -446,13 +511,53 @@ def liabilities():
                 st.rerun()
 
     if liabilities:
-        st.markdown("**📋 Your liabilities**")
+        st.markdown("**📋 Your Liabilities**")
         for i, liability in enumerate(liabilities):
-            cols = st.columns([3, 1, 1, 2, 0.3])
-            cols[0].write(f"**{liability['category']}**")
-            cols[1].write(f"Country: {liability['country']}")
-            cols[2].metric("Amount", f"{liability['currency']} {liability['amount']:,.2f}")
-            if cols[4].button("❌", key=f"remove_liability_{i}"):
-                liabilities.pop(i)
-                update_data("individual.finance.liabilities", liabilities)
-                st.rerun()
+            with st.container(border=True):
+                col1, col2, col3, col4, col5, col6 = st.columns([2.2, 1.0, 1.2, 1.0, 1.0, 0.8])
+                
+                with col1:
+                    st.markdown(f"**{liability['category']}**")
+                    # Show relevant field details
+                    if liability['fields']:
+                        field_details = []
+                        for key, value in liability['fields'].items():
+                            if value:  # Only show non-empty fields
+                                field_details.append(f"{key.replace('_', ' ').title()}: {value}")
+                        if field_details:
+                            st.caption(" • ".join(field_details))
+                
+                with col2:
+                    st.markdown(f"**Country**")
+                    st.write(liability['country'] or "—")
+                
+                with col3:
+                    st.markdown(f"**Amount**")
+                    st.metric(
+                        "", 
+                        f"{liability['currency']} {liability['amount']:,.0f}",
+                        label_visibility="collapsed"
+                    )
+                
+                with col4:
+                    st.markdown(f"**Payback**")
+                    payback_years = liability.get('payback_years', 0)
+                    if payback_years > 0:
+                        st.write(f"{payback_years:.1f} years")
+                    else:
+                        st.write("—")
+                
+                with col5:
+                    st.markdown(f"**Interest**")
+                    interest_rate = liability.get('interest_rate', 0)
+                    if interest_rate > 0:
+                        st.write(f"{interest_rate:.1f}%")
+                    else:
+                        st.write("—")
+                
+                with col6:
+                    st.markdown("&nbsp;")  # Spacer
+                    if st.button("🗑️", key=f"remove_liability_{i}", help="Remove this liability"):
+                        liabilities.pop(i)
+                        update_data("individual.finance.liabilities", liabilities)
+                        st.rerun()

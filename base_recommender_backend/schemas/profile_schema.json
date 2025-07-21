@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://basedguide.ai/schemas/profile_schema.json",
+  "title": "Relocation Tax Profile",
+  "description": "Unified schema describing every field produced by the Streamlit questionnaire.",
+  "type": "object",
+  "required": [
+    "personalInformation",
+    "education",
+    "residencyIntentions",
+    "finance",
+    "socialSecurityAndPensions",
+    "futureFinancialPlans",
+    "taxDeductionsAndCredits",
+    "additionalInformation"
+  ],
+  "properties": {
+    "personalInformation": {
+      "$ref": "#/definitions/personalInformation"
+    },
+    "education": {
+      "$ref": "#/definitions/education"
+    },
+    "residencyIntentions": {
+      "$ref": "#/definitions/residencyIntentions"
+    },
+    "finance": {
+      "$ref": "#/definitions/finance"
+    },
+    "socialSecurityAndPensions": {
+      "$ref": "#/definitions/socialSecurityAndPensions"
+    },
+    "futureFinancialPlans": {
+      "$ref": "#/definitions/futureFinancialPlans"
+    },
+    "taxDeductionsAndCredits": {
+      "$ref": "#/definitions/taxDeductionsAndCredits"
+    },
+    "additionalInformation": {
+      "$ref": "#/definitions/additionalInformation"
+    }
+  },
+  "definitions": {
+    "personalInformation": {
+      "type": "object",
+      "required": ["dateOfBirth", "currentResidency", "nationalities"],
+      "properties": {
+        "dateOfBirth": {"type": "string", "format": "date"},
+        "nationalities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["country", "willingToRenounce"],
+            "properties": {
+              "country": {"type": "string"},
+              "willingToRenounce": {"type": "boolean"}
+            }
+          }
+        },
+        "maritalStatus": {"type": "string", "enum": ["Single", "Official Partnership", "Married", "Divorced", "Widowed", ""]},
+        "currentResidency": {
+          "type": "object",
+          "required": ["country", "status"],
+          "properties": {
+            "country": {"type": "string"},
+            "status": {"type": "string", "enum": ["Citizen", "Permanent Resident", "Temporary Resident"]},
+            "duration": {"type": "number", "minimum": 0}
+          }
+        },
+        "relocationPartner": {"type": "boolean"},
+        "relocationPartnerInfo": {
+          "type": "object",
+          "properties": {
+            "relationshipType": {"type": "string"},
+            "sameSex": {"type": "boolean"},
+            "fullRelationshipDuration": {"type": "number", "minimum": 0},
+            "officialRelationshipDuration": {"type": "number", "minimum": 0},
+            "partnerNationalities": {"type": "array", "items": {"type": "object", "properties": {"country": {"type": "string"}}}}
+          }
+        },
+        "numRelocationDependents": {"type": "integer", "minimum": 0},
+        "relocationDependents": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+
+    "education": {
+      "type": "object",
+      "properties": {
+        "isStudent": {"type": "boolean"},
+        "currentSchool": {"type": "string"},
+        "currentFieldOfStudy": {"type": "string"},
+        "previousDegrees": {"type": "array", "items": {"type": "object"}},
+        "visaSkills": {"type": "array", "items": {"type": "object"}},
+        "interestedInStudying": {"type": "boolean"},
+        "schoolInterestDetails": {"type": "string"}
+      }
+    },
+
+    "residencyIntentions": {
+      "type": "object",
+      "required": ["destinationCountry"],
+      "properties": {
+        "destinationCountry": {
+          "type": "object",
+          "required": ["country", "moveType"],
+          "properties": {
+            "country": {"type": "string"},
+            "moveType": {"type": "string"}
+          }
+        }
+      }
+    },
+
+    "finance": {
+      "type": "object",
+      "properties": {
+        "totalWealth": {
+          "type": "object",
+          "properties": {
+            "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+            "total": {"type": "number", "minimum": 0},
+            "primary_residence": {"type": "number", "minimum": 0}
+          }
+        },
+        "incomeSources": {"type": "array", "items": {"type": "object"}},
+        "expectedEmployment": {"type": "array", "items": {"type": "object"}},
+        "liabilities": {"type": "array", "items": {"type": "object"}},
+        "capitalGains": {"type": "object"}
+      }
+    },
+
+    "socialSecurityAndPensions": {"type": "object"},
+    "futureFinancialPlans": {"type": "object"},
+    "taxDeductionsAndCredits": {"type": "object"},
+    "additionalInformation": {"type": "object"}
+  }
+} 

@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Stone palette — light mode */
+    --background: 60 9.1% 97.8%;      /* stone-50 */
+    --foreground: 24 9.8% 10%;        /* stone-900 */
+
+    /* surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: var(--foreground);
+    --popover: 0 0% 100%;
+    --popover-foreground: var(--foreground);
+
+    /* brand / accents (staying within stone scale) */
+    --primary: 142 38% 50%;           /* lighter green on dark */
+    --primary-foreground: 60 9.1% 97.8%; /* stone-50 */
+
+    --secondary: 24 5.4% 63.9%;       /* stone-400 */
+    --secondary-foreground: var(--foreground);
+
+    --muted: 24 5.7% 82.9%;           /* stone-300 */
+    --muted-foreground: 25 5.3% 44.7%; /* stone-500 */
+
+    --accent: 20 5.9% 90%;            /* stone-200 */
+    --accent-foreground: var(--foreground);
+
+    /* new accent hues */
+    --accent-positive: 142 40% 35%;
+    --accent-warning: 2 65% 50%;
+
+    --destructive: var(--accent-warning);
+
+    --border: 24 5.4% 63.9%;          /* stone-400 */
+    --input: var(--border);
+    --ring: var(--primary);
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Stone palette — dark mode */
+    --background: 24 9.8% 10%;        /* stone-900 */
+    --foreground: 60 9.1% 97.8%;      /* stone-50 */
+
+    --card: 12 6.5% 15.1%;            /* stone-800 */
+    --card-foreground: var(--foreground);
+    --popover: 12 6.5% 15.1%;         /* stone-800 */
+    --popover-foreground: var(--foreground);
+
+    --primary: 142 38% 35%;           /* dark green */
+    --primary-foreground: 60 9.1% 97.8%;
+
+    --secondary: 30 6.3% 25.1%;       /* stone-700 */
+    --secondary-foreground: var(--foreground);
+
+    --muted: 33.3 5.5% 32.4%;         /* stone-600 */
+    --muted-foreground: 24 5.7% 82.9%; /* stone-300 */
+
+    --accent: 30 6.3% 25.1%;           /* stone-700 */
+    --accent-foreground: var(--foreground);
+
+    /* accents in dark */
+    --accent-positive: 142 40% 50%;
+    --accent-warning: 2 65% 60%;
+
+    --destructive: var(--accent-warning);
+
+    --border: 30 6.3% 25.1%;           /* stone-700 */
+    --input: var(--border);
+    --ring: var(--primary);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Default icon colour to primary for consistency with stone palette */
+  svg {
+    @apply text-primary;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+} 

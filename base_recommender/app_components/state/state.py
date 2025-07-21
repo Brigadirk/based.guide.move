@@ -49,8 +49,14 @@ def init_session_state():
                     "relocationPartnerInfo": {
                         "relationshipType": "",
                         "sameSex": False,  # Changed from string to boolean
-                        "fullRelationshipDuration": 0.0,
-                        "officialRelationshipDuration": 0.0,
+                        "fullRelationshipDuration": 0.0,  # Total time in relationship (any type)
+                        "officialRelationshipDuration": 0.0,  # Duration of official status:
+                        #   - For "Spouse": Years married
+                        #   - For "Civil Partner"/"Domestic Partner": Years in official partnership
+                        #   - For "Unmarried Partner"/"Common-law Partner"/"Cohabiting Partner": Years living together
+                        #   - For "Fiancé(e)": Years engaged
+                        #   - For "Conjugal Partner": Years in committed relationship
+                        #   - For "Other": Years in official relationship status
                         "partnerNationalities": [
                             # Example:
                             # {"country": "France", "willingToRenounce": False}
@@ -253,7 +259,9 @@ def init_session_state():
                         #     },
                         #     "country": "US",
                         #     "amount": 250000.0,
-                        #     "currency": "USD"
+                        #     "currency": "USD",
+                        #     "payback_years": 25.0,      # Years until fully paid off
+                        #     "interest_rate": 3.5        # Annual interest rate percentage
                         # }
                     ],
                     "capitalGains": {

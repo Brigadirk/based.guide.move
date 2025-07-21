@@ -1,3 +1,0 @@
-"""
-Stripe integration package
-""" 

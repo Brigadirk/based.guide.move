@@ -1,0 +1,217 @@
+{
+  "personalInformation": {
+    "dateOfBirth": "1995-07-07",
+    "nationalities": [
+      {
+        "country": "Netherlands",
+        "willingToRenounce": false
+      },
+      {
+        "country": "Ireland",
+        "willingToRenounce": true
+      }
+    ],
+    "maritalStatus": "Married",
+    "enduringMaritalStatusInfo": "",
+    "currentResidency": {
+      "country": "Netherlands",
+      "status": "Citizen",
+      "duration": 0.0
+    },
+    "relocationPartner": true,
+    "relocationPartnerInfo": {
+      "relationshipType": "Spouse",
+      "sameSex": true,
+      "fullRelationshipDuration": 3.0,
+      "officialRelationshipDuration": 1.0,
+      "partnerNationalities": [
+        {
+          "country": "Argentina",
+          "willingToRenounce": false
+        }
+      ]
+    },
+    "numRelocationDependents": 1,
+    "relocationDependents": [
+      {
+        "dateOfBirth": "2020-07-13",
+        "nationalities": [],
+        "relationship": "Child",
+        "isStudent": false
+      }
+    ]
+  },
+  "education": {
+    "isStudent": false,
+    "currentSchool": "",
+    "currentFieldOfStudy": "",
+    "previousDegrees": [
+      {
+        "degree": "MSc Artificial Intelligence",
+        "institution": "Utrecht University",
+        "field": "IT",
+        "start_year": "2015",
+        "end_year": "2018",
+        "in_progress": false
+      }
+    ],
+    "visaSkills": [
+      {
+        "skill": "Caligraphy",
+        "credential_name": "",
+        "credential_institute": ""
+      }
+    ],
+    "interestedInStudying": false,
+    "schoolInterestDetails": "",
+    "learningInterests": [],
+    "schoolOffers": []
+  },
+  "residencyIntentions": {
+    "destinationCountry": {
+      "country": "Argentina",
+      "region": "Buenos Aires",
+      "citizenshipStatus": false,
+      "moveType": "Permanent",
+      "intendedTemporaryDurationOfStay": 0.0
+    },
+    "residencyPlans": {
+      "applyForResidency": true,
+      "maxMonthsWillingToReside": 6,
+      "openToVisiting": false
+    },
+    "citizenshipPlans": {
+      "interestedInCitizenship": false,
+      "familyTies": {
+        "hasConnections": false,
+        "closestRelation": ""
+      },
+      "militaryService": {
+        "willing": false,
+        "maxServiceYears": 2
+      },
+      "investment": {
+        "willing": false,
+        "amount": 0,
+        "currency": "USD"
+      },
+      "donation": {
+        "willing": false,
+        "amount": 0,
+        "currency": "USD"
+      }
+    },
+    "languageProficiency": {
+      "individual": {
+        "Spanish": 3
+      },
+      "partner": {
+        "Spanish": 2
+      },
+      "dependents": [
+        {
+          "Spanish": 4
+        }
+      ],
+      "willing_to_learn": [],
+      "can_teach": {},
+      "other_languages": {
+        "Dutch": "Informally"
+      }
+    },
+    "centerOfLife": {
+      "maintainsSignificantTies": false,
+      "tiesDescription": ""
+    },
+    "moveMotivation": "",
+    "taxCompliantEverywhere": true
+  },
+  "socialSecurityAndPensions": {
+    "currentCountryContributions": {
+      "isContributing": true,
+      "country": "Netherlands",
+      "yearsOfContribution": 3.0
+    },
+    "futurePensionContributions": {
+      "isPlanning": false,
+      "details": []
+    },
+    "existingPlans": {
+      "hasPlans": true,
+      "details": [
+        {
+          "planType": "Defined benefit plan",
+          "currency": "USD",
+          "currentValue": 3.0,
+          "country": "Australia"
+        }
+      ]
+    }
+  },
+  "taxDeductionsAndCredits": {
+    "potentialDeductions": []
+  },
+  "finance": {
+    "totalWealth": {
+      "currency": "USD",
+      "total": 1000000.0,
+      "primary_residence": 500000.0
+    },
+    "incomeSources": [
+      {
+        "category": "Employment",
+        "fields": {
+          "employer": "DSL",
+          "role": "Data Scientist"
+        },
+        "country": "Netherlands",
+        "amount": 45000.0,
+        "currency": "USD",
+        "continue_in_destination": true
+      }
+    ],
+    "expectedEmployment": [],
+    "liabilities": [
+      {
+        "category": "Loan",
+        "fields": {
+          "lender": "Student loan",
+          "purpose": "Study"
+        },
+        "country": "Netherlands",
+        "amount": 35000.0,
+        "currency": "USD"
+      }
+    ],
+    "capitalGains": {
+      "hasGains": false,
+      "details": [],
+      "futureSales": [
+        {
+          "asset": "Bitcoin",
+          "type": "Crypto",
+          "holding_time": "12 \u2013 24 months",
+          "surplus_value": 15000.0,
+          "currency": "USD",
+          "reason": ""
+        }
+      ]
+    },
+    "assets": {
+      "realEstate": [],
+      "financial": [],
+      "taxAdvantagedAccounts": [],
+      "cryptocurrency": []
+    }
+  },
+  "futureFinancialPlans": {
+    "plannedInvestments": [],
+    "plannedPropertyTransactions": [],
+    "plannedRetirementContributions": [],
+    "plannedBusinessChanges": []
+  },
+  "additionalInformation": {
+    "specialSections": [],
+    "generalNotes": ""
+  }
+}
