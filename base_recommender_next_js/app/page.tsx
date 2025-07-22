@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,32 +31,61 @@ import { TaxDeductionsAndCredits } from "@/components/features/tax-deductions-an
 import { FutureFinancialPlans } from "@/components/features/future-financial-plans";
 import { AdditionalInformation } from "@/components/features/additional-information";
 import { Summary } from "@/components/features/summary";
-import { useFormData } from "@/lib/hooks/use-form-data";
+import { useFormStore } from "@/lib/stores";
 import { DevStateViewer } from "@/components/dev/state-viewer";
+import { SelectedDestinationCard } from "@/components/features/selected-destination-card";
 
-const SECTIONS = [
-  { id: "disclaimer", title: "Disclaimer", icon: AlertCircle, required: true },
-  { id: "destination", title: "Desired Destination", icon: Globe, required: true },
-  { id: "personal", title: "Personal Information", icon: User, required: true },
-  { id: "education", title: "Education", icon: BookOpen, required: false },
-  { id: "residency", title: "Residency Intentions", icon: Plane, required: true },
-  { id: "finance", title: "Income and Assets", icon: Banknote, required: true },
-  { id: "social-security", title: "Social Security and Pensions", icon: Briefcase, required: false },
-  { id: "tax-deductions", title: "Tax Deductions and Credits", icon: Calculator, required: false },
-  { id: "future-plans", title: "Future Financial Plans", icon: TrendingUp, required: false },
-  { id: "additional", title: "Additional Information", icon: Info, required: false },
-  { id: "summary", title: "Summary", icon: CheckCircle, required: true },
+interface Section {
+  id: string
+  title: string
+  icon: any
+  required: boolean
+  showDot: boolean
+}
+
+const SECTIONS: Section[] = [
+  { id: "disclaimer", title: "Disclaimer", icon: AlertCircle, required: true, showDot: true },
+  { id: "destination", title: "Desired Destination", icon: Globe, required: true, showDot: true },
+  { id: "personal", title: "Personal Information", icon: User, required: true, showDot: true },
+  { id: "education", title: "Education", icon: BookOpen, required: false, showDot: true },
+  { id: "residency", title: "Residency Intentions", icon: Plane, required: true, showDot: true },
+  { id: "finance", title: "Income and Assets", icon: Banknote, required: true, showDot: true },
+  { id: "social-security", title: "Social Security and Pensions", icon: Briefcase, required: false, showDot: true },
+  { id: "tax-deductions", title: "Tax Deductions and Credits", icon: Calculator, required: false, showDot: true },
+  { id: "future-plans", title: "Future Financial Plans", icon: TrendingUp, required: false, showDot: true },
+  { id: "additional", title: "Additional Information", icon: Info, required: false, showDot: true },
+  { id: "summary", title: "Summary", icon: CheckCircle, required: false, showDot: false }, // No red dot for summary
 ];
 
 export default function HomePage() {
   const [currentSection, setCurrentSection] = useState(0);
-  const { isSectionComplete, markSectionComplete, isSectionMarkedComplete, formData } = useFormData();
+  const { isSectionComplete, hasRequiredData, markSectionComplete, isSectionMarkedComplete, formData, updateFormData } = useFormStore();
   const destCountry = formData.destination?.country ?? "";
   const destRegion = formData.destination?.region ?? "";
 
-  const handleNext = () => {
+  // Listen for formData changes from custom events
+  useEffect(() => {
+    const handleFormDataChange = (event: CustomEvent) => {
+      // Event listener for form data changes
+    }
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("formDataChange", handleFormDataChange as EventListener)
+      return () => window.removeEventListener("formDataChange", handleFormDataChange as EventListener)
+    }
+  }, [])
+
+  // Called when user clicks "Continue" button within a section component
+  const handleContinue = () => {
+    markSectionComplete(SECTIONS[currentSection].id)
     if (currentSection < SECTIONS.length - 1) {
-      markSectionComplete(SECTIONS[currentSection].id)
+      setCurrentSection(currentSection + 1);
+    }
+  };
+
+  // Called when user clicks navigation "Next" button (should NOT mark complete)
+  const handleNavigateNext = () => {
+    if (currentSection < SECTIONS.length - 1) {
       setCurrentSection(currentSection + 1);
     }
   };
@@ -70,18 +99,21 @@ export default function HomePage() {
   const canProceed = () => {
     const currentSectionData = SECTIONS[currentSection];
     if (!currentSectionData.required) return true;
-    return isSectionComplete(currentSectionData.id);
+    // Use hasRequiredData for navigation (not isSectionComplete which is for manual completion)
+    return hasRequiredData(currentSectionData.id);
   };
 
-  const progress = ((currentSection + 1) / SECTIONS.length) * 100;
+  // FIXED: Progress based on actual completion, not navigation position
+  const completedSections = SECTIONS.filter(section => isSectionComplete(section.id))
+  const progress = (completedSections.length / SECTIONS.length) * 100;
 
   const renderSection = () => {
     const section = SECTIONS[currentSection];
     
-    // Gate all sections beyond destination until destination complete
+    // Gate all sections beyond destination until destination has required data
     if (
       !["disclaimer", "destination", "summary"].includes(section.id) &&
-      !isSectionComplete("destination")
+      !hasRequiredData("destination")
     ) {
       return (
         <div className="p-6 text-center text-sm text-muted-foreground">
@@ -92,25 +124,25 @@ export default function HomePage() {
 
     switch (section.id) {
       case "disclaimer":
-        return <Disclaimer onComplete={handleNext} />;
+        return <Disclaimer onComplete={handleContinue} />;
       case "destination":
-        return <Destination onComplete={handleNext} />;
+        return <Destination onComplete={handleContinue} />;
       case "personal":
-        return <PersonalInformation onComplete={handleNext} />;
+        return <PersonalInformation onComplete={handleContinue} />;
       case "education":
-        return <Education onComplete={handleNext} />;
+        return <Education onComplete={handleContinue} />;
       case "residency":
-        return <ResidencyIntentions onComplete={handleNext} />;
+        return <ResidencyIntentions onComplete={handleContinue} />;
       case "finance":
-        return <Finance onComplete={handleNext} />;
+        return <Finance onComplete={handleContinue} />;
       case "social-security":
-        return <SocialSecurityPensions onComplete={handleNext} />;
+        return <SocialSecurityPensions onComplete={handleContinue} />;
       case "tax-deductions":
-        return <TaxDeductionsAndCredits onComplete={handleNext} />;
+        return <TaxDeductionsAndCredits onComplete={handleContinue} />;
       case "future-plans":
-        return <FutureFinancialPlans onComplete={handleNext} />;
+        return <FutureFinancialPlans onComplete={handleContinue} />;
       case "additional":
-        return <AdditionalInformation onComplete={handleNext} />;
+        return <AdditionalInformation onComplete={handleContinue} />;
       case "summary":
         return <Summary />;
       default:
@@ -144,22 +176,32 @@ export default function HomePage() {
         <div className="flex flex-col lg:flex-row lg:items-start lg:gap-8">
           {/* Sidebar */}
           <aside className="w-full lg:w-64 mb-6 lg:mb-0">
-            {destCountry && (
-              <p className="text-sm mb-3 text-accent-positive">Destination: {destCountry}{destRegion && ` – ${destRegion}`}</p>
-            )}
+            {/* Selected Destination Card - Only show after section completion */}
+            {destCountry && destRegion && destCountry.trim() !== "" && destRegion.trim() !== "" && isSectionComplete('destination') ? (
+              <div className="mb-4">
+                <SelectedDestinationCard 
+                  country={destCountry} 
+                  region={destRegion} 
+                  compact={true}
+                />
+              </div>
+            ) : null}
             <nav className="space-y-1 lg:sticky lg:top-24 flex lg:block overflow-x-auto lg:overflow-visible">
               {SECTIONS.map((section, index) => {
                 const Icon = section.icon
-                const isCompleted = isSectionMarkedComplete(section.id)
-                const disabled = index > 1 && !isSectionComplete("destination")
+                const isCompleted = isSectionComplete(section.id)
+                const isMarkedComplete = isSectionMarkedComplete(section.id)
+                const disabled = index > 1 && !hasRequiredData("destination")
                 const isCurrent = index === currentSection
                 return (
                   <button
                     key={section.id}
                     title={disabled ? "Please enter your destination first" : undefined}
-                    className={`flex items-center w-full px-3 py-2 rounded-md text-sm transition-colors ${
+                    className={`flex items-center w-full px-3 py-2 rounded-md text-sm transition-colors relative ${
                       isCurrent
                         ? "bg-primary text-primary-foreground"
+                        : isCompleted
+                        ? "bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 border border-green-200 dark:border-green-800"
                         : "hover:bg-muted"
                     } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                     onClick={() => !disabled && setCurrentSection(index)}
@@ -168,11 +210,23 @@ export default function HomePage() {
                     <span className="flex-1 text-left truncate">
                       {section.title}
                     </span>
-                    {isCompleted && <Check className="w-4 h-4 text-accent-positive" />}
+                    
+                    {/* Enhanced completion indicators */}
+                    <div className="flex items-center gap-1">
+                      {isCompleted && <Check className="w-4 h-4 text-green-600" />}
+                      {isMarkedComplete && !isCompleted && <Check className="w-4 h-4 text-yellow-500" />}
+                      {section.showDot && !isCompleted && (
+                        <div className="w-1.5 h-1.5 bg-red-500 rounded-full opacity-80 shadow-sm" title="Section to complete" />
+                      )}
+                    </div>
+
+
                   </button>
                 )
               })}
             </nav>
+            
+
           </aside>
 
           {/* Main column */}
@@ -196,19 +250,22 @@ export default function HomePage() {
                 {SECTIONS.map((section, index) => {
                   const Icon = section.icon
                   const isCompleted = isSectionMarkedComplete(section.id)
-                  const disabled = index > 1 && !isSectionComplete("destination")
+                  const disabled = index > 1 && !hasRequiredData("destination")
                   const isCurrent = index === currentSection
                   return (
                     <Badge
                       key={section.id}
                       title={disabled ? "Please enter your destination first" : undefined}
                       variant={isCurrent ? "default" : isCompleted ? "secondary" : "outline"}
-                      className={`transition-all ${isCurrent ? "ring-2 ring-primary" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                      className={`transition-all relative ${isCurrent ? "ring-2 ring-primary" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                       onClick={() => !disabled && setCurrentSection(index)}
                     >
                       <Icon className="w-4 h-4 mr-1" />
                       {section.title}
                       {isCompleted && <Check className="w-4 h-4 ml-1 text-accent-positive" />}
+                      {section.showDot && !isCompleted && (
+                        <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-red-500 rounded-full opacity-80 shadow-sm" />
+                      )}
                     </Badge>
                   )
                 })}
@@ -253,7 +310,7 @@ export default function HomePage() {
                     Previous
                   </Button>
                   <Button
-                    onClick={handleNext}
+                    onClick={handleNavigateNext}
                     disabled={!canProceed()}
                   >
                     {currentSection === SECTIONS.length - 2 ? "Finish" : "Next"}

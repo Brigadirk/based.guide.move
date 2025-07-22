@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Code, X } from "lucide-react"
-import { useFormData } from "@/lib/hooks/use-form-data"
+import { useFormStore } from "@/lib/stores"
 import { Button } from "@/components/ui/button"
 
 export function DevStateViewer() {
@@ -11,7 +11,7 @@ export function DevStateViewer() {
     return null
   }
 
-  const { formData } = useFormData()
+  const { formData } = useFormStore()
   const [open, setOpen] = useState(false)
 
   return (

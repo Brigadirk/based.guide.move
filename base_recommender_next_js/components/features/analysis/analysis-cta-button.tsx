@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/components/providers/supabase-auth-provider"
+import { useAuthStore } from "@/lib/stores"
 import { useState } from "react"
 
 interface AnalysisCtaButtonProps {
@@ -17,7 +17,7 @@ export function AnalysisCtaButton({
   fullWidth = false 
 }: AnalysisCtaButtonProps) {
   const router = useRouter()
-  const { user, hasMembership, bananaBalance } = useAuth()
+  const { user, hasMembership, bananaBalance } = useAuthStore()
   const [loading, setLoading] = useState(false)
 
   const handleClick = async (e: React.MouseEvent) => {

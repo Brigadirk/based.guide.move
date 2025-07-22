@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { useFormData } from "@/lib/hooks/use-form-data"
+import { useFormStore } from "@/lib/stores"
 import { useState, useEffect, useMemo } from "react"
 import { SectionHint } from "@/components/ui/section-hint"
 import { getLanguages } from "@/lib/utils/country-utils"
@@ -36,7 +36,7 @@ export function ResidencyIntentions({
 }: {
   onComplete: () => void
 }) {
-  const { getFormData, updateFormData } = useFormData()
+  const { getFormData, updateFormData } = useFormStore()
 
   /* ---------------------- move type ---------------------- */
   const moveType =
@@ -76,9 +76,6 @@ export function ResidencyIntentions({
     proficiency: string
     teachingCapability: string
   }
-
-  const primaryLang =
-    getFormData("residencyIntentions.languageProficiency.primaryLanguage") ?? ""
 
   const others: OtherLang[] =
     getFormData("residencyIntentions.languageProficiency.otherLanguages") ?? []
@@ -121,8 +118,7 @@ export function ResidencyIntentions({
   const canContinue =
     moveType &&
     (moveType !== "Temporary" || tempDuration) &&
-    (!applyForResidency || maxMonths !== "") &&
-    primaryLang.trim() !== ""
+    (!applyForResidency || maxMonths !== "")
 
   return (
     <Card>
@@ -131,10 +127,8 @@ export function ResidencyIntentions({
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <SectionHint>
-          <p>
-            This section helps us understand your residency intentions. It's important for us to know your plans and motivations for moving.
-          </p>
+        <SectionHint title="📋 About this section">
+          This section helps us understand your residency intentions, language skills, and citizenship pathways to provide tailored advice for your move.
         </SectionHint>
 
         {/* Move type */}
@@ -212,35 +206,244 @@ export function ResidencyIntentions({
 
         {/* Max months if residency */}
         {applyForResidency && (
-          <div className="space-y-1">
+          <div className="space-y-3">
             <Label>
               Max months per year I'm willing to reside (first year) *
             </Label>
             <p className="text-xs text-muted-foreground mb-1">
               Some residency permits require physical presence; set 12 for full-time stay.
             </p>
-            <Input
-              type="number"
-              min={0}
-              max={12}
-              value={maxMonths}
-              onChange={(e) =>
-                updateFormData(
-                  "residencyIntentions.residencyPlans.maxMonthsWillingToReside",
-                  e.target.value
-                )
-              }
-            />
+            
+            {/* Slider for months */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Months per year: <strong>{maxMonths || 6}</strong></span>
+                <span className="text-xs text-muted-foreground">
+                  {Number(maxMonths || 6) === 0 ? "No presence" :
+                   Number(maxMonths || 6) <= 3 ? "Minimal presence" :
+                   Number(maxMonths || 6) <= 6 ? "Limited presence" :
+                   Number(maxMonths || 6) <= 9 ? "Substantial presence" : "Full-time residence"}
+                </span>
+              </div>
+              <Slider
+                value={[Number(maxMonths || 6)]}
+                onValueChange={(value) =>
+                  updateFormData(
+                    "residencyIntentions.residencyPlans.maxMonthsWillingToReside",
+                    value[0].toString()
+                  )
+                }
+                max={12}
+                min={0}
+                step={1}
+                className="w-full"
+              />
+              
+              {/* Warning for zero presence */}
+              {Number(maxMonths || 6) === 0 && (
+                <div className="flex items-center gap-2 mt-2">
+                  <Checkbox
+                    id="open_visiting"
+                    checked={getFormData("residencyIntentions.residencyPlans.openToVisiting") ?? false}
+                    onCheckedChange={(v) =>
+                      updateFormData("residencyIntentions.residencyPlans.openToVisiting", !!v)
+                    }
+                  />
+                  <Label htmlFor="open_visiting" className="text-sm">I'm open to occasional visits if required</Label>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
-        {/* Destination languages list (step 1) */}
-        <div className="space-y-2">
-          <h3 className="font-semibold">Languages spoken in your destination</h3>
+        {/* Language Proficiency Section */}
+        <div className="space-y-4">
+          <h3 className="font-semibold">🗣️ Language Skills</h3>
+          
           {destLangs.length > 0 ? (
-            <p className="text-sm">{destLangs.join(" • ")}</p>
+            <div className="space-y-4">
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  🌐 The dominant language{destLangs.length > 1 ? 's' : ''} in {destCountry} {destLangs.length > 1 ? 'are' : 'is'}: <strong>{destLangs.join(', ')}</strong>
+                </p>
+              </div>
+
+              {/* Your Language Proficiency */}
+              <div className="space-y-3">
+                <h4 className="font-medium">📊 Your Language Skills</h4>
+                {destLangs.map((lang) => {
+                  const currentLevel = Number(indProf[lang] || 0)
+                  const proficiencyLabels = ['None', 'A1 (Beginner)', 'A2 (Elementary)', 'B1 (Intermediate)', 'B2 (Upper-Intermediate)', 'C1 (Advanced)', 'C2 (Native-like)']
+                  
+                  return (
+                    <div key={lang} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <Label className="text-sm font-medium">{lang} proficiency</Label>
+                        <span className="text-sm text-muted-foreground">{proficiencyLabels[currentLevel]}</span>
+                      </div>
+                                             <Slider
+                         value={[currentLevel]}
+                         onValueChange={(value) => {
+                           const newProf = { ...indProf, [lang]: value[0].toString() }
+                           setIndProf(newProf)
+                         }}
+                        max={6}
+                        min={0}
+                        step={1}
+                        className="w-full"
+                      />
+                      
+                      {/* Willingness to learn */}
+                      {currentLevel < 3 && (
+                        <div className="flex items-center gap-2 mt-2">
+                          <Checkbox
+                            id={`learn_${lang}`}
+                            checked={willing.includes(lang)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setWilling([...willing, lang])
+                              } else {
+                                setWilling(willing.filter(l => l !== lang))
+                              }
+                            }}
+                          />
+                          <Label htmlFor={`learn_${lang}`} className="text-sm">Willing to learn {lang}</Label>
+                        </div>
+                      )}
+                      
+                      {/* Teaching capability */}
+                      {currentLevel >= 4 && (
+                        <div className="space-y-2 mt-2">
+                          <Label className="text-sm">Can you teach {lang}?</Label>
+                          <Select
+                            value={canTeach[lang] || 'No'}
+                            onValueChange={(value) => {
+                              const newTeach = { ...canTeach }
+                              if (value === 'No') {
+                                delete newTeach[lang]
+                              } else {
+                                newTeach[lang] = value
+                              }
+                              setCanTeach(newTeach)
+                            }}
+                          >
+                            <SelectTrigger className="h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="No">No</SelectItem>
+                              <SelectItem value="Informally">Informally</SelectItem>
+                              <SelectItem value="Formally with credentials">Formally with credentials</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Partner's Language Skills */}
+              {(() => {
+                const hasPartner = getFormData("personalInformation.partner.hasPartner") ?? false
+                const partnerProf = getFormData("residencyIntentions.languageProficiency.partner") ?? {}
+                
+                if (!hasPartner) return null
+                
+                return (
+                  <div className="space-y-3 border-t pt-4">
+                    <h4 className="font-medium">👥 Partner's Language Skills</h4>
+                    {destLangs.map((lang) => {
+                      const currentLevel = Number(partnerProf[lang] || 0)
+                      const proficiencyLabels = ['None', 'A1 (Beginner)', 'A2 (Elementary)', 'B1 (Intermediate)', 'B2 (Upper-Intermediate)', 'C1 (Advanced)', 'C2 (Native-like)']
+                      
+                      return (
+                        <div key={`partner_${lang}`} className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <Label className="text-sm font-medium">Partner's {lang} proficiency</Label>
+                            <span className="text-sm text-muted-foreground">{proficiencyLabels[currentLevel]}</span>
+                          </div>
+                          <Slider
+                            value={[currentLevel]}
+                            onValueChange={(value) => {
+                              const newPartnerProf = { ...partnerProf, [lang]: value[0] }
+                              updateFormData("residencyIntentions.languageProficiency.partner", newPartnerProf)
+                            }}
+                            max={6}
+                            min={0}
+                            step={1}
+                            className="w-full"
+                          />
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
+              })()}
+
+              {/* Other Languages */}
+              <div className="space-y-3 border-t pt-4">
+                <h4 className="font-medium">🔤 Other Languages You Can Teach</h4>
+                <p className="text-xs text-muted-foreground">Add any other languages you can teach that aren't listed above</p>
+                
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Language name"
+                    value={draftLang.language}
+                    onChange={(e) => setDraftLang({...draftLang, language: e.target.value})}
+                    className="flex-1"
+                  />
+                  <Select
+                    value={draftLang.teachingCapability}
+                    onValueChange={(v) => setDraftLang({...draftLang, teachingCapability: v})}
+                  >
+                    <SelectTrigger className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="No">Not interested</SelectItem>
+                      <SelectItem value="Informally">Informally</SelectItem>
+                      <SelectItem value="Formally with credentials">Formally with credentials</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={!canAddLang}
+                    onClick={() => {
+                      if (canAddLang && !others.some(o => o.language === draftLang.language)) {
+                        setOthers([...others, draftLang])
+                        setDraftLang({language: '', proficiency: 'Basic', teachingCapability: 'No'})
+                      }
+                    }}
+                  >
+                    Add
+                  </Button>
+                </div>
+
+                {others.length > 0 && (
+                  <div className="space-y-2">
+                    {others.map((lang, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-2 border rounded">
+                        <div>
+                          <span className="font-medium">{lang.language}</span>
+                          <span className="text-sm text-muted-foreground ml-2">({lang.teachingCapability})</span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setOthers(others.filter((_, i) => i !== idx))}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           ) : (
-            <p className="text-sm text-muted-foreground">Select a destination country first to see its dominant languages.</p>
+            <p className="text-sm text-muted-foreground">Select a destination country first to see its dominant languages and configure your language skills.</p>
           )}
         </div>
 
@@ -312,50 +515,158 @@ export function ResidencyIntentions({
 
         {/* Destination language proficiency removed for reset */}
 
-        {/* Citizenship acquisition methods */}
+        {/* Enhanced Citizenship acquisition methods */}
         {interestedInCitizenship && (
-          <div className="space-y-2 border rounded-md p-4 mt-2">
-            <h4 className="font-medium">Citizenship pathways you're open to</h4>
-            {(() => {
-              const invest = getFormData("residencyIntentions.citizenshipPlans.investmentCitizenship") ?? false
-              const donate = getFormData("residencyIntentions.citizenshipPlans.donationCitizenship") ?? false
-              const military = getFormData("residencyIntentions.citizenshipPlans.militaryService") ?? false
-
-              const family = getFormData("residencyIntentions.citizenshipPlans.familyTies.hasConnections") ?? false
-              const relation = getFormData("residencyIntentions.citizenshipPlans.familyTies.closestRelation") ?? ""
-
-              const upd = (field: string, v: boolean) =>
-                updateFormData(`residencyIntentions.citizenshipPlans.${field}`, v)
-
-              return (
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <Checkbox id="invest_cit" checked={invest} onCheckedChange={(v)=>upd('investmentCitizenship',!!v)} />
-                    <Label htmlFor="invest_cit">Investment route (e.g. real estate, bonds)</Label>
+          <div className="space-y-4 border rounded-md p-4 mt-2">
+            <h4 className="font-medium">🪪 Citizenship Options</h4>
+            
+            {/* Investment Route */}
+            <div className="space-y-2 border rounded p-3">
+              <div className="flex items-center gap-2">
+                <Checkbox 
+                  id="invest_cit" 
+                  checked={getFormData("residencyIntentions.citizenshipPlans.investment.willing") ?? false}
+                  onCheckedChange={(v) => updateFormData('residencyIntentions.citizenshipPlans.investment.willing', !!v)} 
+                />
+                <Label htmlFor="invest_cit" className="font-medium">💼 Investment route</Label>
+              </div>
+              <p className="text-xs text-muted-foreground ml-6">Investment in real estate, bonds, or business for citizenship</p>
+              
+              {getFormData("residencyIntentions.citizenshipPlans.investment.willing") && (
+                <div className="ml-6 space-y-2">
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <Label className="text-sm">Investment Amount</Label>
+                      <Input
+                        type="number"
+                        min={0}
+                        placeholder="0"
+                        value={getFormData("residencyIntentions.citizenshipPlans.investment.amount") ?? ""}
+                        onChange={(e) => updateFormData("residencyIntentions.citizenshipPlans.investment.amount", Number(e.target.value))}
+                      />
+                    </div>
+                    <div className="w-24">
+                      <Label className="text-sm">Currency</Label>
+                      <Select
+                        value={getFormData("residencyIntentions.citizenshipPlans.investment.currency") ?? "USD"}
+                        onValueChange={(v) => updateFormData("residencyIntentions.citizenshipPlans.investment.currency", v)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="USD">USD</SelectItem>
+                          <SelectItem value="EUR">EUR</SelectItem>
+                          <SelectItem value="GBP">GBP</SelectItem>
+                          <SelectItem value="CHF">CHF</SelectItem>
+                          <SelectItem value="CAD">CAD</SelectItem>
+                          <SelectItem value="AUD">AUD</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Checkbox id="donate_cit" checked={donate} onCheckedChange={(v)=>upd('donationCitizenship',!!v)} />
-                    <Label htmlFor="donate_cit">Donation route (e.g. national fund)</Label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Checkbox id="mil_cit" checked={military} onCheckedChange={(v)=>upd('militaryService',!!v)} />
-                    <Label htmlFor="mil_cit">Willing to perform mandatory military service</Label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Checkbox id="fam_cit" checked={family} onCheckedChange={(v)=>updateFormData('residencyIntentions.citizenshipPlans.familyTies.hasConnections',!!v)} />
-                    <Label htmlFor="fam_cit">I have family ties that might grant citizenship</Label>
-                  </div>
-
-                  {family && (
-                    <Input
-                      placeholder="Describe closest relation (e.g. grandparent)"
-                      value={relation}
-                      onChange={(e)=>updateFormData('residencyIntentions.citizenshipPlans.familyTies.closestRelation', e.target.value)}
-                    />
-                  )}
                 </div>
-              )
-            })()}
+              )}
+            </div>
+
+            {/* Donation Route */}
+            <div className="space-y-2 border rounded p-3">
+              <div className="flex items-center gap-2">
+                <Checkbox 
+                  id="donate_cit" 
+                  checked={getFormData("residencyIntentions.citizenshipPlans.donation.willing") ?? false}
+                  onCheckedChange={(v) => updateFormData('residencyIntentions.citizenshipPlans.donation.willing', !!v)} 
+                />
+                <Label htmlFor="donate_cit" className="font-medium">🎁 Donation route</Label>
+              </div>
+              <p className="text-xs text-muted-foreground ml-6">Donation to national fund or development projects</p>
+              
+              {getFormData("residencyIntentions.citizenshipPlans.donation.willing") && (
+                <div className="ml-6 space-y-2">
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <Label className="text-sm">Donation Amount</Label>
+                      <Input
+                        type="number"
+                        min={0}
+                        placeholder="0"
+                        value={getFormData("residencyIntentions.citizenshipPlans.donation.amount") ?? ""}
+                        onChange={(e) => updateFormData("residencyIntentions.citizenshipPlans.donation.amount", Number(e.target.value))}
+                      />
+                    </div>
+                    <div className="w-24">
+                      <Label className="text-sm">Currency</Label>
+                      <Select
+                        value={getFormData("residencyIntentions.citizenshipPlans.donation.currency") ?? "USD"}
+                        onValueChange={(v) => updateFormData("residencyIntentions.citizenshipPlans.donation.currency", v)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="USD">USD</SelectItem>
+                          <SelectItem value="EUR">EUR</SelectItem>
+                          <SelectItem value="GBP">GBP</SelectItem>
+                          <SelectItem value="CHF">CHF</SelectItem>
+                          <SelectItem value="CAD">CAD</SelectItem>
+                          <SelectItem value="AUD">AUD</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Military Service */}
+            <div className="space-y-2 border rounded p-3">
+              <div className="flex items-center gap-2">
+                <Checkbox 
+                  id="mil_cit" 
+                  checked={getFormData("residencyIntentions.citizenshipPlans.militaryService.willing") ?? false}
+                  onCheckedChange={(v) => updateFormData('residencyIntentions.citizenshipPlans.militaryService.willing', !!v)} 
+                />
+                <Label htmlFor="mil_cit" className="font-medium">🪖 Military service</Label>
+              </div>
+              <p className="text-xs text-muted-foreground ml-6">Willing to perform mandatory military service for citizenship</p>
+              
+              {getFormData("residencyIntentions.citizenshipPlans.militaryService.willing") && (
+                <div className="ml-6 space-y-2">
+                  <Label className="text-sm">Maximum years of service</Label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={10}
+                    value={getFormData("residencyIntentions.citizenshipPlans.militaryService.maxServiceYears") ?? 2}
+                    onChange={(e) => updateFormData("residencyIntentions.citizenshipPlans.militaryService.maxServiceYears", Number(e.target.value))}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Family Ties */}
+            <div className="space-y-2 border rounded p-3">
+              <div className="flex items-center gap-2">
+                <Checkbox 
+                  id="fam_cit" 
+                  checked={getFormData("residencyIntentions.citizenshipPlans.familyTies.hasConnections") ?? false}
+                  onCheckedChange={(v) => updateFormData('residencyIntentions.citizenshipPlans.familyTies.hasConnections', !!v)} 
+                />
+                <Label htmlFor="fam_cit" className="font-medium">👪 Family connections</Label>
+              </div>
+              <p className="text-xs text-muted-foreground ml-6">Family ties that might grant citizenship eligibility</p>
+              
+              {getFormData("residencyIntentions.citizenshipPlans.familyTies.hasConnections") && (
+                <div className="ml-6 space-y-2">
+                  <Label className="text-sm">Describe your closest family relation in the country</Label>
+                  <Input
+                    placeholder="e.g., parent, grandparent, spouse, child"
+                    value={getFormData("residencyIntentions.citizenshipPlans.familyTies.closestRelation") ?? ""}
+                    onChange={(e) => updateFormData('residencyIntentions.citizenshipPlans.familyTies.closestRelation', e.target.value)}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         )}
       </CardContent>

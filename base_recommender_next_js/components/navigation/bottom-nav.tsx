@@ -3,12 +3,12 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { useAuth } from "@/components/providers/supabase-auth-provider"
+import { useAuthStore } from "@/lib/stores"
 import { HomeIcon, GlobeIcon, BarChartIcon, UserIcon, SettingsIcon } from "lucide-react"
 
 export function BottomNav() {
   const pathname = usePathname()
-  const { user, hasMembership } = useAuth()
+  const { user, hasMembership } = useAuthStore()
 
   // Don't show bottom nav on auth pages, if user is not authenticated, or if user is not a member
   if (!user || !hasMembership || pathname?.startsWith('/(auth)') || pathname?.startsWith('/auth')) {

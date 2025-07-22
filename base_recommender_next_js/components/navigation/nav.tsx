@@ -1,13 +1,13 @@
 'use client'
 
 import Link from "next/link"
-import { useAuth } from "@/components/providers/supabase-auth-provider"
+import { useAuthStore } from "@/lib/stores"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export function Nav() {
-  const { user, loading, signOut, hasMembership, bananaBalance } = useAuth()
+  const { user, loading, signOut, hasMembership, bananaBalance } = useAuthStore()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   

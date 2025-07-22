@@ -92,6 +92,7 @@ export function CountryFlag({
   showPlaceholder = false,
 }: CountryFlagProps) {
   const [error, setError] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   // If no country code and no placeholder needed, return null
   if (!countryCode || (!countryCode.trim() && !showPlaceholder)) {
@@ -107,19 +108,36 @@ export function CountryFlag({
 
   return (
     <div className={cn('relative shrink-0', sizes[size], className)}>
+      {/* Loading state */}
+      {loading && !error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded animate-pulse">
+          <div className="w-2 h-2 bg-muted-foreground/50 rounded-full"></div>
+        </div>
+      )}
+      
       <Image
         src={flagUrl}
         alt={`${code.toUpperCase()} flag`}
         fill
         className="object-contain rounded"
         priority
+        onLoad={() => setLoading(false)}
         onError={() => {
           setError(true)
+          setLoading(false)
         }}
       />
+      
+      {/* Error fallback */}
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-muted rounded">
-          <span className="text-xs text-muted-foreground">{code.toUpperCase()}</span>
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/80 rounded border border-border">
+          <span className={`font-mono font-bold text-muted-foreground ${
+            size === 'xs' ? 'text-[8px]' : 
+            size === 'sm' ? 'text-[10px]' : 
+            size === 'md' ? 'text-xs' : 'text-sm'
+          }`}>
+            {code.toUpperCase()}
+          </span>
         </div>
       )}
     </div>

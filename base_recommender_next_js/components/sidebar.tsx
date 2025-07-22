@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useFormData } from "@/lib/hooks/use-form-data";
+import { useFormStore } from "@/lib/stores";
 import { 
   AlertTriangle, 
   Globe, 
@@ -35,7 +35,7 @@ const stepIcons = [
 ];
 
 export function Sidebar({ steps, currentStep, onStepChange }: SidebarProps) {
-  const { formData } = useFormData()
+  const { formData } = useFormStore()
   const destCountry = formData.destination?.country ?? ""
   const destRegion = formData.destination?.region ?? ""
   return (
