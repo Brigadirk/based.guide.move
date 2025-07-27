@@ -111,7 +111,14 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
               <div>
                 <h3 className="font-semibold text-green-900 mb-2">Your Privacy Matters</h3>
                 <p className="text-sm text-green-800 leading-relaxed">
-                  Data is encrypted, processed securely, and not stored. Only used to generate your personalized analysis.
+                  Data is encrypted, processed securely, and not stored. Only used to generate your personalized analysis. 
+                  <a 
+                    href="/privacy-policy" 
+                    target="_blank" 
+                    className="underline hover:text-green-900 font-medium ml-1"
+                  >
+                    Read our Privacy Policy
+                  </a>
                 </p>
                 <Badge variant="secondary" className="mt-2 bg-green-100 text-green-700">
                   No Data Storage

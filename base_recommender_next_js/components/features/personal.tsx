@@ -66,12 +66,19 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     dateOfBirth: string
     student: boolean
     nationalities: { country: string; willingToRenounce: boolean }[]
+    currentResidency?: {
+      country?: string
+      status?: string
+      duration?: string
+    }
   }
   const depList: Dependent[] = getFormData("personalInformation.dependents") ?? []
   const updateDepList = (next: Dependent[]) =>
     updateFormData("personalInformation.dependents", next)
   const [visibleDependents, setVisibleDependents] = useState<number[]>([])
   const [editingDependents, setEditingDependents] = useState<number[]>([])
+  const [savedDependents, setSavedDependents] = useState<number[]>([])
+  const [attemptedDependentSaves, setAttemptedDependentSaves] = useState<number[]>([])
   const [addCountry, setAddCountry] = useState("")
 
   // Local state
@@ -213,6 +220,24 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     }
   }, [getFormData("personalInformation.maritalStatus")])
 
+  // Auto-save default relationship type when partner is enabled or marital status changes
+  useEffect(() => {
+    if (hasPartner) {
+      const maritalStatus = getFormData("personalInformation.maritalStatus") ?? ""
+      const currentRelationshipType = getFormData("personalInformation.relocationPartnerInfo.relationshipType") ?? ""
+      
+      // If no relationship type is saved, auto-save the default
+      if (!currentRelationshipType) {
+        let defaultType = "Unmarried Partner" // fallback
+        if (maritalStatus === "Married") defaultType = "Spouse"
+        if (maritalStatus === "Official Partnership") defaultType = "Civil Partner"
+        
+        console.log("Auto-saving default relationship type:", defaultType)
+        updateFormData("personalInformation.relocationPartnerInfo.relationshipType", defaultType)
+      }
+    }
+  }, [hasPartner, getFormData("personalInformation.maritalStatus"), getFormData("personalInformation.relocationPartnerInfo.relationshipType")])
+
   // Partner validation function
   const validatePartnerInfo = () => {
     if (!hasPartner) return true
@@ -225,22 +250,93 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     const partnerStatus = getFormData("personalInformation.relocationPartnerInfo.currentResidency.status")
     const partnerNationalities = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") || []
     
-    return partnerDob && 
-           relationshipType && 
-           (fullDuration || fullDuration === 0) && 
-           (officialDuration || officialDuration === 0) && 
-           partnerCountry && 
-           partnerStatus && 
-           partnerNationalities.length > 0
+    console.log("DEBUG Partner Validation:")
+    console.log("- partnerDob:", partnerDob)
+    console.log("- relationshipType:", relationshipType)
+    console.log("- fullDuration:", fullDuration)
+    console.log("- officialDuration:", officialDuration)
+    console.log("- partnerCountry:", partnerCountry)
+    console.log("- partnerStatus:", partnerStatus)
+    console.log("- partnerNationalities:", partnerNationalities)
+    
+    // Check each field individually for better debugging
+    const dobValid = !!partnerDob
+    const relationshipValid = !!relationshipType
+    const fullDurationValid = fullDuration !== undefined && fullDuration !== null && fullDuration !== ""
+    const officialDurationValid = officialDuration !== undefined && officialDuration !== null && officialDuration !== ""
+    const durationLogicValid = !fullDurationValid || !officialDurationValid || (officialDuration <= fullDuration)
+    const countryValid = !!partnerCountry
+    const statusValid = !!partnerStatus
+    const nationalitiesValid = partnerNationalities.length > 0
+    
+    console.log("- dobValid:", dobValid)
+    console.log("- relationshipValid:", relationshipValid)
+    console.log("- fullDurationValid:", fullDurationValid)
+    console.log("- officialDurationValid:", officialDurationValid)
+    console.log("- durationLogicValid:", durationLogicValid)
+    console.log("- countryValid:", countryValid)
+    console.log("- statusValid:", statusValid)
+    console.log("- nationalitiesValid:", nationalitiesValid)
+    
+    const isValid = dobValid && relationshipValid && fullDurationValid && officialDurationValid && durationLogicValid && countryValid && statusValid && nationalitiesValid
+    
+    console.log("- isValid:", isValid)
+    return isValid
   }
 
   const savePartnerInfo = () => {
+    console.log("DEBUG: Attempting to save partner info")
     setAttemptedPartnerSave(true)
-    if (validatePartnerInfo()) {
+    const isValid = validatePartnerInfo()
+    console.log("DEBUG: Validation result:", isValid)
+    if (isValid) {
+      console.log("DEBUG: Partner info is valid, saving...")
       setPartnerSaved(true)
       setEditingPartner(false)
       setAttemptedPartnerSave(false) // Reset after successful save
+    } else {
+      console.log("DEBUG: Partner info is NOT valid, showing errors")
     }
+  }
+
+  // Dependent validation function
+  const validateDependentInfo = (depIndex: number) => {
+    const dep = depList[depIndex]
+    if (!dep) return false
+    
+    return dep.dateOfBirth && 
+           dep.relationship && 
+           dep.currentResidency?.country && 
+           dep.currentResidency?.status && 
+           dep.nationalities && 
+           dep.nationalities.length > 0
+  }
+
+  const saveDependentInfo = (depIndex: number) => {
+    // Track that we attempted to save this dependent
+    setAttemptedDependentSaves(prev => [...prev.filter(i => i !== depIndex), depIndex])
+    
+    if (validateDependentInfo(depIndex)) {
+      setSavedDependents(prev => [...prev.filter(i => i !== depIndex), depIndex])
+      setEditingDependents(prev => prev.filter(i => i !== depIndex))
+      setAttemptedDependentSaves(prev => prev.filter(i => i !== depIndex))
+    }
+  }
+
+  const editDependentInfo = (depIndex: number) => {
+    setEditingDependents(prev => [...prev.filter(i => i !== depIndex), depIndex])
+    setSavedDependents(prev => prev.filter(i => i !== depIndex))
+  }
+
+  const removeDependentInfo = (depIndex: number) => {
+    const newDepList = depList.filter((_, idx) => idx !== depIndex)
+    updateDepList(newDepList)
+    
+    // Clean up state arrays by removing this index and adjusting higher indices
+    setVisibleDependents(prev => prev.filter(i => i !== depIndex).map(i => i > depIndex ? i - 1 : i))
+    setEditingDependents(prev => prev.filter(i => i !== depIndex).map(i => i > depIndex ? i - 1 : i))
+    setSavedDependents(prev => prev.filter(i => i !== depIndex).map(i => i > depIndex ? i - 1 : i))
+    setAttemptedDependentSaves(prev => prev.filter(i => i !== depIndex).map(i => i > depIndex ? i - 1 : i))
   }
 
   // Validation
@@ -361,7 +457,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                 step="0.5"
                 min={0}
                 max={100}
-                placeholder="e.g., 2.5"
+                placeholder="2.5"
+                className="placeholder:!text-muted-foreground/60"
                 value={curStatus === "Citizen" ? "" : tempDuration}
                 onChange={(e) =>
                   updateFormData("personalInformation.currentResidency.duration", e.target.value)
@@ -669,8 +766,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                        if (["Single", "Divorced", "Widowed"].includes(maritalStatus)) {
                          return ["Unmarried Partner", "Fiancé(e)", "Cohabiting Partner", "Common-law Partner", "Conjugal Partner", "Other"]
                        }
-                       // If no marital status set, allow all
-                       return ["Unmarried Partner", "Spouse", "Fiancé(e)", "Civil Partner", "Cohabiting Partner", "Common-law Partner", "Conjugal Partner", "Domestic Partner", "Other"]
+                       // If no marital status set, default to non-married options only
+                       return ["Unmarried Partner", "Fiancé(e)", "Cohabiting Partner", "Common-law Partner", "Conjugal Partner", "Other"]
                      }
                      
                      const allowedTypes = getAllowedRelationshipTypes()
@@ -735,8 +832,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       step="0.5"
                       min="0"
                       placeholder="2.5"
+                      className="placeholder:!text-muted-foreground/60"
                       value={getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration") ?? ""}
-                      onChange={(e) => updateFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration", parseFloat(e.target.value) || 0)}
+                      onChange={(e) => updateFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration", e.target.value === "" ? "" : parseFloat(e.target.value))}
                     />
                   </div>
                   <div className="space-y-2">
@@ -749,16 +847,33 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                         return "Official relationship duration (years) *"
                       })()}
                     </Label>
-                    <Input
-                      type="number"
-                      step="0.5"
-                      min="0"
-                      placeholder="1.5"
-                      value={getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration") ?? ""}
-                      onChange={(e) => updateFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration", parseFloat(e.target.value) || 0)}
-                    />
-                                       </div>
-                   </div>
+                    {(() => {
+                      const fullDuration = getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration") || 0
+                      const officialDuration = getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration") || 0
+                      const isInvalid = fullDuration > 0 && officialDuration > fullDuration
+                      
+                      return (
+                        <>
+                          <Input
+                            type="number"
+                            step="0.5"
+                            min="0"
+                            max={fullDuration || undefined}
+                            placeholder="1.5"
+                            className={`placeholder:!text-muted-foreground/60 ${isInvalid ? 'border-red-500 focus:ring-red-500' : ''}`}
+                            value={getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration") ?? ""}
+                            onChange={(e) => updateFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration", e.target.value === "" ? "" : parseFloat(e.target.value))}
+                          />
+                          {isInvalid && (
+                            <p className="text-sm text-red-600 dark:text-red-400">
+                              Official duration cannot exceed total relationship duration ({fullDuration} years)
+                            </p>
+                          )}
+                        </>
+                      )
+                    })()}
+                  </div>
+                </div>
  
                    {/* Relationship Status Messages and Conflict Detection */}
                    {(() => {
@@ -949,18 +1064,19 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             <Label className="text-sm font-medium">
                               Duration (years) {partnerStatus !== "Citizen" ? "*" : ""}
                             </Label>
-                            <Input
-                              type="number"
-                              step="0.5"
-                              min={0}
-                              max={100}
-                              placeholder="e.g., 2.5"
-                              value={partnerStatus === "Citizen" ? "" : getFormData("personalInformation.relocationPartnerInfo.currentResidency.duration") ?? ""}
-                              onChange={(e) =>
-                                updateFormData("personalInformation.relocationPartnerInfo.currentResidency.duration", e.target.value)
-                              }
-                              disabled={partnerStatus === "Citizen"}
-                            />
+                                                          <Input
+                                type="number"
+                                step="0.5"
+                                min={0}
+                                max={100}
+                                placeholder="2.5"
+                                className="placeholder:!text-muted-foreground/60"
+                                value={partnerStatus === "Citizen" ? "" : getFormData("personalInformation.relocationPartnerInfo.currentResidency.duration") ?? ""}
+                                onChange={(e) =>
+                                  updateFormData("personalInformation.relocationPartnerInfo.currentResidency.duration", e.target.value)
+                                }
+                                disabled={partnerStatus === "Citizen"}
+                              />
                           </div>
                         )
                       })()}
@@ -1076,12 +1192,17 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     if (!getFormData("personalInformation.relocationPartnerInfo.relationshipType")) {
                       errors.push("Relationship type is required")
                     }
-                    if (!getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration") && getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration") !== 0) {
-                      errors.push("Total relationship duration is required")
-                    }
-                    if (!getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration") && getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration") !== 0) {
-                      errors.push("Official relationship duration is required")
-                    }
+                                         const fullDuration = getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration")
+                     const officialDuration = getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration")
+                     if (fullDuration === undefined || fullDuration === null || fullDuration === "") {
+                       errors.push("Total relationship duration is required")
+                     }
+                     if (officialDuration === undefined || officialDuration === null || officialDuration === "") {
+                       errors.push("Official relationship duration is required")
+                     }
+                     if (fullDuration > 0 && officialDuration > 0 && officialDuration > fullDuration) {
+                       errors.push(`Official duration (${officialDuration} years) cannot exceed total relationship duration (${fullDuration} years)`)
+                     }
                     if (!getFormData("personalInformation.relocationPartnerInfo.currentResidency.country")) {
                       errors.push("Partner's current residency country is required")
                     }
@@ -1160,7 +1281,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                   relationship: "Child",
                   dateOfBirth: "",
                   student: false,
-                  nationalities: []
+                  nationalities: [],
+                  currentResidency: {
+                    country: "",
+                    status: "",
+                    duration: ""
+                  }
                 }
                 updateDepList([...depList, newDependent])
                 // Make this dependent form visible and editable
@@ -1171,7 +1297,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               className="w-full"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Add Dependent{depList.length > 0 ? ` ${depList.length + 1}` : ''}
+              Add Dependent
             </Button>
 
                         {/* Dependent cards and forms */}
@@ -1179,6 +1305,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               if (!visibleDependents.includes(idx)) return null
               
               const isEditing = editingDependents.includes(idx)
+              const isSaved = savedDependents.includes(idx)
+              const attemptedSave = attemptedDependentSaves.includes(idx)
               
               // Show summary card if not editing
               if (!isEditing) {
@@ -1398,12 +1526,13 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           <Label className="text-sm font-medium">
                             Duration (years) {dependentStatus !== "Citizen" ? "*" : ""}
                           </Label>
-                          <Input
+                                                    <Input
                             type="number"
                             step="0.5"
                             min={0}
                             max={100}
-                            placeholder="e.g., 2.5"
+                            placeholder="2.5"
+                            className="placeholder:!text-muted-foreground/60"
                             value={dependentStatus === "Citizen" ? "" : dep.currentResidency?.duration ?? ""}
                             onChange={(e) => {
                               const updated = [...depList]
