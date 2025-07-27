@@ -18,6 +18,7 @@ import {
   GraduationCap, 
   Heart, 
   DollarSign, 
+  Lightbulb, 
   PiggyBank, 
   Receipt, 
   TrendingUp, 
@@ -315,7 +316,7 @@ export function Summary() {
       <Card className="shadow-sm border-l-4 border-l-amber-500">
         <CardHeader className="bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
-            <Info className="w-6 h-6 text-amber-600" />
+            <Lightbulb className="w-6 h-6 text-amber-600" />
             Important Notes
           </CardTitle>
         </CardHeader>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDown, ChevronRight, Info } from "lucide-react"
+import { ChevronDown, ChevronRight, Lightbulb } from "lucide-react"
 
 interface SectionHintProps {
   title?: string
@@ -25,7 +25,7 @@ export function SectionHint({
       >
         <div className="flex items-center gap-2 flex-1">
           <div className="w-5 h-5 rounded-full bg-card flex items-center justify-center group-hover:bg-muted transition-colors">
-            <Info className="w-3 h-3 text-slate-600" />
+            <Lightbulb className="w-3 h-3 text-slate-600" />
           </div>
           <span className="text-left">{title}</span>
         </div>

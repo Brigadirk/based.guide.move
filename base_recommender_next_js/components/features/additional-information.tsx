@@ -18,7 +18,7 @@ import {
   Plus, 
   Check, 
   X, 
-  Info, 
+  Lightbulb, 
   FileText, 
   Calendar
 } from "lucide-react"
@@ -271,7 +271,7 @@ export function AdditionalInformation({ onComplete }: { onComplete: () => void }
             </div>
           ) : (
             <Alert>
-              <Info className="w-4 h-4" />
+              <Lightbulb className="w-4 h-4" />
               <AlertDescription>
                 ℹ️ No special information sections added yet. Use the form above to add important details.
               </AlertDescription>

@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
-import { CalendarDays, UserPlus, Plus, Trash2, Users, Info, Home, Globe, Heart, Baby, Pencil, Check } from "lucide-react"
+import { CalendarDays, UserPlus, Plus, Trash2, Users, Lightbulb, Home, Globe, Heart, Baby, Pencil, Check } from "lucide-react"
 import countryInfo from "@/data/country_info.json"
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
@@ -257,7 +257,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
         </CardHeader>
         <CardContent className="pt-6">
           <Alert className="mb-6">
-            <Info className="h-4 w-4" />
+            <Lightbulb className="h-4 w-4" />
             <AlertDescription>
               Mark "willing to renounce" if you would consider giving up a citizenship to avoid exit taxes or dual-citizenship restrictions in your future country.
             </AlertDescription>
@@ -407,7 +407,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                      <AccordionItem value="relationship-types" className="border rounded-lg">
                        <AccordionTrigger className="px-4 hover:no-underline">
                          <div className="flex items-center gap-2">
-                           <Info className="w-5 h-5 text-blue-600" />
+                           <Lightbulb className="w-5 h-5 text-blue-600" />
                            <span className="font-medium text-blue-800 dark:text-blue-200">
                              📚 Learn more about relationship types
                            </span>
@@ -580,7 +580,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                            <Card className="border border-amber-200 bg-amber-50 dark:bg-amber-950/20">
                              <CardContent className="pt-4">
                                <div className="flex items-start gap-2">
-                                 <Info className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                                 <Lightbulb className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
                                  <div>
                                    <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">
                                      Being married while bringing an unmarried partner requires explanation
@@ -612,7 +612,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                            <Card className="border border-amber-200 bg-amber-50 dark:bg-amber-950/20">
                              <CardContent className="pt-4">
                                <div className="flex items-start gap-2">
-                                 <Info className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                                 <Lightbulb className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
                                  <div>
                                    <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">
                                      Being in an official partnership while bringing a different partner requires explanation

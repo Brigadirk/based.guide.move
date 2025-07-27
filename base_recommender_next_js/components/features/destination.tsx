@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
-import { Globe, MapPin, Languages, Info } from "lucide-react"
+import { Globe, MapPin, Languages, Lightbulb } from "lucide-react"
 import { useFormStore } from "@/lib/stores"
 import { getLanguages } from "@/lib/utils/country-utils"
 import { SectionHint } from "@/components/ui/section-hint"
@@ -235,9 +235,9 @@ export function Destination({ onComplete }: DestinationProps) {
                         <AccordionItem value="region-importance" className="border rounded-lg">
                           <AccordionTrigger className="px-4 hover:no-underline">
                             <div className="flex items-center gap-2">
-                              <Info className="w-5 h-5 text-amber-600" />
+                                                             <Lightbulb className="w-5 h-5 text-amber-600" />
                               <span className="font-medium text-amber-800 dark:text-amber-200">
-                                💡 Why is the region selection important?
+                                Why is the region selection important?
                               </span>
                             </div>
                           </AccordionTrigger>
@@ -272,7 +272,7 @@ export function Destination({ onComplete }: DestinationProps) {
                 ) : (
                   <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950/20">
                     <div className="flex items-center gap-2">
-                      <Info className="w-5 h-5 text-blue-600" />
+                      <Lightbulb className="w-5 h-5 text-blue-600" />
                       <p className="text-sm text-blue-800 dark:text-blue-200">
                         ✅ No region-specific visa or tax rules—skip region selection for this country.
                       </p>
