@@ -313,8 +313,8 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   const currencies = useCurrencies()
 
-  // Check if tax sections are skipped
-  const skip = getFormData("skipTaxSections") ?? false
+  // Check if finance details are being skipped
+  const skip = getFormData("finance.skipDetails") ?? false
 
   const deductions: Deduction[] = getFormData("taxDeductionsAndCredits.potentialDeductions") ?? []
   const setDeductions = (next: Deduction[]) =>
@@ -354,12 +354,12 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
               <div>
                 <h3 className="font-medium">🚀 Detailed deduction / credit inputs skipped</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Per your earlier choice to skip detailed tax sections
+                  Per your earlier choice to skip detailed finance sections
                 </p>
               </div>
               <Button 
                 variant="outline" 
-                onClick={() => updateFormData("skipTaxSections", false)}
+                onClick={() => updateFormData("finance.skipDetails", false)}
               >
                 <AlertTriangle className="w-4 h-4 mr-2" />
                 Enable Details

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -45,6 +45,38 @@ const INCOME_CATEGORIES = {
 export function Finance({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   const currencies = useCurrencies()
+
+  // Auto-complete related sections when skipDetails is checked
+  useEffect(() => {
+    const skipDetails = getFormData("finance.skipDetails")
+    const wasAutoCompleted = getFormData("finance.autoCompletedSections") ?? false
+    
+    if (skipDetails) {
+      // Mark all finance-related sections as complete when skipping details
+      markSectionComplete("finance")
+      markSectionComplete("social-security") 
+      markSectionComplete("tax-deductions")
+      markSectionComplete("future-plans")
+      
+      // Store which sections were auto-completed so we can unmark them later
+      updateFormData("finance.autoCompletedSections", [
+        "finance", "social-security", "tax-deductions", "future-plans"
+      ])
+    } else if (wasAutoCompleted) {
+      // When unchecking, unmark the sections that were auto-completed
+      const autoCompletedSections = Array.isArray(wasAutoCompleted) 
+        ? wasAutoCompleted 
+        : ["finance", "social-security", "tax-deductions", "future-plans"]
+      
+      // Unmark each auto-completed section
+      autoCompletedSections.forEach((sectionId: string) => {
+        updateFormData(`completedSections.${sectionId}`, false)
+      })
+      
+      // Clear the auto-completion flag
+      updateFormData("finance.autoCompletedSections", false)
+    }
+  }, [getFormData("finance.skipDetails"), markSectionComplete, updateFormData, getFormData])
 
   // Income Sources
   const incomeSources = getFormData("finance.incomeSources") ?? []
@@ -146,6 +178,10 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
             <div className="mt-4 p-4 border rounded-lg bg-green-50 dark:bg-green-950/20">
               <p className="text-green-800 dark:text-green-200">
                 ✅ Detailed finance inputs skipped. We'll focus only on whether any financial thresholds apply to your relocation.
+              </p>
+              <p className="text-sm text-green-700 dark:text-green-300 mt-2">
+                📋 The following sections have been automatically marked as complete:
+                <br />• Income and Assets • Social Security and Pensions • Tax Deductions and Credits • Future Financial Plans
               </p>
             </div>
           )}
