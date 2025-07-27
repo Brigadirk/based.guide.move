@@ -56,7 +56,7 @@ function InvestmentPlansSection({ updateFormData, getFormData, currencies }: {
   getFormData: (path: string) => any
   currencies: string[]
 }) {
-  const investments = getFormData("futureFinancialPlans.plannedInvestments") ?? []
+  const investments = getFormData("individual.futureFinancialPlans.plannedInvestments") ?? []
   const [showAddForm, setShowAddForm] = useState(false)
   const [newInvestment, setNewInvestment] = useState({
     type: "Stocks",
@@ -83,7 +83,7 @@ function InvestmentPlansSection({ updateFormData, getFormData, currencies }: {
       currency: newInvestment.currency
     }
     const updated = [...investments, investmentToAdd]
-    updateFormData("futureFinancialPlans.plannedInvestments", updated)
+    updateFormData("individual.futureFinancialPlans.plannedInvestments", updated)
     setNewInvestment({
       type: "Stocks",
       otherType: "",
@@ -96,7 +96,7 @@ function InvestmentPlansSection({ updateFormData, getFormData, currencies }: {
 
   const removeInvestment = (index: number) => {
     const updated = investments.filter((_: any, i: number) => i !== index)
-    updateFormData("futureFinancialPlans.plannedInvestments", updated)
+    updateFormData("individual.futureFinancialPlans.plannedInvestments", updated)
   }
 
   return (
@@ -111,7 +111,7 @@ function InvestmentPlansSection({ updateFormData, getFormData, currencies }: {
         <div className="space-y-3">
           <h4 className="font-medium">Registered Investment Plans</h4>
           {investments.map((investment: Investment, index: number) => (
-            <div key={index} className="border rounded p-3 bg-muted/50">
+            <div key={index} className="border rounded p-3 bg-card">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <p className="font-medium">{investment.type}</p>
@@ -234,7 +234,7 @@ function PropertyTransactionsSection({ updateFormData, getFormData, currencies }
   getFormData: (path: string) => any
   currencies: string[]
 }) {
-  const transactions = getFormData("futureFinancialPlans.plannedPropertyTransactions") ?? []
+  const transactions = getFormData("individual.futureFinancialPlans.plannedPropertyTransactions") ?? []
   const [showAddForm, setShowAddForm] = useState(false)
   const [newTransaction, setNewTransaction] = useState({
     transactionType: "Buy",
@@ -253,7 +253,7 @@ function PropertyTransactionsSection({ updateFormData, getFormData, currencies }
       currency: newTransaction.currency
     }
     const updated = [...transactions, transactionToAdd]
-    updateFormData("futureFinancialPlans.plannedPropertyTransactions", updated)
+    updateFormData("individual.futureFinancialPlans.plannedPropertyTransactions", updated)
     setNewTransaction({
       transactionType: "Buy",
       country: "",
@@ -265,7 +265,7 @@ function PropertyTransactionsSection({ updateFormData, getFormData, currencies }
 
   const removeTransaction = (index: number) => {
     const updated = transactions.filter((_: any, i: number) => i !== index)
-    updateFormData("futureFinancialPlans.plannedPropertyTransactions", updated)
+    updateFormData("individual.futureFinancialPlans.plannedPropertyTransactions", updated)
   }
 
   return (
@@ -280,7 +280,7 @@ function PropertyTransactionsSection({ updateFormData, getFormData, currencies }
         <div className="space-y-3">
           <h4 className="font-medium">Registered Property Transactions</h4>
           {transactions.map((transaction: PropertyTransaction, index: number) => (
-            <div key={index} className="border rounded p-3 bg-muted/50">
+            <div key={index} className="border rounded p-3 bg-card">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <p className="font-medium">{transaction.transactionType} Property</p>
@@ -392,7 +392,7 @@ function RetirementContributionsSection({ updateFormData, getFormData, currencie
   getFormData: (path: string) => any
   currencies: string[]
 }) {
-  const contributions = getFormData("futureFinancialPlans.plannedRetirementContributions") ?? []
+  const contributions = getFormData("individual.futureFinancialPlans.plannedRetirementContributions") ?? []
   const [showAddForm, setShowAddForm] = useState(false)
   const [newContribution, setNewContribution] = useState({
     accountType: "401(k)",
@@ -412,7 +412,7 @@ function RetirementContributionsSection({ updateFormData, getFormData, currencie
       currency: newContribution.currency
     }
     const updated = [...contributions, contributionToAdd]
-    updateFormData("futureFinancialPlans.plannedRetirementContributions", updated)
+    updateFormData("individual.futureFinancialPlans.plannedRetirementContributions", updated)
     setNewContribution({
       accountType: "401(k)",
       otherAccountType: "",
@@ -425,7 +425,7 @@ function RetirementContributionsSection({ updateFormData, getFormData, currencie
 
   const removeContribution = (index: number) => {
     const updated = contributions.filter((_: any, i: number) => i !== index)
-    updateFormData("futureFinancialPlans.plannedRetirementContributions", updated)
+    updateFormData("individual.futureFinancialPlans.plannedRetirementContributions", updated)
   }
 
   return (
@@ -440,7 +440,7 @@ function RetirementContributionsSection({ updateFormData, getFormData, currencie
         <div className="space-y-3">
           <h4 className="font-medium">Registered Retirement Contributions</h4>
           {contributions.map((contribution: RetirementContribution, index: number) => (
-            <div key={index} className="border rounded p-3 bg-muted/50">
+            <div key={index} className="border rounded p-3 bg-card">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <p className="font-medium">{contribution.accountType}</p>
@@ -563,7 +563,7 @@ function BusinessChangesSection({ updateFormData, getFormData, currencies }: {
   getFormData: (path: string) => any
   currencies: string[]
 }) {
-  const businessChanges = getFormData("futureFinancialPlans.plannedBusinessChanges") ?? []
+  const businessChanges = getFormData("individual.futureFinancialPlans.plannedBusinessChanges") ?? []
   const [showAddForm, setShowAddForm] = useState(false)
   const [newChange, setNewChange] = useState({
     changeType: "Start New Business",
@@ -586,7 +586,7 @@ function BusinessChangesSection({ updateFormData, getFormData, currencies }: {
       currency: newChange.currency
     }
     const updated = [...businessChanges, changeToAdd]
-    updateFormData("futureFinancialPlans.plannedBusinessChanges", updated)
+    updateFormData("individual.futureFinancialPlans.plannedBusinessChanges", updated)
     setNewChange({
       changeType: "Start New Business",
       country: "",
@@ -598,7 +598,7 @@ function BusinessChangesSection({ updateFormData, getFormData, currencies }: {
 
   const removeBusinessChange = (index: number) => {
     const updated = businessChanges.filter((_: any, i: number) => i !== index)
-    updateFormData("futureFinancialPlans.plannedBusinessChanges", updated)
+    updateFormData("individual.futureFinancialPlans.plannedBusinessChanges", updated)
   }
 
   return (
@@ -613,7 +613,7 @@ function BusinessChangesSection({ updateFormData, getFormData, currencies }: {
         <div className="space-y-3">
           <h4 className="font-medium">Registered Business Changes</h4>
           {businessChanges.map((change: BusinessChange, index: number) => (
-            <div key={index} className="border rounded p-3 bg-muted/50">
+            <div key={index} className="border rounded p-3 bg-card">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <p className="font-medium">{change.changeType}</p>
@@ -720,22 +720,27 @@ function BusinessChangesSection({ updateFormData, getFormData, currencies }: {
 }
 
 export function FutureFinancialPlans({ onComplete }: { onComplete: () => void }) {
-  const { getFormData, updateFormData } = useFormStore()
+  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   const currencies = useCurrencies()
 
   // Check if tax sections are skipped
   const skip = getFormData("skipTaxSections") ?? false
 
   // Get all plan data
-  const investments = getFormData("futureFinancialPlans.plannedInvestments") ?? []
-  const propertyTransactions = getFormData("futureFinancialPlans.plannedPropertyTransactions") ?? []
-  const retirementContributions = getFormData("futureFinancialPlans.plannedRetirementContributions") ?? []
-  const businessChanges = getFormData("futureFinancialPlans.plannedBusinessChanges") ?? []
+  const investments = getFormData("individual.futureFinancialPlans.plannedInvestments") ?? []
+  const propertyTransactions = getFormData("individual.futureFinancialPlans.plannedPropertyTransactions") ?? []
+  const retirementContributions = getFormData("individual.futureFinancialPlans.plannedRetirementContributions") ?? []
+  const businessChanges = getFormData("individual.futureFinancialPlans.plannedBusinessChanges") ?? []
 
   // Validation - at least one plan or skip
   const hasAnyPlans = investments.length > 0 || propertyTransactions.length > 0 || 
                      retirementContributions.length > 0 || businessChanges.length > 0
   const canContinue = skip || hasAnyPlans
+  
+  const handleContinue = () => {
+    markSectionComplete("future-plans")
+    onComplete()
+  }
 
   return (
     <Card>
@@ -809,11 +814,11 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
 
       <CardFooter>
         <Button 
-          onClick={onComplete} 
+          onClick={handleContinue} 
           className="w-full"
           disabled={!canContinue}
         >
-          Continue
+          {hasAnyPlans ? "Continue" : "Continue (skip section)"}
         </Button>
       </CardFooter>
     </Card>

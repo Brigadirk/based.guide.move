@@ -24,7 +24,7 @@ export function SectionHint({
         className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors group"
       >
         <div className="flex items-center gap-2 flex-1">
-          <div className="w-5 h-5 rounded-full bg-slate-100/80 flex items-center justify-center group-hover:bg-slate-200/80 transition-colors">
+          <div className="w-5 h-5 rounded-full bg-card flex items-center justify-center group-hover:bg-muted transition-colors">
             <Info className="w-3 h-3 text-slate-600" />
           </div>
           <span className="text-left">{title}</span>

@@ -2,12 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { useFormStore } from "@/lib/stores"
@@ -27,12 +22,16 @@ import {
   Receipt, 
   TrendingUp, 
   FileEdit,
-  Calendar
+  Calendar,
+  Shield,
+  Target,
+  AlertCircle,
+  Info
 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export function Summary() {
-  const { formData, hasRequiredData } = useFormStore()
+  const { formData, hasRequiredData, completedSections } = useFormStore()
   const [showJSON, setShowJSON] = useState(false)
 
   const json = JSON.stringify(formData, null, 2)
@@ -51,243 +50,300 @@ export function Summary() {
     window.print()
   }
 
-  const resetAll = () => {
+  const resetData = () => {
     if (confirm("Are you sure you want to reset all data? This cannot be undone.")) {
-      localStorage.removeItem("base-recommender-form-data")
+      localStorage.removeItem("tax-migration-form")
       window.location.reload()
     }
   }
 
-  // Helper function to get completion status
-  const getSectionStatus = (sectionKey: string) => {
-    // Map summary section keys to form store section IDs
-    const sectionIdMap: Record<string, string> = {
-      'destination': 'destination',
-      'personal': 'personal', 
-      'education': 'education',
-      'residencyIntentions': 'residency',
-      'finance': 'finance',
-      'socialSecurityAndPensions': 'social-security',
-      'taxDeductionsAndCredits': 'tax-deductions',
-      'futureFinancialPlans': 'future-plans',
-      'additionalInformation': 'additional'
-    }
-    
-    const sectionId = sectionIdMap[sectionKey]
-    if (!sectionId) return 'incomplete'
-    
-    return hasRequiredData(sectionId) ? 'complete' : 'incomplete'
-  }
-
-  // Helper function to format data for display
-  const formatValue = (value: any): string => {
-    if (value === null || value === undefined || value === '') return 'Not specified'
-    if (typeof value === 'boolean') return value ? 'Yes' : 'No'
-    if (typeof value === 'object') return Object.keys(value).length + ' items'
-    if (typeof value === 'number') return value.toLocaleString()
-    return String(value)
-  }
-
+  // Section completion status
   const sections = [
-    { key: 'destination', icon: MapPin, title: 'Destination', color: 'blue' },
-    { key: 'personal', icon: User, title: 'Personal Information', color: 'green' },
-    { key: 'education', icon: GraduationCap, title: 'Education', color: 'purple' },
-    { key: 'residencyIntentions', icon: Heart, title: 'Residency Intentions', color: 'pink' },
-    { key: 'finance', icon: DollarSign, title: 'Finance', color: 'yellow' },
-    { key: 'socialSecurityAndPensions', icon: PiggyBank, title: 'Social Security & Pensions', color: 'indigo' },
-    { key: 'taxDeductionsAndCredits', icon: Receipt, title: 'Tax Deductions & Credits', color: 'red' },
-    { key: 'futureFinancialPlans', icon: TrendingUp, title: 'Future Financial Plans', color: 'orange' },
-    { key: 'additionalInformation', icon: FileEdit, title: 'Additional Information', color: 'gray' }
+    { id: "destination", name: "Destination Country", icon: MapPin, data: formData.destination },
+    { id: "personal", name: "Personal Information", icon: User, data: formData.personalInformation },
+    { id: "education", name: "Education & Skills", icon: GraduationCap, data: formData.education },
+    { id: "residency", name: "Residency Intentions", icon: Heart, data: formData.residencyIntentions },
+    { id: "finance", name: "Financial Information", icon: DollarSign, data: formData.finance },
+    { id: "socialSecurity", name: "Social Security & Pensions", icon: Shield, data: formData.socialSecurityAndPensions },
+    { id: "taxDeductions", name: "Tax Deductions & Credits", icon: Receipt, data: formData.taxDeductionsAndCredits },
+    { id: "futurePlans", name: "Future Financial Plans", icon: TrendingUp, data: formData.futureFinancialPlans },
+    { id: "additional", name: "Additional Information", icon: FileEdit, data: formData.additionalInformation }
   ]
 
-  const completedSections = sections.filter(section => getSectionStatus(section.key) === 'complete').length
+  const completedCount = sections.filter(section => 
+    (section.data && Object.keys(section.data).length > 0)
+  ).length
+
+  const completionPercentage = Math.round((completedCount / sections.length) * 100)
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      {/* Print styles */}
-      <style jsx>{`
-        @media print {
-          .no-print { display: none !important; }
-          body { background: #fff !important; }
-          .print-break { page-break-before: always; }
-        }
-      `}</style>
-
-      {/* Header */}
-      <div className="text-center space-y-4 py-8">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-full">
-          <CheckCircle className="w-4 h-4 text-green-600" />
-          <span className="text-sm font-medium text-green-700">Assessment Complete</span>
+    <div className="space-y-8 max-w-5xl mx-auto">
+      {/* Page Header */}
+      <div className="text-center pb-4 border-b">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <FileText className="w-7 h-7 text-primary" />
+          <h1 className="text-3xl font-bold tracking-tight">Profile Summary</h1>
         </div>
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-          📊 Your Profile Summary
-        </h1>
-        <p className="text-lg text-muted-foreground">
-          Review your information and export your complete assessment
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Review your tax migration profile and download your data
         </p>
       </div>
 
-      {/* Completion Overview */}
-      <Card className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="font-semibold text-green-900">Assessment Progress</h3>
-              <p className="text-sm text-green-800">
-                You've completed {completedSections} of {sections.length} sections
-              </p>
+      {/* Completion Overview Card */}
+      <Card className="shadow-sm border-l-4 border-l-primary">
+        <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Target className="w-6 h-6 text-primary" />
+            Profile Completion
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Your progress through the questionnaire</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            {/* Overall progress */}
+            <div className="text-center p-6 border rounded-lg bg-card">
+              <div className="text-4xl font-bold text-primary mb-2">{completionPercentage}%</div>
+              <div className="text-lg font-medium mb-1">Profile Complete</div>
+              <div className="text-sm text-muted-foreground">
+                {completedCount} of {sections.length} sections completed
+              </div>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-green-900">{Math.round((completedSections / sections.length) * 100)}%</div>
-              <div className="text-sm text-green-800">Complete</div>
+
+                         {/* Section breakdown */}
+             <div className="grid gap-3">
+               {sections.map((section) => {
+                 const hasData = section.data && Object.keys(section.data).length > 0
+                 const status = hasData
+                
+                return (
+                  <div key={section.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                    <div className={`p-2 rounded-full ${status ? 'bg-green-100 text-green-600' : 'bg-card text-gray-500'}`}>
+                      {status ? <CheckCircle className="w-4 h-4" /> : <section.icon className="w-4 h-4" />}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium">{section.name}</div>
+                    </div>
+                    <Badge variant={status ? "default" : "secondary"}>
+                      {status ? "Complete" : "Incomplete"}
+                    </Badge>
+                  </div>
+                )
+              })}
             </div>
-          </div>
-          <div className="w-full bg-green-200 rounded-full h-2">
-            <div 
-              className="bg-green-600 h-2 rounded-full transition-all duration-500" 
-              style={{ width: `${(completedSections / sections.length) * 100}%` }}
-            />
           </div>
         </CardContent>
       </Card>
 
-      {/* Sections Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {sections.map((section) => {
-          const status = getSectionStatus(section.key)
-          const sectionData = formData[section.key as keyof typeof formData]
-          const Icon = section.icon
-          
-          return (
-            <Card key={section.key} className={`transition-all hover:shadow-md ${
-              status === 'complete' ? 'border-green-200 bg-green-50/50' : 'border-gray-200'
-            }`}>
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-3">
+      {/* Profile Overview Card */}
+      {formData && (
+        <Card className="shadow-sm border-l-4 border-l-blue-500">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
+            <CardTitle className="text-xl flex items-center gap-3">
+              <User className="w-6 h-6 text-blue-600" />
+              Profile Overview
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Key information from your profile</p>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Destination */}
+              {formData.destination && (
+                <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <div className={`w-8 h-8 rounded-full bg-${section.color}-100 flex items-center justify-center`}>
-                      <Icon className={`w-4 h-4 text-${section.color}-600`} />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">{section.title}</h4>
-                    </div>
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                    <span className="font-medium">Destination</span>
                   </div>
-                  <Badge variant={status === 'complete' ? 'default' : 'secondary'} className="text-xs">
-                    {status === 'complete' ? 'Complete' : 'Incomplete'}
-                  </Badge>
+                  <p className="text-sm text-muted-foreground ml-6">
+                    {formData.destination.region && formData.destination.region !== "I don't know yet / open to any" 
+                      ? `${formData.destination.region}, ${formData.destination.country}`
+                      : formData.destination.country}
+                  </p>
                 </div>
-                
-                {/* Key Information Preview */}
-                {sectionData && typeof sectionData === 'object' && (
-                  <div className="space-y-1 text-xs text-muted-foreground">
-                    {Object.entries(sectionData).slice(0, 2).map(([key, value]) => (
-                      <div key={key} className="flex justify-between">
-                        <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}:</span>
-                        <span className="truncate ml-2 max-w-20">{formatValue(value)}</span>
-                      </div>
-                    ))}
-                    {Object.keys(sectionData).length > 2 && (
-                      <div className="text-center text-muted-foreground">
-                        +{Object.keys(sectionData).length - 2} more fields
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
+              )}
 
-      {/* Export & Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5" />
+              {/* Current Country */}
+              {formData.personalInformation?.currentResidency?.country && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                    <span className="font-medium">Current Location</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground ml-6">
+                    {formData.personalInformation.currentResidency.country}
+                  </p>
+                </div>
+              )}
+
+              {/* Move Type */}
+              {formData.residencyIntentions?.destinationCountry?.moveType && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Heart className="w-4 h-4 text-muted-foreground" />
+                    <span className="font-medium">Move Type</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground ml-6">
+                    {formData.residencyIntentions.destinationCountry.moveType}
+                  </p>
+                </div>
+              )}
+
+                             {/* Income Sources */}
+               {formData.finance?.incomeSources && formData.finance.incomeSources.length > 0 && (
+                 <div className="space-y-2">
+                   <div className="flex items-center gap-2">
+                     <DollarSign className="w-4 h-4 text-muted-foreground" />
+                     <span className="font-medium">Income Sources</span>
+                   </div>
+                   <p className="text-sm text-muted-foreground ml-6">
+                     {formData.finance.incomeSources.length} source{formData.finance.incomeSources.length !== 1 ? 's' : ''}
+                   </p>
+                 </div>
+               )}
+
+               {/* Education */}
+               {formData.education?.previousDegrees && formData.education.previousDegrees.length > 0 && (
+                 <div className="space-y-2">
+                   <div className="flex items-center gap-2">
+                     <GraduationCap className="w-4 h-4 text-muted-foreground" />
+                     <span className="font-medium">Education</span>
+                   </div>
+                   <p className="text-sm text-muted-foreground ml-6">
+                     {formData.education.previousDegrees.length} degree{formData.education.previousDegrees.length !== 1 ? 's' : ''}
+                   </p>
+                 </div>
+               )}
+
+               {/* Family */}
+               {formData.personalInformation?.partner && (
+                 <div className="space-y-2">
+                   <div className="flex items-center gap-2">
+                     <User className="w-4 h-4 text-muted-foreground" />
+                     <span className="font-medium">Family</span>
+                   </div>
+                   <p className="text-sm text-muted-foreground ml-6">
+                     Relocating with partner
+                     {formData.personalInformation.dependents && formData.personalInformation.dependents.length > 0 && 
+                       ` and ${formData.personalInformation.dependents.length} dependent${formData.personalInformation.dependents.length !== 1 ? 's' : ''}`
+                     }
+                   </p>
+                 </div>
+               )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Actions Card */}
+      <Card className="shadow-sm border-l-4 border-l-green-500">
+        <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Download className="w-6 h-6 text-green-600" />
             Export & Actions
           </CardTitle>
+          <p className="text-sm text-muted-foreground">Download your profile or manage your data</p>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Export Options */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 no-print">
-            <Button onClick={downloadJSON} className="flex items-center gap-2">
-              <Download className="w-4 h-4" />
-              Download JSON Data
-            </Button>
-            <Button variant="outline" onClick={printPDF} className="flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              Print / Save as PDF
-            </Button>
-          </div>
-
-          <Separator className="no-print" />
-
-          {/* JSON Data Viewer */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between no-print">
-              <h4 className="font-medium">Raw Data</h4>
-              <Button 
-                variant="ghost" 
-                onClick={() => setShowJSON(!showJSON)}
-                className="flex items-center gap-2"
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <Button
+                onClick={downloadJSON}
+                variant="default"
+                className="w-full"
+                size="lg"
               >
-                {showJSON ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                {showJSON ? 'Hide' : 'Show'} JSON
+                <Download className="w-4 h-4 mr-2" />
+                Download Profile (JSON)
+              </Button>
+
+              <Button
+                onClick={printPDF}
+                variant="outline"
+                className="w-full"
+                size="lg"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Print Summary (PDF)
               </Button>
             </div>
-            
-            {showJSON && (
-              <div className="max-h-[50vh] overflow-auto rounded-md bg-muted p-4 text-sm font-mono">
-                <pre className="whitespace-pre-wrap">{json}</pre>
-              </div>
-            )}
-          </div>
 
-          <Separator className="no-print" />
+            <Separator />
 
-          {/* Metadata */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Generated:</span>
-              <span>{new Date().toLocaleDateString()}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Sections:</span>
-              <span>{completedSections}/{sections.length}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Status:</span>
-              <Badge variant="secondary">Ready for Analysis</Badge>
-            </div>
-          </div>
-
-          <Separator className="no-print" />
-
-          {/* Reset Warning */}
-          <Alert className="no-print">
-            <AlertDescription className="flex items-center justify-between">
-              <span>Need to start over? You can reset all your data, but this action cannot be undone.</span>
-              <Button 
-                variant="destructive" 
-                size="sm"
-                onClick={resetAll}
-                className="flex items-center gap-2"
+            <div className="space-y-3">
+              <Button
+                onClick={() => setShowJSON(!showJSON)}
+                variant="ghost"
+                className="w-full"
               >
-                <RotateCcw className="w-4 h-4" />
+                {showJSON ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
+                {showJSON ? "Hide" : "Show"} Raw Data
+              </Button>
+
+              <Button
+                onClick={resetData}
+                variant="destructive"
+                className="w-full"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
                 Reset All Data
               </Button>
-            </AlertDescription>
-          </Alert>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Print Footer */}
-      <div className="print-only text-center text-sm text-muted-foreground mt-8 border-t pt-4">
-        <p>Generated on {new Date().toLocaleDateString()} • Tax Migration Assessment Profile</p>
-      </div>
+      {/* Raw Data Display */}
+      {showJSON && (
+        <Card className="shadow-sm border-l-4 border-l-amber-500">
+          <CardHeader className="bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-950/20">
+            <CardTitle className="text-xl flex items-center gap-3">
+              <FileText className="w-6 h-6 text-amber-600" />
+              Raw Profile Data
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Your complete profile in JSON format</p>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="bg-card p-4 rounded-lg overflow-auto max-h-96">
+              <pre className="text-xs font-mono whitespace-pre-wrap">
+                {json}
+              </pre>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Important Notes Card */}
+      <Card className="shadow-sm border-l-4 border-l-amber-500">
+        <CardHeader className="bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Info className="w-6 h-6 text-amber-600" />
+            Important Notes
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Privacy:</strong> Your data is stored locally in your browser and is not automatically shared with any third parties. Make sure to download your profile before clearing your browser data.
+              </AlertDescription>
+            </Alert>
+
+            <Alert>
+              <Info className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Professional Advice:</strong> This profile is a starting point for your tax migration planning. Always consult with qualified tax professionals, immigration lawyers, and financial advisors for your specific situation.
+              </AlertDescription>
+            </Alert>
+
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Accuracy:</strong> Tax laws and immigration requirements change frequently. Ensure you have the most current information before making any major decisions based on this profile.
+              </AlertDescription>
+            </Alert>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 } 

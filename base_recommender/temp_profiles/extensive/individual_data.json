@@ -1,7 +1,11 @@
 {
     "personalInformation": {
-        "dateOfBirth": "1995-07-25",
+        "dateOfBirth": "1995-08-04",
         "nationalities": [
+            {
+                "country": "Angola",
+                "willingToRenounce": false
+            },
             {
                 "country": "Algeria",
                 "willingToRenounce": false
@@ -10,7 +14,7 @@
         "maritalStatus": "",
         "enduringMaritalStatusInfo": "",
         "currentResidency": {
-            "country": "Algeria",
+            "country": "Angola",
             "status": "Citizen",
             "duration": 0.0
         },
@@ -46,7 +50,7 @@
     "residencyIntentions": {
         "destinationCountry": {
             "country": "Argentina",
-            "region": "Buenos Aires",
+            "region": "Salta",
             "citizenshipStatus": false,
             "moveType": "Permanent",
             "intendedTemporaryDurationOfStay": 0.0

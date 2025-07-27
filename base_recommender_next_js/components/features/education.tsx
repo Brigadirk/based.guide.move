@@ -1,7 +1,3 @@
-/* --------------------------------------------------------------------- *
- *  Education section: Enhanced with visa skills, study interests, etc.  *
- * --------------------------------------------------------------------- */
-
 "use client"
 
 import { useState } from "react"
@@ -17,14 +13,15 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
-import { Plus, Trash2, GraduationCap, BookOpen, Award, Users, Info } from "lucide-react"
+import { Plus, Trash2, GraduationCap, BookOpen, Award, Users, Info, Target, Brain, School } from "lucide-react"
 
 type Degree = {
-  degreeName: string
+  degree: string
   institution: string
-  startYear: string
-  endYear: string
-  inProgress: boolean
+  field: string
+  start_year: string
+  end_year: string
+  in_progress: boolean
 }
 
 type Skill = {
@@ -50,7 +47,17 @@ type SchoolOffer = {
 }
 
 export function Education({ onComplete }: { onComplete: () => void }) {
-  const { getFormData, updateFormData } = useFormStore()
+  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+
+  // Work experience state
+  const [workExpDraft, setWorkExpDraft] = useState({
+    jobTitle: "", company: "", country: "", startYear: "", endYear: "", current: false
+  })
+
+  // Professional license state  
+  const [licenseDraft, setLicenseDraft] = useState({
+    licenseType: "", licenseName: "", issuingBody: "", country: "", active: false
+  })
 
   // Get destination country for context
   const destCountry = getFormData("destination.country") ?? ""
@@ -75,445 +82,661 @@ export function Education({ onComplete }: { onComplete: () => void }) {
   const setSchoolOffers = (next: SchoolOffer[]) => updateFormData("education.schoolOffers", next)
 
   // Local state for forms
-
   const [degreeDraft, setDegreeDraft] = useState<Degree>({
-    degreeName: "", institution: "", startYear: "", endYear: "", inProgress: false
+    degree: "",
+    institution: "",
+    field: "",
+    start_year: "",
+    end_year: "",
+    in_progress: false
   })
-  const [skillDraft, setSkillDraft] = useState<Skill>({ skill: "" })
-  const [studyType, setStudyType] = useState<"course" | "offer">("course")
-  const [courseDraft, setCourseDraft] = useState<Omit<LearningInterest, "status">>({
-    skill: "", institute: "", months: 0, hoursPerWeek: 0, fundingStatus: "Not sure / need scholarship"
+
+  const [skillDraft, setSkillDraft] = useState<Skill>({
+    skill: "", credentialName: "", credentialInstitute: ""
   })
+
+  const [learningDraft, setLearningDraft] = useState<LearningInterest>({
+    skill: "", status: "planned", institute: "", months: 12, hoursPerWeek: 10, fundingStatus: "Self-funded"
+  })
+
   const [offerDraft, setOfferDraft] = useState<SchoolOffer>({
-    school: "", program: "", year: "", fundingStatus: "Not sure / need scholarship"
+    school: "", program: "", year: "", fundingStatus: "Self-funded"
   })
 
-  const resetDegreeDraft = () => setDegreeDraft({
-    degreeName: "", institution: "", startYear: "", endYear: "", inProgress: false
-  })
+  const handleComplete = () => {
+    markSectionComplete("education")
+    onComplete()
+  }
 
-  const resetSkillDraft = () => setSkillDraft({ skill: "" })
+  const canContinue = degrees.length > 0 // At least one degree required
 
-  const canAddDegree = degreeDraft.degreeName && degreeDraft.institution && degreeDraft.startYear && 
-    (degreeDraft.inProgress || degreeDraft.endYear)
-  
+  const canAddDegree = degreeDraft.degree && degreeDraft.institution && degreeDraft.start_year && degreeDraft.end_year
   const canAddSkill = skillDraft.skill.trim().length > 0
-  
-  const canAddCourse = courseDraft.skill.trim() !== ""
-  
-  const canAddOffer = offerDraft.school.trim() !== ""
+  const canAddLearning = learningDraft.skill && learningDraft.institute
+  const canAddOffer = offerDraft.school && offerDraft.program
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <GraduationCap className="w-5 h-5" />
-          📚 Education
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent className="space-y-6">
-        <SectionHint title="ℹ️ Why your educational background matters">
-          Your educational background helps assess visa eligibility, professional licensing requirements, and qualification recognition in your destination country.
-          <ul className="mt-3 space-y-1 list-disc list-inside">
-            <li><strong>Points-based migration</strong> – many skilled-visa systems (e.g. Canada, Australia, UK PBS) award extra points for Bachelor's, Master's or PhD credentials.</li>
-            <li><strong>Professional licensing & salary thresholds</strong> – regulated professions or minimum-salary rules often depend on your highest qualification.</li>
-            <li><strong>Qualification recognition</strong> – some countries grant simplified diploma-recognition or "blue-card" routes when the awarding institution is accredited. Listing your degrees helps us flag any equivalency steps you may need.</li>
-          </ul>
-        </SectionHint>
-
-        <Separator />
-
-        {/* Education History Section */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            📚 Education History (past & present)
-          </h3>
-
-          {/* Existing degrees list */}
-          {degrees.length > 0 && (
-            <div className="space-y-3">
-              {degrees.map((deg, idx) => (
-                <div
-                  key={idx}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border rounded-md p-3 bg-muted/50"
-                >
-                  <div>
-                    <span className="font-medium">{deg.degreeName}</span>
-                    <p className="text-sm text-muted-foreground">{deg.institution}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-muted-foreground">
-                      {deg.startYear} – {deg.inProgress ? "Present" : deg.endYear}
-                    </span>
-                    {deg.inProgress && <Badge variant="secondary">In Progress</Badge>}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setDegrees(degrees.filter((_, i) => i !== idx))}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Add degree form */}
-          <div className="border rounded-lg p-4 space-y-3">
-            <h4 className="font-medium flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              Add Educational Qualification
-            </h4>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Input
-                placeholder="Degree name (e.g. BSc Economics, PhD Physics)"
-                value={degreeDraft.degreeName}
-                onChange={(e) => setDegreeDraft({ ...degreeDraft, degreeName: e.target.value })}
-              />
-              <Input
-                placeholder="Institution"
-                value={degreeDraft.institution}
-                onChange={(e) => setDegreeDraft({ ...degreeDraft, institution: e.target.value })}
-              />
-            </div>
-            
-            <div className="flex gap-3">
-              <Input
-                type="number"
-                placeholder="Start year"
-                className="flex-1"
-                value={degreeDraft.startYear}
-                onChange={(e) => setDegreeDraft({ ...degreeDraft, startYear: e.target.value })}
-              />
-              {!degreeDraft.inProgress && (
-                <Input
-                  type="number"
-                  placeholder="End year"
-                  className="flex-1"
-                  value={degreeDraft.endYear}
-                  onChange={(e) => setDegreeDraft({ ...degreeDraft, endYear: e.target.value })}
-                />
-              )}
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Checkbox
-                id="inProgress"
-                checked={degreeDraft.inProgress}
-                onCheckedChange={(v) => setDegreeDraft({
-                  ...degreeDraft,
-                  inProgress: !!v,
-                  endYear: v ? "" : degreeDraft.endYear,
-                })}
-              />
-              <Label htmlFor="inProgress">Currently in progress</Label>
-            </div>
-
-            <Button
-              disabled={!canAddDegree}
-              onClick={() => {
-                setDegrees([...degrees, degreeDraft])
-                resetDegreeDraft()
-              }}
-              className="w-full"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Degree
-            </Button>
-          </div>
+    <div className="space-y-8 max-w-5xl mx-auto">
+      {/* Page Header */}
+      <div className="text-center pb-4 border-b">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <GraduationCap className="w-7 h-7 text-primary" />
+          <h1 className="text-3xl font-bold tracking-tight">Education & Skills</h1>
         </div>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Your educational background and professional skills for visa applications and career opportunities
+        </p>
+      </div>
 
-        <Separator />
+      <SectionHint title="About this section">
+        Educational qualifications and professional skills are crucial for visa applications, especially for skilled worker visas and professional registration in your destination country.
+      </SectionHint>
 
-        {/* Visa-relevant Skills Section */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Award className="w-5 h-5" />
-            🛂 Visa-relevant Skills
-          </h3>
-          
-          <Alert>
-            <Info className="h-4 w-4" />
-            <AlertDescription>
-              <strong>Why list skills?</strong> Many countries run occupation- or skill-shortage visas (e.g. Australian Skills Independent Visa, New Zealand Green List, Canada Express Entry). Documenting your skills helps us match you with these programs.
-            </AlertDescription>
-          </Alert>
-
-          {/* Existing skills list */}
-          {skills.length > 0 && (
-            <div className="space-y-3">
-              {skills.map((s, idx) => (
-                <div key={idx} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border rounded-md p-3 bg-muted/50">
-                  <div>
-                    <span className="font-medium">{s.skill}</span>
-                    {s.credentialName && (
-                      <p className="text-sm text-muted-foreground">Credential: {s.credentialName}</p>
-                    )}
-                    {s.credentialInstitute && (
-                      <p className="text-sm text-muted-foreground">Institution: {s.credentialInstitute}</p>
-                    )}
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => setSkills(skills.filter((_, i) => i !== idx))}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Add skill form */}
-          <div className="border rounded-lg p-4 space-y-3">
-            <h4 className="font-medium flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              Add Skill/Expertise
-            </h4>
-            
-            <Input
-              placeholder="Skill / Expertise (e.g. Software Engineering, Nursing)"
-              value={skillDraft.skill}
-              onChange={(e) => setSkillDraft({ ...skillDraft, skill: e.target.value })}
-            />
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Input
-                placeholder="Credential name (optional)"
-                value={skillDraft.credentialName ?? ""}
-                onChange={(e) => setSkillDraft({ ...skillDraft, credentialName: e.target.value })}
-              />
-              <Input
-                placeholder="Credential institute (optional)"
-                value={skillDraft.credentialInstitute ?? ""}
-                onChange={(e) => setSkillDraft({ ...skillDraft, credentialInstitute: e.target.value })}
-              />
-            </div>
-
-            <Button
-              disabled={!canAddSkill}
-              onClick={() => {
-                setSkills([...skills, skillDraft])
-                resetSkillDraft()
-              }}
-              className="w-full"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Skill
-            </Button>
-          </div>
-        </div>
-
-        <Separator />
-
-        {/* Education Interests Section */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <BookOpen className="w-5 h-5" />
-            🎓 Education Interests
-          </h3>
-          
-          <Alert>
-            <Info className="h-4 w-4" />
-            <AlertDescription>
-              <strong>Why list future studies / skills?</strong> Documenting what you plan to study—especially high-demand skills—helps us match you with skill-shortage programs and study visa options.
-            </AlertDescription>
-          </Alert>
-
-          <div className="flex items-center gap-2">
-            <Checkbox 
-              id="interestChk" 
-              checked={interestedInStudy} 
-              onCheckedChange={(v) => setInterested(!!v)} 
-            />
-            <Label htmlFor="interestChk">
-              I plan or am interested in formal study (courses, degrees or certified skills) in {countryPhrase}.
-            </Label>
-          </div>
-          <p className="text-xs text-muted-foreground ml-6">
-            Tick if you expect to enroll in a school, university <strong>or official skills course</strong>.
-          </p>
-
-          {interestedInStudy && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="studyDetails">Details about your education / skill interests</Label>
-                <p className="text-xs text-muted-foreground">
-                  Tell us which qualifications or skills you'd like to pursue.
-                </p>
-                <Textarea
-                  id="studyDetails"
-                  className="min-h-[120px]"
-                  value={studyDetails}
-                  onChange={(e) => setStudyDetails(e.target.value)}
-                  placeholder="Describe your educational interests, goals, and planned studies..."
-                />
-              </div>
-
-              {/* Planned Study Management */}
-              <div className="border rounded-lg p-4 space-y-4">
-                <h4 className="font-medium flex items-center gap-2">
-                  <Plus className="w-4 h-4" />
-                  ➕ Add planned study (course OR university offer)
-                </h4>
-
-                {/* Study Type Selection */}
-                <div className="flex gap-4">
-                  <Label className="flex items-center gap-2">
-                    <input 
-                      type="radio" 
-                      name="studyType" 
-                      checked={studyType === 'course'} 
-                      onChange={() => setStudyType('course')} 
-                    />
-                    📘 Skill / Certificate course
-                  </Label>
-                  <Label className="flex items-center gap-2">
-                    <input 
-                      type="radio" 
-                      name="studyType" 
-                      checked={studyType === 'offer'} 
-                      onChange={() => setStudyType('offer')} 
-                    />
-                    🏛️ School / University offer
-                  </Label>
-                </div>
-
-                {studyType === 'course' ? (
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <Input
-                        placeholder="Skill or Course Name"
-                        value={courseDraft.skill}
-                        onChange={(e) => setCourseDraft({ ...courseDraft, skill: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Institution / Provider"
-                        value={courseDraft.institute}
-                        onChange={(e) => setCourseDraft({ ...courseDraft, institute: e.target.value })}
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div>
-                        <Label>Duration (months)</Label>
-                        <Input
-                          type="number"
-                          min={0}
-                          value={courseDraft.months}
-                          onChange={(e) => setCourseDraft({ ...courseDraft, months: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div>
-                        <Label>Hours per week</Label>
-                        <Input
-                          type="number"
-                          min={0}
-                          value={courseDraft.hoursPerWeek}
-                          onChange={(e) => setCourseDraft({ ...courseDraft, hoursPerWeek: Number(e.target.value) })}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label>Funding status</Label>
-                      <Select 
-                        value={courseDraft.fundingStatus} 
-                        onValueChange={(v) => setCourseDraft({ ...courseDraft, fundingStatus: v })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Paid">Paid</SelectItem>
-                          <SelectItem value="Have funds">Have funds</SelectItem>
-                          <SelectItem value="Not sure / need scholarship">Not sure / need scholarship</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <Button
-                      disabled={!canAddCourse}
-                      onClick={() => {
-                        setLearningInterests([...learningInterests, { ...courseDraft, status: "planned" }])
-                        setCourseDraft({ skill: "", institute: "", months: 0, hoursPerWeek: 0, fundingStatus: "Not sure / need scholarship" })
-                      }}
-                      className="w-full"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Course Interest
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <Input
-                        placeholder="School / University Name *"
-                        value={offerDraft.school}
-                        onChange={(e) => setOfferDraft({ ...offerDraft, school: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Offer / Programme"
-                        value={offerDraft.program}
-                        onChange={(e) => setOfferDraft({ ...offerDraft, program: e.target.value })}
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <Input
-                        placeholder="Year (YYYY)"
-                        value={offerDraft.year}
-                        onChange={(e) => setOfferDraft({ ...offerDraft, year: e.target.value })}
-                      />
-                      <Select 
-                        value={offerDraft.fundingStatus} 
-                        onValueChange={(v) => setOfferDraft({ ...offerDraft, fundingStatus: v })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Funding status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Paid">Paid</SelectItem>
-                          <SelectItem value="Have funds">Have funds</SelectItem>
-                          <SelectItem value="Not sure / need scholarship">Not sure / need scholarship</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <Button
-                      disabled={!canAddOffer}
-                      onClick={() => {
-                        setSchoolOffers([...schoolOffers, offerDraft])
-                        setOfferDraft({ school: "", program: "", year: "", fundingStatus: "Not sure / need scholarship" })
-                      }}
-                      className="w-full"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add School Offer
-                    </Button>
-                  </div>
-                )}
-              </div>
-
-              {/* Display Learning Interests */}
-              {learningInterests.length > 0 && (
-                <div className="space-y-3">
-                  <h4 className="font-medium">📘 Your Course/Skill Interests</h4>
-                  {learningInterests.map((interest, idx) => (
-                    <div key={idx} className="border rounded p-3 bg-muted/50">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium">{interest.skill}</p>
-                          <p className="text-sm text-muted-foreground">{interest.institute}</p>
-                          <div className="flex gap-4 text-xs text-muted-foreground mt-1">
-                            {interest.months > 0 && <span>Duration: {interest.months} months</span>}
-                            {interest.hoursPerWeek > 0 && <span>Hours/week: {interest.hoursPerWeek}</span>}
-                            <span>Funding: {interest.fundingStatus}</span>
+      {/* Previous Degrees Card */}
+      <Card className="shadow-sm border-l-4 border-l-primary">
+        <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <GraduationCap className="w-6 h-6 text-primary" />
+            Previous Degrees
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Your completed and in-progress formal education</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            {/* Existing degrees */}
+            {degrees.length > 0 && (
+              <div className="space-y-4">
+                <h4 className="font-medium text-base">Your Degrees</h4>
+                <div className="grid gap-4">
+                  {degrees.map((degree, idx) => (
+                    <div key={idx} className="p-4 border rounded-lg bg-card">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <Badge variant="secondary">{degree.degree || "Not specified"}</Badge>
+                            {degree.in_progress && <Badge variant="outline">In Progress</Badge>}
                           </div>
+                          <p className="font-medium">{degree.institution || "Institution not specified"}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {degree.field || "Field not specified"}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {degree.start_year} - {degree.in_progress ? "Present" : (degree.end_year || "Not specified")}
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setDegrees(degrees.filter((_, i) => i !== idx))}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Add degree form */}
+            <div className="space-y-4 p-4 border rounded-lg bg-card">
+              <h4 className="font-medium text-base">Add Degree</h4>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Degree name *</Label>
+                  <Input
+                    placeholder="e.g., Bachelor of Science in Computer Science"
+                    value={degreeDraft.degree}
+                    onChange={(e) => setDegreeDraft({...degreeDraft, degree: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Institution *</Label>
+                  <Input
+                    placeholder="e.g., University of Technology"
+                    value={degreeDraft.institution}
+                    onChange={(e) => setDegreeDraft({...degreeDraft, institution: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Start year *</Label>
+                  <Input
+                    type="number"
+                    min="1950"
+                    max="2030"
+                    placeholder="2020"
+                    value={degreeDraft.start_year}
+                    onChange={(e) => setDegreeDraft({...degreeDraft, start_year: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>End year {!degreeDraft.in_progress && "*"}</Label>
+                  <Input
+                    type="number"
+                    min="1950"
+                    max="2030"
+                    placeholder="2024"
+                    disabled={degreeDraft.in_progress}
+                    value={degreeDraft.end_year}
+                    onChange={(e) => setDegreeDraft({...degreeDraft, end_year: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="in_progress"
+                  checked={degreeDraft.in_progress}
+                  onCheckedChange={(v) => setDegreeDraft({...degreeDraft, in_progress: !!v, end_year: v ? "" : degreeDraft.end_year})}
+                />
+                <Label htmlFor="in_progress">Currently in progress</Label>
+              </div>
+              <Button
+                disabled={!canAddDegree}
+                                  onClick={() => {
+                    setDegrees([...degrees, degreeDraft])
+                    setDegreeDraft({degree: "", institution: "", field: "", start_year: "", end_year: "", in_progress: false})
+                  }}
+                className="w-full"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Degree
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Professional Skills Card */}
+      <Card className="shadow-sm border-l-4 border-l-blue-500">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Award className="w-6 h-6 text-blue-600" />
+            Professional Skills & Credentials
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Skills and certifications that may help with visa applications</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            {/* Existing skills */}
+            {skills.length > 0 && (
+              <div className="space-y-4">
+                <h4 className="font-medium text-base">Your Skills & Credentials</h4>
+                <div className="grid gap-3">
+                  {skills.map((skill, idx) => (
+                    <div key={idx} className="p-3 border rounded-lg bg-card flex items-center justify-between">
+                      <div>
+                        <span className="font-medium">{skill.skill}</span>
+                        {skill.credentialName && (
+                          <div className="text-sm text-muted-foreground mt-1">
+                            {skill.credentialName} {skill.credentialInstitute && `• ${skill.credentialInstitute}`}
+                          </div>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSkills(skills.filter((_, i) => i !== idx))}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Add skill form */}
+            <div className="space-y-4 p-4 border rounded-lg bg-card">
+              <h4 className="font-medium text-base">Add Skill or Credential</h4>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Skill or profession *</Label>
+                  <Input
+                    placeholder="e.g., Software Development, Nursing, Accounting..."
+                    value={skillDraft.skill}
+                    onChange={(e) => setSkillDraft({...skillDraft, skill: e.target.value})}
+                  />
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Credential name</Label>
+                    <Input
+                      placeholder="e.g., CPA, RN License, AWS Certification..."
+                      value={skillDraft.credentialName}
+                      onChange={(e) => setSkillDraft({...skillDraft, credentialName: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Issuing organization</Label>
+                    <Input
+                      placeholder="e.g., AICPA, State Board, Amazon..."
+                      value={skillDraft.credentialInstitute}
+                      onChange={(e) => setSkillDraft({...skillDraft, credentialInstitute: e.target.value})}
+                    />
+                  </div>
+                </div>
+                <Button
+                  disabled={!canAddSkill}
+                  onClick={() => {
+                    setSkills([...skills, skillDraft])
+                    setSkillDraft({skill: "", credentialName: "", credentialInstitute: ""})
+                  }}
+                  className="w-full"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Skill
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Military Service Card */}
+      <Card className="shadow-sm border-l-4 border-l-red-500">
+        <CardHeader className="bg-gradient-to-r from-red-50 to-transparent dark:from-red-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Award className="w-6 h-6 text-red-600" />
+            Military Service
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Your military service history</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
+              <Checkbox
+                id="has_military"
+                checked={getFormData("education.militaryService.hasService") ?? false}
+                onCheckedChange={(v) => updateFormData("education.militaryService.hasService", !!v)}
+              />
+              <Label htmlFor="has_military" className="text-base font-medium">
+                I have served in the military
+              </Label>
+            </div>
+
+            {getFormData("education.militaryService.hasService") && (
+              <div className="space-y-4 p-4 border rounded-lg bg-card">
+                <h4 className="font-medium text-base">Military Service Details</h4>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Country of service *</Label>
+                    <Input
+                      placeholder="e.g., United States"
+                      value={getFormData("education.militaryService.country") ?? ""}
+                      onChange={(e) => updateFormData("education.militaryService.country", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Branch/Service *</Label>
+                    <Input
+                      placeholder="e.g., Army, Navy, Air Force"
+                      value={getFormData("education.militaryService.branch") ?? ""}
+                      onChange={(e) => updateFormData("education.militaryService.branch", e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Start year</Label>
+                    <Input
+                      type="number"
+                      placeholder="2010"
+                      value={getFormData("education.militaryService.startYear") ?? ""}
+                      onChange={(e) => updateFormData("education.militaryService.startYear", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>End year (or "Present")</Label>
+                    <Input
+                      placeholder="2014 or Present"
+                      value={getFormData("education.militaryService.endYear") ?? ""}
+                      onChange={(e) => updateFormData("education.militaryService.endYear", e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Rank achieved</Label>
+                  <Input
+                    placeholder="e.g., Sergeant, Lieutenant"
+                    value={getFormData("education.militaryService.rank") ?? ""}
+                    onChange={(e) => updateFormData("education.militaryService.rank", e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Work Experience Card */}
+      <Card className="shadow-sm border-l-4 border-l-blue-500">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Users className="w-6 h-6 text-blue-600" />
+            Work Experience
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Your employment history for visa purposes</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            {/* Existing work experience */}
+            {(() => {
+              const workExp = getFormData("education.workExperience") ?? []
+              return workExp.length > 0 && (
+                <div className="space-y-4">
+                  <h4 className="font-medium text-base">Your Work Experience</h4>
+                  <div className="grid gap-4">
+                    {workExp.map((job: any, idx: number) => (
+                      <div key={idx} className="p-4 border rounded-lg bg-card">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <Badge variant="secondary">{job.jobTitle || "Not specified"}</Badge>
+                              {job.current && <Badge variant="outline">Current</Badge>}
+                            </div>
+                            <p className="font-medium">{job.company || "Company not specified"}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {job.startYear} - {job.current ? "Present" : (job.endYear || "Not specified")}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {job.country || "Country not specified"}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              const updated = workExp.filter((_: any, i: number) => i !== idx)
+                              updateFormData("education.workExperience", updated)
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })()}
+
+            {/* Add work experience form */}
+            <div className="space-y-4 p-4 border rounded-lg bg-card">
+              <h4 className="font-medium text-base">Add Work Experience</h4>
+              <div className="space-y-4">
+                                 <div className="grid md:grid-cols-2 gap-4">
+                   <div className="space-y-2">
+                     <Label>Job title *</Label>
+                     <Input
+                       placeholder="e.g., Software Engineer"
+                       value={workExpDraft.jobTitle}
+                       onChange={(e) => setWorkExpDraft({...workExpDraft, jobTitle: e.target.value})}
+                     />
+                   </div>
+                   <div className="space-y-2">
+                     <Label>Company *</Label>
+                     <Input
+                       placeholder="e.g., Tech Corp Inc"
+                       value={workExpDraft.company}
+                       onChange={(e) => setWorkExpDraft({...workExpDraft, company: e.target.value})}
+                     />
+                   </div>
+                 </div>
+                 <div className="grid md:grid-cols-3 gap-4">
+                   <div className="space-y-2">
+                     <Label>Country *</Label>
+                     <Input
+                       placeholder="e.g., United States"
+                       value={workExpDraft.country}
+                       onChange={(e) => setWorkExpDraft({...workExpDraft, country: e.target.value})}
+                     />
+                   </div>
+                   <div className="space-y-2">
+                     <Label>Start year *</Label>
+                     <Input
+                       type="number"
+                       placeholder="2020"
+                       value={workExpDraft.startYear}
+                       onChange={(e) => setWorkExpDraft({...workExpDraft, startYear: e.target.value})}
+                     />
+                   </div>
+                   <div className="space-y-2">
+                     <Label>End year</Label>
+                     <Input
+                       type="number"
+                       placeholder="2023"
+                       value={workExpDraft.endYear}
+                       onChange={(e) => setWorkExpDraft({...workExpDraft, endYear: e.target.value})}
+                       disabled={workExpDraft.current}
+                     />
+                   </div>
+                 </div>
+                 <div className="flex items-center gap-2">
+                   <Checkbox 
+                     id="current_job" 
+                     checked={workExpDraft.current}
+                     onCheckedChange={(v) => setWorkExpDraft({...workExpDraft, current: !!v, endYear: !!v ? "" : workExpDraft.endYear})}
+                   />
+                   <Label htmlFor="current_job">This is my current job</Label>
+                 </div>
+                 <Button
+                   disabled={!workExpDraft.jobTitle || !workExpDraft.company || !workExpDraft.country || !workExpDraft.startYear || (!workExpDraft.current && !workExpDraft.endYear)}
+                   onClick={() => {
+                     const currentExp = getFormData("education.workExperience") ?? []
+                     updateFormData("education.workExperience", [...currentExp, workExpDraft])
+                     setWorkExpDraft({jobTitle: "", company: "", country: "", startYear: "", endYear: "", current: false})
+                   }}
+                   className="w-full"
+                 >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Work Experience
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Professional Licenses Card */}
+      <Card className="shadow-sm border-l-4 border-l-purple-500">
+        <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Award className="w-6 h-6 text-purple-600" />
+            Professional Licenses
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Professional certifications and licenses</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            {/* Existing licenses */}
+            {(() => {
+              const licenses = getFormData("education.professionalLicenses") ?? []
+              return licenses.length > 0 && (
+                <div className="space-y-4">
+                  <h4 className="font-medium text-base">Your Professional Licenses</h4>
+                  <div className="grid gap-4">
+                    {licenses.map((license: any, idx: number) => (
+                      <div key={idx} className="p-4 border rounded-lg bg-card">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <Badge variant="secondary">{license.licenseType || "Not specified"}</Badge>
+                              {license.active && <Badge variant="outline">Active</Badge>}
+                            </div>
+                            <p className="font-medium">{license.licenseName || "License not specified"}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Issued by: {license.issuingBody || "Not specified"}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Country: {license.country || "Not specified"}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              const updated = licenses.filter((_: any, i: number) => i !== idx)
+                              updateFormData("education.professionalLicenses", updated)
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })()}
+
+            {/* Add professional license form */}
+            <div className="space-y-4 p-4 border rounded-lg bg-card">
+              <h4 className="font-medium text-base">Add Professional License</h4>
+              <div className="space-y-4">
+                                 <div className="grid md:grid-cols-2 gap-4">
+                   <div className="space-y-2">
+                     <Label>License type *</Label>
+                     <Select
+                       value={licenseDraft.licenseType}
+                       onValueChange={(v) => setLicenseDraft({...licenseDraft, licenseType: v})}
+                     >
+                       <SelectTrigger>
+                         <SelectValue placeholder="Select license type" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         <SelectItem value="Medical">Medical</SelectItem>
+                         <SelectItem value="Legal">Legal</SelectItem>
+                         <SelectItem value="Engineering">Engineering</SelectItem>
+                         <SelectItem value="Teaching">Teaching</SelectItem>
+                         <SelectItem value="Financial">Financial</SelectItem>
+                         <SelectItem value="Other">Other</SelectItem>
+                       </SelectContent>
+                     </Select>
+                   </div>
+                   <div className="space-y-2">
+                     <Label>License name *</Label>
+                     <Input
+                       placeholder="e.g., Registered Nurse, Professional Engineer"
+                       value={licenseDraft.licenseName}
+                       onChange={(e) => setLicenseDraft({...licenseDraft, licenseName: e.target.value})}
+                     />
+                   </div>
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-4">
+                   <div className="space-y-2">
+                     <Label>Issuing body *</Label>
+                     <Input
+                       placeholder="e.g., State Medical Board"
+                       value={licenseDraft.issuingBody}
+                       onChange={(e) => setLicenseDraft({...licenseDraft, issuingBody: e.target.value})}
+                     />
+                   </div>
+                   <div className="space-y-2">
+                     <Label>Country *</Label>
+                     <Input
+                       placeholder="e.g., United States"
+                       value={licenseDraft.country}
+                       onChange={(e) => setLicenseDraft({...licenseDraft, country: e.target.value})}
+                     />
+                   </div>
+                 </div>
+                 <div className="flex items-center gap-2">
+                   <Checkbox 
+                     id="license_active"
+                     checked={licenseDraft.active}
+                     onCheckedChange={(v) => setLicenseDraft({...licenseDraft, active: !!v})}
+                   />
+                   <Label htmlFor="license_active">License is currently active</Label>
+                 </div>
+                 <Button
+                   disabled={!licenseDraft.licenseType || !licenseDraft.licenseName || !licenseDraft.issuingBody || !licenseDraft.country}
+                   onClick={() => {
+                     const currentLicenses = getFormData("education.professionalLicenses") ?? []
+                     updateFormData("education.professionalLicenses", [...currentLicenses, licenseDraft])
+                     setLicenseDraft({licenseType: "", licenseName: "", issuingBody: "", country: "", active: false})
+                   }}
+                   className="w-full"
+                 >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Professional License
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Study Interest Card */}
+      <Card className="shadow-sm border-l-4 border-l-green-500">
+        <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <BookOpen className="w-6 h-6 text-green-600" />
+            Study Plans in {countryPhrase}
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Interest in further education or training</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
+              <Checkbox
+                id="interested_study"
+                checked={interestedInStudy}
+                onCheckedChange={(v) => setInterested(!!v)}
+              />
+              <Label htmlFor="interested_study" className="text-base font-medium">
+                I'm interested in studying in {countryPhrase}
+              </Label>
+            </div>
+
+            {interestedInStudy && (
+              <div className="space-y-4 p-4 border rounded-lg bg-card">
+                <div className="space-y-2">
+                  <Label>Study details</Label>
+                  <Textarea
+                    placeholder="Describe what you'd like to study, preferred institutions, program types..."
+                    value={studyDetails}
+                    onChange={(e) => setStudyDetails(e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Learning Interests Card */}
+      <Card className="shadow-sm border-l-4 border-l-purple-500">
+        <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Brain className="w-6 h-6 text-purple-600" />
+            Learning & Development Goals
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Skills you'd like to learn or improve</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            {/* Existing learning interests */}
+            {learningInterests.length > 0 && (
+              <div className="space-y-4">
+                <h4 className="font-medium text-base">Your Learning Goals</h4>
+                <div className="grid gap-4">
+                  {learningInterests.map((interest, idx) => (
+                    <div key={idx} className="p-4 border rounded-lg bg-card">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h5 className="font-medium">{interest.skill}</h5>
+                            <Badge variant={interest.status === "planned" ? "default" : "secondary"}>
+                              {interest.status === "planned" ? "Planned" : "Open to it"}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {interest.institute}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {interest.months} months • {interest.hoursPerWeek} hrs/week • {interest.fundingStatus}
+                          </p>
                         </div>
                         <Button
                           variant="ghost"
@@ -526,22 +749,130 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                     </div>
                   ))}
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* Display School Offers */}
-              {schoolOffers.length > 0 && (
-                <div className="space-y-3">
-                  <h4 className="font-medium">🏛️ Your School / University Offers</h4>
+            {/* Add learning interest form */}
+            <div className="space-y-4 p-4 border rounded-lg bg-card">
+              <h4 className="font-medium text-base">Add Learning Goal</h4>
+              <div className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Skill or subject *</Label>
+                    <Input
+                      placeholder="e.g., Machine Learning, German Language..."
+                      value={learningDraft.skill}
+                      onChange={(e) => setLearningDraft({...learningDraft, skill: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Status *</Label>
+                    <Select
+                      value={learningDraft.status}
+                      onValueChange={(v: "planned" | "open") => setLearningDraft({...learningDraft, status: v})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="planned">Definitely planned</SelectItem>
+                        <SelectItem value="open">Open to it</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Preferred institution/platform *</Label>
+                  <Input
+                    placeholder="e.g., Local university, Coursera, Udemy..."
+                    value={learningDraft.institute}
+                    onChange={(e) => setLearningDraft({...learningDraft, institute: e.target.value})}
+                  />
+                </div>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>Duration (months) *</Label>
+                    <Input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={learningDraft.months}
+                      onChange={(e) => setLearningDraft({...learningDraft, months: parseInt(e.target.value) || 12})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Hours per week *</Label>
+                    <Input
+                      type="number"
+                      min="1"
+                      max="80"
+                      value={learningDraft.hoursPerWeek}
+                      onChange={(e) => setLearningDraft({...learningDraft, hoursPerWeek: parseInt(e.target.value) || 10})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Funding *</Label>
+                    <Select
+                      value={learningDraft.fundingStatus}
+                      onValueChange={(v) => setLearningDraft({...learningDraft, fundingStatus: v})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Self-funded">Self-funded</SelectItem>
+                        <SelectItem value="Employer-funded">Employer-funded</SelectItem>
+                        <SelectItem value="Scholarship">Scholarship</SelectItem>
+                        <SelectItem value="Government grant">Government grant</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <Button
+                  disabled={!canAddLearning}
+                  onClick={() => {
+                    setLearningInterests([...learningInterests, learningDraft])
+                    setLearningDraft({skill: "", status: "planned", institute: "", months: 12, hoursPerWeek: 10, fundingStatus: "Self-funded"})
+                  }}
+                  className="w-full"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Learning Goal
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* School Offers Card */}
+      <Card className="shadow-sm border-l-4 border-l-orange-500">
+        <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <School className="w-6 h-6 text-orange-600" />
+            School Offers & Applications
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Existing school offers or applications in {countryPhrase}</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            {/* Existing school offers */}
+            {schoolOffers.length > 0 && (
+              <div className="space-y-4">
+                <h4 className="font-medium text-base">Your School Offers</h4>
+                <div className="grid gap-4">
                   {schoolOffers.map((offer, idx) => (
-                    <div key={idx} className="border rounded p-3 bg-muted/50">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium">{offer.school}</p>
-                          <p className="text-sm text-muted-foreground">{offer.program}</p>
-                          <div className="flex gap-4 text-xs text-muted-foreground mt-1">
-                            {offer.year && <span>Year: {offer.year}</span>}
-                            <span>Status: {offer.fundingStatus}</span>
-                          </div>
+                    <div key={idx} className="p-4 border rounded-lg bg-card">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <h5 className="font-medium mb-1">{offer.program}</h5>
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {offer.school}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {offer.year} • {offer.fundingStatus}
+                          </p>
                         </div>
                         <Button
                           variant="ghost"
@@ -554,17 +885,103 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
-          )}
-        </div>
-      </CardContent>
+              </div>
+            )}
 
-      <CardFooter>
-        <Button className="w-full" onClick={onComplete} size="lg">
-          Continue
-        </Button>
-      </CardFooter>
-    </Card>
+            {/* Add school offer form */}
+            <div className="space-y-4 p-4 border rounded-lg bg-card">
+              <h4 className="font-medium text-base">Add School Offer</h4>
+              <div className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>School/University *</Label>
+                    <Input
+                      placeholder="e.g., University of Toronto"
+                      value={offerDraft.school}
+                      onChange={(e) => setOfferDraft({...offerDraft, school: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Program/Course *</Label>
+                    <Input
+                      placeholder="e.g., Master of Computer Science"
+                      value={offerDraft.program}
+                      onChange={(e) => setOfferDraft({...offerDraft, program: e.target.value})}
+                    />
+                  </div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Start year *</Label>
+                    <Input
+                      placeholder="2024"
+                      value={offerDraft.year}
+                      onChange={(e) => setOfferDraft({...offerDraft, year: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Funding status *</Label>
+                    <Select
+                      value={offerDraft.fundingStatus}
+                      onValueChange={(v) => setOfferDraft({...offerDraft, fundingStatus: v})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Self-funded">Self-funded</SelectItem>
+                        <SelectItem value="Scholarship">Scholarship</SelectItem>
+                        <SelectItem value="Teaching assistantship">Teaching assistantship</SelectItem>
+                        <SelectItem value="Research assistantship">Research assistantship</SelectItem>
+                        <SelectItem value="Government funding">Government funding</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <Button
+                  disabled={!canAddOffer}
+                  onClick={() => {
+                    setSchoolOffers([...schoolOffers, offerDraft])
+                    setOfferDraft({school: "", program: "", year: "", fundingStatus: "Self-funded"})
+                  }}
+                  className="w-full"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add School Offer
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Action Card */}
+      <Card className="shadow-md">
+        <CardFooter className="pt-6">
+          <div className="w-full space-y-4">
+            {!canContinue && (
+              <Alert variant="destructive">
+                <AlertDescription>
+                  <strong>Complete required fields:</strong>
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    {degrees.length === 0 && <li>At least one degree</li>}
+                  </ul>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <Button
+              disabled={!canContinue}
+              onClick={handleComplete}
+              className="w-full"
+              size="lg"
+            >
+              Continue to Finance
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
   )
 } 

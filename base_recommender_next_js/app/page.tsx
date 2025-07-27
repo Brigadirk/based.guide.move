@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,10 +58,35 @@ const SECTIONS: Section[] = [
 ];
 
 export default function HomePage() {
-  const [currentSection, setCurrentSection] = useState(0);
-  const { isSectionComplete, hasRequiredData, markSectionComplete, isSectionMarkedComplete, formData, updateFormData } = useFormStore();
-  const destCountry = formData.destination?.country ?? "";
-  const destRegion = formData.destination?.region ?? "";
+  const { 
+    isSectionComplete, 
+    hasRequiredData, 
+    markSectionComplete, 
+    isSectionMarkedComplete, 
+    formData, 
+    updateFormData, 
+    resetFormData,
+    currentSection,
+    setCurrentSection
+  } = useFormStore();
+  const destCountry = (formData.residencyIntentions?.destinationCountry as any)?.country ?? formData.destination?.country ?? "";
+  const destRegion = (formData.residencyIntentions?.destinationCountry as any)?.region ?? formData.destination?.region ?? "";
+
+  // Handle section persistence on mount
+  useEffect(() => {
+    const savedSection = localStorage.getItem('migration-current-section')
+    if (savedSection !== null) {
+      const sectionNum = parseInt(savedSection, 10)
+      if (sectionNum >= 0 && sectionNum < SECTIONS.length) {
+        setCurrentSection(sectionNum)
+      }
+    }
+  }, [setCurrentSection])
+
+  // Save current section to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('migration-current-section', currentSection.toString())
+  }, [currentSection])
 
   // Listen for formData changes from custom events
   useEffect(() => {
@@ -110,14 +135,21 @@ export default function HomePage() {
   const renderSection = () => {
     const section = SECTIONS[currentSection];
     
-    // Gate all sections beyond destination until destination has required data
+    // Gate all sections beyond disclaimer and destination until both are complete
+    const disclaimerComplete = isSectionMarkedComplete("disclaimer");
+    const destinationComplete = destCountry && destCountry.trim() !== "";
+    
     if (
       !["disclaimer", "destination", "summary"].includes(section.id) &&
-      !hasRequiredData("destination")
+      (!disclaimerComplete || !destinationComplete)
     ) {
+      const missingSteps = [];
+      if (!disclaimerComplete) missingSteps.push("Disclaimer");
+      if (!destinationComplete) missingSteps.push("Desired Destination");
+      
       return (
         <div className="p-6 text-center text-sm text-muted-foreground">
-          Please complete the &quot;Desired Destination&quot; section first.
+          Please complete the {missingSteps.join(" and ")} section{missingSteps.length > 1 ? "s" : ""} first.
         </div>
       );
     }
@@ -157,7 +189,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8 text-center">
+        <div className="mb-8 text-center relative">
           <Image
             src="/images/wordmark.png"
             alt="Mr Pro Bonobo's Ape Escape Consultancy"
@@ -171,11 +203,40 @@ export default function HomePage() {
           <p className="text-lg text-muted-foreground">
             Migration Questionnaire
           </p>
+          
+          {/* Auto-save indicator and reset button */}
+          <div className="absolute top-0 right-0 flex items-center gap-2">
+            <span className="text-xs text-muted-foreground opacity-50" title="Your progress is automatically saved to browser storage">
+              💾 Persistent storage active
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                if (confirm("Are you sure you want to reset all form data? This cannot be undone.")) {
+                  // Reset the form data
+                  resetFormData()
+                  setCurrentSection(0)
+                  
+                  // Clear all persistent storage
+                  localStorage.removeItem('migration-current-section')
+                  localStorage.removeItem('base-recommender-form-data')
+                  
+                  // Force a page reload to ensure clean state
+                  window.location.reload()
+                }
+              }}
+              className="text-xs text-muted-foreground hover:text-foreground opacity-50 hover:opacity-100 transition-opacity"
+              title="Reset all form data"
+            >
+              🗑️ Reset
+            </Button>
+          </div>
         </div>
 
         <div className="flex flex-col lg:flex-row lg:items-start lg:gap-8">
-          {/* Sidebar */}
-          <aside className="w-full lg:w-64 mb-6 lg:mb-0">
+          {/* Sidebar - Desktop only */}
+          <aside className="hidden lg:block w-64">
             {/* Selected Destination Card - Only show after section completion */}
             {destCountry && destRegion && destCountry.trim() !== "" && destRegion.trim() !== "" && isSectionComplete('destination') ? (
               <div className="mb-4">
@@ -186,18 +247,18 @@ export default function HomePage() {
                 />
               </div>
             ) : null}
-            <nav className="space-y-1 lg:sticky lg:top-24 flex lg:block overflow-x-auto lg:overflow-visible">
+            <nav className="space-y-1 sticky top-24">
               {SECTIONS.map((section, index) => {
                 const Icon = section.icon
                 const isCompleted = isSectionComplete(section.id)
                 const isMarkedComplete = isSectionMarkedComplete(section.id)
-                const disabled = index > 1 && !hasRequiredData("destination")
+                const disabled = (index === 1 && !isSectionMarkedComplete("disclaimer")) || (index > 1 && (!isSectionMarkedComplete("disclaimer") || !(destCountry && destCountry.trim() !== "")))
                 const isCurrent = index === currentSection
                 return (
                   <button
                     key={section.id}
-                    title={disabled ? "Please enter your destination first" : undefined}
-                    className={`flex items-center w-full px-3 py-2 rounded-md text-sm transition-colors relative ${
+                    title={disabled ? (index === 1 ? "Please complete the Disclaimer section first" : "Please complete the Disclaimer and Desired Destination sections first") : undefined}
+                    className={`flex items-center w-full px-4 py-3 rounded-md text-sm transition-colors relative min-w-0 ${
                       isCurrent
                         ? "bg-primary text-primary-foreground"
                         : isCompleted
@@ -206,21 +267,19 @@ export default function HomePage() {
                     } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                     onClick={() => !disabled && setCurrentSection(index)}
                   >
-                    <Icon className="w-4 h-4 mr-2" />
+                    <Icon className={`w-4 h-4 mr-3 flex-shrink-0 ${isCurrent ? "text-white" : ""}`} />
                     <span className="flex-1 text-left truncate">
                       {section.title}
                     </span>
                     
                     {/* Enhanced completion indicators */}
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2 ml-3 flex-shrink-0">
                       {isCompleted && <Check className="w-4 h-4 text-green-600" />}
                       {isMarkedComplete && !isCompleted && <Check className="w-4 h-4 text-yellow-500" />}
                       {section.showDot && !isCompleted && (
                         <div className="w-1.5 h-1.5 bg-red-500 rounded-full opacity-80 shadow-sm" title="Section to complete" />
                       )}
                     </div>
-
-
                   </button>
                 )
               })}
@@ -231,6 +290,17 @@ export default function HomePage() {
 
           {/* Main column */}
           <main className="flex-1">
+            {/* Selected Destination Card - Mobile only */}
+            {destCountry && destRegion && destCountry.trim() !== "" && destRegion.trim() !== "" && isSectionComplete('destination') && (
+              <div className="mb-6 lg:hidden flex justify-center">
+                <SelectedDestinationCard 
+                  country={destCountry} 
+                  region={destRegion} 
+                  compact={true}
+                />
+              </div>
+            )}
+            
             {/* Progress Bar */}
             <div className="mb-8">
               <div className="flex justify-between items-center mb-2">
@@ -244,25 +314,25 @@ export default function HomePage() {
               <Progress value={progress} className="h-2" />
             </div>
 
-            {/* Section Navigation (chips) */}
+            {/* Section Navigation (chips) - Mobile only */}
             <div className="mb-8 lg:hidden">
-              <div className="flex flex-wrap gap-2 justify-center">
+              <div className="flex flex-wrap gap-3 justify-center px-4">
                 {SECTIONS.map((section, index) => {
                   const Icon = section.icon
                   const isCompleted = isSectionMarkedComplete(section.id)
-                  const disabled = index > 1 && !hasRequiredData("destination")
+                  const disabled = (index === 1 && !isSectionMarkedComplete("disclaimer")) || (index > 1 && (!isSectionMarkedComplete("disclaimer") || !(destCountry && destCountry.trim() !== "")))
                   const isCurrent = index === currentSection
                   return (
                     <Badge
                       key={section.id}
-                      title={disabled ? "Please enter your destination first" : undefined}
+                      title={disabled ? (index === 1 ? "Please complete the Disclaimer section first" : "Please complete the Disclaimer and Desired Destination sections first") : undefined}
                       variant={isCurrent ? "default" : isCompleted ? "secondary" : "outline"}
-                      className={`transition-all relative ${isCurrent ? "ring-2 ring-primary" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                      className={`transition-all relative px-3 py-2 ${isCurrent ? "ring-2 ring-primary" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                       onClick={() => !disabled && setCurrentSection(index)}
                     >
-                      <Icon className="w-4 h-4 mr-1" />
-                      {section.title}
-                      {isCompleted && <Check className="w-4 h-4 ml-1 text-accent-positive" />}
+                      <Icon className={`w-4 h-4 mr-2 flex-shrink-0 ${isCurrent ? "text-white" : ""}`} />
+                      <span className="truncate max-w-[120px]">{section.title}</span>
+                      {isCompleted && <Check className="w-4 h-4 ml-2 text-green-600 flex-shrink-0" />}
                       {section.showDot && !isCompleted && (
                         <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-red-500 rounded-full opacity-80 shadow-sm" />
                       )}

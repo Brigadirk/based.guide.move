@@ -321,32 +321,19 @@ export function SelectedDestinationCard({
   return (
     <Card className={`border-primary/20 bg-primary/5 transition-all duration-200 hover:bg-primary/10 ${className}`}>
       <CardContent className={`${compact ? 'p-3' : 'p-4'}`}>
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 mt-1">
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0">
             <CountryFlag 
               countryCode={flagCode} 
-              size={compact ? "sm" : "md"} 
+              size="xl" 
               showPlaceholder={true}
             />
           </div>
           
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <MapPin className={`${compact ? 'w-3 h-3' : 'w-4 h-4'} text-primary flex-shrink-0`} />
-              <h3 className={`${compact ? 'text-sm' : 'text-base'} font-semibold text-foreground leading-tight truncate`}>
-                Selected Destination
-              </h3>
-            </div>
-            
-            <p className={`${compact ? 'text-sm' : 'text-base'} text-foreground font-medium mb-1 truncate`}>
+            <h3 className={`${compact ? 'text-base' : 'text-lg'} font-semibold text-foreground leading-tight truncate mb-2`}>
               {country}
-            </p>
-            
-            {region && (
-              <p className={`${compact ? 'text-xs' : 'text-sm'} text-muted-foreground mb-2 truncate`}>
-                {region}
-              </p>
-            )}
+            </h3>
             
             {languages.length > 0 && (
               <div className="flex items-start gap-1">

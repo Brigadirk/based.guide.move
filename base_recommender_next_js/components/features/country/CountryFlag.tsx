@@ -70,7 +70,7 @@ export interface CountryFlagProps {
    * Size variant of the flag
    * @default 'sm'
    */
-  size?: 'xs' | 'sm' | 'md' | 'lg'
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   /**
    * Whether to show a placeholder when country code is missing
    * @default false
@@ -83,6 +83,7 @@ const sizes = {
   sm: 'w-6 h-4',
   md: 'w-8 h-6',
   lg: 'w-12 h-8',
+  xl: 'w-16 h-12',
 }
 
 export function CountryFlag({

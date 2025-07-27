@@ -29,7 +29,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 
 export function AdditionalInformation({ onComplete }: { onComplete: () => void }) {
-  const { getFormData, updateFormData } = useFormStore()
+  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
 
   const generalNotes = getFormData("additionalInformation.generalNotes") ?? ""
   const specialSections = getFormData("additionalInformation.specialSections") ?? []
@@ -44,6 +44,13 @@ export function AdditionalInformation({ onComplete }: { onComplete: () => void }
   const [editTheme, setEditTheme] = useState("")
   const [editContent, setEditContent] = useState("")
 
+  // Check if section has any content
+  const hasContent = generalNotes.trim() !== "" || specialSections.length > 0
+
+  const handleContinue = () => {
+    markSectionComplete("additional")
+    onComplete()
+  }
 
 
   const handleAddSection = () => {
@@ -302,9 +309,9 @@ export function AdditionalInformation({ onComplete }: { onComplete: () => void }
       <CardFooter>
         <Button 
           className="w-full" 
-          onClick={onComplete}
+          onClick={handleContinue}
         >
-          Continue
+          {hasContent ? "Continue" : "Continue (skip section)"}
         </Button>
       </CardFooter>
     </Card>

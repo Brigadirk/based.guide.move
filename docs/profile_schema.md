@@ -45,7 +45,11 @@ describes its purpose, allowed values, and how it is used by the backend.
 | destinationCountry.moveType | enum | `Permanent`, `Temporary`, `Remote`, etc. | |
 | residencyPlans.applyForResidency | bool | |
 | citizenshipPlans.interestedInCitizenship | bool | |
-| languageProficiency.individual | dict{lang:int(0-5)} | | CEFR-style skills |
+| languageProficiency.individual | dict{lang:int(0-6)} | 0=None, 1=A1, 2=A2, 3=B1, 4=B2, 5=C1, 6=C2 | CEFR proficiency levels |
+| languageProficiency.partner | dict{lang:int(0-6)} | Same scale as individual | Partner's CEFR proficiency |
+| languageProficiency.willing_to_learn | array[string] | Language names | Languages user is willing to learn |
+| languageProficiency.can_teach | dict{lang:string} | Teaching capability level | Languages user can teach |
+| languageProficiency.other_languages | array[object] | Language objects | Additional languages not in destination |
 | centerOfLife.maintainsSignificantTies | bool | |
 
 (… additional fields will be documented)

@@ -123,7 +123,7 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
       </div>
 
       {/* Legal Notice - Minimal */}
-      <Card className="border-2 border-dashed border-gray-200 bg-gray-50/50">
+      <Card className="border-2 border-dashed border-gray-300 bg-card">
         <CardContent className="p-6">
           <div className="flex items-start gap-3">
             <Shield className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />

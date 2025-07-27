@@ -2,10 +2,10 @@
 
 import { useMemo, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Globe, MapPin, Languages } from "lucide-react"
+import { Globe, MapPin, Languages, Info } from "lucide-react"
 import { useFormStore } from "@/lib/stores"
 import { getLanguages } from "@/lib/utils/country-utils"
 import { SectionHint } from "@/components/ui/section-hint"
@@ -38,11 +38,11 @@ const COUNTRIES: CountryEntry[] = Object.entries(
 }))
 
 export function Destination({ onComplete }: DestinationProps) {
-  const { getFormData, updateFormData, formData, isSectionComplete } = useFormStore()
+  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   
-    // Use formData.destination directly to avoid race conditions with getFormData
-  const selectedCountry = formData.destination?.country || ""
-  const selectedRegion = formData.destination?.region || ""
+  // Use correct data structure matching Streamlit
+  const selectedCountry = getFormData("residencyIntentions.destinationCountry.country") ?? ""
+  const selectedRegion = getFormData("residencyIntentions.destinationCountry.region") ?? ""
 
   // Component lifecycle tracking
   useEffect(() => {
@@ -55,43 +55,36 @@ export function Destination({ onComplete }: DestinationProps) {
   const handleCountryChange = (countryCode: string) => {
     if (!countryCode || countryCode.trim() === "") return
     
-    updateFormData("destination.country", countryCode)
-    updateFormData("destination.region", "") // Clear region when country changes
+    updateFormData("residencyIntentions.destinationCountry.country", countryCode)
+    updateFormData("residencyIntentions.destinationCountry.region", "") // Clear region when country changes
   }
 
   const handleRegionChange = (region: string) => {
     if (!region || region.trim() === "") return
     
-    updateFormData("destination.region", region)
+    updateFormData("residencyIntentions.destinationCountry.region", region)
   }
 
   const handleContinue = () => {
-    // Verify we have required data before proceeding
-    const currentCountry = formData.destination?.country || selectedCountry
-    const currentRegion = formData.destination?.region || selectedRegion
-    
-    if (!currentCountry || currentCountry.trim() === "") {
+    if (!selectedCountry || selectedCountry.trim() === "") {
       return
     }
     
     // Check if country has regions
-    const countryData = COUNTRIES.find(c => c.name === currentCountry)
+    const countryData = COUNTRIES.find(c => c.name === selectedCountry)
     const hasRegions = countryData?.regions && countryData.regions.length > 0
     
     // If country has regions, require region selection
-    if (hasRegions && (!currentRegion || currentRegion.trim() === "")) {
+    if (hasRegions && (!selectedRegion || selectedRegion.trim() === "")) {
       return
     }
     
-    // Final save to ensure data persistence before navigation
-    updateFormData("destination.country", currentCountry)
-    if (hasRegions) {
-      updateFormData("destination.region", currentRegion)
-    } else {
-      // For countries without regions, set region to indicate no regions available
-      updateFormData("destination.region", "No regional divisions")
+    // For countries without regions, clear any saved region
+    if (!hasRegions) {
+      updateFormData("residencyIntentions.destinationCountry.region", "")
     }
     
+    markSectionComplete("destination")
     onComplete()
   }
 
@@ -100,35 +93,40 @@ export function Destination({ onComplete }: DestinationProps) {
   }, [selectedCountry])
 
   return (
-    <div className="space-y-6">
-      {/* Introduction */}
-      <div className="text-center space-y-2">
-        <Globe className="w-12 h-12 mx-auto text-primary" />
-        <h2 className="text-2xl font-bold text-foreground">
-          Where would you like to move?
-        </h2>
-        <p className="text-muted-foreground">
-          Select your desired destination country and region to get personalized recommendations.
+    <div className="space-y-8 max-w-5xl mx-auto">
+      {/* Page Header */}
+      <div className="text-center pb-4 border-b">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <Globe className="w-7 h-7 text-primary" />
+          <h1 className="text-3xl font-bold tracking-tight">Desired Destination</h1>
+        </div>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Select the country and region you plan to relocate to
         </p>
       </div>
 
-      <SectionHint title="📋 About this section">
+      <SectionHint title="About this section">
         Choosing a destination country and region allows the questionnaire to tailor subsequent tax, residency, and language questions to local rules—many inputs later on depend on this choice.
       </SectionHint>
 
-      {/* Country Selection */}
-      <Card>
+      {/* Country Selection Card */}
+      <Card className="shadow-sm border-l-4 border-l-primary">
+        <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Globe className="w-6 h-6 text-primary" />
+            Destination Country
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Enter the country you plan to relocate to</p>
+        </CardHeader>
         <CardContent className="pt-6">
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="country" className="text-base font-medium">
-                Country
-              </Label>
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Label className="text-base font-medium">Destination country *</Label>
               <Select 
                 value={selectedCountry} 
                 onValueChange={handleCountryChange}
               >
-                <SelectTrigger className="mt-2">
+                <SelectTrigger>
                   <SelectValue placeholder="Select a country" />
                 </SelectTrigger>
                 <SelectContent>
@@ -139,68 +137,114 @@ export function Destination({ onComplete }: DestinationProps) {
                   ))}
                 </SelectContent>
               </Select>
-
             </div>
 
             {/* Region Selection */}
             {selectedCountry && (
-              <div>
-                <Label htmlFor="region" className="text-base font-medium">
-                  Region/State
-                </Label>
+              <>
                 {selectedCountryData?.regions && selectedCountryData.regions.length > 0 ? (
-                  <Select 
-                    value={selectedRegion} 
-                    onValueChange={handleRegionChange}
-                  >
-                    <SelectTrigger className="mt-2">
-                      <SelectValue placeholder="Select a region" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {selectedCountryData.regions.map((region) => (
-                        <SelectItem key={region} value={region}>
-                          {region}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <div className="mt-2 p-3 bg-muted rounded-md border-dashed border-2">
-                    <p className="text-sm text-muted-foreground">
-                      ℹ️ This country does not have regions that change the rules for immigration or taxation purposes.
-                    </p>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-base font-medium">Region *</Label>
+                      
+                      {/* Region importance explanation */}
+                      <Card className="border border-amber-200 bg-amber-50 dark:bg-amber-950/20">
+                        <CardContent className="pt-4">
+                          <div className="flex items-start gap-2">
+                            <Info className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">
+                                Why is the region selection important?
+                              </h4>
+                              <div className="text-sm text-amber-700 dark:text-amber-300 space-y-1">
+                                <p>• Visa quotas, processing times and special programs can be region-specific</p>
+                                <p>• Tax rates, incentives or reporting rules sometimes differ by region</p>
+                                <p>• Labour-market shortage lists and investment zones are often regional</p>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Select 
+                        value={selectedRegion} 
+                        onValueChange={handleRegionChange}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={`Choose a province/state/region if relevant, or 'I don't know yet'`} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="I don't know yet">I don't know yet</SelectItem>
+                          {selectedCountryData.regions.map((region) => (
+                            <SelectItem key={region} value={region}>
+                              {region}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                )}
-              </div>
+                ) : (
+                  <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950/20">
+                    <div className="flex items-center gap-2">
+                      <Info className="w-5 h-5 text-blue-600" />
+                      <p className="text-sm text-blue-800 dark:text-blue-200">
+                        ✅ No region-specific visa or tax rules—skip region selection for this country.
+                      </p>
+                    </div>
+                  </div>
+                )}</>
             )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Selected Destination Display - Only show after section completion */}
-      {selectedCountry && isSectionComplete('destination') && (
-        <Card className="border-border bg-muted">
+      {/* Action Card */}
+      <Card className="shadow-md">
+        <CardFooter className="pt-6">
+          <div className="w-full space-y-4">
+            <Button
+              disabled={(() => {
+                if (!selectedCountry) return true
+                const countryData = COUNTRIES.find(c => c.name === selectedCountry)
+                const hasRegions = countryData?.regions && countryData.regions.length > 0
+                return hasRegions ? !selectedRegion : false
+              })()}
+              onClick={handleContinue}
+              className="w-full"
+              size="lg"
+            >
+              Continue to Personal Information
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+
+      {/* Selected Destination Display */}
+      {selectedCountry && (
+        <Card className="shadow-sm border-l-4 border-l-green-500">
+          <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
+            <CardTitle className="text-xl flex items-center gap-3">
+              <MapPin className="w-6 h-6 text-green-600" />
+              Your Destination
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Selected destination for your relocation</p>
+          </CardHeader>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <MapPin className="w-5 h-5 text-primary" />
               <div>
-                <h3 className="font-semibold text-foreground">
-                  Selected Destination
-                </h3>
-                <p className="text-muted-foreground">
-                  {selectedCountryData?.name}
-                  {selectedCountryData?.regions && selectedCountryData.regions.length > 0 && selectedRegion && selectedRegion !== "No regional divisions"
-                    ? `, ${selectedRegion}`
-                    : ""
+                <h3 className="font-semibold text-foreground text-lg">
+                  {selectedCountryData?.regions && selectedCountryData.regions.length > 0 && selectedRegion && selectedRegion !== "I don't know yet"
+                    ? `${selectedRegion}, ${selectedCountryData?.name}`
+                    : selectedCountryData?.name
                   }
-                </p>
-                {/* languages */}
+                </h3>
                 {(() => {
                   const langs = getLanguages(selectedCountry, selectedRegion || "")
                   if (langs.length === 0) return null
                   return (
-                    <p className="text-xs mt-1 flex items-center gap-1 text-muted-foreground">
-                      <Languages className="w-3 h-3" /> Dominant languages: {langs.join(", ")}
+                    <p className="text-sm mt-1 flex items-center gap-1 text-muted-foreground">
+                      <Languages className="w-4 h-4" /> Dominant languages: {langs.join(", ")}
                     </p>
                   )
                 })()}
@@ -209,23 +253,6 @@ export function Destination({ onComplete }: DestinationProps) {
           </CardContent>
         </Card>
       )}
-
-      {/* Continue Button */}
-      <div className="flex justify-center">
-        <Button
-          onClick={handleContinue}
-          disabled={(() => {
-            if (!selectedCountry) return true
-            const countryData = COUNTRIES.find(c => c.name === selectedCountry)
-            const hasRegions = countryData?.regions && countryData.regions.length > 0
-            return hasRegions ? !selectedRegion : false
-          })()}
-          size="lg"
-          className="px-8"
-        >
-          Continue
-        </Button>
-      </div>
 
 
 

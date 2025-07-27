@@ -310,7 +310,7 @@ function GeneralDeductionsSection({ updateFormData, getFormData, currencies }: {
 }
 
 export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void }) {
-  const { getFormData, updateFormData } = useFormStore()
+  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   const currencies = useCurrencies()
 
   // Check if tax sections are skipped
@@ -325,8 +325,16 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
     setDeductions(updated)
   }
 
+  // Check if section has any content
+  const hasContent = deductions.length > 0
+
   // Validation - all deductions must have country
   const canContinue = skip || deductions.every(d => d.country)
+  
+  const handleContinue = () => {
+    markSectionComplete("tax-deductions")
+    onComplete()
+  }
 
   return (
     <Card>
@@ -341,7 +349,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
 
         {skip ? (
           /* Skip mode - simplified summary */
-          <div className="border rounded-lg p-4 bg-muted/50">
+                      <div className="border rounded-lg p-4 bg-card">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-medium">🚀 Detailed deduction / credit inputs skipped</h3>
@@ -381,7 +389,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                       {showInfo ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                     </Button>
                     {showInfo && (
-                      <div className="space-y-2 mt-2 p-4 border rounded-lg bg-muted/50">
+                      <div className="space-y-2 mt-2 p-4 border rounded-lg bg-card">
                         <p className="text-sm">
                           <strong>Tax treatments vary by country. Common deductible items include:</strong>
                         </p>
@@ -431,7 +439,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                       return (
                         <div key={index}>
                           <div 
-                            className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
+                            className="flex items-center justify-between p-3 border rounded-lg hover:bg-card cursor-pointer"
                             onClick={() => setIsExpanded(!isExpanded)}
                           >
                             <div className="flex items-center gap-2">
@@ -476,7 +484,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                     <h4 className="font-medium">📈 Summary of Deductions</h4>
                     <div className="border rounded-lg overflow-hidden">
                       <table className="w-full">
-                        <thead className="bg-muted/50">
+                        <thead className="bg-card">
                           <tr>
                             <th className="text-left p-3 font-medium">Type</th>
                             <th className="text-left p-3 font-medium">Amount</th>
@@ -511,11 +519,11 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
 
       <CardFooter>
         <Button 
-          onClick={onComplete} 
+          onClick={handleContinue} 
           className="w-full"
           disabled={!canContinue}
         >
-          Continue
+          {hasContent ? "Continue" : "Continue (skip section)"}
         </Button>
       </CardFooter>
     </Card>

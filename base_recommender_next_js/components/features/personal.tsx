@@ -8,13 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
-import { CalendarDays, UserPlus, Plus, Trash2, Users, Info } from "lucide-react"
+import { CalendarDays, UserPlus, Plus, Trash2, Users, Info, Home, Globe, Heart, Baby, Pencil, Check } from "lucide-react"
 import countryInfo from "@/data/country_info.json"
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 
 // Hooks can't run outside components – compute once as a plain constant.
 const COUNTRY_LIST = Object.keys(countryInfo).sort()
@@ -29,480 +30,282 @@ const MARITAL_OPTIONS = [
 ] as const
 
 export function PersonalInformation({ onComplete }: { onComplete: () => void }) {
-  const { getFormData, updateFormData } = useFormStore()
+  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
 
-  /* ------------------------------------------------------------------ */
-  /* helpers                                                            */
-  /* ------------------------------------------------------------------ */
-  const natList: { country: string; willingToRenounce: boolean }[] =
-    getFormData("personalInformation.nationalities") ?? []
-
-  const updateNatList = (next: typeof natList) =>
-    updateFormData("personalInformation.nationalities", next)
-
-  const nationalityExists = (c: string) =>
-    natList.some((n) => n.country === c)
-
-  // partner selector temporary state (unconditional to respect hook rules)
-  const [partnerSel, setPartnerSel] = useState("")
-
-
-  /* ------------------------------------------------------------------ */
-  /* date of birth                                                      */
-  /* ------------------------------------------------------------------ */
-  const dob = getFormData("personalInformation.dateOfBirth") || ""
+  // Basic Information
+  const dob: string = getFormData("personalInformation.dateOfBirth") ?? ""
   const handleDobChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     updateFormData("personalInformation.dateOfBirth", e.target.value)
 
-  /* ------------------------------------------------------------------ */
-  /* current residence                                                  */
-  /* ------------------------------------------------------------------ */
-  const curCountry = getFormData(
-    "personalInformation.currentResidency.country"
-  ) as string
-  const curStatus =
-    (getFormData(
-      "personalInformation.currentResidency.status"
-    ) as string) || RESIDENCY_OPTIONS[0]
+  // Current Residence
+  const curCountry: string = getFormData("personalInformation.currentResidency.country") ?? ""
+  const curStatus: string = getFormData("personalInformation.currentResidency.status") ?? ""
+  const tempDuration: string = getFormData("personalInformation.currentResidency.duration") ?? ""
 
-  const tempDuration =
-    getFormData("personalInformation.currentResidency.duration") || ""
+  // Nationalities
+  const natList: { country: string; willingToRenounce: boolean }[] =
+    getFormData("personalInformation.nationalities") ?? []
+  const updateNatList = (next: typeof natList) =>
+    updateFormData("personalInformation.nationalities", next)
 
-  // Automatic nationality management - add current country if citizen
-  useEffect(() => {
-    if (curCountry && curStatus === "Citizen" && !nationalityExists(curCountry)) {
-      const updatedList = [{ country: curCountry, willingToRenounce: false }, ...natList]
-      updateNatList(updatedList)
-    } else if (curCountry && curStatus !== "Citizen" && nationalityExists(curCountry)) {
-      // Remove current country from nationalities if not a citizen
-      const filtered = natList.filter(n => n.country !== curCountry)
-      updateNatList(filtered)
-    }
-  }, [curCountry, curStatus])
-
-  /* ------------------------------------------------------------------ */
-  /* marital status                                                     */
-  /* ------------------------------------------------------------------ */
+  // Marital Status
   const maritalStatus: string =
     getFormData("personalInformation.maritalStatus") || MARITAL_OPTIONS[0]
-
   const setMarital = (val: string) =>
     updateFormData("personalInformation.maritalStatus", val)
 
-  // explanation when status + partner type conflict
-  const relType =
-    getFormData(
-      "personalInformation.relocationPartnerInfo.relationshipType"
-    ) || ""
+  // Partner
+  const hasPartner = getFormData("personalInformation.relocationPartner") || false
 
-  const needsExplain =
-    (relType === "Spouse" && maritalStatus !== "Married") ||
-    (["Civil Partner", "Domestic Partner"].includes(relType) &&
-      maritalStatus !== "Official Partnership")
-
-  const explainVal =
-    getFormData("personalInformation.enduringMaritalStatusInfo") || ""
-
-  /* ------------------------------------------------------------------ */
-  /* local UI state                                                     */
-  /* ------------------------------------------------------------------ */
-  const [addCountry, setAddCountry] = useState("")
-
-  /* ------------------------------------------------------------------ */
-  /* derived                                                             */
-  /* ------------------------------------------------------------------ */
-  const canContinue =
-    dob &&
-    curCountry &&
-    curStatus &&
-    natList.length > 0 &&
-    maritalStatus
-
-  /* ---------------- Dependents helpers ---------------- */
-  type DepNat = { country: string; willingToRenounce: boolean }
+  // Dependents
   type Dependent = {
     relationship: string
     dateOfBirth: string
     student: boolean
-    nationalities: DepNat[]
+    nationalities: { country: string; willingToRenounce: boolean }[]
   }
-  const depList: Dependent[] =
-    getFormData("personalInformation.dependents") ?? []
+  const depList: Dependent[] = getFormData("personalInformation.dependents") ?? []
   const updateDepList = (next: Dependent[]) =>
     updateFormData("personalInformation.dependents", next)
 
-  const REL_OPTIONS = [
-    "Child",
-    "Step-child",
-    "Legal ward",
-    "Parent",
-    "Sibling",
-    "Other",
-  ] as const
+  // Local state
+  const [addCountry, setAddCountry] = useState("")
+  const [partnerSel, setPartnerSel] = useState("")
+  // Track which dependent forms are visible
+  const [visibleDependents, setVisibleDependents] = useState<number[]>([])
+  // Track which dependents are being edited (vs saved as cards)
+  const [editingDependents, setEditingDependents] = useState<number[]>([])
 
-  /* ---------------- Dependent card component ---------------- */
-  const DependentItem = ({ dep, idx }: { dep: Dependent; idx: number }) => {
-    const exists = (c: string) =>
-      dep.nationalities.some((n) => n.country === c)
-
-    const updateOne = (next: Partial<Dependent>) => {
-      const copy = [...depList]
-      copy[idx] = { ...copy[idx], ...next }
-      updateDepList(copy)
+  // Auto-citizenship management (matches Streamlit logic exactly)
+  useEffect(() => {
+    let updatedNationalities = [...natList]
+    
+    // Convert old format (list of strings) to new format (list of dicts) if needed
+    if (updatedNationalities.length > 0 && typeof updatedNationalities[0] === 'string') {
+      updatedNationalities = updatedNationalities.map((nat: any) => 
+        typeof nat === 'string' ? { country: nat, willingToRenounce: false } : nat
+      )
     }
+    
+    // Remove any empty country fields
+    updatedNationalities = updatedNationalities.filter(n => n.country)
+    
+    const nationalityExists = (country: string) =>
+      updatedNationalities.some((n) => n.country === country)
+    
+    if (curCountry && curStatus === "Citizen") {
+      // If current country is not in list, add it at the beginning
+      if (!nationalityExists(curCountry)) {
+        updatedNationalities.unshift({ country: curCountry, willingToRenounce: false })
+      } else {
+        // If it exists but not first, move it to the beginning
+        updatedNationalities = updatedNationalities.filter(n => n.country !== curCountry)
+        updatedNationalities.unshift({ country: curCountry, willingToRenounce: false })
+      }
+    } else if (curCountry && curStatus !== "Citizen") {
+      // Remove current country from nationalities if user is not a citizen there
+      updatedNationalities = updatedNationalities.filter(n => n.country !== curCountry)
+    }
+    
+    // Only update if there are actual changes
+    if (JSON.stringify(updatedNationalities) !== JSON.stringify(natList)) {
+      updateNatList(updatedNationalities)
+    }
+  }, [curCountry, curStatus, natList])
 
-    const updateNat = (next: DepNat[]) =>
-      updateOne({ nationalities: next })
+  // Validation
+  const canContinue = dob && curCountry && curStatus && natList.length > 0 && maritalStatus
 
-    return (
-      <div className="space-y-4 border rounded-md p-4">
-        {/* Relationship */}
-        <div className="space-y-1">
-          <Label>Relationship *</Label>
-          <Select
-            value={
-              REL_OPTIONS.includes(dep.relationship as any)
-                ? dep.relationship
-                : "Other"
-            }
-            onValueChange={(v) => updateOne({ relationship: v })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select type" />
-            </SelectTrigger>
-            <SelectContent>
-              {REL_OPTIONS.map((r) => (
-                <SelectItem key={r} value={r}>
-                  {r}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {dep.relationship === "Other" && (
-            <Input
-              className="mt-2"
-              placeholder="Describe relationship"
-              value={
-                REL_OPTIONS.includes(dep.relationship as any)
-                  ? ""
-                  : dep.relationship
-              }
-              onChange={(e) =>
-                updateOne({ relationship: e.target.value })
-              }
-            />
-          )}
-        </div>
+  const nationalityExists = (country: string) =>
+    natList.some((n) => n.country === country)
 
-        {/* Date of birth */}
-        <div className="space-y-1">
-          <Label>Date of birth *</Label>
-          <Input
-            type="date"
-            value={dep.dateOfBirth}
-            onChange={(e) =>
-              updateOne({ dateOfBirth: e.target.value })
-            }
-          />
-        </div>
-
-        {/* Student flag */}
-        <div className="flex items-center gap-2">
-          <Checkbox
-            id={`student_${idx}`}
-            checked={dep.student}
-            onCheckedChange={(v) => updateOne({ student: !!v })}
-          />
-          <Label htmlFor={`student_${idx}`}>Full-time student</Label>
-        </div>
-
-        {/* Citizenship list */}
-        <div className="space-y-2">
-          <Label>Citizenship(s) *</Label>
-          <p className="text-xs text-muted-foreground mb-2">Mark "willing to renounce" if you would consider giving up a citizenship in order to avoid exit taxes or dual-citizenship restrictions in your future country.</p>
-
-          <div className="flex gap-2">
-            <Select value={partnerSel} onValueChange={setPartnerSel}>
-              <SelectTrigger className="flex-1">
-                <SelectValue placeholder="Select country" />
-              </SelectTrigger>
-              <SelectContent>
-                {COUNTRY_LIST.filter((c) => !exists(c)).map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button
-              disabled={!partnerSel}
-              onClick={() => {
-                updateNat([
-                  ...dep.nationalities,
-                  { country: partnerSel, willingToRenounce: false },
-                ])
-                setPartnerSel("")
-              }}
-            >
-              Add
-            </Button>
-          </div>
-
-          {dep.nationalities.length > 0 && (
-            <div className="space-y-2">
-              {dep.nationalities.map((n) => (
-                <div
-                  key={n.country}
-                  className="flex items-center justify-between rounded-md border p-2"
-                >
-                  <span>{n.country}</span>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
-                      <Checkbox
-                        id={`d_renounce_${idx}_${n.country}`}
-                        checked={n.willingToRenounce}
-                        onCheckedChange={(v) => {
-                          n.willingToRenounce = !!v
-                          updateNat([...dep.nationalities])
-                        }}
-                      />
-                      <Label htmlFor={`d_renounce_${idx}_${n.country}`}>
-                        Willing to renounce
-                      </Label>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() =>
-                        updateNat(
-                          dep.nationalities.filter(
-                            (m) => m.country !== n.country
-                          )
-                        )
-                      }
-                    >
-                      ✕
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Remove button */}
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={() =>
-            updateDepList(depList.filter((_, i) => i !== idx))
-          }
-        >
-          Remove dependent
-        </Button>
-      </div>
-    )
+  const handleComplete = () => {
+    markSectionComplete("personal")
+    onComplete()
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <UserPlus className="w-5 h-5" />
-          👤 Personal Information
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <SectionHint>
-          Accurate personal and family information enables country-specific tax residency analysis, spousal/dependent visa eligibility checks, and tailored planning based on your household composition.
-          <ul className="mt-3 space-y-1 list-disc list-inside">
-            <li>Determine tax residency status in multiple jurisdictions</li>
-            <li>Assess eligibility for specific visa categories</li>
-            <li>Identify applicable tax treaties based on nationality</li>
-            <li>Evaluate family-based immigration options</li>
-            <li>Calculate age-related benefits and obligations</li>
-            <li>Establish timeline requirements for residency applications</li>
-          </ul>
-        </SectionHint>
+    <div className="space-y-8 max-w-5xl mx-auto">
+      {/* Page Header */}
+      <div className="text-center pb-4 border-b">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <UserPlus className="w-7 h-7 text-primary" />
+          <h1 className="text-3xl font-bold tracking-tight">Personal Information</h1>
+        </div>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Tell us about yourself to determine visa eligibility, tax obligations, and residency requirements
+        </p>
+      </div>
 
-        <Separator />
+      <SectionHint title="About this section">
+        Accurate personal and family information enables country-specific tax residency analysis, spousal/dependent visa eligibility checks, and tailored planning based on your household composition.
+      </SectionHint>
 
-        {/* ---------------- DOB ---------------- */}
-        <Separator />
-
-        {/* Basic Information Section */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            📝 Basic Information
-          </h3>
-          
-          {/* Date of Birth */}
-          <div className="space-y-2">
-            <Label>Date of birth *</Label>
-            <p className="text-xs text-muted-foreground">
-              Your date of birth affects tax credits, retirement options, and age-related benefits.
-            </p>
-            <div className="relative flex items-center">
+      {/* Basic Information Card */}
+      <Card className="shadow-sm border-l-4 border-l-primary">
+        <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <CalendarDays className="w-6 h-6 text-primary" />
+            Basic Information
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Your personal details for age verification and tax purposes</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label className="text-base font-medium">Date of birth *</Label>
+              <p className="text-sm text-muted-foreground">
+                Your date of birth affects tax credits, retirement options, and age-related benefits.
+              </p>
               <Input
                 type="date"
                 value={dob}
                 onChange={handleDobChange}
-                className="pr-10"
-                max={new Date().toISOString().split('T')[0]}
-                min={new Date(new Date().getFullYear() - 100, 0, 1).toISOString().split('T')[0]}
+                className="max-w-xs"
+                required
               />
-              <CalendarDays className="absolute right-2 h-4 w-4 text-muted-foreground" />
             </div>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        <Separator />
-
-        {/* Current Residence Section */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            🏠 Current Residence
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Where you currently live and pay taxes.
-          </p>
-
-          {/* Country */}
-          <div className="space-y-2">
-            <Label>Country of current residence *</Label>
-            <Select
-              value={curCountry}
-              onValueChange={(val) =>
-                updateFormData("personalInformation.currentResidency.country", val)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select country" />
-              </SelectTrigger>
-              <SelectContent>
-                {COUNTRY_LIST.map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Status */}
-          <div className="space-y-2">
-            <Label>Current residency status *</Label>
-            <p className="text-xs text-muted-foreground">
-              Your official status in your current country affects your tax obligations.
-            </p>
-            <Select
-              value={curStatus}
-              onValueChange={(val) =>
-                updateFormData("personalInformation.currentResidency.status", val)
-              }
-            >
-              <SelectTrigger className="mt-2">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {RESIDENCY_OPTIONS.map((o) => (
-                  <SelectItem key={o} value={o}>
-                    {o}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Duration – only for temporary residents */}
-          {curStatus === "Temporary Resident" && (
+      {/* Current Residence Card */}
+      <Card className="shadow-sm border-l-4 border-l-blue-500">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Home className="w-6 h-6 text-blue-600" />
+            Current Residence
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Where you currently live and pay taxes</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-2">
-              <Label>Years at current residence *</Label>
-              <p className="text-xs text-muted-foreground">
-                Length of time at current residence affects residency status for tax purposes.
-              </p>
-              <Input
-                type="number"
-                step="0.5"
-                min={0}
-                max={100}
-                placeholder="Enter years (e.g., 2.5)"
-                value={tempDuration}
-                onChange={(e) =>
-                  updateFormData(
-                    "personalInformation.currentResidency.duration",
-                    e.target.value
-                  )
+              <Label className="text-base font-medium">Country *</Label>
+              <Select
+                value={curCountry}
+                onValueChange={(val) =>
+                  updateFormData("personalInformation.currentResidency.country", val)
                 }
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select country" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COUNTRY_LIST.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          )}
-        </div>
 
-        <Separator />
+            <div className="space-y-2">
+              <Label className="text-base font-medium">Residency status *</Label>
+              <Select
+                value={curStatus}
+                onValueChange={(val) =>
+                  updateFormData("personalInformation.currentResidency.status", val)
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {RESIDENCY_OPTIONS.map((o) => (
+                    <SelectItem key={o} value={o}>
+                      {o}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-        {/* ---------------- Citizenship(s) ---------------- */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            🌍 Citizenship(s)
-          </h3>
-          <Alert>
+            {curStatus === "Temporary Resident" && (
+              <div className="space-y-2 md:col-span-2">
+                <Label className="text-base font-medium">Years at current residence *</Label>
+                <p className="text-sm text-muted-foreground">
+                  Length of time at current residence affects residency status for tax purposes.
+                </p>
+                <Input
+                  type="number"
+                  step="0.5"
+                  min={0}
+                  max={100}
+                  placeholder="e.g., 2.5"
+                  value={tempDuration}
+                  onChange={(e) =>
+                    updateFormData("personalInformation.currentResidency.duration", e.target.value)
+                  }
+                  className="max-w-xs"
+                />
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Citizenship Card */}
+      <Card className="shadow-sm border-l-4 border-l-green-500">
+        <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Globe className="w-6 h-6 text-green-600" />
+            Citizenship(s)
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Your passport(s) and potential renunciation preferences</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <Alert className="mb-6">
             <Info className="h-4 w-4" />
             <AlertDescription>
-              Mark "willing to renounce" if you would consider giving up a citizenship in order to avoid exit taxes or dual-citizenship restrictions in your future country. For example, the United States taxes its citizens on worldwide income even when they live abroad, creating double-tax exposure.
+              Mark "willing to renounce" if you would consider giving up a citizenship to avoid exit taxes or dual-citizenship restrictions in your future country.
             </AlertDescription>
           </Alert>
 
-          {/* Current country automatic notice */}
-          {curCountry && curStatus === "Citizen" && (
-            <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+          {/* Auto-added current country notice */}
+          {curCountry && curStatus === "Citizen" && natList.some(n => n.country === curCountry) && (
+            <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 mb-6">
               <p className="text-sm text-green-800 dark:text-green-200 flex items-center gap-2">
                 ✅ <strong>{curCountry}</strong> automatically added as citizenship (current residence)
               </p>
             </div>
           )}
 
-          {/* add form */}
-          <div className="flex gap-2">
-            <Select
-              value={addCountry}
-              onValueChange={(v) => setAddCountry(v)}
-            >
+          {/* Add citizenship */}
+          <div className="flex gap-3 mb-6">
+            <Select value={addCountry} onValueChange={setAddCountry}>
               <SelectTrigger className="flex-1">
-                <SelectValue placeholder="Select additional country" />
+                <SelectValue placeholder="Add additional citizenship" />
               </SelectTrigger>
               <SelectContent>
-                {COUNTRY_LIST.filter((c) => !nationalityExists(c)).map(
-                  (c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  )
-                )}
+                {COUNTRY_LIST.filter((c) => !nationalityExists(c)).map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Button
               disabled={!addCountry}
               onClick={() => {
-                updateNatList([
-                  ...natList,
-                  { country: addCountry, willingToRenounce: false },
-                ])
+                updateNatList([...natList, { country: addCountry, willingToRenounce: false }])
                 setAddCountry("")
               }}
+              className="shrink-0"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add
             </Button>
           </div>
 
-          {/* list */}
+          {/* Citizenship list */}
           {natList.length > 0 ? (
             <div className="space-y-3">
               {natList.map((nat) => (
                 <div
                   key={nat.country}
-                  className="flex items-center justify-between rounded-md border p-3 bg-muted/50"
+                  className="flex items-center justify-between p-4 rounded-lg border bg-card"
                 >
                   <div className="flex items-center gap-3">
                     <span className="font-medium">{nat.country}</span>
@@ -520,20 +323,15 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           updateNatList([...natList])
                         }}
                       />
-                      <Label htmlFor={`renounce_${nat.country}`} className="text-sm">
-                        Willing to renounce
-                      </Label>
+                                                         <Label htmlFor={`renounce_${nat.country}`} className="text-sm">
+                                     Willing to give up?
+                                   </Label>
                     </div>
-                    {/* Prevent removal of current country if citizen */}
                     {!(curCountry === nat.country && curStatus === "Citizen") && (
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() =>
-                          updateNatList(
-                            natList.filter((n) => n.country !== nat.country)
-                          )
-                        }
+                        onClick={() => updateNatList(natList.filter((n) => n.country !== nat.country))}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -549,381 +347,698 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               </AlertDescription>
             </Alert>
           )}
-        </div>
+        </CardContent>
+      </Card>
 
-        <Separator />
-
-        {/* ---------------- Marital status ---------------- */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            💍 Marital Status
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Your marital status affects tax filing status and immigration options.
-          </p>
-          <Select value={maritalStatus} onValueChange={setMarital}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {MARITAL_OPTIONS.map((m) => (
-                <SelectItem key={m} value={m}>
-                  {m}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {needsExplain && (
+      {/* Family Status Card */}
+      <Card className="shadow-sm border-l-4 border-l-purple-500">
+        <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Heart className="w-6 h-6 text-purple-600" />
+            Family Status
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Your marital status and family composition</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
             <div className="space-y-2">
-              <Label>Please explain your situation *</Label>
-              <p className="text-xs text-muted-foreground">
-                There seems to be a discrepancy between your marital status and partner relationship type.
+              <Label className="text-base font-medium">Marital status *</Label>
+              <p className="text-sm text-muted-foreground">
+                Your marital status affects tax filing status and immigration options.
               </p>
-              <Textarea
-                value={explainVal}
-                onChange={(e) =>
-                  updateFormData(
-                    "personalInformation.enduringMaritalStatusInfo",
-                    e.target.value
-                  )
-                }
-                placeholder="Please clarify the relationship between your marital status and partnership details..."
-              />
+              <Select value={maritalStatus} onValueChange={setMarital}>
+                <SelectTrigger className="max-w-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {MARITAL_OPTIONS.map((m) => (
+                    <SelectItem key={m} value={m}>
+                      {m}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          )}
-        </div>
 
-        <Separator />
+            <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
+              <Checkbox
+                id="has_partner"
+                checked={hasPartner}
+                onCheckedChange={(v) =>
+                  updateFormData("personalInformation.relocationPartner", !!v)
+                }
+              />
+              <Label htmlFor="has_partner" className="text-base font-medium">
+                I have a partner who will relocate with me
+              </Label>
+            </div>
 
-        {/* ---------------- Partner ---------------- */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            👥 Relocation Partner
-          </h3>
+            {/* Partner Information Form */}
+            {hasPartner && (
+              <div className="space-y-6 p-6 border rounded-lg bg-card">
+                <h4 className="font-medium text-lg">Partner Information</h4>
+                
+                {/* Relationship Type */}
+                                 <div className="space-y-4">
+                   <Label className="text-base font-medium">Relationship type *</Label>
+                   
+                   {/* Learn more about relationship types */}
+                   <Accordion type="single" collapsible>
+                     <AccordionItem value="relationship-types" className="border rounded-lg">
+                       <AccordionTrigger className="px-4 hover:no-underline">
+                         <div className="flex items-center gap-2">
+                           <Info className="w-5 h-5 text-blue-600" />
+                           <span className="font-medium text-blue-800 dark:text-blue-200">
+                             📚 Learn more about relationship types
+                           </span>
+                         </div>
+                       </AccordionTrigger>
+                       <AccordionContent className="px-4 pb-4">
+                         <div className="text-sm text-muted-foreground space-y-3">
+                           <p className="font-medium">This list covers the main categories recognized in various immigration systems:</p>
+                           <div className="space-y-2">
+                             <p><strong>1. Spouse:</strong> Refers to legally married partners, which is the most widely recognized category.</p>
+                             <p><strong>2. Fiancé(e):</strong> Included for those engaged to be married, often eligible for specific visas.</p>
+                             <p><strong>3. Civil Partner:</strong> Kept for jurisdictions that recognize this status.</p>
+                             <p><strong>4. Unmarried Partner:</strong> A common term in immigration contexts for long-term, committed relationships.</p>
+                             <p><strong>5. Common-law Partner:</strong> Recognized in some countries for long-term cohabiting couples.</p>
+                             <p><strong>6. Cohabiting Partner:</strong> Retained from your original list, as some systems specifically use this term.</p>
+                             <p><strong>7. Domestic Partner:</strong> Added for jurisdictions that recognize this status.</p>
+                             <p><strong>8. Conjugal Partner:</strong> Recognized in some immigration systems (e.g., Canada) for committed partners unable to live together.</p>
+                             <p><strong>9. Other:</strong> Kept to cover any unique situations or relationships not fitting the above categories.</p>
+                           </div>
+                           <p className="italic text-xs">This expanded list aims to be more inclusive of various relationship types recognized across different immigration systems while maintaining clarity for users.</p>
+                         </div>
+                       </AccordionContent>
+                     </AccordionItem>
+                   </Accordion>
+                   
+                   <Select
+                     value={getFormData("personalInformation.relocationPartnerInfo.relationshipType") ?? (() => {
+                       // Default to "Spouse" if married and no relationship type set yet
+                       const maritalStatus = getFormData("personalInformation.maritalStatus") ?? ""
+                       return maritalStatus === "Married" ? "Spouse" : "Unmarried Partner"
+                     })()}
+                     onValueChange={(v) => updateFormData("personalInformation.relocationPartnerInfo.relationshipType", v)}
+                   >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Unmarried Partner">Unmarried Partner</SelectItem>
+                      <SelectItem value="Spouse">Spouse</SelectItem>
+                      <SelectItem value="Fiancé(e)">Fiancé(e)</SelectItem>
+                      <SelectItem value="Civil Partner">Civil Partner</SelectItem>
+                      <SelectItem value="Cohabiting Partner">Cohabiting Partner</SelectItem>
+                      <SelectItem value="Common-law Partner">Common-law Partner</SelectItem>
+                      <SelectItem value="Conjugal Partner">Conjugal Partner</SelectItem>
+                      <SelectItem value="Domestic Partner">Domestic Partner</SelectItem>
+                                             <SelectItem value="Other">Other</SelectItem>
+                     </SelectContent>
+                   </Select>
+                   
+                   {/* Other relationship type input */}
+                   {getFormData("personalInformation.relocationPartnerInfo.relationshipType") === "Other" && (
+                     <div className="space-y-2">
+                       <Label className="text-base font-medium">Please explain your relationship type *</Label>
+                       <Input
+                         placeholder="Enter your specific relationship type"
+                         value={getFormData("personalInformation.relocationPartnerInfo.otherRelationshipType") ?? ""}
+                         onChange={(e) => updateFormData("personalInformation.relocationPartnerInfo.otherRelationshipType", e.target.value)}
+                       />
+                     </div>
+                   )}
+                 </div>
 
-          {/* Toggle */}
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="has_partner"
-              checked={getFormData("personalInformation.relocationPartner") || false}
-              onCheckedChange={(v) =>
-                updateFormData("personalInformation.relocationPartner", !!v)
-              }
-            />
-            <Label htmlFor="has_partner">I have a partner who will relocate with me</Label>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Include information about a spouse or partner relocating with you for family visa options.
-          </p>
-
-          {getFormData("personalInformation.relocationPartner") && (
-            <div className="space-y-4 border rounded-md p-4">
-              {/* relationship type */}
-              <div className="space-y-2">
-                <Label>Relationship type *</Label>
-                {/*
-                  Original list: Unmarried Partner, Spouse, Fiancé(e), Civil Partner,
-                  Cohabiting Partner, Common-law Partner, Conjugal Partner,
-                  Domestic Partner, Other
-                */}
-                {(() => {
-                  const rel = getFormData("personalInformation.relocationPartnerInfo.relationshipType") || ""
-                  const setRel = (val: string) =>
-                    updateFormData("personalInformation.relocationPartnerInfo.relationshipType", val)
-                  const REL_TYPES = [
-                    "Unmarried Partner",
-                    "Spouse",
-                    "Fiancé(e)",
-                    "Civil Partner",
-                    "Cohabiting Partner",
-                    "Common-law Partner",
-                    "Conjugal Partner",
-                    "Domestic Partner",
-                    "Other",
-                  ] as const
-                  return (
-                    <>
-                      <Select value={REL_TYPES.includes(rel as any) ? rel : "Other"} onValueChange={setRel}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {REL_TYPES.map((t) => (
-                            <SelectItem key={t} value={t}>
-                              {t}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {rel === "Other" && (
-                        <Input
-                          className="mt-2"
-                          placeholder="Describe relationship"
-                          value={
-                            REL_TYPES.includes(rel as any) ? "" : rel
-                          }
-                          onChange={(e) => setRel(e.target.value)}
-                        />
-                      )}
-                    </>
-                  )
-                })()}
-              </div>
-
-              {/* same-sex */}
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="same_sex"
-                  checked={getFormData("personalInformation.relocationPartnerInfo.sameSex") || false}
-                  onCheckedChange={(v) =>
-                    updateFormData("personalInformation.relocationPartnerInfo.sameSex", !!v)
-                  }
-                />
-                <Label htmlFor="same_sex">This is a same-sex relationship</Label>
-              </div>
-
-              {/* durations */}
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label>Full relationship duration (years) *</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    step={0.5}
-                    value={
-                      getFormData(
-                        "personalInformation.relocationPartnerInfo.fullRelationshipDuration"
-                      ) || ""
-                    }
-                    onChange={(e) =>
-                      updateFormData(
-                        "personalInformation.relocationPartnerInfo.fullRelationshipDuration",
-                        e.target.value
-                      )
-                    }
+                {/* Same-sex relationship */}
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="same_sex"
+                    checked={getFormData("personalInformation.relocationPartnerInfo.sameSex") ?? false}
+                    onCheckedChange={(v) => updateFormData("personalInformation.relocationPartnerInfo.sameSex", !!v)}
                   />
+                  <Label htmlFor="same_sex" className="text-base">
+                    This is a same-sex relationship
+                  </Label>
                 </div>
-                <div className="space-y-1">
-                  <Label>Official relationship duration (years) *</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    step={0.5}
-                    value={
-                      getFormData(
-                        "personalInformation.relocationPartnerInfo.officialRelationshipDuration"
-                      ) || ""
-                    }
-                    onChange={(e) =>
-                      updateFormData(
-                        "personalInformation.relocationPartnerInfo.officialRelationshipDuration",
-                        e.target.value
-                      )
-                    }
-                  />
-                </div>
-              </div>
 
-              {/* partner citizenship(s) */}
-              <div className="space-y-4">
-                <Label className="block">Partner citizenship(s) *</Label>
-                <p className="text-xs text-muted-foreground mb-2">Renouncing a citizenship can sometimes simplify your partner's visa path and mitigate tax obligations. Tick the box if this is an option.</p>
-
-                {(() => {
-                  // ---------- helper state ----------
-                  const partnerList: { country: string; willingToRenounce: boolean }[] =
-                    getFormData(
-                      "personalInformation.relocationPartnerInfo.partnerNationalities"
-                    ) || []
-
-                  const updatePartnerList = (next: typeof partnerList) =>
-                    updateFormData(
-                      "personalInformation.relocationPartnerInfo.partnerNationalities",
-                      next
-                    )
-
-                  const exists = (c: string) =>
-                    partnerList.some((n) => n.country === c)
-
-                  return (
-                    <>
-                      {/* add form */}
-                      <div className="flex gap-2">
-                        <Select value={partnerSel} onValueChange={setPartnerSel}>
-                          <SelectTrigger className="flex-1">
-                            <SelectValue placeholder="Select country" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {COUNTRY_LIST.filter((c) => !exists(c)).map((c) => (
-                              <SelectItem key={c} value={c}>
-                                {c}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Button
-                          disabled={!partnerSel}
-                          onClick={() => {
-                            updatePartnerList([
-                              ...partnerList,
-                              { country: partnerSel, willingToRenounce: false },
-                            ])
-                            setPartnerSel("")
-                          }}
-                        >
-                          Add
-                        </Button>
-                      </div>
-
-                      {/* display list */}
-                      {partnerList.length > 0 ? (
-                        <div className="space-y-2">
-                          {partnerList.map((nat) => (
-                            <div
-                              key={nat.country}
-                              className="flex items-center justify-between rounded-md border p-2"
-                            >
-                              <span>{nat.country}</span>
-                              <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-1">
-                                  <Checkbox
-                                    id={`p_renounce_${nat.country}`}
-                                    checked={nat.willingToRenounce}
-                                    onCheckedChange={(v) => {
-                                      nat.willingToRenounce = !!v
-                                      updatePartnerList([...partnerList])
-                                    }}
-                                  />
-                                  <Label htmlFor={`p_renounce_${nat.country}`}>
-                                    Willing to renounce
-                                  </Label>
-                                </div>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() =>
-                                    updatePartnerList(
-                                      partnerList.filter(
-                                        (n) => n.country !== nat.country
-                                      )
-                                    )
-                                  }
-                                >
-                                  ✕
-                                </Button>
+                {/* Relationship duration */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-base font-medium">Total relationship duration (years) *</Label>
+                    <Input
+                      type="number"
+                      step="0.5"
+                      min="0"
+                      placeholder="2.5"
+                      value={getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration") ?? ""}
+                      onChange={(e) => updateFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration", parseFloat(e.target.value) || 0)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-base font-medium">
+                      {(() => {
+                        const relationshipType = getFormData("personalInformation.relocationPartnerInfo.relationshipType") ?? "Unmarried Partner"
+                        if (relationshipType === "Spouse") return "Marriage duration (years) *"
+                        if (relationshipType === "Fiancé(e)") return "Engagement duration (years) *"
+                        if (relationshipType.includes("Partner")) return "Living together duration (years) *"
+                        return "Official relationship duration (years) *"
+                      })()}
+                    </Label>
+                    <Input
+                      type="number"
+                      step="0.5"
+                      min="0"
+                      placeholder="1.5"
+                      value={getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration") ?? ""}
+                      onChange={(e) => updateFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration", parseFloat(e.target.value) || 0)}
+                    />
+                                       </div>
+                   </div>
+ 
+                   {/* Relationship Status Messages and Conflict Detection */}
+                   {(() => {
+                     const relationshipType = getFormData("personalInformation.relocationPartnerInfo.relationshipType") ?? "Unmarried Partner"
+                     const maritalStatus = getFormData("personalInformation.maritalStatus") ?? ""
+                     
+                     // Case 1: Simple matching cases - success messages
+                     if (relationshipType === "Spouse" && maritalStatus === "Married") {
+                       return (
+                         <div className="p-3 border rounded-lg bg-green-50 dark:bg-green-950/20">
+                           <p className="text-sm text-green-800 dark:text-green-200">
+                             ✅ You are married to your relocation partner
+                           </p>
+                         </div>
+                       )
+                     }
+                     
+                     if (["Civil Partner", "Domestic Partner"].includes(relationshipType) && maritalStatus === "Official Partnership") {
+                       return (
+                         <div className="p-3 border rounded-lg bg-green-50 dark:bg-green-950/20">
+                           <p className="text-sm text-green-800 dark:text-green-200">
+                             ✅ You are in an official partnership with your relocation partner as {relationshipType}
+                           </p>
+                         </div>
+                       )
+                     }
+                     
+                     if (["Single", "Divorced", "Widowed"].includes(maritalStatus) && !["Spouse", "Civil Partner", "Domestic Partner"].includes(relationshipType)) {
+                       return (
+                         <div className="p-3 border rounded-lg bg-green-50 dark:bg-green-950/20">
+                           <p className="text-sm text-green-800 dark:text-green-200">
+                             ✅ You are {maritalStatus.toLowerCase()} and in a relationship with your {relationshipType.toLowerCase()}
+                           </p>
+                         </div>
+                       )
+                     }
+                     
+                     // Case 2: Inconsistent states requiring explanation - error messages
+                     if (relationshipType === "Spouse" && maritalStatus !== "Married") {
+                       return (
+                         <div className="p-3 border rounded-lg bg-red-50 dark:bg-red-950/20">
+                           <p className="text-sm text-red-800 dark:text-red-200">
+                             ⚠️ Your relationship type is 'Spouse' but your marital status is not 'Married'. Please update your marital status.
+                           </p>
+                         </div>
+                       )
+                     }
+                     
+                     if (["Civil Partner", "Domestic Partner"].includes(relationshipType) && maritalStatus !== "Official Partnership") {
+                       return (
+                         <div className="p-3 border rounded-lg bg-red-50 dark:bg-red-950/20">
+                           <p className="text-sm text-red-800 dark:text-red-200">
+                             ⚠️ Your relationship type is '{relationshipType}' but your marital status is not 'Official Partnership'. Please update your marital status.
+                           </p>
+                         </div>
+                       )
+                     }
+                     
+                     // Case 3: Complex cases requiring explanation
+                     if (maritalStatus === "Married" && relationshipType !== "Spouse") {
+                       return (
+                         <div className="space-y-4">
+                           <Card className="border border-amber-200 bg-amber-50 dark:bg-amber-950/20">
+                             <CardContent className="pt-4">
+                               <div className="flex items-start gap-2">
+                                 <Info className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                                 <div>
+                                   <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">
+                                     Being married while bringing an unmarried partner requires explanation
+                                   </h4>
+                                   <p className="text-sm text-amber-700 dark:text-amber-300">
+                                     Many countries require proof that any prior marriages have been dissolved 
+                                     (e.g., divorce certificates) when applying for visas based on relationships. 
+                                     This ensures compliance with requirements like "any previous relationship has broken down permanently"
+                                   </p>
+                                 </div>
+                               </div>
+                             </CardContent>
+                           </Card>
+                           <div className="space-y-2">
+                             <Label className="text-base font-medium">Please explain your situation *</Label>
+                             <Input
+                               placeholder="E.g. separated and divorce in progress?"
+                               value={getFormData("personalInformation.enduringMaritalStatusInfo") ?? ""}
+                               onChange={(e) => updateFormData("personalInformation.enduringMaritalStatusInfo", e.target.value)}
+                             />
+                           </div>
+                         </div>
+                       )
+                     }
+                     
+                     if (maritalStatus === "Official Partnership" && !["Civil Partner", "Domestic Partner"].includes(relationshipType)) {
+                       return (
+                         <div className="space-y-4">
+                           <Card className="border border-amber-200 bg-amber-50 dark:bg-amber-950/20">
+                             <CardContent className="pt-4">
+                               <div className="flex items-start gap-2">
+                                 <Info className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                                 <div>
+                                   <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">
+                                     Being in an official partnership while bringing a different partner requires explanation
+                                   </h4>
+                                   <p className="text-sm text-amber-700 dark:text-amber-300">
+                                     You'll need to explain your current partnership status and how it relates to your 
+                                     relocation partner relationship. Some countries may require the official partnership 
+                                     to be dissolved before recognizing a new relationship.
+                                   </p>
+                                 </div>
+                               </div>
+                             </CardContent>
+                           </Card>
+                           <div className="space-y-2">
+                             <Label className="text-base font-medium">Please explain your situation *</Label>
+                             <Input
+                               placeholder="E.g. partnership dissolution in progress?"
+                               value={getFormData("personalInformation.enduringMaritalStatusInfo") ?? ""}
+                               onChange={(e) => updateFormData("personalInformation.enduringMaritalStatusInfo", e.target.value)}
+                             />
+                           </div>
+                         </div>
+                       )
+                     }
+                     
+                     return null
+                   })()}
+ 
+                   {/* Partner citizenships */}
+                <div className="space-y-4">
+                  <h5 className="font-medium">Partner Citizenships *</h5>
+                  
+                  {/* Existing partner citizenships */}
+                  {(() => {
+                    const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+                    return partnerNats.length > 0 && (
+                      <div className="space-y-2">
+                        {partnerNats.map((nat: any, idx: number) => (
+                          <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <span className="font-medium">{nat.country}</span>
+                              <div className="flex items-center gap-2">
+                                <Checkbox
+                                  id={`partner_renounce_${idx}`}
+                                  checked={nat.willingToRenounce ?? false}
+                                  onCheckedChange={(v) => {
+                                    const updated = [...partnerNats]
+                                    updated[idx] = { ...updated[idx], willingToRenounce: !!v }
+                                    updateFormData("personalInformation.relocationPartnerInfo.partnerNationalities", updated)
+                                  }}
+                                />
+                                <Label htmlFor={`partner_renounce_${idx}`} className="text-sm">
+                                  Willing to renounce
+                                </Label>
                               </div>
                             </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-sm text-destructive">
-                          ⚠️ Partner must have at least one citizenship
-                        </p>
-                      )}
-                    </>
-                  )
-                })()}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const updated = partnerNats.filter((_: any, i: number) => i !== idx)
+                                updateFormData("personalInformation.relocationPartnerInfo.partnerNationalities", updated)
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  })()}
+
+                  {/* Add partner citizenship */}
+                  <div className="flex gap-2">
+                    <Select
+                      value={partnerSel}
+                      onValueChange={setPartnerSel}
+                    >
+                      <SelectTrigger className="flex-1">
+                        <SelectValue placeholder="Add partner citizenship" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {COUNTRY_LIST.filter(c => {
+                          const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+                          return !partnerNats.some((n: any) => n.country === c)
+                        }).map((c) => (
+                          <SelectItem key={c} value={c}>
+                            {c}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      disabled={!partnerSel}
+                      onClick={() => {
+                        if (partnerSel) {
+                          const current = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+                          updateFormData("personalInformation.relocationPartnerInfo.partnerNationalities", [
+                            ...current,
+                            { country: partnerSel, willingToRenounce: false }
+                          ])
+                          setPartnerSel("")
+                        }
+                      }}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* ---------------- Dependents ---------------- */}
-        <Separator />
-        
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Users className="w-5 h-5" />
-            👨‍👩‍👧‍👦 Dependents
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Include family members who will relocate with you and depend on your support.
-          </p>
-
-          <Button
-            variant="outline"
-            onClick={() =>
-              updateDepList([
-                ...depList,
-                {
-                  relationship: "",
+      {/* Dependents Card */}
+      <Card className="shadow-sm border-l-4 border-l-orange-500">
+        <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Baby className="w-6 h-6 text-orange-600" />
+            Dependents
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Family members who will relocate with you and depend on your support</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            {/* Add Dependent Button - only show if we can add more */}
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Add new dependent to data
+                const newDependent = {
+                  relationship: "Child",
                   dateOfBirth: "",
                   student: false,
-                  nationalities: [],
-                },
-              ])
-            }
-            className="w-full"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add dependent
-          </Button>
-
-          {depList.length > 0 && (
-            <div className="space-y-4">
-              {depList.map((dep, idx) => (
-                <DependentItem key={idx} dep={dep} idx={idx} />
-              ))}
-              <Button
-                variant="outline"
-                onClick={() =>
-                  updateDepList([
-                    ...depList,
-                    {
-                      relationship: "",
-                      dateOfBirth: "",
-                      student: false,
-                      nationalities: [],
-                    },
-                  ])
+                  nationalities: []
                 }
-                className="w-full"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add another dependent
-              </Button>
-            </div>
-          )}
+                updateDepList([...depList, newDependent])
+                // Make this dependent form visible and editable
+                const newIndex = depList.length
+                setVisibleDependents([...visibleDependents, newIndex])
+                setEditingDependents([...editingDependents, newIndex])
+              }}
+              className="w-full"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Dependent{depList.length > 0 ? ` ${depList.length + 1}` : ''}
+            </Button>
 
-          {depList.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              <Users className="w-12 h-12 mx-auto mb-3 opacity-50" />
-              <p className="text-sm">No dependents added yet</p>
-              <p className="text-xs">Click "Add dependent" to include family members</p>
-            </div>
-          )}
-        </div>
-      </CardContent>
+                        {/* Dependent cards and forms */}
+            {depList.map((dep, idx) => {
+              if (!visibleDependents.includes(idx)) return null
+              
+              const isEditing = editingDependents.includes(idx)
+              
+              // Show summary card if not editing
+              if (!isEditing) {
+                return (
+                  <div key={idx} className="p-4 border rounded-lg bg-card">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Badge variant="secondary">Dependent {idx + 1}</Badge>
+                          <Badge variant="outline">{dep.relationship}</Badge>
+                          {dep.student && <Badge variant="outline">Student</Badge>}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Born: {dep.dateOfBirth || "Not specified"}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Citizenships: {dep.nationalities?.length || 0} countries
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setEditingDependents([...editingDependents, idx])}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            // Remove from all state
+                            setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
+                            setEditingDependents(editingDependents.filter((i: number) => i !== idx))
+                            // Remove from data list  
+                            const updated = depList.filter((_, i) => i !== idx)
+                            updateDepList(updated)
+                            // Adjust indices for remaining dependents
+                            setVisibleDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
+                            setEditingDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
+              
+              // Show full form if editing
+              return (
+                <div key={idx} className="p-6 border rounded-lg bg-card space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h5 className="font-medium text-lg">Dependent {idx + 1}</h5>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        // Remove from all state
+                        setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
+                        setEditingDependents(editingDependents.filter((i: number) => i !== idx))
+                        // Remove from data list  
+                        const updated = depList.filter((_, i) => i !== idx)
+                        updateDepList(updated)
+                        // Adjust indices for remaining dependents
+                        setVisibleDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
+                        setEditingDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
+                      }}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  {/* Date of birth */}
+                  <div className="space-y-2">
+                    <Label className="text-base font-medium">Date of birth *</Label>
+                    <Input
+                      type="date"
+                      value={dep.dateOfBirth}
+                      onChange={(e) => {
+                        const updated = [...depList]
+                        updated[idx] = { ...updated[idx], dateOfBirth: e.target.value }
+                        updateDepList(updated)
+                      }}
+                    />
+                  </div>
 
-      <CardFooter className="flex flex-col space-y-4">
-        {/* Validation Messages */}
-        {!canContinue && (
-          <Alert variant="destructive" className="w-full">
-            <AlertDescription>
-              <strong>Please complete all required fields:</strong>
-              <ul className="mt-2 space-y-1 list-disc list-inside text-sm">
-                {!dob && <li>Date of birth</li>}
-                {!curCountry && <li>Country of current residence</li>}
-                {!curStatus && <li>Current residency status</li>}
-                {natList.length === 0 && <li>At least one citizenship</li>}
-                {!maritalStatus && <li>Marital status</li>}
-                {curStatus === "Temporary Resident" && !tempDuration && <li>Years at current residence</li>}
-              </ul>
-            </AlertDescription>
-          </Alert>
-        )}
+                  {/* Relationship */}
+                  <div className="space-y-2">
+                    <Label className="text-base font-medium">Relationship to you *</Label>
+                    <Select
+                      value={dep.relationship}
+                      onValueChange={(v) => {
+                        const updated = [...depList]
+                        updated[idx] = { ...updated[idx], relationship: v }
+                        updateDepList(updated)
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Child">Child</SelectItem>
+                        <SelectItem value="Parent">Parent</SelectItem>
+                        <SelectItem value="Sibling">Sibling</SelectItem>
+                        <SelectItem value="Legal Ward (I am)">Legal Ward (I am guardian)</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-        {/* Continue Button */}
-        <Button
-          disabled={!canContinue}
-          onClick={onComplete}
-          className="w-full"
-          size="lg"
-        >
-          Continue
-        </Button>
-      </CardFooter>
-    </Card>
+                {/* Student status */}
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id={`student_${idx}`}
+                    checked={dep.student}
+                    onCheckedChange={(v) => {
+                      const updated = [...depList]
+                      updated[idx] = { ...updated[idx], student: !!v }
+                      updateDepList(updated)
+                    }}
+                  />
+                  <Label htmlFor={`student_${idx}`} className="text-base">
+                    Is a student
+                  </Label>
+                </div>
+
+                {/* Citizenships */}
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">Citizenships *</Label>
+                  
+                  {/* Existing citizenships */}
+                  {dep.nationalities && dep.nationalities.length > 0 && (
+                    <div className="space-y-2">
+                      {dep.nationalities.map((nat: any, natIdx: number) => (
+                        <div key={natIdx} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <span className="font-medium">{nat.country}</span>
+                            <div className="flex items-center gap-2">
+                              <Checkbox
+                                id={`dep_${idx}_renounce_${natIdx}`}
+                                checked={nat.willingToRenounce ?? false}
+                                onCheckedChange={(v) => {
+                                  const updated = [...depList]
+                                  const updatedNats = [...(updated[idx].nationalities || [])]
+                                  updatedNats[natIdx] = { ...updatedNats[natIdx], willingToRenounce: !!v }
+                                  updated[idx] = { ...updated[idx], nationalities: updatedNats }
+                                  updateDepList(updated)
+                                }}
+                              />
+                              <Label htmlFor={`dep_${idx}_renounce_${natIdx}`} className="text-sm">
+                                Willing to give up?
+                              </Label>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                              onClick={() => {
+                                const updated = [...depList]
+                                const updatedNats = (updated[idx].nationalities || []).filter((_: any, i: number) => i !== natIdx)
+                                updated[idx] = { ...updated[idx], nationalities: updatedNats }
+                                updateDepList(updated)
+                              }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Add citizenship */}
+                  <div className="flex gap-2">
+                    <Select
+                      value=""
+                      onValueChange={(country) => {
+                        if (country) {
+                          const updated = [...depList]
+                          const currentNats = updated[idx].nationalities || []
+                          if (!currentNats.some((n: any) => n.country === country)) {
+                            updated[idx] = {
+                              ...updated[idx],
+                              nationalities: [...currentNats, { country, willingToRenounce: false }]
+                            }
+                            updateDepList(updated)
+                          }
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="flex-1">
+                        <SelectValue placeholder="Add citizenship" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {COUNTRY_LIST.filter(c => {
+                          const currentNats = dep.nationalities || []
+                          return !currentNats.some((n: any) => n.country === c)
+                        }).map((c) => (
+                          <SelectItem key={c} value={c}>
+                            {c}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                                  </div>
+                  
+                  {/* Save/Cancel buttons for editing form */}
+                  <div className="flex gap-2 pt-4 border-t">
+                    <Button
+                      size="sm"
+                      onClick={() => setEditingDependents(editingDependents.filter((i: number) => i !== idx))}
+                      className="flex-1"
+                    >
+                      <Check className="w-4 h-4 mr-2" />
+                      Save
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingDependents(editingDependents.filter((i: number) => i !== idx))}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+               )
+             })}
+
+            <p className="text-xs text-muted-foreground">
+              Include children, elderly parents, or other family members who depend on your financial support and will move with you.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Action Card */}
+      <Card className="shadow-md">
+        <CardFooter className="pt-6">
+          <div className="w-full space-y-4">
+            {!canContinue && (
+              <Alert variant="destructive">
+                <AlertDescription>
+                  <strong>Complete required fields:</strong>
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    {!dob && <li>Date of birth</li>}
+                    {!curCountry && <li>Country of current residence</li>}
+                    {!curStatus && <li>Current residency status</li>}
+                    {natList.length === 0 && <li>At least one citizenship</li>}
+                    {!maritalStatus && <li>Marital status</li>}
+                    {curStatus === "Temporary Resident" && !tempDuration && <li>Years at current residence</li>}
+                  </ul>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <Button
+              disabled={!canContinue}
+              onClick={handleComplete}
+              className="w-full"
+              size="lg"
+            >
+              Continue to Education
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
   )
 } 
