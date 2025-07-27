@@ -97,6 +97,7 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
         <DatePicker
           date={info.dateOfBirth ? new Date(info.dateOfBirth) : undefined}
           onSelect={(date) => date && handleChange("dateOfBirth", date.toISOString().split('T')[0])}
+          toDate={new Date()}
           error={getFieldError("dateOfBirth")?.message}
         />
         {getFieldWarning("dateOfBirth") && (

@@ -15,10 +15,10 @@ Service Delivery: We process your data solely to provide you with the requested 
 Legal Basis: We process your data based on your consent and our legitimate interest in providing the requested services.
 
 ## Data Retention
-We do **not** permanently store your data. Your questionnaire responses are kept only as long as necessary to generate the analysis and are deleted within 30 days.
+We do **not** store your data at all. Your questionnaire responses are processed in real-time to generate your analysis and are never saved to our systems.
 
 ## Data Sharing With Perplexity AI
-We send the questionnaire content to the Perplexity AI API to generate parts of your personalised report. Perplexity processes the data solely to provide the service to us. See Perplexity's API privacy statement here: <https://www.perplexity.ai/enterprise-privacy>.
+We send the questionnaire content to the Perplexity AI API to generate parts of your personalised report. Perplexity processes the data solely to provide the service to us. See Perplexity's API privacy statement here: [https://www.perplexity.ai/enterprise-privacy](https://www.perplexity.ai/enterprise-privacy).
 
 Perplexity is contractually required to delete prompt and response data after processing and not to use it for model-training or any other purpose.
 
@@ -34,7 +34,7 @@ Correct inaccurate information
 
 Object to processing
 
-File a complaint with the Dutch Data Protection Authority (Autoriteit Persoonsgegevens)
+File a complaint with the [Dutch Data Protection Authority (Autoriteit Persoonsgegevens)](https://autoriteitpersoonsgegevens.nl/en)
 
 Third-Party Services
 We may use third-party AI services to process your data. These services are contractually required to delete your data immediately after processing and not use it for their own purposes.

@@ -142,6 +142,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                     <Input
                       type="date"
                       value={partnerInfo.personalInformation.dateOfBirth}
+                      max={new Date().toISOString().split('T')[0]}
                       onChange={(e) => {
                         handleUpdate({
                           ...partnerInfo,

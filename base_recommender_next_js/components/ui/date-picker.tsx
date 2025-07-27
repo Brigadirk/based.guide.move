@@ -18,9 +18,10 @@ interface DatePickerProps {
   onSelect: (date: Date | undefined) => void
   error?: string
   className?: string
+  toDate?: Date
 }
 
-export function DatePicker({ date, onSelect, error, className }: DatePickerProps) {
+export function DatePicker({ date, onSelect, error, className, toDate }: DatePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false)
   const [month, setMonth] = React.useState<Date>(date || new Date(2000, 0, 1))
 
@@ -99,6 +100,7 @@ export function DatePicker({ date, onSelect, error, className }: DatePickerProps
           }}
           month={month}
           onMonthChange={setMonth}
+          toDate={toDate}
           initialFocus
           className="rounded-md"
           showOutsideDays={false}

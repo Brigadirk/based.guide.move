@@ -240,7 +240,7 @@ export default function HomePage() {
           {/* Visually hidden heading for accessibility */}
           <h1 className="sr-only">Mr Pro Bonobo's Ape Escape Consultancy</h1>
           <p className="text-lg text-muted-foreground">
-            Migration Questionnaire
+            Mr. Pro Bonobo's Ape Escape Consultancy Migration Questionnaire (APE-M)
           </p>
           
           {/* Auto-save indicator and reset button */}

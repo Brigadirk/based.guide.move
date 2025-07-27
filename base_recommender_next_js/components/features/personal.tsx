@@ -37,6 +37,15 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   const handleDobChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     updateFormData("personalInformation.dateOfBirth", e.target.value)
 
+  // Get today's date in YYYY-MM-DD format for max date validation
+  const getTodayDate = () => {
+    const today = new Date()
+    const year = today.getFullYear()
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
   // Current Residence
   const curCountry: string = getFormData("personalInformation.currentResidency.country") ?? ""
   const curStatus: string = getFormData("personalInformation.currentResidency.status") ?? ""
@@ -387,6 +396,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                 type="date"
                 value={dob}
                 onChange={handleDobChange}
+                max={getTodayDate()}
                 className="max-w-xs"
                 required
               />
@@ -702,6 +712,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     type="date"
                     value={getFormData("personalInformation.relocationPartnerInfo.dateOfBirth") ?? ""}
                     onChange={(e) => updateFormData("personalInformation.relocationPartnerInfo.dateOfBirth", e.target.value)}
+                    max={getTodayDate()}
                     className="max-w-xs"
                     required
                   />
@@ -1388,6 +1399,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     <Input
                       type="date"
                       value={dep.dateOfBirth}
+                      max={getTodayDate()}
                       onChange={(e) => {
                         const updated = [...depList]
                         updated[idx] = { ...updated[idx], dateOfBirth: e.target.value }
