@@ -18,8 +18,11 @@ import {
   Info,
   CheckCircle,
   AlertCircle,
-  Check
+  Check,
+  Zap
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Disclaimer } from "@/components/features/disclaimer";
 import { Destination } from "@/components/features/destination";
 import { PersonalInformation } from "@/components/features/personal";
@@ -67,8 +70,44 @@ export default function HomePage() {
     updateFormData, 
     resetFormData,
     currentSection,
-    setCurrentSection
+    setCurrentSection,
+    getFormData
   } = useFormStore();
+  
+  // Finance skip functionality
+  const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
+  
+  const handleFinanceSkipToggle = (checked: boolean) => {
+    const wasAutoCompleted = getFormData("finance.autoCompletedSections") ?? false
+    
+    updateFormData("finance.skipDetails", checked)
+    
+    if (checked) {
+      // Mark all finance-related sections as complete when skipping details
+      markSectionComplete("finance")
+      markSectionComplete("social-security") 
+      markSectionComplete("tax-deductions")
+      markSectionComplete("future-plans")
+      
+      // Store which sections were auto-completed so we can unmark them later
+      updateFormData("finance.autoCompletedSections", [
+        "finance", "social-security", "tax-deductions", "future-plans"
+      ])
+    } else if (wasAutoCompleted) {
+      // When unchecking, unmark the sections that were auto-completed
+      const autoCompletedSections = Array.isArray(wasAutoCompleted) 
+        ? wasAutoCompleted 
+        : ["finance", "social-security", "tax-deductions", "future-plans"]
+      
+      // Unmark each auto-completed section
+      autoCompletedSections.forEach((sectionId: string) => {
+        updateFormData(`completedSections.${sectionId}`, false)
+      })
+      
+      // Clear the auto-completion flag
+      updateFormData("finance.autoCompletedSections", false)
+    }
+  }
   const destCountry = (formData.residencyIntentions?.destinationCountry as any)?.country ?? formData.destination?.country ?? "";
   const destRegion = (formData.residencyIntentions?.destinationCountry as any)?.region ?? formData.destination?.region ?? "";
 
@@ -247,40 +286,94 @@ export default function HomePage() {
                 />
               </div>
             ) : null}
+            
             <nav className="space-y-1 sticky top-24">
               {SECTIONS.map((section, index) => {
+                // Insert Finance Skip Toggle between Residency Intentions (index 4) and Income and Assets (index 5)
+                const showFinanceToggle = index === 5 // Before Income and Assets section
+                
                 const Icon = section.icon
                 const isCompleted = isSectionComplete(section.id)
                 const isMarkedComplete = isSectionMarkedComplete(section.id)
                 const disabled = (index === 1 && !isSectionMarkedComplete("disclaimer")) || (index > 1 && (!isSectionMarkedComplete("disclaimer") || !(destCountry && destCountry.trim() !== "")))
                 const isCurrent = index === currentSection
+                
                 return (
-                  <button
-                    key={section.id}
-                    title={disabled ? (index === 1 ? "Please complete the Disclaimer section first" : "Please complete the Disclaimer and Desired Destination sections first") : undefined}
-                    className={`flex items-center w-full px-4 py-3 rounded-md text-sm transition-colors relative min-w-0 ${
-                      isCurrent
-                        ? "bg-primary text-primary-foreground"
-                        : isCompleted
-                        ? "bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 border border-green-200 dark:border-green-800"
-                        : "hover:bg-muted"
-                    } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
-                    onClick={() => !disabled && setCurrentSection(index)}
-                  >
-                    <Icon className={`w-4 h-4 mr-3 flex-shrink-0 ${isCurrent ? "text-white" : ""}`} />
-                    <span className="flex-1 text-left truncate">
-                      {section.title}
-                    </span>
+                  <div key={section.id}>
+                    {showFinanceToggle && (
+                      <Card className="mb-3 border-stone-200 bg-stone-50/50 dark:bg-stone-950/20">
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className="p-1.5 rounded-full bg-stone-100 dark:bg-stone-900/50">
+                                <Zap className="w-3 h-3 text-emerald-600" />
+                              </div>
+                              <div>
+                                <Label htmlFor="finance-skip-main" className="text-xs font-medium text-stone-800 dark:text-stone-200 cursor-pointer">
+                                  Quick Finance Skip
+                                </Label>
+                                <p className="text-[10px] text-stone-700 dark:text-stone-300">
+                                  Skip detailed finance sections
+                                </p>
+                              </div>
+                            </div>
+                            <Switch
+                              id="finance-skip-main"
+                              checked={skipFinanceDetails}
+                              onCheckedChange={handleFinanceSkipToggle}
+                              className="scale-75"
+                            />
+                          </div>
+                          
+                          <div className="border-t border-stone-200 pt-2">
+                            <details className="group">
+                              <summary className="text-[10px] text-stone-700 dark:text-stone-300 cursor-pointer hover:text-stone-800 dark:hover:text-stone-200">
+                                💡 Why would I want to do this?
+                              </summary>
+                              <p className="text-[9px] text-stone-600 dark:text-stone-400 mt-1 leading-relaxed">
+                                You may not care about detailed taxation and finance tracking—you simply want to know if there are any financial requirements (income thresholds, bank balances, etc.) needed to be allowed into your destination country.
+                              </p>
+                            </details>
+                          </div>
+                          
+                          {skipFinanceDetails && (
+                            <div className="mt-2 p-1.5 rounded bg-emerald-100 dark:bg-emerald-900/30">
+                              <p className="text-[10px] text-emerald-800 dark:text-emerald-200">
+                                ✅ Finance sections auto-completed
+                              </p>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    )}
                     
-                    {/* Enhanced completion indicators */}
-                    <div className="flex items-center gap-2 ml-3 flex-shrink-0">
-                      {isCompleted && <Check className="w-4 h-4 text-green-600" />}
-                      {isMarkedComplete && !isCompleted && <Check className="w-4 h-4 text-yellow-500" />}
-                      {section.showDot && !isCompleted && (
-                        <div className="w-1.5 h-1.5 bg-red-500 rounded-full opacity-80 shadow-sm" title="Section to complete" />
-                      )}
-                    </div>
-                  </button>
+                    <button
+                      key={`${section.id}-button`}
+                      title={disabled ? (index === 1 ? "Please complete the Disclaimer section first" : "Please complete the Disclaimer and Desired Destination sections first") : undefined}
+                      className={`flex items-center w-full px-4 py-3 rounded-md text-sm transition-colors relative min-w-0 ${
+                        isCurrent
+                          ? "bg-primary text-primary-foreground"
+                          : isCompleted
+                          ? "bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 border border-green-200 dark:border-green-800"
+                          : "hover:bg-muted"
+                      } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                      onClick={() => !disabled && setCurrentSection(index)}
+                    >
+                      <Icon className={`w-4 h-4 mr-3 flex-shrink-0 ${isCurrent ? "text-white" : ""}`} />
+                      <span className="flex-1 text-left truncate">
+                        {section.title}
+                      </span>
+                      
+                      {/* Enhanced completion indicators */}
+                      <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+                        {isCompleted && <Check className="w-4 h-4 text-green-600" />}
+                        {isMarkedComplete && !isCompleted && <Check className="w-4 h-4 text-yellow-500" />}
+                        {section.showDot && !isCompleted && (
+                          <div className="w-1.5 h-1.5 bg-red-500 rounded-full opacity-80 shadow-sm" title="Section to complete" />
+                        )}
+                      </div>
+                    </button>
+                  </div>
                 )
               })}
             </nav>

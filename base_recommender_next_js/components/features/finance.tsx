@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
-import { Plus, Trash2, DollarSign, TrendingUp, AlertTriangle, Info, Briefcase, PiggyBank, CreditCard, Home, Building, Target } from "lucide-react"
+import { Plus, Trash2, DollarSign, TrendingUp, AlertTriangle, Info, Briefcase, PiggyBank, CreditCard, Home, Building, Target, Zap } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
@@ -46,37 +46,8 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   const currencies = useCurrencies()
 
-  // Auto-complete related sections when skipDetails is checked
-  useEffect(() => {
-    const skipDetails = getFormData("finance.skipDetails")
-    const wasAutoCompleted = getFormData("finance.autoCompletedSections") ?? false
-    
-    if (skipDetails) {
-      // Mark all finance-related sections as complete when skipping details
-      markSectionComplete("finance")
-      markSectionComplete("social-security") 
-      markSectionComplete("tax-deductions")
-      markSectionComplete("future-plans")
-      
-      // Store which sections were auto-completed so we can unmark them later
-      updateFormData("finance.autoCompletedSections", [
-        "finance", "social-security", "tax-deductions", "future-plans"
-      ])
-    } else if (wasAutoCompleted) {
-      // When unchecking, unmark the sections that were auto-completed
-      const autoCompletedSections = Array.isArray(wasAutoCompleted) 
-        ? wasAutoCompleted 
-        : ["finance", "social-security", "tax-deductions", "future-plans"]
-      
-      // Unmark each auto-completed section
-      autoCompletedSections.forEach((sectionId: string) => {
-        updateFormData(`completedSections.${sectionId}`, false)
-      })
-      
-      // Clear the auto-completion flag
-      updateFormData("finance.autoCompletedSections", false)
-    }
-  }, [getFormData("finance.skipDetails"), markSectionComplete, updateFormData, getFormData])
+  // Get skip status (now controlled from sidebar)
+  const skipDetails = getFormData("finance.skipDetails") ?? false
 
   // Income Sources
   const incomeSources = getFormData("finance.incomeSources") ?? []
@@ -148,34 +119,18 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
         Financial information is crucial for visa applications, tax planning, and ensuring you meet minimum income requirements for your destination country.
       </SectionHint>
 
-      {/* Skip Finance Details Option */}
-      <Card className="shadow-sm border-l-4 border-l-amber-500">
-        <CardHeader className="bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-950/20">
-          <CardTitle className="text-xl flex items-center gap-3">
-            <AlertTriangle className="w-6 h-6 text-amber-600" />
-            Quick Skip Option
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">Simplified approach for basic financial requirements</p>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
-            <Checkbox
-              id="skip_finance"
-              checked={getFormData("finance.skipDetails") ?? false}
-              onCheckedChange={(v) => updateFormData("finance.skipDetails", !!v)}
-            />
-            <div>
-              <Label htmlFor="skip_finance" className="text-base font-medium">
-                🚀 I don't care about taxation or finance details—just tell me the financial requirements to move
-              </Label>
-              <p className="text-sm text-muted-foreground mt-1">
-                Skip detailed financial inputs and focus only on visa financial thresholds
-              </p>
-            </div>
-          </div>
-
-          {getFormData("finance.skipDetails") && (
-            <div className="mt-4 p-4 border rounded-lg bg-green-50 dark:bg-green-950/20">
+      {/* Skip Mode Indicator */}
+      {skipDetails && (
+        <Card className="shadow-sm border-l-4 border-l-green-500">
+          <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
+            <CardTitle className="text-xl flex items-center gap-3">
+              <Zap className="w-6 h-6 text-green-600" />
+              Finance Details Skipped
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Focus on financial requirements only</p>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950/20">
               <p className="text-green-800 dark:text-green-200">
                 ✅ Detailed finance inputs skipped. We'll focus only on whether any financial thresholds apply to your relocation.
               </p>
@@ -184,12 +139,17 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                 <br />• Income and Assets • Social Security and Pensions • Tax Deductions and Credits • Future Financial Plans
               </p>
             </div>
-          )}
-        </CardContent>
-      </Card>
+            <div className="mt-4 text-center">
+              <p className="text-sm text-muted-foreground">
+                💡 Toggle this setting in the sidebar to enable detailed finance inputs
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Only show detailed finance sections if not skipped */}
-      {!getFormData("finance.skipDetails") && (
+      {!skipDetails && (
         <>
           {/* Total Wealth Card */}
       <Card className="shadow-sm border-l-4 border-l-emerald-500">

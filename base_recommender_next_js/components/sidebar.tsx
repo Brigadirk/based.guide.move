@@ -14,8 +14,11 @@ import {
   Calculator, 
   TrendingUp, 
   FileText, 
-  CheckCircle 
+  CheckCircle,
+  Zap
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface Step {
   id: string;
@@ -35,9 +38,44 @@ const stepIcons = [
 ];
 
 export function Sidebar({ steps, currentStep, onStepChange }: SidebarProps) {
-  const { formData } = useFormStore()
+  const { formData, getFormData, updateFormData, markSectionComplete } = useFormStore()
   const destCountry = formData.destination?.country ?? ""
   const destRegion = formData.destination?.region ?? ""
+  
+  // Finance skip functionality
+  const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
+  
+  const handleFinanceSkipToggle = (checked: boolean) => {
+    const wasAutoCompleted = getFormData("finance.autoCompletedSections") ?? false
+    
+    updateFormData("finance.skipDetails", checked)
+    
+    if (checked) {
+      // Mark all finance-related sections as complete when skipping details
+      markSectionComplete("finance")
+      markSectionComplete("social-security") 
+      markSectionComplete("tax-deductions")
+      markSectionComplete("future-plans")
+      
+      // Store which sections were auto-completed so we can unmark them later
+      updateFormData("finance.autoCompletedSections", [
+        "finance", "social-security", "tax-deductions", "future-plans"
+      ])
+    } else if (wasAutoCompleted) {
+      // When unchecking, unmark the sections that were auto-completed
+      const autoCompletedSections = Array.isArray(wasAutoCompleted) 
+        ? wasAutoCompleted 
+        : ["finance", "social-security", "tax-deductions", "future-plans"]
+      
+      // Unmark each auto-completed section
+      autoCompletedSections.forEach((sectionId: string) => {
+        updateFormData(`completedSections.${sectionId}`, false)
+      })
+      
+      // Clear the auto-completion flag
+      updateFormData("finance.autoCompletedSections", false)
+    }
+  }
   return (
     <div className="w-80 bg-card border-r border-border p-4 h-screen overflow-y-auto">
       <div className="mb-6">
@@ -49,6 +87,39 @@ export function Sidebar({ steps, currentStep, onStepChange }: SidebarProps) {
           </p>
         )}
       </div>
+
+      {/* Finance Skip Toggle */}
+      <Card className="mb-6 border-amber-200 bg-amber-50/50 dark:bg-amber-950/20">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-900/50">
+                <Zap className="w-4 h-4 text-amber-600" />
+              </div>
+              <div>
+                <Label htmlFor="finance-skip" className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                  Quick Finance Skip
+                </Label>
+                <p className="text-xs text-amber-700 dark:text-amber-300">
+                  Skip detailed finance sections
+                </p>
+              </div>
+            </div>
+            <Switch
+              id="finance-skip"
+              checked={skipFinanceDetails}
+              onCheckedChange={handleFinanceSkipToggle}
+            />
+          </div>
+          {skipFinanceDetails && (
+            <div className="mt-3 p-2 rounded bg-green-100 dark:bg-green-900/30">
+              <p className="text-xs text-green-800 dark:text-green-200">
+                ✅ Finance sections auto-completed
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="space-y-2">
         {steps.map((step, index) => {
