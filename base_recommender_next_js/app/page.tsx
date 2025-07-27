@@ -301,7 +301,7 @@ export default function HomePage() {
                 return (
                   <div key={section.id}>
                     {showFinanceToggle && (
-                      <Card className="mb-3 border-stone-200 bg-stone-50/50 dark:bg-stone-950/20">
+                      <Card className="mb-3 border-emerald-200/60 bg-stone-50/50 dark:bg-stone-950/20">
                         <CardContent className="p-3">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
@@ -325,7 +325,7 @@ export default function HomePage() {
                             />
                           </div>
                           
-                          <div className="border-t border-stone-200 pt-2">
+                          <div className="border-t border-emerald-200/40 pt-2">
                             <details className="group">
                               <summary className="text-[10px] text-stone-700 dark:text-stone-300 cursor-pointer hover:text-stone-800 dark:hover:text-stone-200">
                                 💡 Why would I want to do this?

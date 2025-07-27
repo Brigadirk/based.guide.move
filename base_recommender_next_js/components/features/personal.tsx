@@ -20,7 +20,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 // Hooks can't run outside components – compute once as a plain constant.
 const COUNTRY_LIST = Object.keys(countryInfo).sort()
 
-const RESIDENCY_OPTIONS = ["Citizen", "Permanent Resident", "Temporary Resident"] as const
+const RESIDENCY_OPTIONS = ["Citizen", "Permanent Resident", "Temporary Resident", "Work Visa", "Student Visa", "Refugee", "Other"] as const
 const MARITAL_OPTIONS = [
   "Single",
   "Official Partnership",
@@ -113,6 +113,70 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     }
   }, [curCountry, curStatus, natList])
 
+  // Auto-citizenship for partner
+  useEffect(() => {
+    const partnerCountry = getFormData("personalInformation.relocationPartnerInfo.currentResidency.country") ?? ""
+    const partnerStatus = getFormData("personalInformation.relocationPartnerInfo.currentResidency.status") ?? ""
+    const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+    
+    if (!partnerCountry || !partnerStatus) return
+    
+    let updatedPartnerNats = [...partnerNats]
+    
+    if (partnerStatus === "Citizen") {
+      // Add partner's current country as citizenship if not already present
+      if (!updatedPartnerNats.find((n: any) => n.country === partnerCountry)) {
+        updatedPartnerNats.unshift({ country: partnerCountry, willingToRenounce: false })
+        updateFormData("personalInformation.relocationPartnerInfo.partnerNationalities", updatedPartnerNats)
+      }
+    } else {
+      // Remove partner's current country from citizenships if not a citizen
+      const filteredNats = updatedPartnerNats.filter((n: any) => n.country !== partnerCountry)
+      if (filteredNats.length !== updatedPartnerNats.length) {
+        updateFormData("personalInformation.relocationPartnerInfo.partnerNationalities", filteredNats)
+      }
+    }
+  }, [getFormData("personalInformation.relocationPartnerInfo.currentResidency.country"), getFormData("personalInformation.relocationPartnerInfo.currentResidency.status"), getFormData("personalInformation.relocationPartnerInfo.partnerNationalities")])
+
+  // Auto-citizenship for dependents
+  useEffect(() => {
+    let hasChanges = false
+    const updatedDepList = [...depList]
+    
+    depList.forEach((dep: any, idx: number) => {
+      const depCountry = dep.currentResidency?.country
+      const depStatus = dep.currentResidency?.status
+      const depNats = dep.nationalities || []
+      
+      if (!depCountry || !depStatus) return
+      
+      if (depStatus === "Citizen") {
+        // Add dependent's current country as citizenship if not already present
+        if (!depNats.find((n: any) => n.country === depCountry)) {
+          updatedDepList[idx] = {
+            ...dep,
+            nationalities: [{ country: depCountry, willingToRenounce: false }, ...depNats]
+          }
+          hasChanges = true
+        }
+      } else {
+        // Remove dependent's current country from citizenships if not a citizen
+        const filteredNats = depNats.filter((n: any) => n.country !== depCountry)
+        if (filteredNats.length !== depNats.length) {
+          updatedDepList[idx] = {
+            ...dep,
+            nationalities: filteredNats
+          }
+          hasChanges = true
+        }
+      }
+    })
+    
+    if (hasChanges) {
+      updateDepList(updatedDepList)
+    }
+  }, [depList.map((dep: any) => `${dep.currentResidency?.country}-${dep.currentResidency?.status}-${JSON.stringify(dep.nationalities)}`).join(',')])
+
   // Validation
   const canContinue = dob && curCountry && curStatus && natList.length > 0 && maritalStatus
 
@@ -179,7 +243,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
           <p className="text-sm text-muted-foreground">Where you currently live and pay taxes</p>
         </CardHeader>
         <CardContent className="pt-6">
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-3">
             <div className="space-y-2">
               <Label className="text-base font-medium">Country *</Label>
               <Select
@@ -222,27 +286,30 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               </Select>
             </div>
 
-            {curStatus === "Temporary Resident" && (
-              <div className="space-y-2 md:col-span-2">
-                <Label className="text-base font-medium">Years at current residence *</Label>
-                <p className="text-sm text-muted-foreground">
-                  Length of time at current residence affects residency status for tax purposes.
-                </p>
-                <Input
-                  type="number"
-                  step="0.5"
-                  min={0}
-                  max={100}
-                  placeholder="e.g., 2.5"
-                  value={tempDuration}
-                  onChange={(e) =>
-                    updateFormData("personalInformation.currentResidency.duration", e.target.value)
-                  }
-                  className="max-w-xs"
-                />
-              </div>
-            )}
+            <div className={`space-y-2 ${curStatus === "Citizen" ? "opacity-50" : ""}`}>
+              <Label className="text-sm font-medium">
+                Duration (years) {curStatus !== "Citizen" ? "*" : ""}
+              </Label>
+              <Input
+                type="number"
+                step="0.5"
+                min={0}
+                max={100}
+                placeholder="e.g., 2.5"
+                value={curStatus === "Citizen" ? "" : tempDuration}
+                onChange={(e) =>
+                  updateFormData("personalInformation.currentResidency.duration", e.target.value)
+                }
+                disabled={curStatus === "Citizen"}
+              />
+            </div>
           </div>
+          
+          {curStatus && curStatus !== "Citizen" && (
+            <p className="text-sm text-muted-foreground mt-4">
+              Length of time in your current residency status affects tax and visa eligibility.
+            </p>
+          )}
         </CardContent>
       </Card>
 
@@ -409,7 +476,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                          <div className="flex items-center gap-2">
                            <Lightbulb className="w-5 h-5 text-blue-600" />
                            <span className="font-medium text-blue-800 dark:text-blue-200">
-                             📚 Learn more about relationship types
+                                                             Learn more about relationship types
                            </span>
                          </div>
                        </AccordionTrigger>
@@ -641,9 +708,113 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                      return null
                    })()}
  
-                   {/* Partner citizenships */}
+                   {/* Partner Current Residency */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h5 className="font-medium">Partner Current Residency *</h5>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          // Copy main user's residency info to partner
+                          updateFormData("personalInformation.relocationPartnerInfo.currentResidency.country", curCountry)
+                          updateFormData("personalInformation.relocationPartnerInfo.currentResidency.status", curStatus)
+                          updateFormData("personalInformation.relocationPartnerInfo.currentResidency.duration", tempDuration)
+                        }}
+                      >
+                        Same as mine
+                      </Button>
+                    </div>
+                    
+                    <div className="grid gap-4 md:grid-cols-3">
+                      <div className="space-y-2">
+                        <Label className="text-base font-medium">Country *</Label>
+                        <Select
+                          value={getFormData("personalInformation.relocationPartnerInfo.currentResidency.country") ?? ""}
+                          onValueChange={(val) =>
+                            updateFormData("personalInformation.relocationPartnerInfo.currentResidency.country", val)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {COUNTRY_LIST.map((c) => (
+                              <SelectItem key={c} value={c}>
+                                {c}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-base font-medium">Residency status *</Label>
+                        <Select
+                          value={getFormData("personalInformation.relocationPartnerInfo.currentResidency.status") ?? ""}
+                          onValueChange={(val) =>
+                            updateFormData("personalInformation.relocationPartnerInfo.currentResidency.status", val)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Citizen">Citizen</SelectItem>
+                            <SelectItem value="Permanent Resident">Permanent Resident</SelectItem>
+                            <SelectItem value="Temporary Resident">Temporary Resident</SelectItem>
+                            <SelectItem value="Work Visa">Work Visa</SelectItem>
+                            <SelectItem value="Student Visa">Student Visa</SelectItem>
+
+                            <SelectItem value="Refugee">Refugee</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                       {(() => {
+                        const partnerStatus = getFormData("personalInformation.relocationPartnerInfo.currentResidency.status") ?? ""
+                        return (
+                          <div className={`space-y-2 ${partnerStatus === "Citizen" ? "opacity-50" : ""}`}>
+                            <Label className="text-sm font-medium">
+                              Duration (years) {partnerStatus !== "Citizen" ? "*" : ""}
+                            </Label>
+                            <Input
+                              type="number"
+                              step="0.5"
+                              min={0}
+                              max={100}
+                              placeholder="e.g., 2.5"
+                              value={partnerStatus === "Citizen" ? "" : getFormData("personalInformation.relocationPartnerInfo.currentResidency.duration") ?? ""}
+                              onChange={(e) =>
+                                updateFormData("personalInformation.relocationPartnerInfo.currentResidency.duration", e.target.value)
+                              }
+                              disabled={partnerStatus === "Citizen"}
+                            />
+                          </div>
+                        )
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* Partner citizenships */}
                 <div className="space-y-4">
-                  <h5 className="font-medium">Partner Citizenships *</h5>
+                  <div className="flex items-center justify-between">
+                    <h5 className="font-medium">Partner Citizenships *</h5>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        // Copy main user's citizenships to partner
+                        updateFormData("personalInformation.relocationPartnerInfo.partnerNationalities", [...natList])
+                      }}
+                    >
+                      Same as mine
+                    </Button>
+                  </div>
+
                   
                   {/* Existing partner citizenships */}
                   {(() => {
@@ -898,9 +1069,140 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                   </Label>
                 </div>
 
+                {/* Current Residency */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h6 className="font-medium">Current Residency *</h6>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        // Copy main user's residency info to dependent
+                        const updated = [...depList]
+                        updated[idx] = { 
+                          ...updated[idx], 
+                          currentResidency: {
+                            country: curCountry,
+                            status: curStatus,
+                            duration: tempDuration
+                          }
+                        }
+                        updateDepList(updated)
+                      }}
+                    >
+                      Same as mine
+                    </Button>
+                  </div>
+                  
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <div className="space-y-2">
+                      <Label className="text-base font-medium">Country *</Label>
+                      <Select
+                        value={dep.currentResidency?.country ?? ""}
+                        onValueChange={(val) => {
+                          const updated = [...depList]
+                          updated[idx] = { 
+                            ...updated[idx], 
+                            currentResidency: { ...updated[idx].currentResidency, country: val }
+                          }
+                          updateDepList(updated)
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select country" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {COUNTRY_LIST.map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-base font-medium">Residency status *</Label>
+                      <Select
+                        value={dep.currentResidency?.status ?? ""}
+                        onValueChange={(val) => {
+                          const updated = [...depList]
+                          updated[idx] = { 
+                            ...updated[idx], 
+                            currentResidency: { ...updated[idx].currentResidency, status: val }
+                          }
+                          updateDepList(updated)
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Citizen">Citizen</SelectItem>
+                          <SelectItem value="Permanent Resident">Permanent Resident</SelectItem>
+                          <SelectItem value="Temporary Resident">Temporary Resident</SelectItem>
+                          <SelectItem value="Work Visa">Work Visa</SelectItem>
+                          <SelectItem value="Student Visa">Student Visa</SelectItem>
+
+                          <SelectItem value="Refugee">Refugee</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {(() => {
+                      const dependentStatus = dep.currentResidency?.status ?? ""
+                      return (
+                        <div className={`space-y-2 ${dependentStatus === "Citizen" ? "opacity-50" : ""}`}>
+                          <Label className="text-sm font-medium">
+                            Duration (years) {dependentStatus !== "Citizen" ? "*" : ""}
+                          </Label>
+                          <Input
+                            type="number"
+                            step="0.5"
+                            min={0}
+                            max={100}
+                            placeholder="e.g., 2.5"
+                            value={dependentStatus === "Citizen" ? "" : dep.currentResidency?.duration ?? ""}
+                            onChange={(e) => {
+                              const updated = [...depList]
+                              updated[idx] = { 
+                                ...updated[idx], 
+                                currentResidency: { ...updated[idx].currentResidency, duration: e.target.value }
+                              }
+                              updateDepList(updated)
+                            }}
+                            disabled={dependentStatus === "Citizen"}
+                          />
+                        </div>
+                      )
+                    })()}
+                  </div>
+                </div>
+
                 {/* Citizenships */}
                 <div className="space-y-3">
-                  <Label className="text-base font-medium">Citizenships *</Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-base font-medium">Citizenships *</Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        // Copy main user's citizenships to dependent
+                        const updated = [...depList]
+                        updated[idx] = { 
+                          ...updated[idx], 
+                          nationalities: [...natList]
+                        }
+                        updateDepList(updated)
+                      }}
+                    >
+                      Same as mine
+                    </Button>
+                  </div>
+
                   
                   {/* Existing citizenships */}
                   {dep.nationalities && dep.nationalities.length > 0 && (
