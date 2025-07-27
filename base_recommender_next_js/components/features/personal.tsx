@@ -56,6 +56,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
   // Partner
   const hasPartner = getFormData("personalInformation.relocationPartner") || false
+  const [partnerSaved, setPartnerSaved] = useState(false)
+  const [editingPartner, setEditingPartner] = useState(false)
+  const [attemptedPartnerSave, setAttemptedPartnerSave] = useState(false)
 
   // Dependents
   type Dependent = {
@@ -67,14 +70,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   const depList: Dependent[] = getFormData("personalInformation.dependents") ?? []
   const updateDepList = (next: Dependent[]) =>
     updateFormData("personalInformation.dependents", next)
+  const [visibleDependents, setVisibleDependents] = useState<number[]>([])
+  const [editingDependents, setEditingDependents] = useState<number[]>([])
+  const [addCountry, setAddCountry] = useState("")
 
   // Local state
-  const [addCountry, setAddCountry] = useState("")
   const [partnerSel, setPartnerSel] = useState("")
-  // Track which dependent forms are visible
-  const [visibleDependents, setVisibleDependents] = useState<number[]>([])
-  // Track which dependents are being edited (vs saved as cards)
-  const [editingDependents, setEditingDependents] = useState<number[]>([])
 
   // Auto-citizenship management (matches Streamlit logic exactly)
   useEffect(() => {
@@ -177,8 +178,73 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     }
   }, [depList.map((dep: any) => `${dep.currentResidency?.country}-${dep.currentResidency?.status}-${JSON.stringify(dep.nationalities)}`).join(',')])
 
+  // Clear partner info when partner checkbox is unchecked
+  useEffect(() => {
+    if (!hasPartner) {
+      // Only clear if there's actually partner data to clear (to avoid unnecessary updates)
+      const currentPartnerInfo = getFormData("personalInformation.relocationPartnerInfo")
+      if (currentPartnerInfo && Object.keys(currentPartnerInfo).length > 0) {
+        updateFormData("personalInformation.relocationPartnerInfo", null)
+        setPartnerSaved(false)
+        setEditingPartner(false)
+        setAttemptedPartnerSave(false)
+      }
+    }
+  }, [hasPartner])
+
+  // Clear incompatible relationship type when marital status changes
+  useEffect(() => {
+    const maritalStatus = getFormData("personalInformation.maritalStatus") ?? ""
+    const currentRelationshipType = getFormData("personalInformation.relocationPartnerInfo.relationshipType") ?? ""
+    
+    if (!maritalStatus || !currentRelationshipType) return
+    
+    // Check if current relationship type is incompatible with marital status
+    const isIncompatible = () => {
+      if (maritalStatus === "Married" && currentRelationshipType !== "Spouse") return true
+      if (maritalStatus === "Official Partnership" && !["Civil Partner", "Domestic Partner"].includes(currentRelationshipType)) return true
+      if (["Single", "Divorced", "Widowed"].includes(maritalStatus) && ["Spouse", "Civil Partner", "Domestic Partner"].includes(currentRelationshipType)) return true
+      return false
+    }
+    
+    if (isIncompatible()) {
+      // Clear the incompatible relationship type
+      updateFormData("personalInformation.relocationPartnerInfo.relationshipType", "")
+    }
+  }, [getFormData("personalInformation.maritalStatus")])
+
+  // Partner validation function
+  const validatePartnerInfo = () => {
+    if (!hasPartner) return true
+    
+    const partnerDob = getFormData("personalInformation.relocationPartnerInfo.dateOfBirth")
+    const relationshipType = getFormData("personalInformation.relocationPartnerInfo.relationshipType")
+    const fullDuration = getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration")
+    const officialDuration = getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration")
+    const partnerCountry = getFormData("personalInformation.relocationPartnerInfo.currentResidency.country")
+    const partnerStatus = getFormData("personalInformation.relocationPartnerInfo.currentResidency.status")
+    const partnerNationalities = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") || []
+    
+    return partnerDob && 
+           relationshipType && 
+           (fullDuration || fullDuration === 0) && 
+           (officialDuration || officialDuration === 0) && 
+           partnerCountry && 
+           partnerStatus && 
+           partnerNationalities.length > 0
+  }
+
+  const savePartnerInfo = () => {
+    setAttemptedPartnerSave(true)
+    if (validatePartnerInfo()) {
+      setPartnerSaved(true)
+      setEditingPartner(false)
+      setAttemptedPartnerSave(false) // Reset after successful save
+    }
+  }
+
   // Validation
-  const canContinue = dob && curCountry && curStatus && natList.length > 0 && maritalStatus
+  const canContinue = dob && curCountry && curStatus && natList.length > 0 && maritalStatus && (!hasPartner || partnerSaved)
 
   const nationalityExists = (country: string) =>
     natList.some((n) => n.country === country)
@@ -330,15 +396,6 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
             </AlertDescription>
           </Alert>
 
-          {/* Auto-added current country notice */}
-          {curCountry && curStatus === "Citizen" && natList.some(n => n.country === curCountry) && (
-            <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 mb-6">
-              <p className="text-sm text-green-800 dark:text-green-200 flex items-center gap-2">
-                ✅ <strong>{curCountry}</strong> automatically added as citizenship (current residence)
-              </p>
-            </div>
-          )}
-
           {/* Add citizenship */}
           <div className="flex gap-3 mb-6">
             <Select value={addCountry} onValueChange={setAddCountry}>
@@ -451,9 +508,16 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               <Checkbox
                 id="has_partner"
                 checked={hasPartner}
-                onCheckedChange={(v) =>
+                onCheckedChange={(v) => {
                   updateFormData("personalInformation.relocationPartner", !!v)
-                }
+                  // Clear partner info if unchecked
+                  if (!v) {
+                    updateFormData("personalInformation.relocationPartnerInfo", null)
+                    setPartnerSaved(false)
+                    setEditingPartner(false)
+                    setAttemptedPartnerSave(false)
+                  }
+                }}
               />
               <Label htmlFor="has_partner" className="text-base font-medium">
                 I have a partner who will relocate with me
@@ -462,8 +526,89 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
             {/* Partner Information Form */}
             {hasPartner && (
+              <>
+                {/* Partner Card Display (when saved) */}
+                {partnerSaved && !editingPartner && (
+                  <div className="p-6 border rounded-lg bg-card">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="font-medium text-lg">Partner Information</h4>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setEditingPartner(true)}
+                      >
+                        <Pencil className="w-4 h-4 mr-2" />
+                        Edit
+                      </Button>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-3">
+                        <div>
+                          <Label className="text-sm font-medium text-muted-foreground">Date of Birth</Label>
+                          <p className="text-base">{getFormData("personalInformation.relocationPartnerInfo.dateOfBirth")}</p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-muted-foreground">Relationship Type</Label>
+                          <p className="text-base">{getFormData("personalInformation.relocationPartnerInfo.relationshipType")}</p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-muted-foreground">Same-Sex Relationship</Label>
+                          <p className="text-base">{getFormData("personalInformation.relocationPartnerInfo.sameSex") ? "Yes" : "No"}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div>
+                          <Label className="text-sm font-medium text-muted-foreground">Total Relationship Duration</Label>
+                          <p className="text-base">{getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration")} years</p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-muted-foreground">Official Duration</Label>
+                          <p className="text-base">{getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration")} years</p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-muted-foreground">Current Residency</Label>
+                          <p className="text-base">
+                            {getFormData("personalInformation.relocationPartnerInfo.currentResidency.country")} 
+                            ({getFormData("personalInformation.relocationPartnerInfo.currentResidency.status")})
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="md:col-span-2">
+                        <Label className="text-sm font-medium text-muted-foreground">Citizenships</Label>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {(getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") || []).map((nat: any, idx: number) => (
+                            <Badge key={idx} variant="secondary">
+                              {nat.country} {nat.willingToRenounce && "(willing to renounce)"}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Partner Form (when editing or not saved) */}
+                {(!partnerSaved || editingPartner) && (
               <div className="space-y-6 p-6 border rounded-lg bg-card">
                 <h4 className="font-medium text-lg">Partner Information</h4>
+                
+                {/* Partner Date of Birth */}
+                <div className="space-y-2">
+                  <Label className="text-base font-medium">Partner's date of birth *</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Your partner's age affects visa eligibility and age-related benefits.
+                  </p>
+                  <Input
+                    type="date"
+                    value={getFormData("personalInformation.relocationPartnerInfo.dateOfBirth") ?? ""}
+                    onChange={(e) => updateFormData("personalInformation.relocationPartnerInfo.dateOfBirth", e.target.value)}
+                    className="max-w-xs"
+                    required
+                  />
+                </div>
                 
                 {/* Relationship Type */}
                                  <div className="space-y-4">
@@ -500,29 +645,54 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                      </AccordionItem>
                    </Accordion>
                    
-                   <Select
-                     value={getFormData("personalInformation.relocationPartnerInfo.relationshipType") ?? (() => {
-                       // Default to "Spouse" if married and no relationship type set yet
-                       const maritalStatus = getFormData("personalInformation.maritalStatus") ?? ""
-                       return maritalStatus === "Married" ? "Spouse" : "Unmarried Partner"
-                     })()}
-                     onValueChange={(v) => updateFormData("personalInformation.relocationPartnerInfo.relationshipType", v)}
-                   >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Unmarried Partner">Unmarried Partner</SelectItem>
-                      <SelectItem value="Spouse">Spouse</SelectItem>
-                      <SelectItem value="Fiancé(e)">Fiancé(e)</SelectItem>
-                      <SelectItem value="Civil Partner">Civil Partner</SelectItem>
-                      <SelectItem value="Cohabiting Partner">Cohabiting Partner</SelectItem>
-                      <SelectItem value="Common-law Partner">Common-law Partner</SelectItem>
-                      <SelectItem value="Conjugal Partner">Conjugal Partner</SelectItem>
-                      <SelectItem value="Domestic Partner">Domestic Partner</SelectItem>
-                                             <SelectItem value="Other">Other</SelectItem>
-                     </SelectContent>
-                   </Select>
+                   {(() => {
+                     const maritalStatus = getFormData("personalInformation.maritalStatus") ?? ""
+                     const currentRelationshipType = getFormData("personalInformation.relocationPartnerInfo.relationshipType") ?? ""
+                     
+
+                     
+                     // Auto-select appropriate relationship type based on marital status
+                     const getDefaultRelationshipType = () => {
+                       if (maritalStatus === "Married") return "Spouse"
+                       if (maritalStatus === "Official Partnership") return "Civil Partner"
+                       return currentRelationshipType || "Unmarried Partner"
+                     }
+                     
+                     // Get allowed relationship types based on marital status
+                     const getAllowedRelationshipTypes = () => {
+                       if (maritalStatus === "Married") {
+                         return ["Spouse"]
+                       }
+                       if (maritalStatus === "Official Partnership") {
+                         return ["Civil Partner", "Domestic Partner"]
+                       }
+                       if (["Single", "Divorced", "Widowed"].includes(maritalStatus)) {
+                         return ["Unmarried Partner", "Fiancé(e)", "Cohabiting Partner", "Common-law Partner", "Conjugal Partner", "Other"]
+                       }
+                       // If no marital status set, allow all
+                       return ["Unmarried Partner", "Spouse", "Fiancé(e)", "Civil Partner", "Cohabiting Partner", "Common-law Partner", "Conjugal Partner", "Domestic Partner", "Other"]
+                     }
+                     
+                     const allowedTypes = getAllowedRelationshipTypes()
+                     
+                     return (
+                       <Select
+                         value={currentRelationshipType || getDefaultRelationshipType()}
+                         onValueChange={(v) => updateFormData("personalInformation.relocationPartnerInfo.relationshipType", v)}
+                       >
+                         <SelectTrigger>
+                           <SelectValue />
+                         </SelectTrigger>
+                         <SelectContent>
+                           {allowedTypes.map((type) => (
+                             <SelectItem key={type} value={type}>
+                               {type}
+                             </SelectItem>
+                           ))}
+                         </SelectContent>
+                       </Select>
+                     )
+                   })()}
                    
                    {/* Other relationship type input */}
                    {getFormData("personalInformation.relocationPartnerInfo.relationshipType") === "Other" && (
@@ -538,16 +708,23 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                  </div>
 
                 {/* Same-sex relationship */}
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="same_sex"
-                    checked={getFormData("personalInformation.relocationPartnerInfo.sameSex") ?? false}
-                    onCheckedChange={(v) => updateFormData("personalInformation.relocationPartnerInfo.sameSex", !!v)}
-                  />
-                  <Label htmlFor="same_sex" className="text-base">
-                    This is a same-sex relationship
-                  </Label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <Checkbox
+                      id="same_sex"
+                      checked={getFormData("personalInformation.relocationPartnerInfo.sameSex") ?? false}
+                      onCheckedChange={(v) => updateFormData("personalInformation.relocationPartnerInfo.sameSex", !!v)}
+                    />
+                    <Label htmlFor="same_sex" className="text-base">
+                      This is a same-sex relationship
+                    </Label>
+                  </div>
+                  <p className="text-xs text-muted-foreground ml-6">
+                    This may affect how some countries see your union.
+                  </p>
                 </div>
+
+
 
                 {/* Relationship duration */}
                 <div className="grid md:grid-cols-2 gap-4">
@@ -609,15 +786,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                        )
                      }
                      
-                     if (["Single", "Divorced", "Widowed"].includes(maritalStatus) && !["Spouse", "Civil Partner", "Domestic Partner"].includes(relationshipType)) {
-                       return (
-                         <div className="p-3 border rounded-lg bg-green-50 dark:bg-green-950/20">
-                           <p className="text-sm text-green-800 dark:text-green-200">
-                             ✅ You are {maritalStatus.toLowerCase()} and in a relationship with your {relationshipType.toLowerCase()}
-                           </p>
-                         </div>
-                       )
-                     }
+                     
                      
                      // Case 2: Inconsistent states requiring explanation - error messages
                      if (relationshipType === "Spouse" && maritalStatus !== "Married") {
@@ -894,7 +1063,78 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     </Button>
                   </div>
                 </div>
+
+                {/* Save Partner Information Button */}
+                <div className="space-y-4">
+                  {(() => {
+                    const isValid = validatePartnerInfo()
+                    const errors = []
+                    
+                    if (!getFormData("personalInformation.relocationPartnerInfo.dateOfBirth")) {
+                      errors.push("Partner's date of birth is required")
+                    }
+                    if (!getFormData("personalInformation.relocationPartnerInfo.relationshipType")) {
+                      errors.push("Relationship type is required")
+                    }
+                    if (!getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration") && getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration") !== 0) {
+                      errors.push("Total relationship duration is required")
+                    }
+                    if (!getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration") && getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration") !== 0) {
+                      errors.push("Official relationship duration is required")
+                    }
+                    if (!getFormData("personalInformation.relocationPartnerInfo.currentResidency.country")) {
+                      errors.push("Partner's current residency country is required")
+                    }
+                    if (!getFormData("personalInformation.relocationPartnerInfo.currentResidency.status")) {
+                      errors.push("Partner's residency status is required")
+                    }
+                    const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") || []
+                    if (partnerNats.length === 0) {
+                      errors.push("At least one citizenship is required for partner")
+                    }
+                    
+                                         return (
+                       <>
+                         {errors.length > 0 && attemptedPartnerSave && (
+                           <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                             <h5 className="font-medium text-red-800 dark:text-red-200 mb-2">Complete the following to save partner information:</h5>
+                             <ul className="text-sm text-red-700 dark:text-red-300 space-y-1">
+                               {errors.map((error, idx) => (
+                                 <li key={idx}>• {error}</li>
+                               ))}
+                             </ul>
+                           </div>
+                         )}
+                        
+                        <div className="flex gap-3">
+                          <Button
+                            onClick={savePartnerInfo}
+                            disabled={!isValid}
+                            className="flex-1"
+                          >
+                            <Check className="w-4 h-4 mr-2" />
+                            Save Partner Information
+                          </Button>
+                          {editingPartner && (
+                                                         <Button
+                               variant="outline"
+                               onClick={() => {
+                                 setEditingPartner(false)
+                                 setPartnerSaved(true)
+                                 setAttemptedPartnerSave(false)
+                               }}
+                             >
+                               Cancel
+                             </Button>
+                          )}
+                        </div>
+                      </>
+                    )
+                  })()}
+                </div>
               </div>
+                )}
+              </>
             )}
           </div>
         </CardContent>
