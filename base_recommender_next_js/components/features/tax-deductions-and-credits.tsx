@@ -11,40 +11,31 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
-import { Plus, Trash2, Info, AlertTriangle, HelpCircle, ChevronDown, ChevronUp } from "lucide-react"
+import { Plus, Info, AlertTriangle, HelpCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
-import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
 
 // Simple currencies hook - replace with actual implementation
 const useCurrencies = () => ["USD", "EUR", "GBP", "CAD", "AUD", "CHF", "JPY", "CNY"]
 
-type Deduction = {
-  type: string
-  amount: number
-  currency: string
-  country: string
-  date?: string
-  notes?: string
-}
+export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void }) {
+  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
+  const currencies = useCurrencies()
 
-// Alimony Section Component
-function AlimonySection({ updateFormData, getFormData, currencies }: {
-  updateFormData: (path: string, value: any) => void
-  getFormData: (path: string) => any
-  currencies: string[]
-}) {
+  // Check if finance details are being skipped
+  const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
+
+  // Potential deductions array (from Streamlit design)
   const deductions = getFormData("taxDeductionsAndCredits.potentialDeductions") ?? []
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [newEntry, setNewEntry] = useState({
+
+  // Alimony form state
+  const [newAlimony, setNewAlimony] = useState({
     alimonyType: "Paid",
     country: "",
     agreementDate: "",
@@ -52,134 +43,7 @@ function AlimonySection({ updateFormData, getFormData, currencies }: {
     currency: "USD"
   })
 
-  const addAlimonyEntry = () => {
-    const entryToAdd: Deduction = {
-      type: `Alimony ${newEntry.alimonyType}`,
-      amount: newEntry.amount,
-      currency: newEntry.currency,
-      country: newEntry.country,
-      date: newEntry.agreementDate,
-      notes: `Governed by ${newEntry.country} law`
-    }
-    const updated = [...deductions, entryToAdd]
-    updateFormData("taxDeductionsAndCredits.potentialDeductions", updated)
-    setNewEntry({
-      alimonyType: "Paid",
-      country: "",
-      agreementDate: "",
-      amount: 0,
-      currency: "USD"
-    })
-    setShowAddForm(false)
-  }
-
-  return (
-    <div className="border rounded-lg p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h4 className="font-medium flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          ➕ Add Alimony/Spousal Support
-        </h4>
-        <Button variant="outline" onClick={() => setShowAddForm(!showAddForm)}>
-          {showAddForm ? "Cancel" : "Add Alimony"}
-        </Button>
-      </div>
-
-      {showAddForm && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <Label>Alimony Type</Label>
-              <Select
-                value={newEntry.alimonyType}
-                onValueChange={(value) => setNewEntry({...newEntry, alimonyType: value})}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Paid">Paid</SelectItem>
-                  <SelectItem value="Received">Received</SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground mt-1">
-                Select whether you paid or received spousal support
-              </p>
-            </div>
-            <div>
-              <Label>Governing Country</Label>
-              <Input
-                value={newEntry.country}
-                onChange={(e) => setNewEntry({...newEntry, country: e.target.value})}
-                placeholder="Country where divorce agreement was finalized"
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label>Agreement Date</Label>
-            <Input
-              type="date"
-              value={newEntry.agreementDate}
-              onChange={(e) => setNewEntry({...newEntry, agreementDate: e.target.value})}
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              Date of court order/legal agreement
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <Label>Annual Amount</Label>
-              <Input
-                type="number"
-                min={0}
-                step={500}
-                value={newEntry.amount}
-                onChange={(e) => setNewEntry({...newEntry, amount: Number(e.target.value)})}
-                placeholder="Yearly spousal support amount"
-              />
-            </div>
-            <div>
-              <Label>Currency</Label>
-              <Select
-                value={newEntry.currency}
-                onValueChange={(value) => setNewEntry({...newEntry, currency: value})}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {currencies.map((curr) => (
-                    <SelectItem key={curr} value={curr}>{curr}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <Button 
-            onClick={addAlimonyEntry} 
-            className="w-full"
-            disabled={!newEntry.country || !newEntry.agreementDate || !newEntry.amount}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Alimony Entry
-          </Button>
-        </div>
-      )}
-    </div>
-  )
-}
-
-// General Deductions Section Component
-function GeneralDeductionsSection({ updateFormData, getFormData, currencies }: {
-  updateFormData: (path: string, value: any) => void
-  getFormData: (path: string) => any
-  currencies: string[]
-}) {
-  const deductions = getFormData("taxDeductionsAndCredits.potentialDeductions") ?? []
-  const [showAddForm, setShowAddForm] = useState(false)
+  // General deduction form state
   const [newDeduction, setNewDeduction] = useState({
     type: "Charitable Donations",
     customType: "",
@@ -188,359 +52,453 @@ function GeneralDeductionsSection({ updateFormData, getFormData, currencies }: {
     country: ""
   })
 
-  const DEDUCTION_CATEGORIES = {
-    "Charitable Donations": "To registered organizations",
-    "Medical Expenses": "Above specific income thresholds",
-    "Education Costs": "Tuition fees, student loan interest",
-    "Work-Related Expenses": "Uniforms, tools, home office",
-    "Retirement Contributions": "To approved pension plans",
-    "Other": "Custom deduction type"
-  }
-
-  const addGeneralDeduction = () => {
-    const deductionToAdd: Deduction = {
-      type: newDeduction.type === "Other" ? newDeduction.customType : newDeduction.type,
-      amount: newDeduction.amount,
-      currency: newDeduction.currency,
-      country: newDeduction.country
-    }
-    const updated = [...deductions, deductionToAdd]
-    updateFormData("taxDeductionsAndCredits.potentialDeductions", updated)
-    setNewDeduction({
-      type: "Charitable Donations",
-      customType: "",
-      amount: 0,
-      currency: "USD",
-      country: ""
-    })
-    setShowAddForm(false)
-  }
-
-  return (
-    <div className="border rounded-lg p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h4 className="font-medium flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          ➕ Add Other Deduction/Credit
-        </h4>
-        <Button variant="outline" onClick={() => setShowAddForm(!showAddForm)}>
-          {showAddForm ? "Cancel" : "Add Deduction"}
-        </Button>
-      </div>
-
-      {showAddForm && (
-        <div className="space-y-4">
-          <div>
-            <Label>Deduction Category</Label>
-            <Select
-              value={newDeduction.type}
-              onValueChange={(value) => setNewDeduction({...newDeduction, type: value})}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(DEDUCTION_CATEGORIES).map(([key, description]) => (
-                  <SelectItem key={key} value={key}>{key}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground mt-1">
-              {DEDUCTION_CATEGORIES[newDeduction.type as keyof typeof DEDUCTION_CATEGORIES]}
-            </p>
-          </div>
-
-          {newDeduction.type === "Other" && (
-            <div>
-              <Label>Specify Type *</Label>
-              <Input
-                value={newDeduction.customType}
-                onChange={(e) => setNewDeduction({...newDeduction, customType: e.target.value})}
-                placeholder="Enter specific deduction type"
-              />
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div>
-              <Label>Amount</Label>
-              <Input
-                type="number"
-                min={0}
-                step={0.5}
-                value={newDeduction.amount}
-                onChange={(e) => setNewDeduction({...newDeduction, amount: Number(e.target.value)})}
-              />
-            </div>
-            <div>
-              <Label>Currency</Label>
-              <Select
-                value={newDeduction.currency}
-                onValueChange={(value) => setNewDeduction({...newDeduction, currency: value})}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {currencies.map((curr) => (
-                    <SelectItem key={curr} value={curr}>{curr}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Applicable Country</Label>
-              <Input
-                value={newDeduction.country}
-                onChange={(e) => setNewDeduction({...newDeduction, country: e.target.value})}
-                placeholder="Country where deduction is claimed"
-              />
-            </div>
-          </div>
-
-          <Button 
-            onClick={addGeneralDeduction} 
-            className="w-full"
-            disabled={!newDeduction.country || !newDeduction.amount || (newDeduction.type === "Other" && !newDeduction.customType)}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Deduction
-          </Button>
-        </div>
-      )}
-    </div>
-  )
-}
-
-export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void }) {
-  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
-  const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
-  const currencies = useCurrencies()
-
-  // Check if finance details are being skipped
-  const skip = getFormData("finance.skipDetails") ?? false
-
-  const deductions: Deduction[] = getFormData("taxDeductionsAndCredits.potentialDeductions") ?? []
-  const setDeductions = (next: Deduction[]) =>
-    updateFormData("taxDeductionsAndCredits.potentialDeductions", next)
-
-  const removeDeduction = (index: number) => {
-    const updated = deductions.filter((_, i) => i !== index)
-    setDeductions(updated)
-  }
-
-  // Check if section has any content
-  const hasContent = deductions.length > 0
-
-  // Validation - all deductions must have country
-  const canContinue = skip || deductions.every(d => d.country)
-  
-  const handleContinue = () => {
-    markSectionComplete("tax-deductions")
+  const handleComplete = () => {
+    markSectionComplete("taxDeductionsAndCredits")
     onComplete()
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>📉 Tax Deductions & Credits</CardTitle>
-      </CardHeader>
+    <div className="space-y-8 max-w-5xl mx-auto">
+      {/* Page Header */}
+      <div className="text-center pb-4 border-b">
+        <h1 className="text-3xl font-bold text-primary mb-3">
+          📉 Tax Deductions & Credits
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Your potential tax deductions and credits for international tax compliance
+        </p>
+      </div>
 
-      <CardContent className="space-y-6">
-        <SectionHint>
-          Understanding tax deductions and credits helps identify potential tax savings, ensure compliance with international treaties, plan for cross-border efficiency, and maximize available benefits in your new tax jurisdiction.
-        </SectionHint>
+      <SectionHint title="Why is this section important?">
+        <div className="space-y-2 text-sm">
+          <p><strong>Understanding tax deductions and credits helps:</strong></p>
+          <ul className="list-disc list-inside space-y-1 ml-4">
+            <li>Identify potential tax savings in your destination country</li>
+            <li>Ensure compliance with international tax treaties</li>
+            <li>Plan for cross-border tax efficiency</li>
+            <li>Avoid double taxation on certain expenses</li>
+            <li>Maximize available benefits in your new tax jurisdiction</li>
+            <li>Document important financial obligations with tax implications</li>
+          </ul>
+        </div>
+      </SectionHint>
 
-        {skip ? (
-          /* Skip mode - simplified summary */
-                      <div className="border rounded-lg p-4 bg-card">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">🚀 Detailed deduction / credit inputs skipped</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Per your earlier choice to skip detailed finance sections
-                </p>
-              </div>
-              <Button 
-                variant="outline" 
-                onClick={() => updateFormData("finance.skipDetails", false)}
-              >
-                <AlertTriangle className="w-4 h-4 mr-2" />
-                Enable Details
-              </Button>
+      {/* Skip Mode Indicator */}
+      {skipFinanceDetails && (
+        <Card className="shadow-sm border-l-4 border-l-green-500">
+          <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
+            <CardTitle className="text-xl flex items-center gap-3">
+              <HelpCircle className="w-6 h-6 text-green-600" />
+              Tax Deductions & Credits Details Skipped
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Per your earlier choice in finance section</p>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950/20">
+              <p className="text-green-800 dark:text-green-200">
+                🚀 Detailed deduction / credit inputs skipped per your earlier choice.
+              </p>
             </div>
-          </div>
-        ) : (
-          /* Full detailed mode */
-          <>
-            <div className="space-y-4">
-              <h3 className="font-semibold">💲 Potential Tax Deductions & Credits</h3>
-              
-              {/* Understanding Tax Deductions Info */}
-              {(() => {
-                const [showInfo, setShowInfo] = useState(false)
-                return (
-                  <div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Only show detailed sections if not skipped */}
+      {!skipFinanceDetails && (
+        <>
+          {/* Information Expander */}
+          <Card className="shadow-sm border-l-4 border-l-blue-500">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
+              <CardTitle className="text-xl flex items-center gap-3">
+                <Info className="w-6 h-6 text-blue-600" />
+                Understanding Tax Deductions & Credits
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Common deductible items vary by country</p>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-4 text-sm">
+                <p><strong>Tax treatments vary by country. Common deductible items include:</strong></p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <p><strong>• Alimony/Spousal Support:</strong> <em>Paid</em> (may reduce taxable income) / <em>Received</em> (may be taxable)</p>
+                    <p><strong>• Charitable Donations:</strong> To registered organizations</p>
+                    <p><strong>• Medical Expenses:</strong> Above specific income thresholds</p>
+                  </div>
+                  <div className="space-y-2">
+                    <p><strong>• Education Costs:</strong> Tuition fees, student loan interest</p>
+                    <p><strong>• Work-Related Expenses:</strong> Uniforms, tools, home office</p>
+                    <p><strong>• Retirement Contributions:</strong> To approved pension plans</p>
+                  </div>
+                </div>
+                <Alert>
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>
+                    <em>Always verify local tax rules - this is not legal advice.</em>
+                  </AlertDescription>
+                </Alert>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Alimony/Spousal Support Section (Streamlit specialized form) */}
+          <Card className="shadow-sm border-l-4 border-l-purple-500">
+            <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
+              <CardTitle className="text-xl flex items-center gap-3">
+                <HelpCircle className="w-6 h-6 text-purple-600" />
+                Alimony/Spousal Support
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Legal agreements with special tax treatment</p>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-6">
+                {/* Add alimony form */}
+                <div className="p-4 border rounded-lg bg-card">
+                  <h4 className="font-medium mb-4">Add Alimony/Spousal Support</h4>
+                  <div className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Alimony Type</Label>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="paid"
+                              name="alimonyType"
+                              value="Paid"
+                              checked={newAlimony.alimonyType === "Paid"}
+                              onChange={(e) => setNewAlimony({...newAlimony, alimonyType: e.target.value})}
+                            />
+                            <label htmlFor="paid" className="text-sm cursor-pointer">Paid</label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="received"
+                              name="alimonyType"
+                              value="Received"
+                              checked={newAlimony.alimonyType === "Received"}
+                              onChange={(e) => setNewAlimony({...newAlimony, alimonyType: e.target.value})}
+                            />
+                            <label htmlFor="received" className="text-sm cursor-pointer">Received</label>
+                          </div>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Select whether you paid or received spousal support</p>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Governing Country</Label>
+                        <Select
+                          value={newAlimony.country}
+                          onValueChange={(value) => setNewAlimony({...newAlimony, country: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">Select country</SelectItem>
+                            {["United States", "United Kingdom", "Canada", "Germany", "France", "Australia", "Netherlands", "Sweden", "Other"].map((country) => (
+                              <SelectItem key={country} value={country}>
+                                {country}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground">Country where divorce agreement was finalized</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Agreement Date</Label>
+                      <Input
+                        type="date"
+                        value={newAlimony.agreementDate}
+                        onChange={(e) => setNewAlimony({...newAlimony, agreementDate: e.target.value})}
+                      />
+                      <p className="text-xs text-muted-foreground">Date of court order/legal agreement</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Annual Amount</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="500.0"
+                          value={newAlimony.amount}
+                          onChange={(e) => setNewAlimony({...newAlimony, amount: parseFloat(e.target.value) || 0})}
+                          placeholder="0.00"
+                        />
+                        <p className="text-xs text-muted-foreground">Yearly spousal support amount</p>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Currency</Label>
+                        <Select
+                          value={newAlimony.currency}
+                          onValueChange={(value) => setNewAlimony({...newAlimony, currency: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {currencies.map((currency) => (
+                              <SelectItem key={currency} value={currency}>
+                                {currency}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
                     <Button 
-                      variant="outline" 
-                      className="w-full justify-between"
-                      onClick={() => setShowInfo(!showInfo)}
+                      onClick={() => {
+                        if (newAlimony.amount > 0 && newAlimony.country && newAlimony.agreementDate) {
+                          const entry = {
+                            type: `Alimony ${newAlimony.alimonyType}`,
+                            amount: newAlimony.amount,
+                            currency: newAlimony.currency,
+                            country: newAlimony.country,
+                            date: newAlimony.agreementDate,
+                            notes: `Governed by ${newAlimony.country} law`
+                          }
+                          const updatedDeductions = [...deductions, entry]
+                          updateFormData("taxDeductionsAndCredits.potentialDeductions", updatedDeductions)
+                          setNewAlimony({
+                            alimonyType: "Paid",
+                            country: "",
+                            agreementDate: "",
+                            amount: 0,
+                            currency: "USD"
+                          })
+                        }
+                      }}
+                      disabled={!newAlimony.amount || !newAlimony.country || !newAlimony.agreementDate}
+                      className="w-full"
                     >
-                      <span className="flex items-center gap-2">
-                        <HelpCircle className="w-4 h-4" />
-                        📚 Understanding Tax Deductions & Credits
-                      </span>
-                      {showInfo ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      💾 Add Alimony Entry
                     </Button>
-                    {showInfo && (
-                      <div className="space-y-2 mt-2 p-4 border rounded-lg bg-card">
-                        <p className="text-sm">
-                          <strong>Tax treatments vary by country. Common deductible items include:</strong>
-                        </p>
-                        <ul className="text-sm space-y-1 list-disc list-inside">
-                          <li><strong>Alimony/Spousal Support:</strong> Paid (may reduce taxable income) / Received (may be taxable)</li>
-                          <li><strong>Charitable Donations:</strong> To registered organizations</li>
-                          <li><strong>Medical Expenses:</strong> Above specific income thresholds</li>
-                          <li><strong>Education Costs:</strong> Tuition fees, student loan interest</li>
-                          <li><strong>Work-Related Expenses:</strong> Uniforms, tools, home office</li>
-                          <li><strong>Retirement Contributions:</strong> To approved pension plans</li>
-                        </ul>
-                        <p className="text-xs text-muted-foreground italic mt-2">
-                          Always verify local tax rules - this is not legal advice.
-                        </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* General Deductions Section */}
+          <Card className="shadow-sm border-l-4 border-l-orange-500">
+            <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
+              <CardTitle className="text-xl flex items-center gap-3">
+                <Plus className="w-6 h-6 text-orange-600" />
+                Other Deductions/Credits
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Universal deduction form with common international categories</p>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-6">
+                {/* Add general deduction form */}
+                <div className="p-4 border rounded-lg bg-card">
+                  <h4 className="font-medium mb-4">Add Other Deduction/Credit</h4>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Deduction Category</Label>
+                      <Select
+                        value={newDeduction.type}
+                        onValueChange={(value) => setNewDeduction({...newDeduction, type: value})}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[
+                            "Charitable Donations",
+                            "Medical Expenses",
+                            "Education Costs",
+                            "Work-Related Expenses",
+                            "Retirement Contributions",
+                            "Other"
+                          ].map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {newDeduction.type === "Other" && (
+                      <div className="space-y-2">
+                        <Label>Specify Type</Label>
+                        <Input
+                          value={newDeduction.customType}
+                          onChange={(e) => setNewDeduction({...newDeduction, customType: e.target.value})}
+                          placeholder="Enter deduction type"
+                        />
                       </div>
                     )}
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Amount</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.5"
+                          value={newDeduction.amount}
+                          onChange={(e) => setNewDeduction({...newDeduction, amount: parseFloat(e.target.value) || 0})}
+                          placeholder="0.00"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Currency</Label>
+                        <Select
+                          value={newDeduction.currency}
+                          onValueChange={(value) => setNewDeduction({...newDeduction, currency: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {currencies.map((currency) => (
+                              <SelectItem key={currency} value={currency}>
+                                {currency}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Applicable Country</Label>
+                      <Select
+                        value={newDeduction.country}
+                        onValueChange={(value) => setNewDeduction({...newDeduction, country: value})}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select country" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Select country</SelectItem>
+                          {["United States", "United Kingdom", "Canada", "Germany", "France", "Australia", "Netherlands", "Sweden", "Other"].map((country) => (
+                            <SelectItem key={country} value={country}>
+                              {country}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground">Country where deduction is claimed</p>
+                    </div>
+
+                    <Button 
+                      onClick={() => {
+                        if (newDeduction.amount > 0 && newDeduction.country) {
+                          const entry = {
+                            type: newDeduction.type !== "Other" ? newDeduction.type : newDeduction.customType,
+                            amount: newDeduction.amount,
+                            currency: newDeduction.currency,
+                            country: newDeduction.country
+                          }
+                          const updatedDeductions = [...deductions, entry]
+                          updateFormData("taxDeductionsAndCredits.potentialDeductions", updatedDeductions)
+                          setNewDeduction({
+                            type: "Charitable Donations",
+                            customType: "",
+                            amount: 0,
+                            currency: "USD",
+                            country: ""
+                          })
+                        }
+                      }}
+                      disabled={!newDeduction.amount || !newDeduction.country || 
+                               (newDeduction.type === "Other" && !newDeduction.customType)}
+                      className="w-full"
+                    >
+                      💾 Add Deduction
+                    </Button>
                   </div>
-                )
-              })()}
+                </div>
 
-              {/* Alimony Section */}
-              <AlimonySection 
-                updateFormData={updateFormData}
-                getFormData={getFormData}
-                currencies={currencies}
-              />
+                {/* Display existing deductions */}
+                {deductions.length > 0 && (
+                  <div className="space-y-4">
+                    <h4 className="font-medium">📊 Registered Deductions & Credits</h4>
+                    <div className="space-y-3">
+                      {deductions.map((deduction: any, idx: number) => (
+                        <div key={idx} className="p-4 border rounded-lg bg-card">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <h5 className="font-medium">Item {idx + 1}: {deduction.type}</h5>
+                              <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
+                                <div>
+                                  <p><strong>Amount:</strong> {deduction.currency} {deduction.amount?.toLocaleString()}</p>
+                                </div>
+                                <div>
+                                  <p><strong>Country:</strong> {deduction.country}</p>
+                                </div>
+                                {deduction.date && (
+                                  <div>
+                                    <p><strong>Date:</strong> {deduction.date}</p>
+                                  </div>
+                                )}
+                                {deduction.notes && (
+                                  <div>
+                                    <p><strong>Notes:</strong> {deduction.notes}</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => {
+                                const updatedDeductions = deductions.filter((_: any, i: number) => i !== idx)
+                                updateFormData("taxDeductionsAndCredits.potentialDeductions", updatedDeductions)
+                              }}
+                            >
+                              ❌
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <Alert>
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>
+                        ⚠️ Whether this is a deductible in your desired destination remains to be seen.
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
 
-              {/* General Deductions Section */}
-              <GeneralDeductionsSection 
-                updateFormData={updateFormData}
-                getFormData={getFormData}
-                currencies={currencies}
+      {/* Action Card */}
+      <Card className="shadow-md">
+        <CardFooter className="pt-6">
+          <div className="w-full space-y-4">
+            <div className="text-center text-sm text-muted-foreground">
+              This section is optional. You can continue even if you don't have deductions or credits to report.
+            </div>
+
+            {/* Check My Information Button */}
+            <div className="flex justify-center">
+              <CheckInfoButton
+                onClick={() => showSectionInfo("tax-deductions")}
+                isLoading={isCheckingInfo}
               />
             </div>
 
-            {/* Display existing deductions */}
-            {deductions.length > 0 && (
-              <>
-                <Separator />
-                <div className="space-y-4">
-                  <h4 className="font-medium">📊 Registered Deductions & Credits</h4>
-                  
-                  {/* Individual deduction cards */}
-                  <div className="space-y-3">
-                    {deductions.map((deduction, index) => {
-                      const [isExpanded, setIsExpanded] = useState(false)
-                      return (
-                        <div key={index}>
-                          <div 
-                            className="flex items-center justify-between p-3 border rounded-lg hover:bg-card cursor-pointer"
-                            onClick={() => setIsExpanded(!isExpanded)}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">Item {index + 1}: {deduction.type}</span>
-                              <Badge variant="secondary">{deduction.country}</Badge>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-muted-foreground">
-                                {deduction.currency} {deduction.amount.toLocaleString()}
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  removeDeduction(index)
-                                }}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                              {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                            </div>
-                          </div>
-                          {isExpanded && (
-                            <div className="px-3 pb-3">
-                              <div className="space-y-1 text-sm text-muted-foreground">
-                                <p><strong>Type:</strong> {deduction.type}</p>
-                                <p><strong>Amount:</strong> {deduction.currency} {deduction.amount.toLocaleString()}</p>
-                                <p><strong>Country:</strong> {deduction.country}</p>
-                                {deduction.date && <p><strong>Date:</strong> {deduction.date}</p>}
-                                {deduction.notes && <p><strong>Notes:</strong> {deduction.notes}</p>}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-
-                  {/* Summary Table */}
-                  <div className="space-y-3">
-                    <h4 className="font-medium">📈 Summary of Deductions</h4>
-                    <div className="border rounded-lg overflow-hidden">
-                      <table className="w-full">
-                        <thead className="bg-card">
-                          <tr>
-                            <th className="text-left p-3 font-medium">Type</th>
-                            <th className="text-left p-3 font-medium">Amount</th>
-                            <th className="text-left p-3 font-medium">Country</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {deductions.map((deduction, index) => (
-                            <tr key={index} className="border-t">
-                              <td className="p-3">{deduction.type}</td>
-                              <td className="p-3">{deduction.currency} {deduction.amount.toLocaleString()}</td>
-                              <td className="p-3">{deduction.country}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  <Alert>
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertDescription>
-                      ⚠️ Whether these are deductible in your desired destination remains to be seen.
-                    </AlertDescription>
-                  </Alert>
-                </div>
-              </>
-            )}
-          </>
-        )}
-      </CardContent>
-
-      <CardFooter>
-        <div className="w-full space-y-3">
-          {/* Check My Information Button */}
-          <div className="flex justify-center">
-            <CheckInfoButton
-              onClick={() => showSectionInfo("tax-deductions")}
-              isLoading={isCheckingInfo}
-              disabled={!canContinue}
-            />
+            <Button
+              onClick={handleComplete}
+              className="w-full"
+              size="lg"
+            >
+              Continue to Future Financial Plans
+            </Button>
           </div>
-          
-          <Button 
-            onClick={handleContinue} 
-            className="w-full"
-            disabled={!canContinue}
-          >
-            {hasContent ? "Continue" : "Continue (skip section)"}
-          </Button>
-        </div>
-      </CardFooter>
+        </CardFooter>
+      </Card>
 
       {/* Section Info Modal */}
       <SectionInfoModal
@@ -556,6 +514,6 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
         onGoToSection={goToSection}
         onNavigateToSection={navigateToSection}
       />
-    </Card>
+    </div>
   )
-} 
+}

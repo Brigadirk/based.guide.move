@@ -9,15 +9,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
-import { Plus, Trash2, Info, AlertTriangle, TrendingUp, Building, PiggyBank, Briefcase } from "lucide-react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Separator } from "@/components/ui/separator"
+import { Plus, TrendingUp, Building, PiggyBank, Briefcase, HelpCircle } from "lucide-react"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
@@ -25,42 +22,21 @@ import { useSectionInfo } from "@/lib/hooks/use-section-info"
 // Simple currencies hook - replace with actual implementation
 const useCurrencies = () => ["USD", "EUR", "GBP", "CAD", "AUD", "CHF", "JPY", "CNY"]
 
-type Investment = {
-  type: string
-  country: string
-  estimatedValue: number
-  currency: string
-}
+export function FutureFinancialPlans({ onComplete }: { onComplete: () => void }) {
+  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
+  const currencies = useCurrencies()
 
-type PropertyTransaction = {
-  transactionType: string
-  country: string
-  estimatedValue: number
-  currency: string
-}
+  // Check if finance details are being skipped
+  const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
 
-type RetirementContribution = {
-  accountType: string
-  country: string
-  contributionAmount: number
-  currency: string
-}
+  // Get existing data (arrays)
+  const plannedInvestments = getFormData("futureFinancialPlans.plannedInvestments") ?? []
+  const plannedPropertyTransactions = getFormData("futureFinancialPlans.plannedPropertyTransactions") ?? []
+  const plannedRetirementContributions = getFormData("futureFinancialPlans.plannedRetirementContributions") ?? []
+  const plannedBusinessChanges = getFormData("futureFinancialPlans.plannedBusinessChanges") ?? []
 
-type BusinessChange = {
-  changeType: string
-  country: string
-  estimatedValueImpact: number
-  currency: string
-}
-
-// Investment Plans Component
-function InvestmentPlansSection({ updateFormData, getFormData, currencies }: {
-  updateFormData: (path: string, value: any) => void
-  getFormData: (path: string) => any
-  currencies: string[]
-}) {
-  const investments = getFormData("individual.futureFinancialPlans.plannedInvestments") ?? []
-  const [showAddForm, setShowAddForm] = useState(false)
+  // Form states for each section
   const [newInvestment, setNewInvestment] = useState({
     type: "Stocks",
     otherType: "",
@@ -69,335 +45,14 @@ function InvestmentPlansSection({ updateFormData, getFormData, currencies }: {
     currency: "USD"
   })
 
-  const INVESTMENT_TYPES = [
-    "Stocks",
-    "Bonds", 
-    "Real Estate",
-    "Cryptocurrency",
-    "Mutual Funds",
-    "Other"
-  ]
-
-  const addInvestment = () => {
-    const investmentToAdd: Investment = {
-      type: newInvestment.type === "Other" ? newInvestment.otherType : newInvestment.type,
-      country: newInvestment.country,
-      estimatedValue: newInvestment.estimatedValue,
-      currency: newInvestment.currency
-    }
-    const updated = [...investments, investmentToAdd]
-    updateFormData("individual.futureFinancialPlans.plannedInvestments", updated)
-    setNewInvestment({
-      type: "Stocks",
-      otherType: "",
-      country: "",
-      estimatedValue: 0,
-      currency: "USD"
-    })
-    setShowAddForm(false)
-  }
-
-  const removeInvestment = (index: number) => {
-    const updated = investments.filter((_: any, i: number) => i !== index)
-    updateFormData("individual.futureFinancialPlans.plannedInvestments", updated)
-  }
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <TrendingUp className="w-5 h-5" />
-        <h3 className="font-semibold">📈 Investment Plans</h3>
-      </div>
-
-      {/* Existing investments */}
-      {investments.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="font-medium">Registered Investment Plans</h4>
-          {investments.map((investment: Investment, index: number) => (
-            <div key={index} className="border rounded p-3 bg-card">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <p className="font-medium">{investment.type}</p>
-                  <p className="text-sm text-muted-foreground">Country: {investment.country}</p>
-                  <p className="text-sm font-medium mt-1">
-                    Estimated Value: {investment.currency} {investment.estimatedValue.toLocaleString()}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeInvestment(index)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Add investment */}
-      <div className="border rounded-lg p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-medium flex items-center gap-2">
-            <Plus className="w-4 h-4" />
-            Add Planned Investment
-          </h4>
-          <Button variant="outline" onClick={() => setShowAddForm(!showAddForm)}>
-            {showAddForm ? "Cancel" : "Add Investment"}
-          </Button>
-        </div>
-
-        {showAddForm && (
-          <div className="space-y-4">
-            <div>
-              <Label>Investment Type</Label>
-              <Select
-                value={newInvestment.type}
-                onValueChange={(value) => setNewInvestment({...newInvestment, type: value})}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {INVESTMENT_TYPES.map((type) => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {newInvestment.type === "Other" && (
-              <div>
-                <Label>Specify Investment Type *</Label>
-                <Input
-                  value={newInvestment.otherType}
-                  onChange={(e) => setNewInvestment({...newInvestment, otherType: e.target.value})}
-                  placeholder="Enter specific investment type"
-                />
-              </div>
-            )}
-
-            <div>
-              <Label>Country of Investment</Label>
-              <Input
-                value={newInvestment.country}
-                onChange={(e) => setNewInvestment({...newInvestment, country: e.target.value})}
-                placeholder="Enter country"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <Label>Estimated Value</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  value={newInvestment.estimatedValue}
-                  onChange={(e) => setNewInvestment({...newInvestment, estimatedValue: Number(e.target.value)})}
-                  placeholder="In local currency"
-                />
-              </div>
-              <div>
-                <Label>Currency</Label>
-                <Select
-                  value={newInvestment.currency}
-                  onValueChange={(value) => setNewInvestment({...newInvestment, currency: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencies.map((curr) => (
-                      <SelectItem key={curr} value={curr}>{curr}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <Button 
-              onClick={addInvestment} 
-              className="w-full"
-              disabled={!newInvestment.country || !newInvestment.estimatedValue || (newInvestment.type === "Other" && !newInvestment.otherType)}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Investment
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-// Property Transactions Component
-function PropertyTransactionsSection({ updateFormData, getFormData, currencies }: {
-  updateFormData: (path: string, value: any) => void
-  getFormData: (path: string) => any
-  currencies: string[]
-}) {
-  const transactions = getFormData("individual.futureFinancialPlans.plannedPropertyTransactions") ?? []
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [newTransaction, setNewTransaction] = useState({
+  const [newPropertyTransaction, setNewPropertyTransaction] = useState({
     transactionType: "Buy",
     country: "",
     estimatedValue: 0,
     currency: "USD"
   })
 
-  const TRANSACTION_TYPES = ["Buy", "Sell", "Rent Out"]
-
-  const addTransaction = () => {
-    const transactionToAdd: PropertyTransaction = {
-      transactionType: newTransaction.transactionType,
-      country: newTransaction.country,
-      estimatedValue: newTransaction.estimatedValue,
-      currency: newTransaction.currency
-    }
-    const updated = [...transactions, transactionToAdd]
-    updateFormData("individual.futureFinancialPlans.plannedPropertyTransactions", updated)
-    setNewTransaction({
-      transactionType: "Buy",
-      country: "",
-      estimatedValue: 0,
-      currency: "USD"
-    })
-    setShowAddForm(false)
-  }
-
-  const removeTransaction = (index: number) => {
-    const updated = transactions.filter((_: any, i: number) => i !== index)
-    updateFormData("individual.futureFinancialPlans.plannedPropertyTransactions", updated)
-  }
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Building className="w-5 h-5" />
-        <h3 className="font-semibold">🏠 Real Estate Plans</h3>
-      </div>
-
-      {/* Existing transactions */}
-      {transactions.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="font-medium">Registered Property Transactions</h4>
-          {transactions.map((transaction: PropertyTransaction, index: number) => (
-            <div key={index} className="border rounded p-3 bg-card">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <p className="font-medium">{transaction.transactionType} Property</p>
-                  <p className="text-sm text-muted-foreground">Country: {transaction.country}</p>
-                  <p className="text-sm font-medium mt-1">
-                    Estimated {transaction.transactionType === "Buy" ? "Purchase Price" : "Value"}: {transaction.currency} {transaction.estimatedValue.toLocaleString()}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeTransaction(index)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Add transaction */}
-      <div className="border rounded-lg p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-medium flex items-center gap-2">
-            <Plus className="w-4 h-4" />
-            Add Property Transaction
-          </h4>
-          <Button variant="outline" onClick={() => setShowAddForm(!showAddForm)}>
-            {showAddForm ? "Cancel" : "Add Transaction"}
-          </Button>
-        </div>
-
-        {showAddForm && (
-          <div className="space-y-4">
-            <div>
-              <Label>Transaction Type</Label>
-              <Select
-                value={newTransaction.transactionType}
-                onValueChange={(value) => setNewTransaction({...newTransaction, transactionType: value})}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {TRANSACTION_TYPES.map((type) => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label>Country of Property</Label>
-              <Input
-                value={newTransaction.country}
-                onChange={(e) => setNewTransaction({...newTransaction, country: e.target.value})}
-                placeholder="Enter country"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <Label>Estimated {newTransaction.transactionType === "Buy" ? "Purchase Price" : "Sale Value"}</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  value={newTransaction.estimatedValue}
-                  onChange={(e) => setNewTransaction({...newTransaction, estimatedValue: Number(e.target.value)})}
-                  placeholder="In local currency"
-                />
-              </div>
-              <div>
-                <Label>Currency</Label>
-                <Select
-                  value={newTransaction.currency}
-                  onValueChange={(value) => setNewTransaction({...newTransaction, currency: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencies.map((curr) => (
-                      <SelectItem key={curr} value={curr}>{curr}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <Button 
-              onClick={addTransaction} 
-              className="w-full"
-              disabled={!newTransaction.country || !newTransaction.estimatedValue}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Transaction
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-// Retirement Contributions Component
-function RetirementContributionsSection({ updateFormData, getFormData, currencies }: {
-  updateFormData: (path: string, value: any) => void
-  getFormData: (path: string) => any
-  currencies: string[]
-}) {
-  const contributions = getFormData("individual.futureFinancialPlans.plannedRetirementContributions") ?? []
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [newContribution, setNewContribution] = useState({
+  const [newRetirementContribution, setNewRetirementContribution] = useState({
     accountType: "401(k)",
     otherAccountType: "",
     country: "",
@@ -405,425 +60,684 @@ function RetirementContributionsSection({ updateFormData, getFormData, currencie
     currency: "USD"
   })
 
-  const ACCOUNT_TYPES = ["401(k)", "IRA/Roth IRA", "Pension Plan", "Other"]
-
-  const addContribution = () => {
-    const contributionToAdd: RetirementContribution = {
-      accountType: newContribution.accountType === "Other" ? newContribution.otherAccountType : newContribution.accountType,
-      country: newContribution.country,
-      contributionAmount: newContribution.contributionAmount,
-      currency: newContribution.currency
-    }
-    const updated = [...contributions, contributionToAdd]
-    updateFormData("individual.futureFinancialPlans.plannedRetirementContributions", updated)
-    setNewContribution({
-      accountType: "401(k)",
-      otherAccountType: "",
-      country: "",
-      contributionAmount: 0,
-      currency: "USD"
-    })
-    setShowAddForm(false)
-  }
-
-  const removeContribution = (index: number) => {
-    const updated = contributions.filter((_: any, i: number) => i !== index)
-    updateFormData("individual.futureFinancialPlans.plannedRetirementContributions", updated)
-  }
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <PiggyBank className="w-5 h-5" />
-        <h3 className="font-semibold">🏦 Retirement Plans</h3>
-      </div>
-
-      {/* Existing contributions */}
-      {contributions.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="font-medium">Registered Retirement Contributions</h4>
-          {contributions.map((contribution: RetirementContribution, index: number) => (
-            <div key={index} className="border rounded p-3 bg-card">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <p className="font-medium">{contribution.accountType}</p>
-                  <p className="text-sm text-muted-foreground">Country: {contribution.country}</p>
-                  <p className="text-sm font-medium mt-1">
-                    Planned Contribution: {contribution.currency} {contribution.contributionAmount.toLocaleString()}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeContribution(index)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Add contribution */}
-      <div className="border rounded-lg p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-medium flex items-center gap-2">
-            <Plus className="w-4 h-4" />
-            Add Retirement Contribution
-          </h4>
-          <Button variant="outline" onClick={() => setShowAddForm(!showAddForm)}>
-            {showAddForm ? "Cancel" : "Add Contribution"}
-          </Button>
-        </div>
-
-        {showAddForm && (
-          <div className="space-y-4">
-            <div>
-              <Label>Retirement Account Type</Label>
-              <Select
-                value={newContribution.accountType}
-                onValueChange={(value) => setNewContribution({...newContribution, accountType: value})}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {ACCOUNT_TYPES.map((type) => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {newContribution.accountType === "Other" && (
-              <div>
-                <Label>Specify Account Type *</Label>
-                <Input
-                  value={newContribution.otherAccountType}
-                  onChange={(e) => setNewContribution({...newContribution, otherAccountType: e.target.value})}
-                  placeholder="Enter specific account type"
-                />
-              </div>
-            )}
-
-            <div>
-              <Label>Country of Account</Label>
-              <Input
-                value={newContribution.country}
-                onChange={(e) => setNewContribution({...newContribution, country: e.target.value})}
-                placeholder="Enter country"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <Label>Planned Contribution Amount</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  value={newContribution.contributionAmount}
-                  onChange={(e) => setNewContribution({...newContribution, contributionAmount: Number(e.target.value)})}
-                  placeholder="In local currency"
-                />
-              </div>
-              <div>
-                <Label>Currency</Label>
-                <Select
-                  value={newContribution.currency}
-                  onValueChange={(value) => setNewContribution({...newContribution, currency: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencies.map((curr) => (
-                      <SelectItem key={curr} value={curr}>{curr}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <Button 
-              onClick={addContribution} 
-              className="w-full"
-              disabled={!newContribution.country || !newContribution.contributionAmount || (newContribution.accountType === "Other" && !newContribution.otherAccountType)}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Contribution
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-// Business Changes Component
-function BusinessChangesSection({ updateFormData, getFormData, currencies }: {
-  updateFormData: (path: string, value: any) => void
-  getFormData: (path: string) => any
-  currencies: string[]
-}) {
-  const businessChanges = getFormData("individual.futureFinancialPlans.plannedBusinessChanges") ?? []
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [newChange, setNewChange] = useState({
+  const [newBusinessChange, setNewBusinessChange] = useState({
     changeType: "Start New Business",
     country: "",
     estimatedValueImpact: 0,
     currency: "USD"
   })
 
-  const CHANGE_TYPES = [
-    "Start New Business",
-    "Sell Existing Business", 
-    "Expand Business to Another Country"
-  ]
-
-  const addBusinessChange = () => {
-    const changeToAdd: BusinessChange = {
-      changeType: newChange.changeType,
-      country: newChange.country,
-      estimatedValueImpact: newChange.estimatedValueImpact,
-      currency: newChange.currency
-    }
-    const updated = [...businessChanges, changeToAdd]
-    updateFormData("individual.futureFinancialPlans.plannedBusinessChanges", updated)
-    setNewChange({
-      changeType: "Start New Business",
-      country: "",
-      estimatedValueImpact: 0,
-      currency: "USD"
-    })
-    setShowAddForm(false)
-  }
-
-  const removeBusinessChange = (index: number) => {
-    const updated = businessChanges.filter((_: any, i: number) => i !== index)
-    updateFormData("individual.futureFinancialPlans.plannedBusinessChanges", updated)
-  }
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Briefcase className="w-5 h-5" />
-        <h3 className="font-semibold">💼 Business Plans</h3>
-      </div>
-
-      {/* Existing business changes */}
-      {businessChanges.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="font-medium">Registered Business Changes</h4>
-          {businessChanges.map((change: BusinessChange, index: number) => (
-            <div key={index} className="border rounded p-3 bg-card">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <p className="font-medium">{change.changeType}</p>
-                  <p className="text-sm text-muted-foreground">Country: {change.country}</p>
-                  <p className="text-sm font-medium mt-1">
-                    Estimated {change.changeType === "Start New Business" ? "Startup Cost" : "Value Impact"}: {change.currency} {change.estimatedValueImpact.toLocaleString()}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeBusinessChange(index)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Add business change */}
-      <div className="border rounded-lg p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-medium flex items-center gap-2">
-            <Plus className="w-4 h-4" />
-            Add Business Change
-          </h4>
-          <Button variant="outline" onClick={() => setShowAddForm(!showAddForm)}>
-            {showAddForm ? "Cancel" : "Add Business Change"}
-          </Button>
-        </div>
-
-        {showAddForm && (
-          <div className="space-y-4">
-            <div>
-              <Label>Change Type</Label>
-              <Select
-                value={newChange.changeType}
-                onValueChange={(value) => setNewChange({...newChange, changeType: value})}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {CHANGE_TYPES.map((type) => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label>Country of Business Activity</Label>
-              <Input
-                value={newChange.country}
-                onChange={(e) => setNewChange({...newChange, country: e.target.value})}
-                placeholder="Enter country"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <Label>Estimated {newChange.changeType === "Start New Business" ? "Startup Cost" : "Value Impact"}</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  value={newChange.estimatedValueImpact}
-                  onChange={(e) => setNewChange({...newChange, estimatedValueImpact: Number(e.target.value)})}
-                  placeholder="In local currency"
-                />
-              </div>
-              <div>
-                <Label>Currency</Label>
-                <Select
-                  value={newChange.currency}
-                  onValueChange={(value) => setNewChange({...newChange, currency: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencies.map((curr) => (
-                      <SelectItem key={curr} value={curr}>{curr}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <Button 
-              onClick={addBusinessChange} 
-              className="w-full"
-              disabled={!newChange.country || !newChange.estimatedValueImpact}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Business Change
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-export function FutureFinancialPlans({ onComplete }: { onComplete: () => void }) {
-  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
-  const currencies = useCurrencies()
-
-  // Check if finance details are being skipped
-  const skip = getFormData("finance.skipDetails") ?? false
-
-  // Get all plan data
-  const investments = getFormData("individual.futureFinancialPlans.plannedInvestments") ?? []
-  const propertyTransactions = getFormData("individual.futureFinancialPlans.plannedPropertyTransactions") ?? []
-  const retirementContributions = getFormData("individual.futureFinancialPlans.plannedRetirementContributions") ?? []
-  const businessChanges = getFormData("individual.futureFinancialPlans.plannedBusinessChanges") ?? []
-
-  // Validation - at least one plan or skip
-  const hasAnyPlans = investments.length > 0 || propertyTransactions.length > 0 || 
-                     retirementContributions.length > 0 || businessChanges.length > 0
-  const canContinue = skip || hasAnyPlans
-  
-  const handleContinue = () => {
-    markSectionComplete("future-plans")
+  const handleComplete = () => {
+    markSectionComplete("futureFinancialPlans")
     onComplete()
   }
 
+  // Helper functions to add items
+  const addInvestment = () => {
+    if (newInvestment.estimatedValue > 0 && newInvestment.country) {
+      const investment = {
+        type: newInvestment.type !== "Other" ? newInvestment.type : newInvestment.otherType,
+        country: newInvestment.country,
+        estimatedValue: newInvestment.estimatedValue,
+        currency: newInvestment.currency
+      }
+      const updated = [...plannedInvestments, investment]
+      updateFormData("futureFinancialPlans.plannedInvestments", updated)
+      setNewInvestment({
+        type: "Stocks",
+        otherType: "",
+        country: "",
+        estimatedValue: 0,
+        currency: "USD"
+      })
+    }
+  }
+
+  const addPropertyTransaction = () => {
+    if (newPropertyTransaction.estimatedValue > 0 && newPropertyTransaction.country) {
+      const transaction = {
+        transactionType: newPropertyTransaction.transactionType,
+        country: newPropertyTransaction.country,
+        estimatedValue: newPropertyTransaction.estimatedValue,
+        currency: newPropertyTransaction.currency
+      }
+      const updated = [...plannedPropertyTransactions, transaction]
+      updateFormData("futureFinancialPlans.plannedPropertyTransactions", updated)
+      setNewPropertyTransaction({
+        transactionType: "Buy",
+        country: "",
+        estimatedValue: 0,
+        currency: "USD"
+      })
+    }
+  }
+
+  const addRetirementContribution = () => {
+    if (newRetirementContribution.contributionAmount > 0 && newRetirementContribution.country) {
+      const contribution = {
+        accountType: newRetirementContribution.accountType !== "Other" ? newRetirementContribution.accountType : newRetirementContribution.otherAccountType,
+        country: newRetirementContribution.country,
+        contributionAmount: newRetirementContribution.contributionAmount,
+        currency: newRetirementContribution.currency
+      }
+      const updated = [...plannedRetirementContributions, contribution]
+      updateFormData("futureFinancialPlans.plannedRetirementContributions", updated)
+      setNewRetirementContribution({
+        accountType: "401(k)",
+        otherAccountType: "",
+        country: "",
+        contributionAmount: 0,
+        currency: "USD"
+      })
+    }
+  }
+
+  const addBusinessChange = () => {
+    if (newBusinessChange.estimatedValueImpact > 0 && newBusinessChange.country) {
+      const businessChange = {
+        changeType: newBusinessChange.changeType,
+        country: newBusinessChange.country,
+        estimatedValueImpact: newBusinessChange.estimatedValueImpact,
+        currency: newBusinessChange.currency
+      }
+      const updated = [...plannedBusinessChanges, businessChange]
+      updateFormData("futureFinancialPlans.plannedBusinessChanges", updated)
+      setNewBusinessChange({
+        changeType: "Start New Business",
+        country: "",
+        estimatedValueImpact: 0,
+        currency: "USD"
+      })
+    }
+  }
+
+  // Helper functions to remove items
+  const removeInvestment = (index: number) => {
+    const updated = plannedInvestments.filter((_: any, i: number) => i !== index)
+    updateFormData("futureFinancialPlans.plannedInvestments", updated)
+  }
+
+  const removePropertyTransaction = (index: number) => {
+    const updated = plannedPropertyTransactions.filter((_: any, i: number) => i !== index)
+    updateFormData("futureFinancialPlans.plannedPropertyTransactions", updated)
+  }
+
+  const removeRetirementContribution = (index: number) => {
+    const updated = plannedRetirementContributions.filter((_: any, i: number) => i !== index)
+    updateFormData("futureFinancialPlans.plannedRetirementContributions", updated)
+  }
+
+  const removeBusinessChange = (index: number) => {
+    const updated = plannedBusinessChanges.filter((_: any, i: number) => i !== index)
+    updateFormData("futureFinancialPlans.plannedBusinessChanges", updated)
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>🏡 Future Financial Plans</CardTitle>
-      </CardHeader>
+    <div className="space-y-8 max-w-5xl mx-auto">
+      {/* Page Header */}
+      <div className="text-center pb-4 border-b">
+        <h1 className="text-3xl font-bold text-primary mb-3">
+          🏡 Future Financial Plans
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Your planned financial activities and future investments
+        </p>
+      </div>
 
-      <CardContent className="space-y-6">
-        <SectionHint>
-          Planning your future financial activities helps ensure tax compliance and optimize your financial strategy across jurisdictions.
-        </SectionHint>
+      <SectionHint title="About this section">
+        Future financial planning information helps tax advisors understand your long-term intentions, 
+        potential tax implications of upcoming transactions, and ensures compliance with international 
+        reporting requirements for planned activities.
+      </SectionHint>
 
-        {skip ? (
-          /* Skip mode - simplified summary */
-          <div className="border rounded-lg p-4 bg-muted/50">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">🚀 Future-financial-plans inputs skipped</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Per your earlier choice to skip detailed finance sections
-                </p>
-              </div>
-              <Button 
-                variant="outline" 
-                onClick={() => updateFormData("finance.skipDetails", false)}
-              >
-                <AlertTriangle className="w-4 h-4 mr-2" />
-                Enable Details
-              </Button>
+      {/* Skip Mode Indicator */}
+      {skipFinanceDetails && (
+        <Card className="shadow-sm border-l-4 border-l-green-500">
+          <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
+            <CardTitle className="text-xl flex items-center gap-3">
+              <HelpCircle className="w-6 h-6 text-green-600" />
+              Future Financial Plans Details Skipped
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Per your earlier choice in finance section</p>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950/20">
+              <p className="text-green-800 dark:text-green-200">
+                🚀 Future-financial-plans inputs skipped per your earlier choice.
+              </p>
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Only show detailed sections if not skipped */}
+      {!skipFinanceDetails && (
+        <>
+          {/* 1. Investment Plans Section */}
+          <Card className="shadow-sm border-l-4 border-l-blue-500">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
+              <CardTitle className="text-xl flex items-center gap-3">
+                <TrendingUp className="w-6 h-6 text-blue-600" />
+                Investment Plans
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Planned investments and financial assets</p>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-6">
+                {/* Add Investment Form */}
+                <div className="p-4 border rounded-lg bg-card">
+                  <h4 className="font-medium mb-4">Add Planned Investment</h4>
+                  <div className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Investment Type</Label>
+                        <Select
+                          value={newInvestment.type}
+                          onValueChange={(value) => setNewInvestment({...newInvestment, type: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {["Stocks", "Bonds", "Real Estate", "Cryptocurrency", "Mutual Funds", "Other"].map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {newInvestment.type === "Other" && (
+                        <div className="space-y-2">
+                          <Label>Specify Investment Type</Label>
+                          <Input
+                            value={newInvestment.otherType}
+                            onChange={(e) => setNewInvestment({...newInvestment, otherType: e.target.value})}
+                            placeholder="Enter investment type"
+                          />
+                        </div>
+                      )}
+                      <div className="space-y-2">
+                        <Label>Country of Investment</Label>
+                        <Input
+                          value={newInvestment.country}
+                          onChange={(e) => setNewInvestment({...newInvestment, country: e.target.value})}
+                          placeholder="Enter country"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Estimated Value</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="1000"
+                          value={newInvestment.estimatedValue}
+                          onChange={(e) => setNewInvestment({...newInvestment, estimatedValue: parseFloat(e.target.value) || 0})}
+                          placeholder="0.00"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Currency</Label>
+                        <Select
+                          value={newInvestment.currency}
+                          onValueChange={(value) => setNewInvestment({...newInvestment, currency: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {currencies.map((currency) => (
+                              <SelectItem key={currency} value={currency}>
+                                {currency}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <Button 
+                      onClick={addInvestment}
+                      disabled={!newInvestment.estimatedValue || !newInvestment.country || 
+                               (newInvestment.type === "Other" && !newInvestment.otherType)}
+                      className="w-full"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Investment
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Display existing investments */}
+                {plannedInvestments.length > 0 && (
+                  <div className="space-y-3">
+                    <h5 className="font-medium">Your Planned Investments</h5>
+                    {plannedInvestments.map((investment: any, idx: number) => (
+                      <div key={idx} className="p-3 border rounded-lg bg-card flex justify-between items-center">
+                        <div>
+                          <p className="font-medium">{investment.type}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {investment.currency} {investment.estimatedValue?.toLocaleString()} in {investment.country}
+                          </p>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removeInvestment(idx)}
+                        >
+                          ❌
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 2. Real Estate Plans Section */}
+          <Card className="shadow-sm border-l-4 border-l-green-500">
+            <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
+              <CardTitle className="text-xl flex items-center gap-3">
+                <Building className="w-6 h-6 text-green-600" />
+                Real Estate Plans
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Planned property transactions</p>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-6">
+                {/* Add Property Transaction Form */}
+                <div className="p-4 border rounded-lg bg-card">
+                  <h4 className="font-medium mb-4">Add Property Transaction</h4>
+                  <div className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Transaction Type</Label>
+                        <Select
+                          value={newPropertyTransaction.transactionType}
+                          onValueChange={(value) => setNewPropertyTransaction({...newPropertyTransaction, transactionType: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {["Buy", "Sell", "Rent Out"].map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Country of Property</Label>
+                        <Input
+                          value={newPropertyTransaction.country}
+                          onChange={(e) => setNewPropertyTransaction({...newPropertyTransaction, country: e.target.value})}
+                          placeholder="Enter country"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>
+                          Estimated {newPropertyTransaction.transactionType === "Buy" ? "Purchase Price" : "Sale Value"}
+                        </Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="10000"
+                          value={newPropertyTransaction.estimatedValue}
+                          onChange={(e) => setNewPropertyTransaction({...newPropertyTransaction, estimatedValue: parseFloat(e.target.value) || 0})}
+                          placeholder="0.00"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Currency</Label>
+                        <Select
+                          value={newPropertyTransaction.currency}
+                          onValueChange={(value) => setNewPropertyTransaction({...newPropertyTransaction, currency: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {currencies.map((currency) => (
+                              <SelectItem key={currency} value={currency}>
+                                {currency}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <Button 
+                      onClick={addPropertyTransaction}
+                      disabled={!newPropertyTransaction.estimatedValue || !newPropertyTransaction.country}
+                      className="w-full"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Property Transaction
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Display existing property transactions */}
+                {plannedPropertyTransactions.length > 0 && (
+                  <div className="space-y-3">
+                    <h5 className="font-medium">Your Property Transactions</h5>
+                    {plannedPropertyTransactions.map((transaction: any, idx: number) => (
+                      <div key={idx} className="p-3 border rounded-lg bg-card flex justify-between items-center">
+                        <div>
+                          <p className="font-medium">{transaction.transactionType} Property</p>
+                          <p className="text-sm text-muted-foreground">
+                            {transaction.currency} {transaction.estimatedValue?.toLocaleString()} in {transaction.country}
+                          </p>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removePropertyTransaction(idx)}
+                        >
+                          ❌
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 3. Retirement Plans Section */}
+          <Card className="shadow-sm border-l-4 border-l-orange-500">
+            <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
+              <CardTitle className="text-xl flex items-center gap-3">
+                <PiggyBank className="w-6 h-6 text-orange-600" />
+                Retirement Plans
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Planned retirement contributions</p>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-6">
+                {/* Add Retirement Contribution Form */}
+                <div className="p-4 border rounded-lg bg-card">
+                  <h4 className="font-medium mb-4">Add Retirement Contribution</h4>
+                  <div className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Retirement Account Type</Label>
+                        <Select
+                          value={newRetirementContribution.accountType}
+                          onValueChange={(value) => setNewRetirementContribution({...newRetirementContribution, accountType: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {["401(k)", "IRA/Roth IRA", "Pension Plan", "Other"].map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {newRetirementContribution.accountType === "Other" && (
+                        <div className="space-y-2">
+                          <Label>Specify Account Type</Label>
+                          <Input
+                            value={newRetirementContribution.otherAccountType}
+                            onChange={(e) => setNewRetirementContribution({...newRetirementContribution, otherAccountType: e.target.value})}
+                            placeholder="Enter account type"
+                          />
+                        </div>
+                      )}
+                      <div className="space-y-2">
+                        <Label>Country of Account</Label>
+                        <Input
+                          value={newRetirementContribution.country}
+                          onChange={(e) => setNewRetirementContribution({...newRetirementContribution, country: e.target.value})}
+                          placeholder="Enter country"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Planned Contribution Amount</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="500"
+                          value={newRetirementContribution.contributionAmount}
+                          onChange={(e) => setNewRetirementContribution({...newRetirementContribution, contributionAmount: parseFloat(e.target.value) || 0})}
+                          placeholder="0.00"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Currency</Label>
+                        <Select
+                          value={newRetirementContribution.currency}
+                          onValueChange={(value) => setNewRetirementContribution({...newRetirementContribution, currency: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {currencies.map((currency) => (
+                              <SelectItem key={currency} value={currency}>
+                                {currency}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <Button 
+                      onClick={addRetirementContribution}
+                      disabled={!newRetirementContribution.contributionAmount || !newRetirementContribution.country || 
+                               (newRetirementContribution.accountType === "Other" && !newRetirementContribution.otherAccountType)}
+                      className="w-full"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Contribution
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Display existing retirement contributions */}
+                {plannedRetirementContributions.length > 0 && (
+                  <div className="space-y-3">
+                    <h5 className="font-medium">Your Retirement Contributions</h5>
+                    {plannedRetirementContributions.map((contribution: any, idx: number) => (
+                      <div key={idx} className="p-3 border rounded-lg bg-card flex justify-between items-center">
+                        <div>
+                          <p className="font-medium">{contribution.accountType}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {contribution.currency} {contribution.contributionAmount?.toLocaleString()} in {contribution.country}
+                          </p>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removeRetirementContribution(idx)}
+                        >
+                          ❌
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 4. Business Plans Section */}
+          <Card className="shadow-sm border-l-4 border-l-purple-500">
+            <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
+              <CardTitle className="text-xl flex items-center gap-3">
+                <Briefcase className="w-6 h-6 text-purple-600" />
+                Business Plans
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Planned business changes and activities</p>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-6">
+                {/* Add Business Change Form */}
+                <div className="p-4 border rounded-lg bg-card">
+                  <h4 className="font-medium mb-4">Add Business Change</h4>
+                  <div className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Change Type</Label>
+                        <Select
+                          value={newBusinessChange.changeType}
+                          onValueChange={(value) => setNewBusinessChange({...newBusinessChange, changeType: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {["Start New Business", "Sell Existing Business", "Expand Business to Another Country"].map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Country of Business Activity</Label>
+                        <Input
+                          value={newBusinessChange.country}
+                          onChange={(e) => setNewBusinessChange({...newBusinessChange, country: e.target.value})}
+                          placeholder="Enter country"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>
+                          Estimated {newBusinessChange.changeType === "Start New Business" ? "Startup Cost" : "Value Impact"}
+                        </Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="5000"
+                          value={newBusinessChange.estimatedValueImpact}
+                          onChange={(e) => setNewBusinessChange({...newBusinessChange, estimatedValueImpact: parseFloat(e.target.value) || 0})}
+                          placeholder="0.00"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Currency</Label>
+                        <Select
+                          value={newBusinessChange.currency}
+                          onValueChange={(value) => setNewBusinessChange({...newBusinessChange, currency: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {currencies.map((currency) => (
+                              <SelectItem key={currency} value={currency}>
+                                {currency}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <Button 
+                      onClick={addBusinessChange}
+                      disabled={!newBusinessChange.estimatedValueImpact || !newBusinessChange.country}
+                      className="w-full"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Business Change
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Display existing business changes */}
+                {plannedBusinessChanges.length > 0 && (
+                  <div className="space-y-3">
+                    <h5 className="font-medium">Your Business Changes</h5>
+                    {plannedBusinessChanges.map((businessChange: any, idx: number) => (
+                      <div key={idx} className="p-3 border rounded-lg bg-card flex justify-between items-center">
+                        <div>
+                          <p className="font-medium">{businessChange.changeType}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {businessChange.currency} {businessChange.estimatedValueImpact?.toLocaleString()} in {businessChange.country}
+                          </p>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removeBusinessChange(idx)}
+                        >
+                          ❌
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
+
+      {/* Action Card */}
+      <Card className="shadow-md">
+        <CardFooter className="pt-6">
+          <div className="w-full space-y-4">
+            <div className="text-center text-sm text-muted-foreground">
+              This section is optional. You can continue even if you don't have future financial plans to report.
+            </div>
+
+            {/* Check My Information Button */}
+            <div className="flex justify-center">
+              <CheckInfoButton
+                onClick={() => showSectionInfo("future-plans")}
+                isLoading={isCheckingInfo}
+              />
+            </div>
+
+            <Button
+              onClick={handleComplete}
+              className="w-full"
+              size="lg"
+            >
+              Continue to Additional Information
+            </Button>
           </div>
-        ) : (
-          /* Full detailed mode */
-          <>
-            {/* Investment Plans */}
-            <InvestmentPlansSection 
-              updateFormData={updateFormData}
-              getFormData={getFormData}
-              currencies={currencies}
-            />
+        </CardFooter>
+      </Card>
 
-            <Separator />
-
-            {/* Property Transactions */}
-            <PropertyTransactionsSection 
-              updateFormData={updateFormData}
-              getFormData={getFormData}
-              currencies={currencies}
-            />
-
-            <Separator />
-
-            {/* Retirement Contributions */}
-            <RetirementContributionsSection 
-              updateFormData={updateFormData}
-              getFormData={getFormData}
-              currencies={currencies}
-            />
-
-            <Separator />
-
-            {/* Business Changes */}
-            <BusinessChangesSection 
-              updateFormData={updateFormData}
-              getFormData={getFormData}
-              currencies={currencies}
-            />
-          </>
-        )}
-      </CardContent>
-
-      <CardFooter>
-        <Button 
-          onClick={handleContinue} 
-          className="w-full"
-          disabled={!canContinue}
-        >
-          {hasAnyPlans ? "Continue" : "Continue (skip section)"}
-        </Button>
-      </CardFooter>
-    </Card>
+      {/* Section Info Modal */}
+      <SectionInfoModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        story={currentStory}
+        isLoading={isCheckingInfo}
+        onExpandFullInfo={expandFullInformation}
+        onBackToSection={backToSection}
+        currentSection={currentSection}
+        isFullView={isFullView}
+        onGoToSection={goToSection}
+        onNavigateToSection={navigateToSection}
+      />
+    </div>
   )
-} 
+}

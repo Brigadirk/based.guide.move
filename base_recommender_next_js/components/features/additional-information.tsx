@@ -19,14 +19,12 @@ import {
   Check, 
   X, 
   Lightbulb, 
-  FileText, 
-  Calendar
+  FileText,
+  AlertTriangle
 } from "lucide-react"
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
@@ -39,7 +37,6 @@ export function AdditionalInformation({ onComplete }: { onComplete: () => void }
   const specialSections = getFormData("additionalInformation.specialSections") ?? []
 
   // Local state for adding a new section
-  const [showAddForm, setShowAddForm] = useState(false)
   const [newTheme, setNewTheme] = useState("")
   const [newContent, setNewContent] = useState("")
 
@@ -48,287 +45,296 @@ export function AdditionalInformation({ onComplete }: { onComplete: () => void }
   const [editTheme, setEditTheme] = useState("")
   const [editContent, setEditContent] = useState("")
 
-  // Check if section has any content
-  const hasContent = generalNotes.trim() !== "" || specialSections.length > 0
-
-  const handleContinue = () => {
-    markSectionComplete("additional")
+  const handleComplete = () => {
+    markSectionComplete("additionalInformation")
     onComplete()
   }
 
-
-  const handleAddSection = () => {
-    if (newTheme.trim() === "" || newContent.trim() === "") return
-    const updated = [
-      ...specialSections,
-      {
+  const addSpecialSection = () => {
+    if (newTheme.trim() && newContent.trim()) {
+      const newSection = {
         theme: newTheme.trim(),
         content: newContent.trim(),
-        dateAdded: new Date().toISOString(),
-      },
-    ]
-    updateFormData("additionalInformation.specialSections", updated)
-    setNewTheme("")
-    setNewContent("")
-    setShowAddForm(false)
-  }
-
-  const handleDelete = (idx: number) => {
-    const updated = specialSections.filter((_: any, i: number) => i !== idx)
-    updateFormData("additionalInformation.specialSections", updated)
-  }
-
-  const startEditing = (idx: number) => {
-    setEditingIdx(idx)
-    setEditTheme(specialSections[idx].theme)
-    setEditContent(specialSections[idx].content)
-  }
-
-  const handleSaveEdit = () => {
-    if (editingIdx === null) return
-    const updated = [...specialSections]
-    updated[editingIdx] = {
-      ...updated[editingIdx],
-      theme: editTheme,
-      content: editContent,
-      dateUpdated: new Date().toISOString(),
+        dateAdded: new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+      }
+      const updated = [...specialSections, newSection]
+      updateFormData("additionalInformation.specialSections", updated)
+      setNewTheme("")
+      setNewContent("")
     }
+  }
+
+  const removeSpecialSection = (index: number) => {
+    const updated = specialSections.filter((_: any, i: number) => i !== index)
     updateFormData("additionalInformation.specialSections", updated)
-    setEditingIdx(null)
+  }
+
+  const startEditing = (index: number) => {
+    const section = specialSections[index]
+    setEditingIdx(index)
+    setEditTheme(section.theme)
+    setEditContent(section.content)
+  }
+
+  const saveEdit = () => {
+    if (editingIdx !== null && editTheme.trim() && editContent.trim()) {
+      const updated = [...specialSections]
+      updated[editingIdx] = {
+        ...updated[editingIdx],
+        theme: editTheme.trim(),
+        content: editContent.trim(),
+        dateUpdated: new Date().toISOString().split('T')[0]
+      }
+      updateFormData("additionalInformation.specialSections", updated)
+      setEditingIdx(null)
+      setEditTheme("")
+      setEditContent("")
+    }
   }
 
   const cancelEdit = () => {
     setEditingIdx(null)
+    setEditTheme("")
+    setEditContent("")
   }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString()
-  }
-
-  const canContinue = true // Always allow to continue - this is optional
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>📝 Additional Information</CardTitle>
-      </CardHeader>
+    <div className="space-y-8 max-w-5xl mx-auto">
+      {/* Page Header */}
+      <div className="text-center pb-4 border-b">
+        <h1 className="text-3xl font-bold text-primary mb-3">
+          📝 Additional Information
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Any additional information that doesn't fit in other sections
+        </p>
+      </div>
 
-      <CardContent className="space-y-6">
-        <SectionHint>
-          <strong>Additional information helps:</strong>
-          <ul className="list-disc list-inside mt-2 space-y-1">
-            <li>Provide context for unique circumstances not covered in standard sections</li>
-            <li>Document special considerations for your international relocation</li>
-            <li>Highlight specific concerns that may affect your tax or immigration status</li>
-            <li>Record important details that immigration officials should know</li>
-            <li>Address potential complications in your application process</li>
-            <li>Ensure all relevant information is considered in your assessment</li>
-          </ul>
-        </SectionHint>
+      {/* Why is this section important */}
+      <Card className="shadow-sm border-l-4 border-l-yellow-500">
+        <CardHeader className="bg-gradient-to-r from-yellow-50 to-transparent dark:from-yellow-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Lightbulb className="w-6 h-6 text-yellow-600" />
+            Why is this section important?
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <Alert>
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              <div className="space-y-2">
+                <p><strong>Additional information helps:</strong></p>
+                <ul className="list-disc list-inside space-y-1 ml-4 text-sm">
+                  <li>Provide context for unique circumstances not covered in standard sections</li>
+                  <li>Document special considerations for your international relocation</li>
+                  <li>Highlight specific concerns that may affect your tax or immigration status</li>
+                  <li>Record important details that immigration officials should know</li>
+                  <li>Address potential complications in your application process</li>
+                  <li>Ensure all relevant information is considered in your assessment</li>
+                </ul>
+              </div>
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
 
-        {/* Special Information Sections */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold flex items-center gap-2">
-              <FileText className="w-5 h-5" />
-              🔖 Special Information Sections
-            </h3>
-            <Button 
-              variant="outline" 
-              onClick={() => setShowAddForm(!showAddForm)}
-              className="flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              {showAddForm ? "Cancel" : "Add Section"}
-            </Button>
-          </div>
-
-          <p className="text-sm text-muted-foreground">
-            Add any additional information that doesn't fit in other sections
-          </p>
-
-          {/* Add new section form */}
-          {showAddForm && (
-            <Card className="border-dashed border-2">
-              <CardContent className="p-4 space-y-4">
-                <div>
+      {/* Special Information Sections */}
+      <Card className="shadow-sm border-l-4 border-l-blue-500">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <FileText className="w-6 h-6 text-blue-600" />
+            Special Information Sections
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Add any additional information that doesn't fit in other sections</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            {/* Add New Section Form */}
+            <div className="p-4 border rounded-lg bg-card">
+              <h4 className="font-medium mb-4 flex items-center gap-2">
+                <Plus className="w-4 h-4" />
+                Add Special Information Section
+              </h4>
+              <div className="space-y-4">
+                <div className="space-y-2">
                   <Label>Theme/Title</Label>
                   <Input
-                    placeholder="Enter a descriptive title for this information section"
                     value={newTheme}
                     onChange={(e) => setNewTheme(e.target.value)}
+                    placeholder="Enter a descriptive title for this information section"
                   />
                 </div>
-                <div>
+                <div className="space-y-2">
                   <Label>Content</Label>
                   <Textarea
-                    placeholder="Provide detailed information about this special circumstance"
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
-                    rows={5}
+                    placeholder="Provide detailed information about this special circumstance"
+                    rows={6}
                   />
                 </div>
                 <Button 
-                  onClick={handleAddSection} 
-                  disabled={newTheme.trim() === "" || newContent.trim() === ""}
+                  onClick={addSpecialSection}
+                  disabled={!newTheme.trim() || !newContent.trim()}
                   className="w-full"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
                   💾 Add Section
                 </Button>
-              </CardContent>
-            </Card>
-          )}
+              </div>
+            </div>
 
-          {/* Existing sections */}
-          {specialSections.length > 0 ? (
-            <div className="space-y-3">
-              {specialSections.map((section: any, idx: number) => {
-                const isCurrentEdit = editingIdx === idx
-                return (
-                  <Card key={idx} className="transition-all hover:shadow-md">
+            {/* Display existing special sections */}
+            {specialSections.length > 0 ? (
+              <div className="space-y-4">
+                {specialSections.map((section: any, idx: number) => (
+                  <Card key={idx} className="border">
                     <CardHeader className="pb-3">
                       <div className="flex justify-between items-start">
-                        {isCurrentEdit ? (
-                          <Input
-                            value={editTheme}
-                            onChange={(e) => setEditTheme(e.target.value)}
-                            className="text-base font-medium"
-                          />
-                        ) : (
-                          <div className="flex-1">
-                            <CardTitle className="text-base font-medium mb-1">
-                              Section {idx + 1}: {section.theme}
-                            </CardTitle>
-                            <div className="flex gap-2 text-xs text-muted-foreground">
-                              {section.dateAdded && (
-                                <Badge variant="secondary" className="flex items-center gap-1">
-                                  <Calendar className="w-3 h-3" />
-                                  Added: {formatDate(section.dateAdded)}
-                                </Badge>
-                              )}
-                              {section.dateUpdated && (
-                                <Badge variant="outline" className="flex items-center gap-1">
-                                  <Calendar className="w-3 h-3" />
-                                  Updated: {formatDate(section.dateUpdated)}
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                        <div className="flex gap-1 ml-3">
-                          {isCurrentEdit ? (
-                            <>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={handleSaveEdit}
-                                disabled={editTheme.trim() === "" || editContent.trim() === ""}
-                              >
-                                <Check className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={cancelEdit}
-                              >
-                                <X className="w-4 h-4" />
-                              </Button>
-                            </>
-                          ) : (
-                            <>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => startEditing(idx)}
-                              >
-                                <Pencil className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => handleDelete(idx)}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </>
+                        <div className="flex-1">
+                          <CardTitle className="text-lg">Section {idx + 1}: {section.theme}</CardTitle>
+                          {section.dateAdded && (
+                            <p className="text-sm text-muted-foreground">
+                              Added on: {section.dateAdded}
+                            </p>
                           )}
+                          {section.dateUpdated && (
+                            <p className="text-sm text-muted-foreground">
+                              Updated on: {section.dateUpdated}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => startEditing(idx)}
+                            disabled={editingIdx !== null}
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => removeSpecialSection(idx)}
+                            disabled={editingIdx !== null}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent className="pt-0">
-                      {isCurrentEdit ? (
-                        <Textarea
-                          value={editContent}
-                          onChange={(e) => setEditContent(e.target.value)}
-                          rows={5}
-                        />
+                      {editingIdx === idx ? (
+                        /* Edit Form */
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label>Update Theme/Title</Label>
+                            <Input
+                              value={editTheme}
+                              onChange={(e) => setEditTheme(e.target.value)}
+                              placeholder="Update theme/title"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Update Content</Label>
+                            <Textarea
+                              value={editContent}
+                              onChange={(e) => setEditContent(e.target.value)}
+                              placeholder="Update content"
+                              rows={6}
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={saveEdit}
+                              disabled={!editTheme.trim() || !editContent.trim()}
+                              className="flex-1"
+                            >
+                              <Check className="w-4 h-4 mr-2" />
+                              Save Changes
+                            </Button>
+                            <Button
+                              variant="outline"
+                              onClick={cancelEdit}
+                              className="flex-1"
+                            >
+                              <X className="w-4 h-4 mr-2" />
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
                       ) : (
-                        <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                          {section.content}
-                        </p>
+                        /* Display Content */
+                        <div className="prose prose-sm max-w-none dark:prose-invert">
+                          <p className="whitespace-pre-wrap">{section.content}</p>
+                        </div>
                       )}
                     </CardContent>
                   </Card>
-                )
-              })}
-            </div>
-          ) : (
-            <Alert>
-              <Lightbulb className="w-4 h-4" />
-              <AlertDescription>
-                ℹ️ No special information sections added yet. Use the form above to add important details.
-              </AlertDescription>
-            </Alert>
-          )}
-        </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>ℹ️ No special information sections added yet.</p>
+                <p className="text-sm">Use the form above to add important details.</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
-        <Separator />
-
-        {/* General Notes */}
-        <div className="space-y-3">
-          <h3 className="font-semibold flex items-center gap-2">
-            <FileText className="w-5 h-5" />
-            📒 General Notes
-          </h3>
-          <div>
-            <Label className="text-sm">
-              Additional notes or comments
-            </Label>
-            <p className="text-xs text-muted-foreground mb-2">
-              Enter any general notes that don't require a separate section
-            </p>
+      {/* General Notes Section */}
+      <Card className="shadow-sm border-l-4 border-l-green-500">
+        <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <FileText className="w-6 h-6 text-green-600" />
+            General Notes
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Additional notes or comments</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-2">
+            <Label>Additional notes or comments</Label>
             <Textarea
               value={generalNotes}
-              onChange={(e) =>
-                updateFormData("additionalInformation.generalNotes", e.target.value)
-              }
-              rows={4}
-              placeholder="Enter any additional notes, comments, or information that might be relevant to your situation..."
+              onChange={(e) => updateFormData("additionalInformation.generalNotes", e.target.value)}
+              placeholder="Enter any general notes that don't require a separate section"
+              rows={6}
             />
+            <p className="text-xs text-muted-foreground">
+              Use this space for any additional information that doesn't fit elsewhere
+            </p>
           </div>
-        </div>
-      </CardContent>
+        </CardContent>
+      </Card>
 
-      <CardFooter>
-        <div className="w-full space-y-3">
-          {/* Check My Information Button */}
-          <div className="flex justify-center">
-            <CheckInfoButton
-              onClick={() => showSectionInfo("additional")}
-              isLoading={isCheckingInfo}
-              disabled={!hasContent}
-            />
+      {/* Action Card */}
+      <Card className="shadow-md">
+        <CardFooter className="pt-6">
+          <div className="w-full space-y-4">
+            <div className="text-center text-sm text-muted-foreground">
+              This section is optional. You can complete your profile even if you don't have additional information to provide.
+            </div>
+
+            {/* Check My Information Button */}
+            <div className="flex justify-center">
+              <CheckInfoButton
+                onClick={() => showSectionInfo("additional")}
+                isLoading={isCheckingInfo}
+              />
+            </div>
+
+            <Button
+              onClick={handleComplete}
+              className="w-full"
+              size="lg"
+            >
+              Complete Profile
+            </Button>
           </div>
-          
-          <Button 
-            className="w-full" 
-            onClick={handleContinue}
-          >
-            {hasContent ? "Continue" : "Continue (skip section)"}
-          </Button>
-        </div>
-      </CardFooter>
+        </CardFooter>
+      </Card>
 
       {/* Section Info Modal */}
       <SectionInfoModal
@@ -344,6 +350,6 @@ export function AdditionalInformation({ onComplete }: { onComplete: () => void }
         onGoToSection={goToSection}
         onNavigateToSection={navigateToSection}
       />
-    </Card>
+    </div>
   )
-} 
+}
