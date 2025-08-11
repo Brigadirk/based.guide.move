@@ -744,7 +744,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                               <SelectValue placeholder="Select country" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="">Select country</SelectItem>
+
                               {/* Add country list here - could use a proper country list */}
                               {["United States", "United Kingdom", "Canada", "Germany", "France", "Other"].map((country) => (
                                 <SelectItem key={country} value={country}>
@@ -1083,7 +1083,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                             <SelectValue placeholder="Select country" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">Select country</SelectItem>
+
                             {["United States", "United Kingdom", "Canada", "Germany", "France", "Other"].map((country) => (
                               <SelectItem key={country} value={country}>
                                 {country}

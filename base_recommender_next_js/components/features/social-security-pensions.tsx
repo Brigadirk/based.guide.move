@@ -71,19 +71,6 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
   // Get current residence country as default for contribution country
   const currentResidence = getFormData("personalInformation.currentResidency.country") ?? ""
 
-  const [newPensionScheme, setNewPensionScheme] = useState({
-    pensionType: "Employer-sponsored plan",
-    otherPensionType: "",
-    contributionAmount: 0,
-    currency: "USD",
-    country: ""
-  })
-
-  const handleComplete = () => {
-    markSectionComplete("socialSecurity")
-    onComplete()
-  }
-
   const canContinue = true // This section is optional
 
   const canAddPensionScheme = newPensionScheme.contributionAmount > 0 && newPensionScheme.country && 
@@ -177,7 +164,6 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                           <SelectValue placeholder="Select country" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Select country</SelectItem>
                           {/* Use current residence as default if available */}
                           {currentResidence && (
                             <SelectItem value={currentResidence}>{currentResidence} (Current)</SelectItem>
@@ -317,7 +303,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                               <SelectValue placeholder="Select country" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="">Select country</SelectItem>
+
                               {["United States", "United Kingdom", "Canada", "Germany", "France", "Australia", "Netherlands", "Sweden", "Other"].map((country) => (
                                 <SelectItem key={country} value={country}>
                                   {country}
@@ -503,7 +489,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                               <SelectValue placeholder="Select country" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="">Select country</SelectItem>
+
                               {["United States", "United Kingdom", "Canada", "Germany", "France", "Australia", "Netherlands", "Sweden", "Other"].map((country) => (
                                 <SelectItem key={country} value={country}>
                                   {country}

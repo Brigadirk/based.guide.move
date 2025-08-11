@@ -194,7 +194,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                             <SelectValue placeholder="Select country" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">Select country</SelectItem>
+
                             {["United States", "United Kingdom", "Canada", "Germany", "France", "Australia", "Netherlands", "Sweden", "Other"].map((country) => (
                               <SelectItem key={country} value={country}>
                                 {country}
@@ -376,7 +376,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                           <SelectValue placeholder="Select country" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Select country</SelectItem>
+
                           {["United States", "United Kingdom", "Canada", "Germany", "France", "Australia", "Netherlands", "Sweden", "Other"].map((country) => (
                             <SelectItem key={country} value={country}>
                               {country}
