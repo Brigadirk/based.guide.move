@@ -16,6 +16,9 @@ import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
+import { CheckInfoButton } from "@/components/ui/check-info-button"
+import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { useSectionInfo } from "@/lib/hooks/use-section-info"
 
 // Hooks can't run outside components – compute once as a plain constant.
 const COUNTRY_LIST = Object.keys(countryInfo).sort()
@@ -31,6 +34,7 @@ const MARITAL_OPTIONS = [
 
 export function PersonalInformation({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
 
   // Basic Information
   const dob: string = getFormData("personalInformation.dateOfBirth") ?? ""
@@ -313,12 +317,17 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     const dep = depList[depIndex]
     if (!dep) return false
     
-    return dep.dateOfBirth && 
-           dep.relationship && 
-           dep.currentResidency?.country && 
-           dep.currentResidency?.status && 
-           dep.nationalities && 
-           dep.nationalities.length > 0
+    const dobValid = !!dep.dateOfBirth
+    const relationshipValid = !!dep.relationship
+    const countryValid = !!dep.currentResidency?.country
+    const statusValid = !!dep.currentResidency?.status
+    const durationValid = dep.currentResidency?.status === "Citizen" || 
+                         (dep.currentResidency?.duration !== undefined && 
+                          dep.currentResidency?.duration !== null && 
+                          dep.currentResidency?.duration !== "")
+    const nationalitiesValid = dep.nationalities && dep.nationalities.length > 0
+    
+    return dobValid && relationshipValid && countryValid && statusValid && durationValid && nationalitiesValid
   }
 
   const saveDependentInfo = (depIndex: number) => {
@@ -349,7 +358,10 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   }
 
   // Validation
-  const canContinue = dob && curCountry && curStatus && natList.length > 0 && maritalStatus && (!hasPartner || partnerSaved)
+  // Check if all dependents are saved
+  const allDependentsSaved = visibleDependents.every(idx => savedDependents.includes(idx))
+  
+  const canContinue = dob && curCountry && curStatus && natList.length > 0 && maritalStatus && (!hasPartner || partnerSaved) && allDependentsSaved
 
   const nationalityExists = (country: string) =>
     natList.some((n) => n.country === country)
@@ -507,7 +519,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
           <div className="flex gap-3 mb-6">
             <Select value={addCountry} onValueChange={setAddCountry}>
               <SelectTrigger className="flex-1">
-                <SelectValue placeholder="Add additional citizenship" />
+                <SelectValue placeholder="Add citizenship" />
               </SelectTrigger>
               <SelectContent>
                 {COUNTRY_LIST.filter((c) => !nationalityExists(c)).map((c) => (
@@ -1283,35 +1295,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
         </CardHeader>
         <CardContent className="pt-6">
           <div className="space-y-6">
-            {/* Add Dependent Button - only show if we can add more */}
-            <Button
-              variant="outline"
-              onClick={() => {
-                // Add new dependent to data
-                const newDependent = {
-                  relationship: "Child",
-                  dateOfBirth: "",
-                  student: false,
-                  nationalities: [],
-                  currentResidency: {
-                    country: "",
-                    status: "",
-                    duration: ""
-                  }
-                }
-                updateDepList([...depList, newDependent])
-                // Make this dependent form visible and editable
-                const newIndex = depList.length
-                setVisibleDependents([...visibleDependents, newIndex])
-                setEditingDependents([...editingDependents, newIndex])
-              }}
-              className="w-full"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Dependent
-            </Button>
-
-                        {/* Dependent cards and forms */}
+            {/* Dependent cards and forms */}
             {depList.map((dep, idx) => {
               if (!visibleDependents.includes(idx)) return null
               
@@ -1319,23 +1303,36 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               const isSaved = savedDependents.includes(idx)
               const attemptedSave = attemptedDependentSaves.includes(idx)
               
+              // Calculate proper dependent number based on position among visible dependents
+              const dependentNumber = visibleDependents.filter(i => i <= idx).length
+              
               // Show summary card if not editing
               if (!isEditing) {
+                const citizenshipCount = dep.nationalities?.length || 0
+                const formattedBirthDate = dep.dateOfBirth ? 
+                  new Date(dep.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) :
+                  "Not specified"
+                
                 return (
                   <div key={idx} className="p-4 border rounded-lg bg-card">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <Badge variant="secondary">Dependent {idx + 1}</Badge>
+                          <Badge variant="secondary">Dependent {dependentNumber}</Badge>
                           <Badge variant="outline">{dep.relationship}</Badge>
                           {dep.student && <Badge variant="outline">Student</Badge>}
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          Born: {dep.dateOfBirth || "Not specified"}
+                          Born: {formattedBirthDate}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          Citizenships: {dep.nationalities?.length || 0} countries
+                          Citizenship{citizenshipCount !== 1 ? 's' : ''}: {citizenshipCount} {citizenshipCount === 1 ? 'country' : 'countries'}
                         </p>
+                        {dep.currentResidency?.country && (
+                          <p className="text-sm text-muted-foreground">
+                            Current residence: {dep.currentResidency.country} ({dep.currentResidency.status})
+                          </p>
+                        )}
                       </div>
                       <div className="flex gap-2">
                         <Button
@@ -1372,7 +1369,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               return (
                 <div key={idx} className="p-6 border rounded-lg bg-card space-y-4">
                   <div className="flex items-center justify-between">
-                    <h5 className="font-medium text-lg">Dependent {idx + 1}</h5>
+                    <h5 className="font-medium text-lg">Dependent {dependentNumber}</h5>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -1662,27 +1659,97 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                   </div>
                   
                   {/* Save/Cancel buttons for editing form */}
-                  <div className="flex gap-2 pt-4 border-t">
-                    <Button
-                      size="sm"
-                      onClick={() => setEditingDependents(editingDependents.filter((i: number) => i !== idx))}
-                      className="flex-1"
-                    >
-                      <Check className="w-4 h-4 mr-2" />
-                      Save
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setEditingDependents(editingDependents.filter((i: number) => i !== idx))}
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
+                  {(() => {
+                    const isValid = validateDependentInfo(idx)
+                    const errors = []
+                    
+                    if (!dep.dateOfBirth) {
+                      errors.push("Date of birth is required")
+                    }
+                    if (!dep.relationship) {
+                      errors.push("Relationship to you is required")
+                    }
+                    if (!dep.currentResidency?.country) {
+                      errors.push("Current residency country is required")
+                    }
+                                         if (!dep.currentResidency?.status) {
+                       errors.push("Current residency status is required")
+                     }
+                     if (dep.currentResidency?.status && dep.currentResidency.status !== "Citizen" && 
+                         (dep.currentResidency?.duration === undefined || dep.currentResidency?.duration === null || dep.currentResidency?.duration === "")) {
+                       errors.push("Duration in current status is required")
+                     }
+                     const depNats = dep.nationalities || []
+                     if (depNats.length === 0) {
+                       errors.push("At least one citizenship is required")
+                     }
+                    
+                    return (
+                      <>
+                        {errors.length > 0 && attemptedSave && (
+                          <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                            <h5 className="font-medium text-red-800 dark:text-red-200 mb-2">Complete the following to save dependent information:</h5>
+                            <ul className="text-sm text-red-700 dark:text-red-300 space-y-1">
+                              {errors.map((error, errorIdx) => (
+                                <li key={errorIdx}>• {error}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
+                        <div className="flex gap-2 pt-4 border-t">
+                          <Button
+                            size="sm"
+                            onClick={() => saveDependentInfo(idx)}
+                            disabled={!isValid}
+                            className="flex-1"
+                          >
+                            <Check className="w-4 h-4 mr-2" />
+                            Save Dependent Information
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingDependents(editingDependents.filter((i: number) => i !== idx))}
+                            className="flex-1"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </>
+                    )
+                  })()}
                 </div>
                )
              })}
+
+            {/* Add Dependent Button - positioned after existing dependent cards */}
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Add new dependent to data
+                const newDependent = {
+                  relationship: "Child",
+                  dateOfBirth: "",
+                  student: false,
+                  nationalities: [],
+                  currentResidency: {
+                    country: "",
+                    status: "",
+                    duration: ""
+                  }
+                }
+                updateDepList([...depList, newDependent])
+                // Make this dependent form visible and editable
+                const newIndex = depList.length
+                setVisibleDependents([...visibleDependents, newIndex])
+                setEditingDependents([...editingDependents, newIndex])
+              }}
+              className="w-full"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Dependent
+            </Button>
 
             <p className="text-xs text-muted-foreground">
               Include children, elderly parents, or other family members who depend on your financial support and will move with you.
@@ -1706,22 +1773,48 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     {natList.length === 0 && <li>At least one citizenship</li>}
                     {!maritalStatus && <li>Marital status</li>}
                     {curStatus === "Temporary Resident" && !tempDuration && <li>Years at current residence</li>}
+                    {hasPartner && !partnerSaved && <li>Complete and save partner information</li>}
+                    {!allDependentsSaved && <li>Complete and save all dependent information</li>}
                   </ul>
                 </AlertDescription>
               </Alert>
             )}
 
-            <Button
-              disabled={!canContinue}
-              onClick={handleComplete}
-              className="w-full"
-              size="lg"
-            >
-              Continue to Education
-            </Button>
+            {/* Check My Information Button */}
+            <div className="flex gap-3">
+              <CheckInfoButton
+                onClick={() => showSectionInfo("personal")}
+                isLoading={isCheckingInfo}
+                className="flex-1"
+                variant="secondary"
+              />
+              <Button
+                disabled={!canContinue}
+                onClick={handleComplete}
+                className="flex-1"
+                size="lg"
+              >
+                Continue to Education
+              </Button>
+            </div>
           </div>
         </CardFooter>
       </Card>
+
+      {/* Section Info Modal */}
+      <SectionInfoModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        story={currentStory}
+        isLoading={isCheckingInfo}
+        onExpandFullInfo={expandFullInformation}
+        onBackToSection={backToSection}
+        currentSection={currentSection}
+        isFullView={isFullView}
+        onGoToSection={goToSection}
+        onNavigateToSection={navigateToSection}
+      />
     </div>
   )
 } 

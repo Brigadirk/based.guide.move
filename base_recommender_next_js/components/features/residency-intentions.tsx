@@ -15,9 +15,13 @@ import { Slider } from "@/components/ui/slider"
 import { Plus, Trash2, Plane, MapPin, Languages, Heart, DollarSign, FileText, Clock, Globe, Target } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
+import { CheckInfoButton } from "@/components/ui/check-info-button"
+import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { useSectionInfo } from "@/lib/hooks/use-section-info"
 
 export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
 
   // Move type
   const moveType = getFormData("residencyIntentions.destinationCountry.moveType") ?? ""
@@ -420,6 +424,15 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
               </Alert>
             )}
 
+            {/* Check My Information Button */}
+            <div className="flex justify-center mb-3">
+              <CheckInfoButton
+                onClick={() => showSectionInfo("residency")}
+                isLoading={isCheckingInfo}
+                disabled={!canContinue}
+              />
+            </div>
+
             <Button
               disabled={!canContinue}
               onClick={handleComplete}
@@ -430,6 +443,21 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
             </Button>
           </div>
         </CardFooter>
+
+        {/* Section Info Modal */}
+        <SectionInfoModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          title={modalTitle}
+          story={currentStory}
+          isLoading={isCheckingInfo}
+          onExpandFullInfo={expandFullInformation}
+          onBackToSection={backToSection}
+          currentSection={currentSection}
+          isFullView={isFullView}
+          onGoToSection={goToSection}
+          onNavigateToSection={navigateToSection}
+        />
       </Card>
     </div>
   )

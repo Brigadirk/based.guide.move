@@ -18,6 +18,9 @@ import { SectionHint } from "@/components/ui/section-hint"
 import { Plus, Trash2, Info, AlertTriangle, TrendingUp, Building, PiggyBank, Briefcase } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
+import { CheckInfoButton } from "@/components/ui/check-info-button"
+import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { useSectionInfo } from "@/lib/hooks/use-section-info"
 
 // Simple currencies hook - replace with actual implementation
 const useCurrencies = () => ["USD", "EUR", "GBP", "CAD", "AUD", "CHF", "JPY", "CNY"]

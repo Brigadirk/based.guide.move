@@ -327,7 +327,7 @@ export function Destination({ onComplete }: DestinationProps) {
                   if (langs.length === 0) return null
                   return (
                     <p className="text-sm mt-1 flex items-center gap-1 text-muted-foreground">
-                      <Languages className="w-4 h-4" /> Dominant languages: {langs.join(", ")}
+                      <Languages className="w-4 h-4" /> Dominant language{langs.length > 1 ? 's' : ''}: {langs.join(", ")}
                     </p>
                   )
                 })()}

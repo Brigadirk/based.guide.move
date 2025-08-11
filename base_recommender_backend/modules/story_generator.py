@@ -676,4 +676,74 @@ def make_story(profile: Dict[str, Any]) -> str:
             sections.append((key, "No information provided."))
 
     paragraphs = [f"{name.replace('_', ' ').title()}:\n{text}" for name, text in sections]
-    return LINE_BREAK.join(paragraphs) 
+    return LINE_BREAK.join(paragraphs)
+
+
+# Individual section story generators for API endpoints
+def make_personal_story(personal_info: Dict[str, Any]) -> str:
+    """Generate a story for just the personal information section."""
+    return f"Personal Information:\n{personal_section(personal_info)}"
+
+
+def make_education_story(education_info: Dict[str, Any]) -> str:
+    """Generate a story for just the education section."""
+    return f"Education:\n{education_section(education_info)}"
+
+
+def make_residency_intentions_story(residency_info: Dict[str, Any]) -> str:
+    """Generate a story for just the residency intentions section."""
+    return f"Residency Plans:\n{residency_section(residency_info)}"
+
+
+def make_finance_story(finance_info: Dict[str, Any], dest_currency: str = "USD") -> str:
+    """Generate a story for just the finance section."""
+    return f"Finance:\n{finance_section(finance_info, dest_currency)}"
+
+
+def make_social_security_story(ssp_info: Dict[str, Any], dest_currency: str = "USD") -> str:
+    """Generate a story for just the social security and pensions section."""
+    return f"Social Security & Pensions:\n{ssp_section(ssp_info, dest_currency)}"
+
+
+def make_tax_deductions_story(tax_info: Dict[str, Any], dest_currency: str = "USD") -> str:
+    """Generate a story for just the tax deductions and credits section."""
+    return f"Tax Deductions & Credits:\n{deductions_section(tax_info, dest_currency)}"
+
+
+def make_future_financial_plans_story(future_info: Dict[str, Any], dest_currency: str = "USD") -> str:
+    """Generate a story for just the future financial plans section."""
+    return f"Future Financial Plans:\n{future_plans_section(future_info, dest_currency)}"
+
+
+def make_additional_information_story(additional_info: Dict[str, Any]) -> str:
+    """Generate a story for just the additional information section."""
+    return f"Additional Information:\n{additional_section(additional_info)}"
+
+
+def make_section_story(section_name: str, section_data: Dict[str, Any], dest_currency: str = "USD") -> str:
+    """
+    Generate a story for any individual section.
+    
+    Args:
+        section_name: Name of the section (e.g., 'personalInformation', 'education', etc.)
+        section_data: The data for that specific section
+        dest_currency: Destination currency for financial calculations
+        
+    Returns:
+        A formatted story string for the section
+    """
+    section_generators = {
+        "personalInformation": lambda data, _: make_personal_story(data),
+        "education": lambda data, _: make_education_story(data),
+        "residencyIntentions": lambda data, _: make_residency_intentions_story(data),
+        "finance": lambda data, currency: make_finance_story(data, currency),
+        "socialSecurityAndPensions": lambda data, currency: make_social_security_story(data, currency),
+        "taxDeductionsAndCredits": lambda data, currency: make_tax_deductions_story(data, currency),
+        "futureFinancialPlans": lambda data, currency: make_future_financial_plans_story(data, currency),
+        "additionalInformation": lambda data, _: make_additional_information_story(data),
+    }
+    
+    if section_name in section_generators:
+        return section_generators[section_name](section_data, dest_currency)
+    else:
+        return f"Unknown section: {section_name}" 

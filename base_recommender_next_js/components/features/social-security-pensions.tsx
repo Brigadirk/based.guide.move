@@ -13,6 +13,9 @@ import { Plus, Trash2, Info, AlertTriangle, Shield, PiggyBank, Building, Globe, 
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
+import { CheckInfoButton } from "@/components/ui/check-info-button"
+import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { useSectionInfo } from "@/lib/hooks/use-section-info"
 
 // Simple currencies hook - replace with actual implementation
 const useCurrencies = () => ["USD", "EUR", "GBP", "CAD", "AUD", "CHF", "JPY", "CNY"]
@@ -28,6 +31,7 @@ const PENSION_SCHEME_TYPES = [
 
 export function SocialSecurityPensions({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
   const currencies = useCurrencies()
 
   // Check if finance details are being skipped
@@ -406,6 +410,14 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                   This section is optional. You can continue even if you don't have social security or pension information to provide.
                 </div>
 
+                {/* Check My Information Button */}
+                <div className="flex justify-center">
+                  <CheckInfoButton
+                    onClick={() => showSectionInfo("social-security")}
+                    isLoading={isCheckingInfo}
+                  />
+                </div>
+
                 <Button
                   onClick={handleComplete}
                   className="w-full"
@@ -424,6 +436,14 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
         <Card className="shadow-md">
           <CardFooter className="pt-6">
             <div className="w-full space-y-4">
+              {/* Check My Information Button */}
+              <div className="flex justify-center">
+                <CheckInfoButton
+                  onClick={() => showSectionInfo("social-security")}
+                  isLoading={isCheckingInfo}
+                />
+              </div>
+
               <Button
                 onClick={handleComplete}
                 className="w-full"
@@ -435,6 +455,21 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
           </CardFooter>
         </Card>
       )}
+
+      {/* Section Info Modal */}
+      <SectionInfoModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        story={currentStory}
+        isLoading={isCheckingInfo}
+        onExpandFullInfo={expandFullInformation}
+        onBackToSection={backToSection}
+        currentSection={currentSection}
+        isFullView={isFullView}
+        onGoToSection={goToSection}
+        onNavigateToSection={navigateToSection}
+      />
     </div>
   )
 } 

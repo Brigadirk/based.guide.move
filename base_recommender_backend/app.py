@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import argparse
 import json
@@ -44,6 +45,15 @@ async def lifespan(app: FastAPI):  # noqa: D401
 
 # Instantiate FastAPI with lifespan handler
 app = FastAPI(title="Base Recommender Backend", version="1.0.0", lifespan=lifespan)
+
+# Add CORS middleware to handle preflight requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Prefix all routes with /api/v1 to stay consistent with repo conventions
 app.include_router(api_router, prefix="/api/v1")

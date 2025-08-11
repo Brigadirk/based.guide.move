@@ -18,6 +18,9 @@ import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
 import { Plus, Trash2, Info, AlertTriangle, HelpCircle, ChevronDown, ChevronUp } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { CheckInfoButton } from "@/components/ui/check-info-button"
+import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 
@@ -311,6 +314,7 @@ function GeneralDeductionsSection({ updateFormData, getFormData, currencies }: {
 
 export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
   const currencies = useCurrencies()
 
   // Check if finance details are being skipped
@@ -518,14 +522,40 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
       </CardContent>
 
       <CardFooter>
-        <Button 
-          onClick={handleContinue} 
-          className="w-full"
-          disabled={!canContinue}
-        >
-          {hasContent ? "Continue" : "Continue (skip section)"}
-        </Button>
+        <div className="w-full space-y-3">
+          {/* Check My Information Button */}
+          <div className="flex justify-center">
+            <CheckInfoButton
+              onClick={() => showSectionInfo("tax-deductions")}
+              isLoading={isCheckingInfo}
+              disabled={!canContinue}
+            />
+          </div>
+          
+          <Button 
+            onClick={handleContinue} 
+            className="w-full"
+            disabled={!canContinue}
+          >
+            {hasContent ? "Continue" : "Continue (skip section)"}
+          </Button>
+        </div>
       </CardFooter>
+
+      {/* Section Info Modal */}
+      <SectionInfoModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        story={currentStory}
+        isLoading={isCheckingInfo}
+        onExpandFullInfo={expandFullInformation}
+        onBackToSection={backToSection}
+        currentSection={currentSection}
+        isFullView={isFullView}
+        onGoToSection={goToSection}
+        onNavigateToSection={navigateToSection}
+      />
     </Card>
   )
 } 

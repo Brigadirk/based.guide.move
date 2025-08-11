@@ -13,7 +13,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
-import { Plus, Trash2, GraduationCap, BookOpen, Award, Users, Info, Target, Brain, School } from "lucide-react"
+import { CheckInfoButton } from "@/components/ui/check-info-button"
+import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { useSectionInfo } from "@/lib/hooks/use-section-info"
+import { Plus, Trash2, GraduationCap, BookOpen, Award, Users, Info, Target, Brain, School, Shield } from "lucide-react"
 
 type Degree = {
   degree: string
@@ -48,6 +51,7 @@ type SchoolOffer = {
 
 export function Education({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
 
   // Work experience state
   const [workExpDraft, setWorkExpDraft] = useState({
@@ -336,10 +340,10 @@ export function Education({ onComplete }: { onComplete: () => void }) {
       <Card className="shadow-sm border-l-4 border-l-red-500">
         <CardHeader className="bg-gradient-to-r from-red-50 to-transparent dark:from-red-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
-            <Award className="w-6 h-6 text-red-600" />
+            <Shield className="w-6 h-6 text-red-600" />
             Military Service
           </CardTitle>
-          <p className="text-sm text-muted-foreground">Your military service history</p>
+          <p className="text-sm text-muted-foreground">Military experience, skills, and security clearances for visa applications</p>
         </CardHeader>
         <CardContent className="pt-6">
           <div className="space-y-6">
@@ -356,7 +360,12 @@ export function Education({ onComplete }: { onComplete: () => void }) {
 
             {getFormData("education.militaryService.hasService") && (
               <div className="space-y-4 p-4 border rounded-lg bg-card">
-                <h4 className="font-medium text-base">Military Service Details</h4>
+                <div className="mb-4">
+                  <h4 className="font-medium text-base">Military Service Details</h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Military experience can be valuable for skilled worker visas, security clearances, and demonstrating transferable skills to employers.
+                  </p>
+                </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Country of service *</Label>
@@ -377,29 +386,93 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Start year</Label>
+                    <Label>Start date</Label>
                     <Input
-                      type="number"
-                      placeholder="2010"
-                      value={getFormData("education.militaryService.startYear") ?? ""}
-                      onChange={(e) => updateFormData("education.militaryService.startYear", e.target.value)}
+                      type="date"
+                      value={getFormData("education.militaryService.startDate") ?? ""}
+                      onChange={(e) => updateFormData("education.militaryService.startDate", e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>End year (or "Present")</Label>
+                    <Label>End date</Label>
                     <Input
-                      placeholder="2014 or Present"
-                      value={getFormData("education.militaryService.endYear") ?? ""}
-                      onChange={(e) => updateFormData("education.militaryService.endYear", e.target.value)}
+                      type="date"
+                      value={getFormData("education.militaryService.endDate") ?? ""}
+                      onChange={(e) => updateFormData("education.militaryService.endDate", e.target.value)}
+                      disabled={getFormData("education.militaryService.currentlyServing") ?? false}
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="currently_serving"
+                    checked={getFormData("education.militaryService.currentlyServing") ?? false}
+                    onCheckedChange={(v) => updateFormData("education.militaryService.currentlyServing", !!v)}
+                  />
+                  <Label htmlFor="currently_serving">Currently serving</Label>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Rank achieved</Label>
+                    <Input
+                      placeholder="e.g., Sergeant, Lieutenant"
+                      value={getFormData("education.militaryService.rank") ?? ""}
+                      onChange={(e) => updateFormData("education.militaryService.rank", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Military occupation/specialization</Label>
+                    <Input
+                      placeholder="e.g., Intelligence Analyst, Combat Engineer"
+                      value={getFormData("education.militaryService.occupation") ?? ""}
+                      onChange={(e) => updateFormData("education.militaryService.occupation", e.target.value)}
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Rank achieved</Label>
-                  <Input
-                    placeholder="e.g., Sergeant, Lieutenant"
-                    value={getFormData("education.militaryService.rank") ?? ""}
-                    onChange={(e) => updateFormData("education.militaryService.rank", e.target.value)}
+                  <Label>Security clearance level</Label>
+                  <Select
+                    value={getFormData("education.militaryService.securityClearance") ?? ""}
+                    onValueChange={(v) => updateFormData("education.militaryService.securityClearance", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select clearance level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="None">None</SelectItem>
+                      <SelectItem value="Confidential">Confidential</SelectItem>
+                      <SelectItem value="Secret">Secret</SelectItem>
+                      <SelectItem value="Top Secret">Top Secret</SelectItem>
+                      <SelectItem value="Top Secret/SCI">Top Secret/SCI</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Languages learned during service</Label>
+                  <Textarea
+                    placeholder="List any languages you learned or improved during military service..."
+                    value={getFormData("education.militaryService.languages") ?? ""}
+                    onChange={(e) => updateFormData("education.militaryService.languages", e.target.value)}
+                    rows={2}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Technical certifications gained</Label>
+                  <Textarea
+                    placeholder="List technical certifications, training programs, or specialized skills gained..."
+                    value={getFormData("education.militaryService.certifications") ?? ""}
+                    onChange={(e) => updateFormData("education.militaryService.certifications", e.target.value)}
+                    rows={3}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Leadership roles held</Label>
+                  <Textarea
+                    placeholder="Describe leadership positions, team management experience, or command responsibilities..."
+                    value={getFormData("education.militaryService.leadership") ?? ""}
+                    onChange={(e) => updateFormData("education.militaryService.leadership", e.target.value)}
+                    rows={3}
                   />
                 </div>
               </div>
@@ -971,17 +1044,41 @@ export function Education({ onComplete }: { onComplete: () => void }) {
               </Alert>
             )}
 
-            <Button
-              disabled={!canContinue}
-              onClick={handleComplete}
-              className="w-full"
-              size="lg"
-            >
-              Continue to Finance
-            </Button>
+            {/* Check My Information Button */}
+            <div className="flex gap-3">
+              <CheckInfoButton
+                onClick={() => showSectionInfo("education")}
+                isLoading={isCheckingInfo}
+                className="flex-1"
+                variant="secondary"
+              />
+              <Button
+                disabled={!canContinue}
+                onClick={handleComplete}
+                className="flex-1"
+                size="lg"
+              >
+                Continue to Finance
+              </Button>
+            </div>
           </div>
         </CardFooter>
       </Card>
+
+      {/* Section Info Modal */}
+      <SectionInfoModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        story={currentStory}
+        isLoading={isCheckingInfo}
+        onExpandFullInfo={expandFullInformation}
+        onBackToSection={backToSection}
+        currentSection={currentSection}
+        isFullView={isFullView}
+        onGoToSection={goToSection}
+        onNavigateToSection={navigateToSection}
+      />
     </div>
   )
 } 

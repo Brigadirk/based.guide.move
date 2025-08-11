@@ -27,9 +27,13 @@ import { SectionHint } from "@/components/ui/section-hint"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { CheckInfoButton } from "@/components/ui/check-info-button"
+import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { useSectionInfo } from "@/lib/hooks/use-section-info"
 
 export function AdditionalInformation({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
 
   const generalNotes = getFormData("additionalInformation.generalNotes") ?? ""
   const specialSections = getFormData("additionalInformation.specialSections") ?? []
@@ -307,13 +311,39 @@ export function AdditionalInformation({ onComplete }: { onComplete: () => void }
       </CardContent>
 
       <CardFooter>
-        <Button 
-          className="w-full" 
-          onClick={handleContinue}
-        >
-          {hasContent ? "Continue" : "Continue (skip section)"}
-        </Button>
+        <div className="w-full space-y-3">
+          {/* Check My Information Button */}
+          <div className="flex justify-center">
+            <CheckInfoButton
+              onClick={() => showSectionInfo("additional")}
+              isLoading={isCheckingInfo}
+              disabled={!hasContent}
+            />
+          </div>
+          
+          <Button 
+            className="w-full" 
+            onClick={handleContinue}
+          >
+            {hasContent ? "Continue" : "Continue (skip section)"}
+          </Button>
+        </div>
       </CardFooter>
+
+      {/* Section Info Modal */}
+      <SectionInfoModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        story={currentStory}
+        isLoading={isCheckingInfo}
+        onExpandFullInfo={expandFullInformation}
+        onBackToSection={backToSection}
+        currentSection={currentSection}
+        isFullView={isFullView}
+        onGoToSection={goToSection}
+        onNavigateToSection={navigateToSection}
+      />
     </Card>
   )
 } 

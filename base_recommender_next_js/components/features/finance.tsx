@@ -10,6 +10,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
+import { CheckInfoButton } from "@/components/ui/check-info-button"
+import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { Plus, Trash2, DollarSign, TrendingUp, AlertTriangle, Info, Briefcase, PiggyBank, CreditCard, Home, Building, Target, Zap } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -44,6 +47,7 @@ const INCOME_CATEGORIES = {
 
 export function Finance({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
   const currencies = useCurrencies()
 
   // Get skip status (now controlled from sidebar)
@@ -772,17 +776,41 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
               </Alert>
             )}
 
-            <Button
-              disabled={!canContinue}
-              onClick={handleComplete}
-              className="w-full"
-              size="lg"
-            >
-              Continue to Social Security & Pensions
-            </Button>
+            {/* Check My Information Button */}
+            <div className="flex gap-3">
+              <CheckInfoButton
+                onClick={() => showSectionInfo("finance")}
+                isLoading={isCheckingInfo}
+                className="flex-1"
+                variant="secondary"
+              />
+              <Button
+                disabled={!canContinue}
+                onClick={handleComplete}
+                className="flex-1"
+                size="lg"
+              >
+                Continue to Social Security & Pensions
+              </Button>
+            </div>
           </div>
         </CardFooter>
       </Card>
+
+      {/* Section Info Modal */}
+      <SectionInfoModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        story={currentStory}
+        isLoading={isCheckingInfo}
+        onExpandFullInfo={expandFullInformation}
+        onBackToSection={backToSection}
+        currentSection={currentSection}
+        isFullView={isFullView}
+        onGoToSection={goToSection}
+        onNavigateToSection={navigateToSection}
+      />
     </div>
   )
 } 

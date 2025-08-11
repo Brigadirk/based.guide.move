@@ -74,4 +74,90 @@ class TaxProfile(BaseModel):
     def not_null(cls, v):  # noqa: D401
         if v is None:
             raise ValueError("Field must not be null")
-        return v 
+        return v
+
+
+# Section-specific schemas for individual story generation
+class SectionRequest(BaseModel):
+    """Base schema for individual section story generation requests."""
+    section_data: Dict
+    destination_country: Optional[str] = None  # For currency calculations
+    
+    class Config:
+        extra = "allow"
+
+
+class PersonalInformationRequest(BaseModel):
+    """Schema for personal information section story generation."""
+    personal_information: Dict
+    
+    class Config:
+        extra = "allow"
+
+
+class EducationRequest(BaseModel):
+    """Schema for education section story generation."""
+    education: Dict
+    
+    class Config:
+        extra = "allow"
+
+
+class ResidencyIntentionsRequest(BaseModel):
+    """Schema for residency intentions section story generation."""
+    residency_intentions: Dict
+    
+    class Config:
+        extra = "allow"
+
+
+class FinanceRequest(BaseModel):
+    """Schema for finance section story generation."""
+    finance: Dict
+    destination_country: Optional[str] = None
+    
+    class Config:
+        extra = "allow"
+
+
+class SocialSecurityRequest(BaseModel):
+    """Schema for social security and pensions section story generation."""
+    social_security_and_pensions: Dict
+    destination_country: Optional[str] = None
+    
+    class Config:
+        extra = "allow"
+
+
+class TaxDeductionsRequest(BaseModel):
+    """Schema for tax deductions and credits section story generation."""
+    tax_deductions_and_credits: Dict
+    destination_country: Optional[str] = None
+    
+    class Config:
+        extra = "allow"
+
+
+class FutureFinancialPlansRequest(BaseModel):
+    """Schema for future financial plans section story generation."""
+    future_financial_plans: Dict
+    destination_country: Optional[str] = None
+    
+    class Config:
+        extra = "allow"
+
+
+class AdditionalInformationRequest(BaseModel):
+    """Schema for additional information section story generation."""
+    additional_information: Dict
+    
+    class Config:
+        extra = "allow"
+
+
+class SummaryRequest(BaseModel):
+    """Schema for complete summary story generation."""
+    profile: Dict
+    
+    class Config:
+        extra = "allow" 

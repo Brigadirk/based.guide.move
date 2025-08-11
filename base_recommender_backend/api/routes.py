@@ -1,6 +1,18 @@
 from fastapi import APIRouter, HTTPException
+from dotenv import load_dotenv
 from modules.validator import validate_tax_data
 from modules.prompt_generator import generate_tax_prompt
+from modules.story_generator import (
+    make_personal_story, make_education_story, make_residency_intentions_story,
+    make_finance_story, make_social_security_story, make_tax_deductions_story,
+    make_future_financial_plans_story, make_additional_information_story, make_story
+)
+from modules.currency_utils import country_to_currency
+from modules.schemas import (
+    PersonalInformationRequest, EducationRequest, ResidencyIntentionsRequest,
+    FinanceRequest, SocialSecurityRequest, TaxDeductionsRequest,
+    FutureFinancialPlansRequest, AdditionalInformationRequest, SummaryRequest
+)
 from api.perplexity import get_tax_advice
 
 # Instantiate the router (replaces Flask Blueprint)
@@ -18,6 +30,7 @@ def tax_advice(data: dict):
         raise HTTPException(status_code=400, detail=validation_result["message"])
 
     prompt = generate_tax_prompt(data)
+        
     advice_response = get_tax_advice(prompt)
     return advice_response
 
@@ -41,3 +54,146 @@ def ping():
         "status": "success",
         "message": "API is running"
     }
+
+
+# Section-specific story generation endpoints
+@router.post("/section/personal-information")
+def get_personal_information_story(request: PersonalInformationRequest):
+    """Generate a story for the personal information section."""
+    try:
+        story = make_personal_story(request.personal_information)
+        return {
+            "status": "success",
+            "section": "personal_information",
+            "story": story
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating personal information story: {str(e)}")
+
+
+@router.post("/section/education")
+def get_education_story(request: EducationRequest):
+    """Generate a story for the education section."""
+    try:
+        story = make_education_story(request.education)
+        return {
+            "status": "success",
+            "section": "education",
+            "story": story
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating education story: {str(e)}")
+
+
+@router.post("/section/residency-intentions")
+def get_residency_intentions_story(request: ResidencyIntentionsRequest):
+    """Generate a story for the residency intentions section."""
+    try:
+        story = make_residency_intentions_story(request.residency_intentions)
+        return {
+            "status": "success",
+            "section": "residency_intentions",
+            "story": story
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating residency intentions story: {str(e)}")
+
+
+@router.post("/section/finance")
+def get_finance_story(request: FinanceRequest):
+    """Generate a story for the finance section."""
+    try:
+        dest_currency = "USD"
+        if request.destination_country:
+            dest_currency = country_to_currency(request.destination_country)
+        
+        story = make_finance_story(request.finance, dest_currency)
+        return {
+            "status": "success",
+            "section": "finance",
+            "story": story
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating finance story: {str(e)}")
+
+
+@router.post("/section/social-security-pensions")
+def get_social_security_story(request: SocialSecurityRequest):
+    """Generate a story for the social security and pensions section."""
+    try:
+        dest_currency = "USD"
+        if request.destination_country:
+            dest_currency = country_to_currency(request.destination_country)
+        
+        story = make_social_security_story(request.social_security_and_pensions, dest_currency)
+        return {
+            "status": "success",
+            "section": "social_security_and_pensions",
+            "story": story
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating social security story: {str(e)}")
+
+
+@router.post("/section/tax-deductions-credits")
+def get_tax_deductions_story(request: TaxDeductionsRequest):
+    """Generate a story for the tax deductions and credits section."""
+    try:
+        dest_currency = "USD"
+        if request.destination_country:
+            dest_currency = country_to_currency(request.destination_country)
+        
+        story = make_tax_deductions_story(request.tax_deductions_and_credits, dest_currency)
+        return {
+            "status": "success",
+            "section": "tax_deductions_and_credits",
+            "story": story
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating tax deductions story: {str(e)}")
+
+
+@router.post("/section/future-financial-plans")
+def get_future_financial_plans_story(request: FutureFinancialPlansRequest):
+    """Generate a story for the future financial plans section."""
+    try:
+        dest_currency = "USD"
+        if request.destination_country:
+            dest_currency = country_to_currency(request.destination_country)
+        
+        story = make_future_financial_plans_story(request.future_financial_plans, dest_currency)
+        return {
+            "status": "success",
+            "section": "future_financial_plans",
+            "story": story
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating future financial plans story: {str(e)}")
+
+
+@router.post("/section/additional-information")
+def get_additional_information_story(request: AdditionalInformationRequest):
+    """Generate a story for the additional information section."""
+    try:
+        story = make_additional_information_story(request.additional_information)
+        return {
+            "status": "success",
+            "section": "additional_information",
+            "story": story
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating additional information story: {str(e)}")
+
+
+@router.post("/section/summary")
+def get_summary_story(request: SummaryRequest):
+    """Generate a complete summary story from the entire profile."""
+    try:
+        story = make_story(request.profile)
+        return {
+            "status": "success",
+            "section": "summary",
+            "story": story
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating summary story: {str(e)}")
