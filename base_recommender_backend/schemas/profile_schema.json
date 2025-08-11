@@ -92,7 +92,15 @@
         "previousDegrees": {"type": "array", "items": {"type": "object"}},
         "visaSkills": {"type": "array", "items": {"type": "object"}},
         "interestedInStudying": {"type": "boolean"},
-        "schoolInterestDetails": {"type": "string"}
+        "schoolInterestDetails": {"type": "string"},
+        "militaryService": {
+          "type": "object",
+          "properties": {
+            "hasService": {"type": "boolean"},
+            "country": {"type": "string"},
+            "branch": {"type": "string"}
+          }
+        }
       }
     },
 
@@ -114,24 +122,71 @@
     "finance": {
       "type": "object",
       "properties": {
+        "incomeSituation": {"type": "string"},
         "totalWealth": {
           "type": "object",
           "properties": {
             "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
             "total": {"type": "number", "minimum": 0},
-            "primary_residence": {"type": "number", "minimum": 0}
+            "primaryResidence": {"type": "number", "minimum": 0}
           }
         },
         "incomeSources": {"type": "array", "items": {"type": "object"}},
         "expectedEmployment": {"type": "array", "items": {"type": "object"}},
         "liabilities": {"type": "array", "items": {"type": "object"}},
-        "capitalGains": {"type": "object"}
+        "capitalGains": {"type": "array", "items": {"type": "object"}},
+        "assets": {"type": "array", "items": {"type": "object"}}
       }
     },
 
-    "socialSecurityAndPensions": {"type": "object"},
-    "futureFinancialPlans": {"type": "object"},
-    "taxDeductionsAndCredits": {"type": "object"},
-    "additionalInformation": {"type": "object"}
+    "socialSecurityAndPensions": {
+      "type": "object",
+      "properties": {
+        "currentCountryContributions": {
+          "type": "object",
+          "properties": {
+            "isContributing": {"type": "boolean"},
+            "country": {"type": "string"},
+            "yearsOfContribution": {"type": "number", "minimum": 0}
+          }
+        },
+        "futurePensionContributions": {
+          "type": "object",
+          "properties": {
+            "isPlanning": {"type": "boolean"},
+            "details": {"type": "array", "items": {"type": "object"}}
+          }
+        },
+        "existingPlans": {
+          "type": "object",
+          "properties": {
+            "hasPlans": {"type": "boolean"},
+            "details": {"type": "array", "items": {"type": "object"}}
+          }
+        }
+      }
+    },
+    "futureFinancialPlans": {
+      "type": "object",
+      "properties": {
+        "plannedInvestments": {"type": "array", "items": {"type": "object"}},
+        "plannedPropertyTransactions": {"type": "array", "items": {"type": "object"}},
+        "plannedRetirementContributions": {"type": "array", "items": {"type": "object"}},
+        "plannedBusinessChanges": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "taxDeductionsAndCredits": {
+      "type": "object",
+      "properties": {
+        "potentialDeductions": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "additionalInformation": {
+      "type": "object",
+      "properties": {
+        "generalNotes": {"type": "string"},
+        "specialSections": {"type": "array", "items": {"type": "string"}}
+      }
+    }
   }
 } 

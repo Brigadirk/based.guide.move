@@ -358,11 +358,16 @@ def _summarise_capital_gains(cg: Dict[str, Any], dest_currency: str) -> str:
 def finance_section(fin: Dict[str, Any], dest_currency: str) -> str:
     parts: List[str] = []
 
+    # Income situation summary
+    income_situation = fin.get("incomeSituation")
+    if income_situation:
+        parts.append(f"Their current income situation: {income_situation}.")
+
     tw = fin.get("totalWealth")
     if tw and tw.get("total"):
         parts.append(
             f"Reported net worth is {_format_money(tw['total'], tw.get('currency', 'USD'), dest_currency)}; "
-            f"primary residence accounts for {tw.get('primary_residence', 0):,.0f} {tw.get('currency','USD')}."
+            f"primary residence accounts for {tw.get('primaryResidence', 0):,.0f} {tw.get('currency','USD')}."
         )
 
     income_sources = fin.get("incomeSources", [])
@@ -501,6 +506,15 @@ def education_section(edu: Dict[str, Any]) -> str:
         if len(offers) > 3:
             segments.append(f"…and {len(offers)-3} more offers.")
 
+    # Military service background
+    military = edu.get("militaryService", {})
+    if military.get("hasService"):
+        country = military.get("country", "their home country")
+        branch = military.get("branch", "the military")
+        segments.append(f"They have military service experience in {country} with {branch}.")
+    elif military:
+        segments.append("They have no military service background.")
+
     return " ".join(segments)
 
 
@@ -525,14 +539,20 @@ def ssp_section(ssp: Dict[str, Any], dest_currency: str) -> str:
         details = future.get("details", [])
         if details:
             for d in details[:3]:
-                plan = d.get("planType", "a pension scheme")
-                amt = d.get("amount") or d.get("expectedAnnual") or 0
+                plan = d.get("pensionType") or d.get("planType", "a pension scheme")
+                # Handle "Other" type with custom description
+                if plan == "Other" and d.get("otherPensionType"):
+                    plan = d.get("otherPensionType")
+                amt = d.get("contributionAmount") or d.get("amount") or d.get("expectedAnnual") or 0
                 curr = d.get("currency", "USD")
+                country = d.get("country", "")
                 if amt:
                     amt_str = _format_money(amt, curr, dest_currency)
-                    segments.append(f"• Expected contribution of {amt_str} into {plan}.")
+                    location = f" in {country}" if country else ""
+                    segments.append(f"• Expected contribution of {amt_str} into {plan}{location}.")
                 else:
-                    segments.append(f"• Plans to contribute to {plan} (amount not specified).")
+                    location = f" in {country}" if country else ""
+                    segments.append(f"• Plans to contribute to {plan}{location} (amount not specified).")
             if len(details) > 3:
                 segments.append(f"…and {len(details)-3} more contribution plan(s).")
     else:
@@ -569,14 +589,22 @@ def future_plans_section(fut: Dict[str, Any], dest_currency: str) -> str:
         sentences = []
         sentences.append(f"They are considering {len(items)} {label}{'s' if len(items)!=1 else ''}.")
         for itm in items[:3]:
-            desc = itm.get("description") or itm.get("asset") or itm.get("type") or label
-            amt = itm.get("amount") or itm.get("value")
+            # Handle different field names for different plan types
+            desc = (itm.get("type") or itm.get("otherType") or 
+                    itm.get("transactionType") or itm.get("accountType") or 
+                    itm.get("otherAccountType") or itm.get("changeType") or 
+                    itm.get("description") or itm.get("asset") or label)
+            amt = (itm.get("estimatedValue") or itm.get("estimatedValueImpact") or 
+                   itm.get("contributionAmount") or itm.get("amount") or itm.get("value"))
             curr = itm.get("currency", "USD")
+            country = itm.get("country", "")
             if amt:
                 amt_str = _format_money(amt, curr, dest_currency)
-                sentences.append(f"• {desc}: {amt_str}.")
+                location = f" in {country}" if country else ""
+                sentences.append(f"• {desc}: {amt_str}{location}.")
             else:
-                sentences.append(f"• {desc}.")
+                location = f" in {country}" if country else ""
+                sentences.append(f"• {desc}{location}.")
         if len(items) > 3:
             sentences.append(f"…and {len(items)-3} more.")
         return " " .join(sentences)
