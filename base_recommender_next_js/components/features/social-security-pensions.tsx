@@ -15,10 +15,9 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
-
-// Simple currencies hook - replace with actual implementation
-const useCurrencies = () => ["USD", "EUR", "GBP", "CAD", "AUD", "CHF", "JPY", "CNY"]
+import { useCurrencies } from "@/lib/hooks/use-currencies"
 
 const PENSION_SCHEME_TYPES = [
   "Employer-sponsored plan",
@@ -572,21 +571,15 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
               This section is optional. You can continue even if you don't have social security or pension information to provide.
             </div>
 
-            {/* Check My Information Button */}
-            <div className="flex justify-center">
-              <CheckInfoButton
-                onClick={() => showSectionInfo("social-security")}
-                isLoading={isCheckingInfo}
-              />
-            </div>
-
-            <Button
-              onClick={handleComplete}
-              className="w-full"
-              size="lg"
-            >
-              Continue to Tax Deductions & Credits
-            </Button>
+            {/* Section Footer */}
+            <SectionFooter
+              onCheckInfo={() => showSectionInfo("social-security")}
+              isCheckingInfo={isCheckingInfo}
+              sectionId="social-security"
+              onContinue={handleComplete}
+              canContinue={true}
+              nextSectionName="Tax Deductions & Credits"
+            />
           </div>
         </CardFooter>
       </Card>

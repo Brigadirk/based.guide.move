@@ -2,20 +2,21 @@ import json
 from pathlib import Path
 from functools import lru_cache
 
-# Path lookup: try next_js then fallback
-COUNTRY_INFO_PATHS = [
-    Path(__file__).resolve().parents[2] / "base_recommender_next_js" / "data" / "country_info.json",
-    Path(__file__).resolve().parents[2] / "base_recommender" / "app_components" / "country_info" / "country_info.json",
-    Path(__file__).resolve().parents[1] / "exchange_rate_fetcher" / "country_info.json",
-]
+# Single source of truth: Next.js data directory
+COUNTRY_INFO_PATH = Path(__file__).resolve().parents[2] / "base_recommender_next_js" / "data" / "country_info.json"
 
 
 @lru_cache(maxsize=1)
 def _load_mapping() -> dict[str, str]:
-    for p in COUNTRY_INFO_PATHS:
-        if p.exists():
-            data = json.loads(p.read_text())
+    """Load country to currency mapping from the single source of truth."""
+    if COUNTRY_INFO_PATH.exists():
+        try:
+            data = json.loads(COUNTRY_INFO_PATH.read_text())
             return {country: info.get("currency_shorthand", "USD") for country, info in data.items()}
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"Error loading country info: {e}")
+    else:
+        print(f"Country info file not found: {COUNTRY_INFO_PATH}")
     return {}
 
 

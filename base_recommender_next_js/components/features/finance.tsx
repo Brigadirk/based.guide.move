@@ -12,14 +12,13 @@ import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
-import { Plus, Trash2, DollarSign, TrendingUp, AlertTriangle, Info, Briefcase, PiggyBank, CreditCard, Home, Building, Target, Zap, Search } from "lucide-react"
+import { Icons } from "@/components/icons"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-
-// Simple currencies hook - replace with actual implementation
-const useCurrencies = () => ["USD", "EUR", "GBP", "CAD", "AUD", "CHF", "JPY", "CNY"]
+import { useCurrencies } from "@/lib/hooks/use-currencies"
 
 // Income Categories
 const INCOME_CATEGORIES = {
@@ -144,7 +143,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
       {/* Page Header */}
       <div className="text-center pb-4 border-b">
         <div className="flex items-center justify-center gap-3 mb-4">
-          <DollarSign className="w-7 h-7 text-primary" />
+          <Icons.money className="w-7 h-7 text-primary" />
           <h1 className="text-3xl font-bold tracking-tight">Financial Information</h1>
         </div>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -161,7 +160,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
         <Card className="shadow-sm border-l-4 border-l-green-500">
           <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
             <CardTitle className="text-xl flex items-center gap-3">
-              <Zap className="w-6 h-6 text-green-600" />
+              <Icons.important className="w-6 h-6 text-green-600" />
               Finance Details Skipped
             </CardTitle>
             <p className="text-sm text-muted-foreground">Focus on financial requirements only</p>
@@ -192,7 +191,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
           <Card className="shadow-sm border-l-4 border-l-blue-500">
             <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
               <CardTitle className="text-xl flex items-center gap-3">
-                <TrendingUp className="w-6 h-6 text-blue-600" />
+                <Icons.investment className="w-6 h-6 text-blue-600" />
                 Income Situation Assessment
               </CardTitle>
               <p className="text-sm text-muted-foreground">What's your income situation after moving?</p>
@@ -268,7 +267,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
           <Card className="shadow-sm border-l-4 border-l-emerald-500">
             <CardHeader className="bg-gradient-to-r from-emerald-50 to-transparent dark:from-emerald-950/20">
               <CardTitle className="text-xl flex items-center gap-3">
-                <Target className="w-6 h-6 text-emerald-600" />
+                <Icons.target className="w-6 h-6 text-emerald-600" />
                 Total Wealth
               </CardTitle>
               <p className="text-sm text-muted-foreground">Enter everything you own, then indicate primary residence share</p>
@@ -338,7 +337,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
           <Card className="shadow-sm border-l-4 border-l-purple-500">
             <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
               <CardTitle className="text-xl flex items-center gap-3">
-                <TrendingUp className="w-6 h-6 text-purple-600" />
+                <Icons.investment className="w-6 h-6 text-purple-600" />
                 Planned Asset Sales in Your First Year
               </CardTitle>
               <p className="text-sm text-muted-foreground">Capital gains planning for your first year after moving</p>
@@ -527,7 +526,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
             <Card className="shadow-sm border-l-4 border-l-green-500">
               <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
                 <CardTitle className="text-xl flex items-center gap-3">
-                  <Briefcase className="w-6 h-6 text-green-600" />
+                  <Icons.work className="w-6 h-6 text-green-600" />
                   Current Income Sources
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">Report INCOME ONLY, not asset values</p>
@@ -899,7 +898,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
             <Card className="shadow-sm border-l-4 border-l-orange-500">
               <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
                 <CardTitle className="text-xl flex items-center gap-3">
-                  <Search className="w-6 h-6 text-orange-600" />
+                  <Icons.search className="w-6 h-6 text-orange-600" />
                   Expected Employment
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">Future income sources you plan to establish</p>
@@ -918,7 +917,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
           <Card className="shadow-sm border-l-4 border-l-red-500">
             <CardHeader className="bg-gradient-to-r from-red-50 to-transparent dark:from-red-950/20">
               <CardTitle className="text-xl flex items-center gap-3">
-                <CreditCard className="w-6 h-6 text-red-600" />
+                <Icons.credit className="w-6 h-6 text-red-600" />
                 Liabilities & Debts
               </CardTitle>
               <p className="text-sm text-muted-foreground">Report DEBTS ONLY, not asset values</p>
@@ -1247,23 +1246,15 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
               </Alert>
             )}
 
-            {/* Check My Information Button */}
-            <div className="flex gap-3">
-              <CheckInfoButton
-                onClick={() => showSectionInfo("finance")}
-                isLoading={isCheckingInfo}
-                className="flex-1"
-                disabled={!skipDetails && !incomeSituation}
-              />
-              <Button
-                onClick={handleComplete}
-                disabled={!skipDetails && !incomeSituation}
-                className="flex-1"
-                size="lg"
-              >
-                Continue to Social Security & Pensions
-              </Button>
-            </div>
+            {/* Section Footer */}
+            <SectionFooter
+              onCheckInfo={() => showSectionInfo("finance")}
+              isCheckingInfo={isCheckingInfo}
+              sectionId="finance"
+              onContinue={handleComplete}
+              canContinue={skipDetails || !!incomeSituation}
+              nextSectionName="Social Security & Pensions"
+            />
           </div>
         </CardFooter>
       </Card>

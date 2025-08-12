@@ -17,10 +17,9 @@ import { SectionHint } from "@/components/ui/section-hint"
 import { Plus, TrendingUp, Building, PiggyBank, Briefcase, HelpCircle } from "lucide-react"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
-
-// Simple currencies hook - replace with actual implementation
-const useCurrencies = () => ["USD", "EUR", "GBP", "CAD", "AUD", "CHF", "JPY", "CNY"]
+import { useCurrencies } from "@/lib/hooks/use-currencies"
 
 export function FutureFinancialPlans({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
@@ -705,21 +704,15 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
               This section is optional. You can continue even if you don't have future financial plans to report.
             </div>
 
-            {/* Check My Information Button */}
-            <div className="flex justify-center">
-              <CheckInfoButton
-                onClick={() => showSectionInfo("future-plans")}
-                isLoading={isCheckingInfo}
-              />
-            </div>
-
-            <Button
-              onClick={handleComplete}
-              className="w-full"
-              size="lg"
-            >
-              Continue to Additional Information
-            </Button>
+            {/* Section Footer */}
+            <SectionFooter
+              onCheckInfo={() => showSectionInfo("future-plans")}
+              isCheckingInfo={isCheckingInfo}
+              sectionId="future-plans"
+              onContinue={handleComplete}
+              canContinue={true}
+              nextSectionName="Additional Information"
+            />
           </div>
         </CardFooter>
       </Card>

@@ -11,6 +11,9 @@ interface CheckInfoButtonProps {
   variant?: "default" | "outline" | "secondary" | "ghost" | "link"
   size?: "default" | "sm" | "lg" | "icon"
   className?: string
+  children?: React.ReactNode
+  icon?: React.ReactNode
+  loadingText?: string
 }
 
 export function CheckInfoButton({ 
@@ -19,8 +22,14 @@ export function CheckInfoButton({
   disabled = false,
   variant = "outline",
   size = "sm",
-  className = ""
+  className = "",
+  children,
+  icon,
+  loadingText = "Generating..."
 }: CheckInfoButtonProps) {
+  const defaultIcon = <FileText className="w-4 h-4" />
+  const defaultText = "Check My Information"
+  
   return (
     <Button
       variant={variant}
@@ -32,9 +41,9 @@ export function CheckInfoButton({
       {isLoading ? (
         <Loader2 className="w-4 h-4 animate-spin" />
       ) : (
-        <FileText className="w-4 h-4" />
+        icon || defaultIcon
       )}
-      {isLoading ? "Generating..." : "Check My Information"}
+      {isLoading ? loadingText : (children || defaultText)}
     </Button>
   )
 }

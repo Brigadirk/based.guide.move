@@ -15,6 +15,7 @@ import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { Plus, Trash2, GraduationCap, BookOpen, Award, Users, Info, Target, Brain, School, Shield } from "lucide-react"
 
@@ -1044,23 +1045,15 @@ export function Education({ onComplete }: { onComplete: () => void }) {
               </Alert>
             )}
 
-            {/* Check My Information Button */}
-            <div className="flex gap-3">
-              <CheckInfoButton
-                onClick={() => showSectionInfo("education")}
-                isLoading={isCheckingInfo}
-                className="flex-1"
-                variant="secondary"
-              />
-              <Button
-                disabled={!canContinue}
-                onClick={handleComplete}
-                className="flex-1"
-                size="lg"
-              >
-                Continue to Finance
-              </Button>
-            </div>
+            {/* Section Footer */}
+            <SectionFooter
+              onCheckInfo={() => showSectionInfo("education")}
+              isCheckingInfo={isCheckingInfo}
+              sectionId="education"
+              onContinue={handleComplete}
+              canContinue={canContinue}
+              nextSectionName="Residency Intentions"
+            />
           </div>
         </CardFooter>
       </Card>

@@ -81,57 +81,123 @@ def personal_section(pi: Dict[str, Any]) -> str:
             sent += "."
             lines.append(sent)
 
-    # Partner same-sex detail
-    if pi.get("relocationPartner"):
-        partner_info = pi.get("relocationPartnerInfo", {})
-        same_sex = partner_info.get("sameSex")
+    # Partner information
+    partner_info = pi.get("relocationPartnerInfo", {})
+    has_partner = pi.get("relocationPartner", False)  # Check the top-level field
+    
+    if has_partner and partner_info:
         rel_type = partner_info.get("relationshipType", "partner")
+        
+        # Basic partner info
+        same_sex = partner_info.get("sameSex")
         if same_sex is not None:
             sex_desc = "same-sex" if same_sex else "opposite-sex"
-            lines.append(f"Their relocating {rel_type.lower()} is {sex_desc}.")
-
-        # Relationship duration
-        full_years = partner_info.get("fullRelationshipDuration")
-        official_years = partner_info.get("officialRelationshipDuration")
-        if full_years or official_years:
-            dur_sentence = "They have been together"
-            if full_years:
-                dur_sentence += f" for about {full_years} year{'s' if full_years != 1 else ''} in total"
-            if official_years is not None:
-                dur_sentence += (
-                    (", " if full_years else " ") +
-                    f"with {official_years} year{'s' if official_years != 1 else ''} of official status"
-                )
-            dur_sentence += "."
-            lines.append(dur_sentence)
+            lines.append(f"They are relocating with their {sex_desc} {rel_type.lower()}.")
+        else:
+            lines.append(f"They are relocating with their {rel_type.lower()}.")
 
         # Partner nationalities
         p_nats = partner_info.get("partnerNationalities", [])
         if p_nats:
             pn_list = ", ".join(n.get("country") for n in p_nats if n.get("country"))
             if pn_list:
-                lines.append(f"Partner holds citizenship of: {pn_list}.")
+                lines.append(f"Their {rel_type.lower()} holds citizenship of: {pn_list}.")
+
+        # Relationship duration with context based on relationship type
+        full_years = partner_info.get("fullRelationshipDuration")
+        official_years = partner_info.get("officialRelationshipDuration")
+        
+        if full_years is not None and full_years > 0:
+            dur_sentence = f"They have been together for {full_years} year{'s' if full_years != 1 else ''}"
+            
+            if official_years is not None:
+                if official_years > 0:
+                    # Interpret official duration based on relationship type
+                    if rel_type == "Spouse":
+                        if official_years == full_years:
+                            dur_sentence += f", all of which has been as a married couple"
+                        else:
+                            dur_sentence += f", including {official_years} year{'s' if official_years != 1 else ''} as a married couple"
+                    elif rel_type in ["Civil Partner", "Domestic Partner"]:
+                        if official_years == full_years:
+                            dur_sentence += f", all of which has been in a registered partnership"
+                        else:
+                            dur_sentence += f", including {official_years} year{'s' if official_years != 1 else ''} in a registered partnership"
+                    elif rel_type == "Fiancé(e)":
+                        if official_years == full_years:
+                            dur_sentence += f", all of which has been as an engaged couple"
+                        else:
+                            dur_sentence += f", including {official_years} year{'s' if official_years != 1 else ''} as an engaged couple"
+                    elif rel_type == "Unmarried Partner":
+                        if official_years == full_years:
+                            dur_sentence += f", all of which has been while living together"
+                        else:
+                            dur_sentence += f", including {official_years} year{'s' if official_years != 1 else ''} living together"
+                    else:
+                        # Fallback for unknown relationship types
+                        if official_years == full_years:
+                            dur_sentence += f", all of which has been in an official capacity"
+                        else:
+                            dur_sentence += f", including {official_years} year{'s' if official_years != 1 else ''} in an official capacity"
+                elif official_years == 0:
+                    # No official duration - different meanings based on relationship type
+                    if rel_type == "Spouse":
+                        dur_sentence += " but they are not yet married"
+                    elif rel_type in ["Civil Partner", "Domestic Partner"]:
+                        dur_sentence += " but they do not have a registered partnership"
+                    elif rel_type == "Fiancé(e)":
+                        dur_sentence += " but they are not yet engaged"
+                    elif rel_type == "Unmarried Partner":
+                        dur_sentence += " but they do not live together"
+                    else:
+                        dur_sentence += " in a romantic relationship but without official recognition"
+            
+            lines.append(dur_sentence + ".")
+
+        # Relationship proof
+        can_prove = partner_info.get("canProveRelationship")
+        if can_prove is True:
+            lines.append("They can provide documentation to prove their relationship (photos, correspondence, joint accounts, etc.).")
+        elif can_prove is False:
+            lines.append("They have indicated they may have limited documentation to prove their relationship.")
 
     # Dependents
-    deps = pi.get("relocationDependents", [])
-    if deps:
+    deps = pi.get("dependents", [])
+    if deps and len(deps) > 0:
         dep_summaries = []
         for d in deps[:3]:
             rel = d.get("relationship", "dependent")
+            
+            # Get dependent's nationalities
+            dep_nats = d.get("nationalities", [])
+            nat_list = []
+            if dep_nats:
+                for n in dep_nats:
+                    country = n.get("country")
+                    if country:
+                        nat_list.append(country)
+            
+            # Calculate age if date of birth is provided
             dob = d.get("dateOfBirth")
             age_str = ""
             if dob:
                 try:
                     age = int((date.today() - datetime.strptime(dob, "%Y-%m-%d").date()).days / 365.25)
-                    age_str = f", age {age}"
+                    age_str = f" (age {age})"
                 except Exception:
                     pass
-            student = " (student)" if d.get("isStudent") else ""
-            dep_summaries.append(f"{rel}{age_str}{student}")
-        more = f" and {len(deps)-3} other(s)" if len(deps) > 3 else ""
-        lines.append("Accompanying dependents: " + ", ".join(dep_summaries) + more + ".")
+            
+            # Student status
+            student_status = " - currently a student" if d.get("isStudent") else ""
+            
+            # Build dependent description
+            nationality_text = f" with citizenship of {', '.join(nat_list)}" if nat_list else ""
+            dep_summaries.append(f"{rel}{age_str}{nationality_text}{student_status}")
+        
+        more = f" and {len(deps)-3} other dependent(s)" if len(deps) > 3 else ""
+        lines.append("They are also relocating with: " + "; ".join(dep_summaries) + more + ".")
 
-    return " ".join(lines) or "Personal information has not been completed yet."
+    return " ".join(lines) or "User has not submitted any information on this section."
 
 
 def _bool_sentence(flag: bool, when_true: str, when_false: str | None = None) -> str:
@@ -150,7 +216,7 @@ def _summarise_language(prof: Dict[str, int]) -> str:
     return ", ".join(parts)
 
 
-def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None) -> str:
+def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None, alternative_interests: Dict[str, Any] = None) -> str:
     if not ri:
         return "Residency intentions have not been completed yet."
 
@@ -262,43 +328,16 @@ def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None) 
                 sentences.append(f"Special family circumstances: {special_circumstances}")
     
     # Alternative interests section for those with no visa issues and finance skipped
-    alternative_interests = ri.get("alternativeInterests", [])
-    specific_questions = ri.get("specificQuestions", "").strip()
-    information_depth = ri.get("informationDepth", "")
-    
-    if alternative_interests or specific_questions or information_depth:
-        sentences.append("Since they have no visa requirements and are not interested in detailed taxation advice, they are seeking alternative information.")
+    if alternative_interests:
+        purpose = alternative_interests.get("purpose", "").strip()
+        completed_via_summary = alternative_interests.get("completedViaSummary", False)
         
-        if alternative_interests:
-            interest_map = {
-                "culturalIntegration": "cultural integration and lifestyle differences",
-                "healthcareSystem": "healthcare system and medical services",
-                "educationSystem": "education system and schooling options", 
-                "employmentMarket": "job market and employment opportunities",
-                "housingMarket": "housing market and rental/purchase options",
-                "socialServices": "social services and government benefits",
-                "legalRequirements": "legal requirements and bureaucratic processes",
-                "costOfLiving": "general cost of living and lifestyle expenses"
-            }
-            interest_text = [interest_map.get(i, i) for i in alternative_interests]
-            if len(interest_text) == 1:
-                sentences.append(f"They are particularly interested in {interest_text[0]}.")
-            elif len(interest_text) == 2:
-                sentences.append(f"They are particularly interested in {interest_text[0]} and {interest_text[1]}.")
-            else:
-                sentences.append(f"They are particularly interested in {', '.join(interest_text[:-1])}, and {interest_text[-1]}.")
-        
-        if specific_questions:
-            sentences.append(f"Specific questions they have: {specific_questions}")
-        
-        if information_depth:
-            depth_map = {
-                "overview": "a general overview and highlights",
-                "practical": "practical steps and how-to information", 
-                "detailed": "detailed analysis and comprehensive guidance"
-            }
-            depth_text = depth_map.get(information_depth, information_depth)
-            sentences.append(f"They prefer {depth_text}.")
+        if purpose:
+            sentences.append("Since they have no visa requirements and are not interested in detailed taxation advice, they are seeking alternative information.")
+            sentences.append(f"Their specific purpose for using this system: {purpose}")
+            
+            if completed_via_summary:
+                sentences.append("They chose to complete their profile via the alternative pathway and proceed directly to a targeted summary.")
 
     # Residency plans - only mention if explicitly provided
     rp = ri.get("residencyPlans", {})
@@ -498,7 +537,7 @@ def finance_section(fin: Dict[str, Any], dest_currency: str) -> str:
         return "The user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
     
     if not fin:
-        return "Financial information has not been completed yet."
+        return "User has not submitted any information on this section."
 
     parts: List[str] = []
 
@@ -561,12 +600,12 @@ def finance_section(fin: Dict[str, Any], dest_currency: str) -> str:
     # Filter empties
     parts = [p for p in parts if p]
 
-    return " ".join(parts) if parts else "Financial information has not been completed yet."
+    return " ".join(parts) if parts else "User has not submitted any information on this section."
 
 
 def education_section(edu: Dict[str, Any]) -> str:
     if not edu:
-        return "Education information has not been completed yet."
+        return "User has not submitted any information on this section."
 
     segments: List[str] = []
 
@@ -640,12 +679,12 @@ def education_section(edu: Dict[str, Any]) -> str:
     elif military.get("hasService") is False:
         segments.append("They have no military service background.")
 
-    return " ".join(segments) if segments else "Education information has not been completed yet."
+    return " ".join(segments) if segments else "User has not submitted any information on this section."
 
 
 def ssp_section(ssp: Dict[str, Any], dest_currency: str) -> str:
     if not ssp:
-        return "Social security and pension information has not been completed yet."
+        return "User has not submitted any information on this section."
 
     segments: List[str] = []
 
@@ -702,12 +741,12 @@ def ssp_section(ssp: Dict[str, Any], dest_currency: str) -> str:
     elif existing.get("hasPlans") is False:
         segments.append("They have no existing pension plans.")
 
-    return " ".join(segments) if segments else "Social security and pension information has not been completed yet."
+    return " ".join(segments) if segments else "User has not submitted any information on this section."
 
 
 def future_plans_section(fut: Dict[str, Any], dest_currency: str) -> str:
     if not fut:
-        return "Future financial plans information has not been completed yet."
+        return "User has not submitted any information on this section."
 
     segs: List[str] = []
 
@@ -749,16 +788,16 @@ def future_plans_section(fut: Dict[str, Any], dest_currency: str) -> str:
         )
     )
 
-    return " " .join(segs) if segs else "Future financial plans information has not been completed yet."
+    return " ".join(segs) if segs else "User has not submitted any information on this section."
 
 
 def deductions_section(ded: Dict[str, Any], dest_currency: str) -> str:
     if not ded:
-        return "Tax deductions and credits information has not been completed yet."
+        return "User has not submitted any information on this section."
         
     lst = ded.get("potentialDeductions", [])
     if not lst:
-        return "Tax deductions and credits information has not been completed yet."
+        return "User has not submitted any information on this section."
 
     total_usd = _mixed_total(lst, "amount")
     total_dest = convert(total_usd, "USD", dest_currency)
@@ -781,7 +820,7 @@ def deductions_section(ded: Dict[str, Any], dest_currency: str) -> str:
 
 def additional_section(add: Dict[str, Any]) -> str:
     if not add:
-        return "Additional information has not been completed yet."
+        return "User has not submitted any information on this section."
 
     notes = add.get("generalNotes")
     special = add.get("specialSections", [])
@@ -793,7 +832,7 @@ def additional_section(add: Dict[str, Any]) -> str:
             segs.append(f"User note: {sec[:200]}{'…' if len(sec)>200 else ''}")
         if len(special) > 2:
             segs.append(f"…and {len(special)-2} more note sections.")
-    return " " .join(segs) if segs else "Additional information has not been completed yet."
+    return " ".join(segs) if segs else "User has not submitted any information on this section."
 
 
 def make_story(profile: Dict[str, Any]) -> str:
@@ -801,7 +840,7 @@ def make_story(profile: Dict[str, Any]) -> str:
     dest_currency = country_to_currency(dest_country) if dest_country else "USD"
 
     sections = [
-        ("Residency Plans", residency_section(profile.get("residencyIntentions", {}), profile.get("personalInformation", {}))),
+        ("Residency Plans", residency_section(profile.get("residencyIntentions", {}), profile.get("personalInformation", {}), profile.get("alternativeInterests", {}))),
         ("Finance", finance_section(profile.get("finance", {}), dest_currency)),
         ("Personal Information", personal_section(profile.get("personalInformation", {}))),
         ("Education", education_section(profile.get("education", {}))),

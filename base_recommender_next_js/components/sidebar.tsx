@@ -38,7 +38,7 @@ const stepIcons = [
 ];
 
 export function Sidebar({ steps, currentStep, onStepChange }: SidebarProps) {
-  const { formData, getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { formData, getFormData, updateFormData, markSectionComplete, isSectionMarkedComplete } = useFormStore()
   const destCountry = formData.destination?.country ?? ""
   const destRegion = formData.destination?.region ?? ""
   
@@ -77,7 +77,7 @@ export function Sidebar({ steps, currentStep, onStepChange }: SidebarProps) {
     }
   }
   return (
-    <div className="w-80 bg-card border-r border-border p-4 h-screen overflow-y-auto">
+    <div className="w-96 bg-card border-r border-border p-4 h-screen overflow-y-auto">
       <div className="mb-6">
         <h2 className="text-lg font-semibold text-foreground mb-2">Assessment Steps</h2>
         <p className="text-sm text-muted-foreground">Complete each section to generate your personalized analysis</p>
@@ -126,6 +126,8 @@ export function Sidebar({ steps, currentStep, onStepChange }: SidebarProps) {
           const Icon = stepIcons[index] || FileText;
           const isCompleted = index < currentStep;
           const isCurrent = index === currentStep;
+          // Sequential progression: only allow access to current, previous completed, or next incomplete section
+          const canAccess = index <= currentStep || isCompleted;
           
           return (
             <Button
@@ -134,15 +136,21 @@ export function Sidebar({ steps, currentStep, onStepChange }: SidebarProps) {
               className={`w-full justify-start gap-3 h-auto p-3 ${
                 isCurrent ? "bg-primary text-primary-foreground" : 
                 isCompleted ? "bg-muted text-foreground border-border" : 
+                !canAccess ? "text-muted-foreground/40 cursor-not-allowed" :
                 "text-muted-foreground hover:text-foreground"
               }`}
-              onClick={() => onStepChange(index)}
+              onClick={() => canAccess && onStepChange(index)}
+              disabled={!canAccess}
+              title={!canAccess ? "Complete previous sections first" : undefined}
             >
               <Icon className="h-4 w-4" />
               <div className="text-left">
                 <div className="font-medium">{step.title}</div>
                 {isCompleted && (
                   <div className="text-xs opacity-75">Completed</div>
+                )}
+                {!canAccess && (
+                  <div className="text-xs opacity-50">Locked</div>
                 )}
               </div>
             </Button>

@@ -38,6 +38,9 @@
     },
     "additionalInformation": {
       "$ref": "#/definitions/additionalInformation"
+    },
+    "alternativeInterests": {
+      "$ref": "#/definitions/alternativeInterests"
     }
   },
   "definitions": {
@@ -71,11 +74,36 @@
         "relocationPartnerInfo": {
           "type": "object",
           "properties": {
-            "relationshipType": {"type": "string"},
+            "relationshipType": {
+              "type": "string", 
+              "enum": ["Spouse", "Fiancé(e)", "Civil Partner", "Domestic Partner", "Unmarried Partner"],
+              "description": "Type of relationship - determines what 'official duration' means"
+            },
             "sameSex": {"type": "boolean"},
-            "fullRelationshipDuration": {"type": "number", "minimum": 0},
-            "officialRelationshipDuration": {"type": "number", "minimum": 0},
-            "partnerNationalities": {"type": "array", "items": {"type": "object", "properties": {"country": {"type": "string"}}}}
+            "fullRelationshipDuration": {
+              "type": "number", 
+              "minimum": 0,
+              "description": "Total time in romantic relationship"
+            },
+            "officialRelationshipDuration": {
+              "type": "number", 
+              "minimum": 0,
+              "description": "Duration meaning depends on relationshipType: Spouse=marriage years, Civil/Domestic Partner=registered partnership years, Unmarried Partner=cohabiting years, Fiancé(e)=engagement years"
+            },
+            "canProveRelationship": {
+              "type": "boolean",
+              "description": "Whether they can provide documentation to prove the relationship"
+            },
+            "partnerNationalities": {
+              "type": "array", 
+              "items": {
+                "type": "object", 
+                "properties": {
+                  "country": {"type": "string"},
+                  "willingToRenounce": {"type": "boolean"}
+                }
+              }
+            }
           }
         },
         "numRelocationDependents": {"type": "integer", "minimum": 0},
@@ -254,6 +282,14 @@
       "properties": {
         "generalNotes": {"type": "string"},
         "specialSections": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+
+    "alternativeInterests": {
+      "type": "object",
+      "properties": {
+        "purpose": {"type": "string"},
+        "completedViaSummary": {"type": "boolean"}
       }
     }
   }

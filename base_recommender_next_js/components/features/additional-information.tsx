@@ -27,6 +27,7 @@ import { SectionHint } from "@/components/ui/section-hint"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 
 export function AdditionalInformation({ onComplete }: { onComplete: () => void }) {
@@ -317,21 +318,15 @@ export function AdditionalInformation({ onComplete }: { onComplete: () => void }
               This section is optional. You can complete your profile even if you don't have additional information to provide.
             </div>
 
-            {/* Check My Information Button */}
-            <div className="flex justify-center">
-              <CheckInfoButton
-                onClick={() => showSectionInfo("additional")}
-                isLoading={isCheckingInfo}
-              />
-            </div>
-
-            <Button
-              onClick={handleComplete}
-              className="w-full"
-              size="lg"
-            >
-              Complete Profile
-            </Button>
+            {/* Section Footer */}
+            <SectionFooter
+              onCheckInfo={() => showSectionInfo("additional")}
+              isCheckingInfo={isCheckingInfo}
+              sectionId="additional"
+              onContinue={handleComplete}
+              canContinue={true}
+              nextSectionName="Summary"
+            />
           </div>
         </CardFooter>
       </Card>

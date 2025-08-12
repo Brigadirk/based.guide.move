@@ -36,6 +36,8 @@ import { AdditionalInformation } from "@/components/features/additional-informat
 import { Summary } from "@/components/features/summary";
 import { useFormStore } from "@/lib/stores";
 import { DevStateViewer } from "@/components/dev/state-viewer";
+import { AlternativeInterestsModal } from "@/components/ui/alternative-interests-modal";
+import { useAlternativeInterests } from "@/lib/hooks/use-alternative-interests";
 import { SelectedDestinationCard } from "@/components/features/selected-destination-card";
 
 interface Section {
@@ -73,6 +75,16 @@ export default function HomePage() {
     setCurrentSection,
     getFormData
   } = useFormStore();
+
+  // Alternative interests modal for visa-free + finance-skipped users
+  const {
+    shouldShowAlternativeInterests,
+    isModalOpen,
+    closeModal,
+    destCountry: modalDestCountry,
+    handleContinueToSummary,
+    handleMistake
+  } = useAlternativeInterests();
   
   // Finance skip functionality
   const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
@@ -295,8 +307,27 @@ export default function HomePage() {
                 const Icon = section.icon
                 const isCompleted = isSectionComplete(section.id)
                 const isMarkedComplete = isSectionMarkedComplete(section.id)
-                const disabled = (index === 1 && !isSectionMarkedComplete("disclaimer")) || (index > 1 && (!isSectionMarkedComplete("disclaimer") || !(destCountry && destCountry.trim() !== "")))
                 const isCurrent = index === currentSection
+                
+                // Sequential progression: check if all previous sections are completed
+                let canAccess = true
+                if (index > 0) {
+                  // Check if all previous sections are completed
+                  for (let i = 0; i < index; i++) {
+                    const prevSection = SECTIONS[i]
+                    if (prevSection.required && !isSectionMarkedComplete(prevSection.id)) {
+                      // For destination, also check if country is selected
+                      if (prevSection.id === "destination" && (!destCountry || destCountry.trim() === "")) {
+                        canAccess = false
+                        break
+                      } else if (prevSection.id !== "destination") {
+                        canAccess = false
+                        break
+                      }
+                    }
+                  }
+                }
+                const disabled = !canAccess
                 
                 return (
                   <div key={section.id}>
@@ -349,7 +380,7 @@ export default function HomePage() {
                     
                     <button
                       key={`${section.id}-button`}
-                      title={disabled ? (index === 1 ? "Please complete the Disclaimer section first" : "Please complete the Disclaimer and Desired Destination sections first") : undefined}
+                      title={disabled ? "Complete previous sections first" : undefined}
                       className={`flex items-center w-full px-4 py-3 rounded-md text-sm transition-colors relative min-w-0 ${
                         isCurrent
                           ? "bg-primary text-primary-foreground"
@@ -413,15 +444,33 @@ export default function HomePage() {
                 {SECTIONS.map((section, index) => {
                   const Icon = section.icon
                   const isCompleted = isSectionMarkedComplete(section.id)
-                  const disabled = (index === 1 && !isSectionMarkedComplete("disclaimer")) || (index > 1 && (!isSectionMarkedComplete("disclaimer") || !(destCountry && destCountry.trim() !== "")))
                   const isCurrent = index === currentSection
+                  
+                  // Sequential progression: check if all previous sections are completed
+                  let canAccess = true
+                  if (index > 0) {
+                    // Check if all previous sections are completed
+                    for (let i = 0; i < index; i++) {
+                      const prevSection = SECTIONS[i]
+                      if (prevSection.required && !isSectionMarkedComplete(prevSection.id)) {
+                        // For destination, also check if country is selected
+                        if (prevSection.id === "destination" && (!destCountry || destCountry.trim() === "")) {
+                          canAccess = false
+                          break
+                        } else if (prevSection.id !== "destination") {
+                          canAccess = false
+                          break
+                        }
+                      }
+                    }
+                  }
                   return (
                     <Badge
                       key={section.id}
-                      title={disabled ? (index === 1 ? "Please complete the Disclaimer section first" : "Please complete the Disclaimer and Desired Destination sections first") : undefined}
+                      title={!canAccess ? "Complete previous sections first" : undefined}
                       variant={isCurrent ? "default" : isCompleted ? "secondary" : "outline"}
-                      className={`transition-all relative px-3 py-2 ${isCurrent ? "ring-2 ring-primary" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                      onClick={() => !disabled && setCurrentSection(index)}
+                      className={`transition-all relative px-3 py-2 ${isCurrent ? "ring-2 ring-primary" : ""} ${!canAccess ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                      onClick={() => canAccess && setCurrentSection(index)}
                     >
                       <Icon className={`w-4 h-4 mr-2 flex-shrink-0 ${isCurrent ? "text-white" : ""}`} />
                       <span className="truncate max-w-[120px]">{section.title}</span>
@@ -487,6 +536,15 @@ export default function HomePage() {
 
         {/* Dev JSON viewer */}
         <DevStateViewer />
+
+        {/* Alternative Interests Modal */}
+        <AlternativeInterestsModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          destinationCountry={modalDestCountry}
+          onContinueToSummary={handleContinueToSummary}
+          onMistake={handleMistake}
+        />
       </div>
     </div>
   );

@@ -18,10 +18,9 @@ import { Plus, Info, AlertTriangle, HelpCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
-
-// Simple currencies hook - replace with actual implementation
-const useCurrencies = () => ["USD", "EUR", "GBP", "CAD", "AUD", "CHF", "JPY", "CNY"]
+import { useCurrencies } from "@/lib/hooks/use-currencies"
 
 export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
@@ -481,21 +480,15 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
               This section is optional. You can continue even if you don't have deductions or credits to report.
             </div>
 
-            {/* Check My Information Button */}
-            <div className="flex justify-center">
-              <CheckInfoButton
-                onClick={() => showSectionInfo("tax-deductions")}
-                isLoading={isCheckingInfo}
-              />
-            </div>
-
-            <Button
-              onClick={handleComplete}
-              className="w-full"
-              size="lg"
-            >
-              Continue to Future Financial Plans
-            </Button>
+            {/* Section Footer */}
+            <SectionFooter
+              onCheckInfo={() => showSectionInfo("tax-deductions")}
+              isCheckingInfo={isCheckingInfo}
+              sectionId="tax-deductions"
+              onContinue={handleComplete}
+              canContinue={true}
+              nextSectionName="Future Financial Plans"
+            />
           </div>
         </CardFooter>
       </Card>

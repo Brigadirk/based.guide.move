@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
-import { CalendarDays, UserPlus, Plus, Trash2, Users, Lightbulb, Home, Globe, Heart, Baby, Pencil, Check } from "lucide-react"
+import { CalendarDays, UserPlus, Plus, Trash2, Users, Lightbulb, Home, Globe, Heart, Baby, Pencil, Check, User, Calendar, Clock, MapPin, Flag, CheckCircle, GraduationCap, School, BookOpen } from "lucide-react"
 import countryInfo from "@/data/country_info.json"
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { hasEUCitizenship, getUserEUCountries } from "@/lib/utils/eu-utils"
 
@@ -51,6 +52,31 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     return `${year}-${month}-${day}`
   }
 
+  // Helper function to calculate age from date of birth (in decimal years)
+  const calculateAge = (dateOfBirth: string): number => {
+    if (!dateOfBirth) return 0
+    const today = new Date()
+    const birthDate = new Date(dateOfBirth)
+    
+    // Calculate age in milliseconds and convert to years
+    const ageInMs = today.getTime() - birthDate.getTime()
+    const ageInYears = ageInMs / (1000 * 60 * 60 * 24 * 365.25) // Account for leap years
+    
+    return Math.max(0, ageInYears)
+  }
+
+  // Helper function to format age for display
+  const formatAge = (ageInYears: number): string => {
+    if (ageInYears < 1) {
+      const months = Math.floor(ageInYears * 12)
+      return `${months} month${months !== 1 ? 's' : ''}`
+    } else if (ageInYears < 2) {
+      return `${ageInYears.toFixed(1)} year${ageInYears >= 1.5 ? 's' : ''}`
+    } else {
+      return `${Math.floor(ageInYears)} year${ageInYears >= 2 ? 's' : ''}`
+    }
+  }
+
   // Current Residence
   const curCountry: string = getFormData("personalInformation.currentResidency.country") ?? ""
   const curStatus: string = getFormData("personalInformation.currentResidency.status") ?? ""
@@ -73,6 +99,24 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   const [partnerSaved, setPartnerSaved] = useState(false)
   const [editingPartner, setEditingPartner] = useState(false)
   const [attemptedPartnerSave, setAttemptedPartnerSave] = useState(false)
+
+  // Initialize partner saved state based on existing data
+  useEffect(() => {
+    if (hasPartner) {
+      const partnerInfo = getFormData("personalInformation.relocationPartnerInfo")
+      const hasBasicPartnerData = partnerInfo && 
+        partnerInfo.dateOfBirth && 
+        partnerInfo.relationshipType && 
+        partnerInfo.fullRelationshipDuration !== undefined &&
+        partnerInfo.officialRelationshipDuration !== undefined &&
+        partnerInfo.partnerNationalities &&
+        partnerInfo.partnerNationalities.length > 0
+      
+      if (hasBasicPartnerData) {
+        setPartnerSaved(true)
+      }
+    }
+  }, [hasPartner]) // Only run when hasPartner changes or on initial load
 
   // Dependents
   type Dependent = {
@@ -328,7 +372,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           dep.currentResidency?.duration !== "")
     const nationalitiesValid = dep.nationalities && dep.nationalities.length > 0
     
-    return dobValid && relationshipValid && countryValid && statusValid && durationValid && nationalitiesValid
+    // Check if dependent's residence duration doesn't exceed their age
+    const dependentAge = calculateAge(dep.dateOfBirth)
+    const dependentDuration = parseFloat(dep.currentResidency?.duration || "0") || 0
+    const ageValidForDuration = dep.currentResidency?.status === "Citizen" || !dep.dateOfBirth || dependentDuration <= dependentAge
+    
+    return dobValid && relationshipValid && countryValid && statusValid && durationValid && nationalitiesValid && ageValidForDuration
   }
 
   const saveDependentInfo = (depIndex: number) => {
@@ -362,7 +411,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   // Check if all dependents are saved
   const allDependentsSaved = visibleDependents.every(idx => savedDependents.includes(idx))
   
-  const canContinue = dob && curCountry && curStatus && natList.length > 0 && maritalStatus && (!hasPartner || partnerSaved) && allDependentsSaved
+  // Check if main person's residence duration doesn't exceed their age
+  const userAge = calculateAge(dob)
+  const currentDuration = parseFloat(tempDuration) || 0
+  const mainPersonDurationValid = curStatus === "Citizen" || !dob || currentDuration <= userAge
+  
+  const canContinue = !!dob && !!curCountry && !!curStatus && natList.length > 0 && !!maritalStatus && (!hasPartner || partnerSaved) && allDependentsSaved && mainPersonDurationValid
 
   const nationalityExists = (country: string) =>
     natList.some((n) => n.country === country)
@@ -475,19 +529,39 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               <Label className="text-sm font-medium">
                 Duration (years) {curStatus !== "Citizen" ? "*" : ""}
               </Label>
-              <Input
-                type="number"
-                step="0.5"
-                min={0}
-                max={100}
-                placeholder="2.5"
-                className="placeholder:!text-muted-foreground/60"
-                value={curStatus === "Citizen" ? "" : tempDuration}
-                onChange={(e) =>
-                  updateFormData("personalInformation.currentResidency.duration", e.target.value)
-                }
-                disabled={curStatus === "Citizen"}
-              />
+              {(() => {
+                const userAge = calculateAge(dob)
+                const currentDuration = parseFloat(tempDuration) || 0
+                const durationExceedsAge = dob && currentDuration > userAge
+                
+                return (
+                  <>
+                    <Input
+                      type="number"
+                      step="0.5"
+                      min={0}
+                      max={dob ? Math.ceil(userAge * 2) / 2 : 100} // Round up to nearest 0.5
+                      placeholder="2.5"
+                      className={`placeholder:!text-muted-foreground/60 ${durationExceedsAge ? 'border-red-500 focus:ring-red-500' : ''}`}
+                      value={curStatus === "Citizen" ? "" : tempDuration}
+                      onChange={(e) =>
+                        updateFormData("personalInformation.currentResidency.duration", e.target.value)
+                      }
+                      disabled={curStatus === "Citizen"}
+                    />
+                    {durationExceedsAge && (
+                      <p className="text-sm text-red-600 dark:text-red-400">
+                        Duration cannot exceed your age ({formatAge(userAge)})
+                      </p>
+                    )}
+                    {dob && userAge > 0 && curStatus !== "Citizen" && !durationExceedsAge && (
+                      <p className="text-xs text-muted-foreground">
+                        Maximum: {Math.ceil(userAge * 2) / 2} years (your age: {formatAge(userAge)})
+                      </p>
+                    )}
+                  </>
+                )
+              })()}
             </div>
           </div>
           
@@ -659,65 +733,152 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               <>
                 {/* Partner Card Display (when saved) */}
                 {partnerSaved && !editingPartner && (
-                  <div className="p-6 border rounded-lg bg-card">
-                    <div className="flex items-center justify-between mb-4">
-                      <h4 className="font-medium text-lg">Partner Information</h4>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setEditingPartner(true)}
-                      >
-                        <Pencil className="w-4 h-4 mr-2" />
-                        Edit
-                      </Button>
-                    </div>
+                  <Card className="shadow-lg border-2 border-pink-100 dark:border-pink-900/30 bg-gradient-to-br from-pink-50/50 via-white to-rose-50/30 dark:from-pink-950/20 dark:via-background dark:to-rose-950/20">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-lg">
+                            <Heart className="w-6 h-6 text-white" />
+                          </div>
+                          <div>
+                            <CardTitle className="text-xl text-pink-900 dark:text-pink-100">Partner Information</CardTitle>
+                            <p className="text-sm text-pink-700 dark:text-pink-300 font-medium">
+                              {getFormData("personalInformation.relocationPartnerInfo.relationshipType")}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingPartner(true)}
+                          className="border-pink-200 hover:bg-pink-50 dark:border-pink-800 dark:hover:bg-pink-950/20"
+                        >
+                          <Pencil className="w-4 h-4 mr-2" />
+                          Edit
+                        </Button>
+                      </div>
+                    </CardHeader>
                     
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="space-y-3">
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground">Date of Birth</Label>
-                          <p className="text-base">{getFormData("personalInformation.relocationPartnerInfo.dateOfBirth")}</p>
+                    <CardContent className="space-y-6">
+                      <div className="grid md:grid-cols-2 gap-6">
+                        {/* Personal Details */}
+                        <div className="space-y-4">
+                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-pink-100 dark:border-pink-900/50">
+                            <h5 className="font-semibold text-pink-900 dark:text-pink-100 mb-3 flex items-center gap-2">
+                              <User className="w-4 h-4" />
+                              Personal Details
+                            </h5>
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-3">
+                                <Calendar className="w-4 h-4 text-pink-600 dark:text-pink-400" />
+                                <div>
+                                  <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</Label>
+                                  <p className="text-sm font-medium">{new Date(getFormData("personalInformation.relocationPartnerInfo.dateOfBirth")).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                </div>
+                              </div>
+                              
+                              <div className="flex items-center gap-3">
+                                <Users className="w-4 h-4 text-pink-600 dark:text-pink-400" />
+                                <div>
+                                  <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Relationship Type</Label>
+                                  <p className="text-sm font-medium flex items-center gap-2">
+                                    {getFormData("personalInformation.relocationPartnerInfo.relationshipType")}
+                                    {getFormData("personalInformation.relocationPartnerInfo.sameSex") && (
+                                      <Badge variant="outline" className="text-xs bg-rainbow-100 border-rainbow-300">
+                                        Same-Sex
+                                      </Badge>
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground">Relationship Type</Label>
-                          <p className="text-base">{getFormData("personalInformation.relocationPartnerInfo.relationshipType")}</p>
+
+                        {/* Relationship Timeline */}
+                        <div className="space-y-4">
+                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-pink-100 dark:border-pink-900/50">
+                            <h5 className="font-semibold text-pink-900 dark:text-pink-100 mb-3 flex items-center gap-2">
+                              <Clock className="w-4 h-4" />
+                              Relationship Timeline
+                            </h5>
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-3">
+                                <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
+                                <div>
+                                  <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total Duration</Label>
+                                  <p className="text-sm font-medium">{getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration")} years together</p>
+                                </div>
+                              </div>
+                              
+                              <div className="flex items-center gap-3">
+                                <div className="w-2 h-2 bg-rose-500 rounded-full"></div>
+                                <div>
+                                  <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Official Duration</Label>
+                                  <p className="text-sm font-medium">{getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration")} years official</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground">Same-Sex Relationship</Label>
-                          <p className="text-base">{getFormData("personalInformation.relocationPartnerInfo.sameSex") ? "Yes" : "No"}</p>
+                      </div>
+
+                      {/* Current Residency */}
+                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-pink-100 dark:border-pink-900/50">
+                        <h5 className="font-semibold text-pink-900 dark:text-pink-100 mb-3 flex items-center gap-2">
+                          <MapPin className="w-4 h-4" />
+                          Current Residency
+                        </h5>
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-full bg-pink-100 dark:bg-pink-900/30">
+                            <Globe className="w-4 h-4 text-pink-600 dark:text-pink-400" />
+                          </div>
+                          <div>
+                            <p className="font-medium">
+                              {getFormData("personalInformation.relocationPartnerInfo.currentResidency.country")}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {getFormData("personalInformation.relocationPartnerInfo.currentResidency.status")}
+                            </p>
+                          </div>
                         </div>
                       </div>
                       
-                      <div className="space-y-3">
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground">Total Relationship Duration</Label>
-                          <p className="text-base">{getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration")} years</p>
-                        </div>
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground">Official Duration</Label>
-                          <p className="text-base">{getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration")} years</p>
-                        </div>
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground">Current Residency</Label>
-                          <p className="text-base">
-                            {getFormData("personalInformation.relocationPartnerInfo.currentResidency.country")} 
-                            ({getFormData("personalInformation.relocationPartnerInfo.currentResidency.status")})
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="md:col-span-2">
-                        <Label className="text-sm font-medium text-muted-foreground">Citizenships</Label>
-                        <div className="flex flex-wrap gap-2 mt-1">
+                      {/* Citizenships */}
+                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-pink-100 dark:border-pink-900/50">
+                        <h5 className="font-semibold text-pink-900 dark:text-pink-100 mb-3 flex items-center gap-2">
+                          <Flag className="w-4 h-4" />
+                          Citizenships
+                        </h5>
+                        <div className="flex flex-wrap gap-2">
                           {(getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") || []).map((nat: any, idx: number) => (
-                            <Badge key={idx} variant="secondary">
-                              {nat.country} {nat.willingToRenounce && "(willing to renounce)"}
+                            <Badge key={idx} variant="secondary" className="bg-pink-100 text-pink-800 border-pink-200 dark:bg-pink-900/30 dark:text-pink-200 dark:border-pink-800">
+                              <Flag className="w-3 h-3 mr-1" />
+                              {nat.country} 
+                              {nat.willingToRenounce && (
+                                <span className="ml-1 text-xs opacity-75">(willing to renounce)</span>
+                              )}
                             </Badge>
                           ))}
                         </div>
                       </div>
-                    </div>
-                  </div>
+
+                      {/* Relationship Proof Indicator */}
+                      {getFormData("personalInformation.relocationPartnerInfo.canProveRelationship") && (
+                        <div className="p-4 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border border-green-200 dark:border-green-800">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-green-800 dark:text-green-200">Documentation Available</p>
+                              <p className="text-sm text-green-700 dark:text-green-300">Can provide relationship proof</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
                 )}
 
                 {/* Partner Form (when editing or not saved) */}
@@ -903,12 +1064,37 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               Official duration cannot exceed total relationship duration ({fullDuration} years)
                             </p>
                           )}
+                          {!isInvalid && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {(() => {
+                                const relationshipType = getFormData("personalInformation.relocationPartnerInfo.relationshipType") ?? "Unmarried Partner"
+                                if (relationshipType === "Spouse") return "How long you have been married"
+                                if (relationshipType === "Fiancé(e)") return "How long you have been engaged"
+                                if (relationshipType === "Civil Partner") return "How long you have been in a registered civil partnership"
+                                if (relationshipType === "Domestic Partner") return "How long you have been in a registered domestic partnership"
+                                if (relationshipType === "Unmarried Partner") return "How long you have been living together/cohabiting"
+                                return "How long your relationship has been officially recognized"
+                              })()}
+                            </p>
+                          )}
                         </>
                       )
                     })()}
                   </div>
+                                </div>
+
+                {/* Relationship Proof */}
+                <div className="flex items-center gap-3 p-3 border rounded-lg bg-blue-50/50 dark:bg-blue-950/20">
+                  <Checkbox
+                    id="relationship_proof"
+                    checked={getFormData("personalInformation.relocationPartnerInfo.canProveRelationship") ?? false}
+                    onCheckedChange={(v) => updateFormData("personalInformation.relocationPartnerInfo.canProveRelationship", !!v)}
+                  />
+                  <Label htmlFor="relationship_proof" className="text-sm">
+                    I can prove this relationship with documentation (photos, texts, joint accounts, etc.)
+                  </Label>
                 </div>
- 
+
                    {/* Relationship Status Messages and Conflict Detection */}
                    {(() => {
                      const relationshipType = getFormData("personalInformation.relocationPartnerInfo.relationshipType") ?? "Unmarried Partner"
@@ -1325,54 +1511,133 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                   "Not specified"
                 
                 return (
-                  <div key={idx} className="p-4 border rounded-lg bg-card">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <Badge variant="secondary">Dependent {dependentNumber}</Badge>
-                          <Badge variant="outline">{dep.relationship}</Badge>
-                          {dep.student && <Badge variant="outline">Student</Badge>}
+                  <Card key={idx} className="shadow-lg border-2 border-blue-100 dark:border-blue-900/30 bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/30 dark:from-blue-950/20 dark:via-background dark:to-indigo-950/20">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg">
+                            {dep.relationship === 'Child' ? (
+                              <Baby className="w-6 h-6 text-white" />
+                            ) : dep.relationship === 'Parent' ? (
+                              <Users className="w-6 h-6 text-white" />
+                            ) : (
+                              <User className="w-6 h-6 text-white" />
+                            )}
+                          </div>
+                          <div>
+                            <CardTitle className="text-lg text-blue-900 dark:text-blue-100">
+                              Dependent {dependentNumber}
+                            </CardTitle>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:border-blue-800">
+                                {dep.relationship}
+                              </Badge>
+                              {dep.student && (
+                                <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-200 dark:border-amber-800">
+                                  <GraduationCap className="w-3 h-3 mr-1" />
+                                  Student
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                        <p className="text-sm text-muted-foreground">
-                          Born: {formattedBirthDate}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Citizenship{citizenshipCount !== 1 ? 's' : ''}: {citizenshipCount} {citizenshipCount === 1 ? 'country' : 'countries'}
-                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingDependents([...editingDependents, idx])}
+                            className="border-blue-200 hover:bg-blue-50 dark:border-blue-800 dark:hover:bg-blue-950/20"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              // Remove from all state
+                              setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
+                              setEditingDependents(editingDependents.filter((i: number) => i !== idx))
+                              // Remove from data list  
+                              const updated = depList.filter((_, i) => i !== idx)
+                              updateDepList(updated)
+                              // Adjust indices for remaining dependents
+                              setVisibleDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
+                              setEditingDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
+                            }}
+                            className="border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 dark:border-red-800 dark:hover:bg-red-950/20 dark:text-red-400"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="space-y-4">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        {/* Personal Information */}
+                        <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-blue-100 dark:border-blue-900/50">
+                          <h5 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
+                            <User className="w-4 h-4" />
+                            Personal Info
+                          </h5>
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-3">
+                              <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                              <div>
+                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</Label>
+                                <p className="text-sm font-medium">{formattedBirthDate}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  Age: {formatAge(calculateAge(dep.dateOfBirth))}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Current Residency */}
                         {dep.currentResidency?.country && (
-                          <p className="text-sm text-muted-foreground">
-                            Current residence: {dep.currentResidency.country} ({dep.currentResidency.status})
-                          </p>
+                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-blue-100 dark:border-blue-900/50">
+                            <h5 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
+                              <MapPin className="w-4 h-4" />
+                              Current Residency
+                            </h5>
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                                <Globe className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                              </div>
+                              <div>
+                                <p className="font-medium">{dep.currentResidency.country}</p>
+                                <p className="text-sm text-muted-foreground">{dep.currentResidency.status}</p>
+                              </div>
+                            </div>
+                          </div>
                         )}
                       </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setEditingDependents([...editingDependents, idx])}
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            // Remove from all state
-                            setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
-                            setEditingDependents(editingDependents.filter((i: number) => i !== idx))
-                            // Remove from data list  
-                            const updated = depList.filter((_, i) => i !== idx)
-                            updateDepList(updated)
-                            // Adjust indices for remaining dependents
-                            setVisibleDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
-                            setEditingDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
-                          }}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+
+                      {/* Citizenships */}
+                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-blue-100 dark:border-blue-900/50">
+                        <h5 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
+                          <Flag className="w-4 h-4" />
+                          Citizenships
+                        </h5>
+                        {citizenshipCount > 0 ? (
+                          <div className="flex flex-wrap gap-2">
+                            {(dep.nationalities || []).map((nat: any, natIdx: number) => (
+                              <Badge key={natIdx} variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:border-blue-800">
+                                <Flag className="w-3 h-3 mr-1" />
+                                {nat.country}
+                                {nat.willingToRenounce && (
+                                  <span className="ml-1 text-xs opacity-75">(willing to renounce)</span>
+                                )}
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-muted-foreground italic">No citizenships specified</p>
+                        )}
                       </div>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 )
               }
               
@@ -1541,18 +1806,22 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
                     {(() => {
                       const dependentStatus = dep.currentResidency?.status ?? ""
+                      const dependentAge = calculateAge(dep.dateOfBirth)
+                      const dependentDuration = parseFloat(dep.currentResidency?.duration || "0") || 0
+                      const durationExceedsAge = dep.dateOfBirth && dependentDuration > dependentAge
+                      
                       return (
                         <div className={`space-y-2 ${dependentStatus === "Citizen" ? "opacity-50" : ""}`}>
                           <Label className="text-sm font-medium">
                             Duration (years) {dependentStatus !== "Citizen" ? "*" : ""}
                           </Label>
-                                                    <Input
+                          <Input
                             type="number"
                             step="0.5"
                             min={0}
-                            max={100}
+                            max={dep.dateOfBirth ? Math.ceil(dependentAge * 2) / 2 : 100} // Round up to nearest 0.5
                             placeholder="2.5"
-                            className="placeholder:!text-muted-foreground/60"
+                            className={`placeholder:!text-muted-foreground/60 ${durationExceedsAge ? 'border-red-500 focus:ring-red-500' : ''}`}
                             value={dependentStatus === "Citizen" ? "" : dep.currentResidency?.duration ?? ""}
                             onChange={(e) => {
                               const updated = [...depList]
@@ -1564,6 +1833,16 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             }}
                             disabled={dependentStatus === "Citizen"}
                           />
+                          {durationExceedsAge && (
+                            <p className="text-sm text-red-600 dark:text-red-400">
+                              Duration cannot exceed their age ({formatAge(dependentAge)})
+                            </p>
+                          )}
+                          {dep.dateOfBirth && dependentAge > 0 && dependentStatus !== "Citizen" && !durationExceedsAge && (
+                            <p className="text-xs text-muted-foreground">
+                              Maximum: {Math.ceil(dependentAge * 2) / 2} years (their age: {formatAge(dependentAge)})
+                            </p>
+                          )}
                         </div>
                       )
                     })()}
@@ -1694,6 +1973,13 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                      if (depNats.length === 0) {
                        errors.push("At least one citizenship is required")
                      }
+                     
+                     // Check age validation for residence duration
+                     const dependentAge = calculateAge(dep.dateOfBirth)
+                     const dependentDuration = parseFloat(dep.currentResidency?.duration || "0") || 0
+                     if (dep.dateOfBirth && dep.currentResidency?.status !== "Citizen" && dependentDuration > dependentAge) {
+                       errors.push(`Duration in current status (${dependentDuration} years) cannot exceed their age (${formatAge(dependentAge)})`)
+                     }
                     
                     return (
                       <>
@@ -1721,7 +2007,23 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setEditingDependents(editingDependents.filter((i: number) => i !== idx))}
+                            onClick={() => {
+                              // If this dependent was never saved (not in savedDependents), remove it entirely
+                              if (!savedDependents.includes(idx)) {
+                                // Remove from visible dependents
+                                setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
+                                // Remove from data list  
+                                const updated = depList.filter((_, i) => i !== idx)
+                                updateFormData("personalInformation.dependents", updated)
+                                // Clean up state arrays by adjusting indices
+                                const adjustIndices = (arr: number[]) => 
+                                  arr.map(i => i > idx ? i - 1 : i).filter(i => i !== idx)
+                                setSavedDependents(adjustIndices(savedDependents))
+                                setAttemptedDependentSaves(adjustIndices(attemptedDependentSaves))
+                              }
+                              // Remove from editing mode
+                              setEditingDependents(editingDependents.filter((i: number) => i !== idx))
+                            }}
                             className="flex-1"
                           >
                             Cancel
@@ -1735,32 +2037,40 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
              })}
 
             {/* Add Dependent Button - positioned after existing dependent cards */}
-            <Button
-              variant="outline"
-              onClick={() => {
-                // Add new dependent to data
-                const newDependent = {
-                  relationship: "Child",
-                  dateOfBirth: "",
-                  student: false,
-                  nationalities: [],
-                  currentResidency: {
-                    country: "",
-                    status: "",
-                    duration: ""
-                  }
-                }
-                updateDepList([...depList, newDependent])
-                // Make this dependent form visible and editable
-                const newIndex = depList.length
-                setVisibleDependents([...visibleDependents, newIndex])
-                setEditingDependents([...editingDependents, newIndex])
-              }}
-              className="w-full"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Dependent
-            </Button>
+            {(() => {
+              const hasUnsavedDependents = visibleDependents.some(idx => !savedDependents.includes(idx))
+              
+              return (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    // Add new dependent to data
+                    const newDependent = {
+                      relationship: "Child",
+                      dateOfBirth: "",
+                      student: false,
+                      nationalities: [],
+                      currentResidency: {
+                        country: "",
+                        status: "",
+                        duration: ""
+                      }
+                    }
+                    updateDepList([...depList, newDependent])
+                    // Make this dependent form visible and editable
+                    const newIndex = depList.length
+                    setVisibleDependents([...visibleDependents, newIndex])
+                    setEditingDependents([...editingDependents, newIndex])
+                  }}
+                  className="w-full"
+                  disabled={hasUnsavedDependents}
+                  title={hasUnsavedDependents ? "Please save or cancel the current dependent before adding another" : undefined}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Dependent
+                </Button>
+              )
+            })()}
 
             <p className="text-xs text-muted-foreground">
               Include children, elderly parents, or other family members who depend on your financial support and will move with you.
@@ -1784,6 +2094,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     {natList.length === 0 && <li>At least one citizenship</li>}
                     {!maritalStatus && <li>Marital status</li>}
                     {curStatus === "Temporary Resident" && !tempDuration && <li>Years at current residence</li>}
+                    {!mainPersonDurationValid && <li>Residence duration cannot exceed your age ({formatAge(userAge)})</li>}
                     {hasPartner && !partnerSaved && <li>Complete and save partner information</li>}
                     {!allDependentsSaved && <li>Complete and save all dependent information</li>}
                   </ul>
@@ -1791,23 +2102,15 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               </Alert>
             )}
 
-            {/* Check My Information Button */}
-            <div className="flex gap-3">
-              <CheckInfoButton
-                onClick={() => showSectionInfo("personal")}
-                isLoading={isCheckingInfo}
-                className="flex-1"
-                variant="secondary"
-              />
-              <Button
-                disabled={!canContinue}
-                onClick={handleComplete}
-                className="flex-1"
-                size="lg"
-              >
-                Continue to Education
-              </Button>
-            </div>
+            {/* Section Footer */}
+            <SectionFooter
+              onCheckInfo={() => showSectionInfo("personal")}
+              isCheckingInfo={isCheckingInfo}
+              sectionId="personal"
+              onContinue={handleComplete}
+              canContinue={canContinue}
+              nextSectionName="Education"
+            />
           </div>
         </CardFooter>
       </Card>
