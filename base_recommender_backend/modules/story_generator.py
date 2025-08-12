@@ -260,6 +260,45 @@ def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None) 
             special_circumstances = family_planning.get("specialCircumstances", "").strip()
             if special_circumstances:
                 sentences.append(f"Special family circumstances: {special_circumstances}")
+    
+    # Alternative interests section for those with no visa issues and finance skipped
+    alternative_interests = ri.get("alternativeInterests", [])
+    specific_questions = ri.get("specificQuestions", "").strip()
+    information_depth = ri.get("informationDepth", "")
+    
+    if alternative_interests or specific_questions or information_depth:
+        sentences.append("Since they have no visa requirements and are not interested in detailed taxation advice, they are seeking alternative information.")
+        
+        if alternative_interests:
+            interest_map = {
+                "culturalIntegration": "cultural integration and lifestyle differences",
+                "healthcareSystem": "healthcare system and medical services",
+                "educationSystem": "education system and schooling options", 
+                "employmentMarket": "job market and employment opportunities",
+                "housingMarket": "housing market and rental/purchase options",
+                "socialServices": "social services and government benefits",
+                "legalRequirements": "legal requirements and bureaucratic processes",
+                "costOfLiving": "general cost of living and lifestyle expenses"
+            }
+            interest_text = [interest_map.get(i, i) for i in alternative_interests]
+            if len(interest_text) == 1:
+                sentences.append(f"They are particularly interested in {interest_text[0]}.")
+            elif len(interest_text) == 2:
+                sentences.append(f"They are particularly interested in {interest_text[0]} and {interest_text[1]}.")
+            else:
+                sentences.append(f"They are particularly interested in {', '.join(interest_text[:-1])}, and {interest_text[-1]}.")
+        
+        if specific_questions:
+            sentences.append(f"Specific questions they have: {specific_questions}")
+        
+        if information_depth:
+            depth_map = {
+                "overview": "a general overview and highlights",
+                "practical": "practical steps and how-to information", 
+                "detailed": "detailed analysis and comprehensive guidance"
+            }
+            depth_text = depth_map.get(information_depth, information_depth)
+            sentences.append(f"They prefer {depth_text}.")
 
     # Residency plans - only mention if explicitly provided
     rp = ri.get("residencyPlans", {})

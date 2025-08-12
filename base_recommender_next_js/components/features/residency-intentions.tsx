@@ -72,6 +72,11 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   
   const familyVisaComplexity = familyVisaAnalysis ? getFamilyVisaComplexity(familyVisaAnalysis) : 'simple'
   const familyVisaPlanningSteps = familyVisaAnalysis ? getFamilyVisaPlanningSteps(familyVisaAnalysis) : []
+  
+  // Check if user has skipped finance and has no visa requirements
+  const hasSkippedFinance = getFormData("finance.skipDetails") ?? false
+  const hasNoVisaIssues = hasNoVisaRequirement && (!familyVisaAnalysis || !familyVisaAnalysis.familyRequiresVisas)
+  const showAlternativeOptions = hasSkippedFinance && hasNoVisaIssues && destCountry
 
   // Move type and duration
   const moveType = getFormData("residencyIntentions.destinationCountry.moveType") ?? ""
@@ -406,8 +411,225 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
             </Card>
           )}
 
+          {/* Alternative Options - Show when no visa issues and finance skipped */}
+          {showAlternativeOptions && (
+            <Card className="shadow-sm border-l-4 border-l-purple-500">
+              <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
+                <CardTitle className="text-xl flex items-center gap-3">
+                  <Target className="w-6 h-6 text-purple-600" />
+                  What Are You Looking For?
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  You do not appear to be interested in taxation, nor do you or any of your family members need a visa to enter {destCountry}. What are you looking for?
+                </p>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-6">
+                  
+                  {/* Primary Interest Areas */}
+                  <div className="space-y-4">
+                    <Label className="text-base font-medium">What specific information interests you most?</Label>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="interest-cultural"
+                          checked={getFormData("residencyIntentions.alternativeInterests")?.includes("culturalIntegration") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentInterests = getFormData("residencyIntentions.alternativeInterests") || []
+                            const newInterests = checked 
+                              ? [...currentInterests, "culturalIntegration"]
+                              : currentInterests.filter((i: string) => i !== "culturalIntegration")
+                            updateFormData("residencyIntentions.alternativeInterests", newInterests)
+                          }}
+                        />
+                        <Label htmlFor="interest-cultural" className="text-sm">
+                          Cultural integration and lifestyle differences
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="interest-healthcare"
+                          checked={getFormData("residencyIntentions.alternativeInterests")?.includes("healthcareSystem") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentInterests = getFormData("residencyIntentions.alternativeInterests") || []
+                            const newInterests = checked 
+                              ? [...currentInterests, "healthcareSystem"]
+                              : currentInterests.filter((i: string) => i !== "healthcareSystem")
+                            updateFormData("residencyIntentions.alternativeInterests", newInterests)
+                          }}
+                        />
+                        <Label htmlFor="interest-healthcare" className="text-sm">
+                          Healthcare system and medical services
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="interest-education"
+                          checked={getFormData("residencyIntentions.alternativeInterests")?.includes("educationSystem") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentInterests = getFormData("residencyIntentions.alternativeInterests") || []
+                            const newInterests = checked 
+                              ? [...currentInterests, "educationSystem"]
+                              : currentInterests.filter((i: string) => i !== "educationSystem")
+                            updateFormData("residencyIntentions.alternativeInterests", newInterests)
+                          }}
+                        />
+                        <Label htmlFor="interest-education" className="text-sm">
+                          Education system and schooling options
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="interest-employment"
+                          checked={getFormData("residencyIntentions.alternativeInterests")?.includes("employmentMarket") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentInterests = getFormData("residencyIntentions.alternativeInterests") || []
+                            const newInterests = checked 
+                              ? [...currentInterests, "employmentMarket"]
+                              : currentInterests.filter((i: string) => i !== "employmentMarket")
+                            updateFormData("residencyIntentions.alternativeInterests", newInterests)
+                          }}
+                        />
+                        <Label htmlFor="interest-employment" className="text-sm">
+                          Job market and employment opportunities
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="interest-housing"
+                          checked={getFormData("residencyIntentions.alternativeInterests")?.includes("housingMarket") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentInterests = getFormData("residencyIntentions.alternativeInterests") || []
+                            const newInterests = checked 
+                              ? [...currentInterests, "housingMarket"]
+                              : currentInterests.filter((i: string) => i !== "housingMarket")
+                            updateFormData("residencyIntentions.alternativeInterests", newInterests)
+                          }}
+                        />
+                        <Label htmlFor="interest-housing" className="text-sm">
+                          Housing market and rental/purchase options
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="interest-social"
+                          checked={getFormData("residencyIntentions.alternativeInterests")?.includes("socialServices") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentInterests = getFormData("residencyIntentions.alternativeInterests") || []
+                            const newInterests = checked 
+                              ? [...currentInterests, "socialServices"]
+                              : currentInterests.filter((i: string) => i !== "socialServices")
+                            updateFormData("residencyIntentions.alternativeInterests", newInterests)
+                          }}
+                        />
+                        <Label htmlFor="interest-social" className="text-sm">
+                          Social services and government benefits
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="interest-legal"
+                          checked={getFormData("residencyIntentions.alternativeInterests")?.includes("legalRequirements") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentInterests = getFormData("residencyIntentions.alternativeInterests") || []
+                            const newInterests = checked 
+                              ? [...currentInterests, "legalRequirements"]
+                              : currentInterests.filter((i: string) => i !== "legalRequirements")
+                            updateFormData("residencyIntentions.alternativeInterests", newInterests)
+                          }}
+                        />
+                        <Label htmlFor="interest-legal" className="text-sm">
+                          Legal requirements and bureaucratic processes
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="interest-cost"
+                          checked={getFormData("residencyIntentions.alternativeInterests")?.includes("costOfLiving") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentInterests = getFormData("residencyIntentions.alternativeInterests") || []
+                            const newInterests = checked 
+                              ? [...currentInterests, "costOfLiving"]
+                              : currentInterests.filter((i: string) => i !== "costOfLiving")
+                            updateFormData("residencyIntentions.alternativeInterests", newInterests)
+                          }}
+                        />
+                        <Label htmlFor="interest-cost" className="text-sm">
+                          General cost of living and lifestyle expenses
+                        </Label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Specific Questions */}
+                  <div className="space-y-4">
+                    <Label htmlFor="specific-questions" className="text-base font-medium">
+                      Specific Questions or Concerns
+                    </Label>
+                    <Textarea
+                      id="specific-questions"
+                      placeholder="What specific questions do you have about moving to and living in this country? (e.g., 'How do I register for healthcare?', 'What's the process for buying a house?', 'How do I enroll my children in school?')"
+                      value={getFormData("residencyIntentions.specificQuestions") || ""}
+                      onChange={(e) => updateFormData("residencyIntentions.specificQuestions", e.target.value)}
+                      rows={4}
+                    />
+                  </div>
+
+                  {/* Information Depth Preference */}
+                  <div className="space-y-4">
+                    <Label className="text-base font-medium">Information Detail Level</Label>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="depth-overview"
+                          name="informationDepth"
+                          value="overview"
+                          checked={getFormData("residencyIntentions.informationDepth") === "overview"}
+                          onChange={(e) => updateFormData("residencyIntentions.informationDepth", e.target.value)}
+                          className="h-4 w-4"
+                        />
+                        <Label htmlFor="depth-overview" className="text-sm">
+                          General overview and highlights
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="depth-practical"
+                          name="informationDepth"
+                          value="practical"
+                          checked={getFormData("residencyIntentions.informationDepth") === "practical"}
+                          onChange={(e) => updateFormData("residencyIntentions.informationDepth", e.target.value)}
+                          className="h-4 w-4"
+                        />
+                        <Label htmlFor="depth-practical" className="text-sm">
+                          Practical steps and how-to information
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="depth-detailed"
+                          name="informationDepth"
+                          value="detailed"
+                          checked={getFormData("residencyIntentions.informationDepth") === "detailed"}
+                          onChange={(e) => updateFormData("residencyIntentions.informationDepth", e.target.value)}
+                          className="h-4 w-4"
+                        />
+                        <Label htmlFor="depth-detailed" className="text-sm">
+                          Detailed analysis and comprehensive guidance
+                        </Label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Center of Life Tax Implications - Always show for citizens and EU movers */}
-          {hasNoVisaRequirement && (
+          {hasNoVisaRequirement && !showAlternativeOptions && (
             <Card className="shadow-sm border-l-4 border-l-orange-500">
               <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
                 <CardTitle className="text-xl flex items-center gap-3">
@@ -475,7 +697,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
           )}
 
           {/* Residency Plans (only show if not already citizen or EU) */}
-          {!hasNoVisaRequirement && !citizenshipStatus && (
+          {!hasNoVisaRequirement && !citizenshipStatus && !showAlternativeOptions && (
             <Card className="shadow-sm border-l-4 border-l-purple-500">
               <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
@@ -645,7 +867,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
           )}
 
           {/* Citizenship Plans (only show if not already citizen/EU and interested) */}
-          {!hasNoVisaRequirement && !citizenshipStatus && (
+          {!hasNoVisaRequirement && !citizenshipStatus && !showAlternativeOptions && (
             <Card className="shadow-sm border-l-4 border-l-orange-500">
               <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
@@ -873,7 +1095,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                 )}
 
           {/* Family Visa Planning - Only show if family requires visas */}
-          {familyVisaAnalysis && familyVisaAnalysis.familyRequiresVisas && (
+          {familyVisaAnalysis && familyVisaAnalysis.familyRequiresVisas && !showAlternativeOptions && (
             <Card className="shadow-sm border-l-4 border-l-blue-500">
               <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
                 <CardTitle className="text-xl flex items-center gap-3">
@@ -1091,7 +1313,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
           )}
 
       {/* Language Skills - Only show for non-citizens/non-EU */}
-      {destCountry && !hasNoVisaRequirement && (
+      {destCountry && !hasNoVisaRequirement && !showAlternativeOptions && (
         <Card className="shadow-sm border-l-4 border-l-indigo-500">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-transparent dark:from-indigo-950/20">
             <CardTitle className="text-xl flex items-center gap-3">
@@ -1361,7 +1583,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
       )}
 
       {/* Motivation & Compliance - Only show for non-citizens/non-EU */}
-      {!hasNoVisaRequirement && (
+      {!hasNoVisaRequirement && !showAlternativeOptions && (
       <Card className="shadow-sm border-l-4 border-l-amber-500">
         <CardHeader className="bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-950/20">
           <CardTitle className="text-xl flex items-center gap-3">

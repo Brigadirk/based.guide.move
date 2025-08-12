@@ -170,6 +170,18 @@
             },
             "specialCircumstances": {"type": "string"}
           }
+        },
+        "alternativeInterests": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["culturalIntegration", "healthcareSystem", "educationSystem", "employmentMarket", "housingMarket", "socialServices", "legalRequirements", "costOfLiving"]
+          }
+        },
+        "specificQuestions": {"type": "string"},
+        "informationDepth": {
+          "type": "string",
+          "enum": ["overview", "practical", "detailed"]
         }
       }
     },
