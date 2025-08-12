@@ -18,6 +18,8 @@ import { Badge } from "@/components/ui/badge"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
+import { canMoveWithinEU, isEUCountry, hasEUCitizenship } from "@/lib/utils/eu-utils"
+import { analyzeFamilyVisaRequirements, getFamilyVisaComplexity, getFamilyVisaPlanningSteps } from "@/lib/utils/family-visa-utils"
 
 // Simple currencies hook - replace with actual implementation
 const useCurrencies = () => ["USD", "EUR", "GBP", "CAD", "AUD", "CHF", "JPY", "CNY"]
@@ -35,6 +37,41 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   // Check if user is already a citizen of destination country
   // userNationalities is an array of objects with { country: string } structure
   const isAlreadyCitizen = userNationalities.some((nat: any) => nat.country === destCountry)
+  
+  // Check EU movement rights
+  const canMoveWithinEUFreedom = destCountry && canMoveWithinEU(userNationalities, destCountry)
+  const isDestinationEU = destCountry && isEUCountry(destCountry)
+  const userHasEUCitizenship = hasEUCitizenship(userNationalities)
+  
+  // Treat EU movement the same as direct citizenship for most purposes
+  const hasNoVisaRequirement = isAlreadyCitizen || canMoveWithinEUFreedom
+  
+  // Family visa analysis
+  const partnerInfo = getFormData("personalInformation.relocationPartnerInfo") 
+  const dependentsInfo = getFormData("personalInformation.relocationDependents") || []
+  
+  const familyVisaAnalysis = useMemo(() => {
+    if (!destCountry) return null
+    
+    // Convert partner info to our format
+    const partner = partnerInfo ? {
+      nationalities: partnerInfo.partnerNationalities || [],
+      relationship: 'spouse'
+    } : undefined
+    
+    // Convert dependents info to our format  
+    const dependents = dependentsInfo.map((dep: any) => ({
+      nationalities: dep.nationalities || [],
+      relationship: dep.relationship || 'child',
+      age: dep.age || 0,
+      dateOfBirth: dep.dateOfBirth
+    }))
+    
+    return analyzeFamilyVisaRequirements(userNationalities, destCountry, partner, dependents)
+  }, [destCountry, userNationalities, partnerInfo, dependentsInfo])
+  
+  const familyVisaComplexity = familyVisaAnalysis ? getFamilyVisaComplexity(familyVisaAnalysis) : 'simple'
+  const familyVisaPlanningSteps = familyVisaAnalysis ? getFamilyVisaPlanningSteps(familyVisaAnalysis) : []
 
   // Move type and duration
   const moveType = getFormData("residencyIntentions.destinationCountry.moveType") ?? ""
@@ -86,7 +123,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
 
   // Language teaching capabilities
   const [newTeachingLang, setNewTeachingLang] = useState({
-    language: '',
+    language: '', 
     capability: 'Informally'
   })
   const otherLanguages = getFormData("residencyIntentions.languageProficiency.other_languages") ?? {}
@@ -144,51 +181,51 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
           {/* Move Type & Duration */}
           <Card className="shadow-sm border-l-4 border-l-blue-500">
             <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
-              <CardTitle className="text-xl flex items-center gap-3">
+          <CardTitle className="text-xl flex items-center gap-3">
                 <Target className="w-6 h-6 text-blue-600" />
                 Relocation Details
-              </CardTitle>
+          </CardTitle>
               <p className="text-sm text-muted-foreground">Provide details about your intended relocation</p>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label className="text-base font-medium">Type of move *</Label>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Label className="text-base font-medium">Type of move *</Label>
                   <Select 
                     value={moveType} 
                     onValueChange={(value) => updateFormData("residencyIntentions.destinationCountry.moveType", value)}
                   >
-                    <SelectTrigger>
+                <SelectTrigger>
                       <SelectValue placeholder="Select the type of move you are planning" />
-                    </SelectTrigger>
-                    <SelectContent>
+                </SelectTrigger>
+                <SelectContent>
                       <SelectItem value="Permanent">Permanent</SelectItem>
                       <SelectItem value="Temporary">Temporary</SelectItem>
                       <SelectItem value="Digital Nomad">Digital Nomad</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                </SelectContent>
+              </Select>
+            </div>
 
-                {moveType === "Temporary" && (
-                  <div className="space-y-2">
+            {moveType === "Temporary" && (
+              <div className="space-y-2">
                     <Label className="text-base font-medium">Intended duration (months) *</Label>
-                    <Input
+                <Input
                       type="number"
                       min="0"
                       max="120"
                       step="1"
-                      value={tempDuration}
+                  value={tempDuration}
                       onChange={(e) => updateFormData("residencyIntentions.destinationCountry.intendedTemporaryDurationOfStay", parseInt(e.target.value) || 0)}
                       placeholder="12"
-                    />
-                    <p className="text-sm text-muted-foreground">
+                />
+                <p className="text-sm text-muted-foreground">
                       Enter how many months you plan to stay in {destCountry}
-                    </p>
-                  </div>
-                )}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
           {/* Citizenship Status */}
           {!isAlreadyCitizen && (
@@ -236,23 +273,132 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
             </Card>
           )}
 
-          {/* Display citizenship confirmation and tax focus if already citizen */}
-          {isAlreadyCitizen && (
+          {/* Display citizenship confirmation and tax focus if already citizen OR EU movement */}
+          {(isAlreadyCitizen || canMoveWithinEUFreedom) && (
             <Card className="shadow-sm border-l-4 border-l-green-500">
               <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
                 <CardTitle className="text-xl flex items-center gap-3">
                   <CheckCircle className="w-6 h-6 text-green-600" />
-                  You Are Already a Citizen
+                  {isAlreadyCitizen ? "You Are Already a Citizen" : "EU Freedom of Movement"}
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
                 <Alert>
                   <CheckCircle className="h-4 w-4" />
                   <AlertDescription className="text-green-800">
-                    <div className="space-y-2">
-                      <p>✅ <strong>You are a citizen of {destCountry}.</strong></p>
-                      <p>🛂 <strong>You do not need a visa.</strong></p>
-                      <p>💰 <strong>You just need to avoid being considered liable for taxation in other locations.</strong></p>
+                    {isAlreadyCitizen ? (
+                      <div className="space-y-2">
+                        <p>✅ <strong>You are a citizen of {destCountry}.</strong></p>
+                        <p>🛂 <strong>You do not need a visa.</strong></p>
+                        <p>💰 <strong>You just need to avoid being considered liable for taxation in other locations.</strong></p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <p>🇪🇺 <strong>You are an EU citizen, and can therefore move to {destCountry} without a visa!</strong></p>
+                        <p>✅ <strong>As an EU citizen, you have the right to live and work in {destCountry}.</strong></p>
+                        <p>💰 <strong>You just need to avoid being considered liable for taxation in other locations.</strong></p>
+                      </div>
+                    )}
+                  </AlertDescription>
+                </Alert>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Family Visa Requirements Analysis */}
+          {familyVisaAnalysis && (partnerInfo || dependentsInfo.length > 0) && (
+            <Card className={`shadow-sm border-l-4 ${
+              familyVisaComplexity === 'simple' ? 'border-l-green-500' :
+              familyVisaComplexity === 'moderate' ? 'border-l-yellow-500' : 'border-l-red-500'
+            }`}>
+              <CardHeader className={`bg-gradient-to-r ${
+                familyVisaComplexity === 'simple' ? 'from-green-50 to-transparent dark:from-green-950/20' :
+                familyVisaComplexity === 'moderate' ? 'from-yellow-50 to-transparent dark:from-yellow-950/20' : 
+                'from-red-50 to-transparent dark:from-red-950/20'
+              }`}>
+                <CardTitle className="text-xl flex items-center gap-3">
+                  <Users className={`w-6 h-6 ${
+                    familyVisaComplexity === 'simple' ? 'text-green-600' :
+                    familyVisaComplexity === 'moderate' ? 'text-yellow-600' : 'text-red-600'
+                  }`} />
+                  Family Visa Requirements
+                  <Badge variant={familyVisaComplexity === 'simple' ? 'default' : 'secondary'} className="ml-2">
+                    {familyVisaComplexity.charAt(0).toUpperCase() + familyVisaComplexity.slice(1)}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <Alert className={
+                  familyVisaComplexity === 'simple' ? 'border-green-200 bg-green-50 dark:bg-green-950/20' :
+                  familyVisaComplexity === 'moderate' ? 'border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20' :
+                  'border-red-200 bg-red-50 dark:bg-red-950/20'
+                }>
+                  {familyVisaComplexity === 'simple' ? <CheckCircle className="h-4 w-4 text-green-600" /> :
+                   familyVisaComplexity === 'moderate' ? <AlertTriangle className="h-4 w-4 text-yellow-600" /> :
+                   <AlertTriangle className="h-4 w-4 text-red-600" />}
+                  <AlertDescription className={
+                    familyVisaComplexity === 'simple' ? 'text-green-800 dark:text-green-200' :
+                    familyVisaComplexity === 'moderate' ? 'text-yellow-800 dark:text-yellow-200' :
+                    'text-red-800 dark:text-red-200'
+                  }>
+                    <div className="space-y-3">
+                      <p><strong>Family Visa Status:</strong> {familyVisaAnalysis.summary}</p>
+                      
+                      {familyVisaAnalysis.visaRequirements.length > 0 && (
+                        <div>
+                          <p className="font-medium mb-2">Visa Requirements by Family Member:</p>
+                          <div className="space-y-2">
+                            {familyVisaAnalysis.visaRequirements.map((req, idx) => (
+                              <div key={idx} className="flex items-start gap-2">
+                                <span className="text-xs mt-1">
+                                  {req.requiresVisa ? '🔴' : '🟢'}
+                                </span>
+                                <div className="flex-1">
+                                  <p className="text-sm">
+                                    <strong>{req.memberType === 'partner' ? 'Partner' : `Dependent ${(req.memberIndex || 0) + 1}`}:</strong> 
+                                    {req.requiresVisa ? ` Requires ${req.visaType}` : ' No visa required'}
+                                  </p>
+                                  {req.specialConsiderations.length > 0 && (
+                                    <ul className="text-xs mt-1 ml-4 list-disc space-y-1">
+                                      {req.specialConsiderations.map((consideration, cidx) => (
+                                        <li key={cidx}>{consideration}</li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {familyVisaAnalysis.specialScenarios.length > 0 && (
+                        <div>
+                          <p className="font-medium mb-2">Special Considerations:</p>
+                          <ul className="text-sm space-y-1">
+                            {familyVisaAnalysis.specialScenarios.map((scenario, idx) => (
+                              <li key={idx} className="flex items-start gap-2">
+                                <span className="text-blue-600">ℹ️</span>
+                                {scenario}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {familyVisaPlanningSteps.length > 0 && (
+                        <div>
+                          <p className="font-medium mb-2">Planning Steps:</p>
+                          <ul className="text-sm space-y-1">
+                            {familyVisaPlanningSteps.map((step, idx) => (
+                              <li key={idx} className="flex items-start gap-2">
+                                <span className="text-blue-600 text-xs mt-1">📋</span>
+                                {step}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   </AlertDescription>
                 </Alert>
@@ -260,8 +406,8 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
             </Card>
           )}
 
-          {/* Center of Life Tax Implications - Always show for citizens */}
-          {isAlreadyCitizen && (
+          {/* Center of Life Tax Implications - Always show for citizens and EU movers */}
+          {hasNoVisaRequirement && (
             <Card className="shadow-sm border-l-4 border-l-orange-500">
               <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
                 <CardTitle className="text-xl flex items-center gap-3">
@@ -328,33 +474,33 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
             </Card>
           )}
 
-          {/* Residency Plans (only show if not already citizen) */}
-          {!isAlreadyCitizen && !citizenshipStatus && (
+          {/* Residency Plans (only show if not already citizen or EU) */}
+          {!hasNoVisaRequirement && !citizenshipStatus && (
             <Card className="shadow-sm border-l-4 border-l-purple-500">
               <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
-                <CardTitle className="text-xl flex items-center gap-3">
+          <CardTitle className="text-xl flex items-center gap-3">
                   <MapPin className="w-6 h-6 text-purple-600" />
-                  Residency Plans
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">Your plans for obtaining legal residency status</p>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
-                    <Checkbox
-                      id="apply_residency"
-                      checked={applyForResidency}
-                      onCheckedChange={(v) => updateFormData("residencyIntentions.residencyPlans.applyForResidency", !!v)}
-                    />
-                    <Label htmlFor="apply_residency" className="text-base font-medium">
+            Residency Plans
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Your plans for obtaining legal residency status</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
+              <Checkbox
+                id="apply_residency"
+                checked={applyForResidency}
+                onCheckedChange={(v) => updateFormData("residencyIntentions.residencyPlans.applyForResidency", !!v)}
+              />
+              <Label htmlFor="apply_residency" className="text-base font-medium">
                       I want to apply for residency in {destCountry}
-                    </Label>
-                  </div>
+              </Label>
+            </div>
 
-                  {applyForResidency && (
+            {applyForResidency && (
                     <>
                       {/* Minimum Stay Requirements */}
-                      <div className="space-y-4 p-4 border rounded-lg bg-card">
+              <div className="space-y-4 p-4 border rounded-lg bg-card">
                         <div className="space-y-4">
                           <h4 className="font-medium text-base flex items-center gap-2">
                             <Clock className="w-5 h-5" />
@@ -383,22 +529,22 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                             <Label className="text-base font-medium">
                               Maximum months per year I am willing to reside in {destCountry} in my first year
                             </Label>
-                            <div className="px-3">
-                              <Slider
-                                value={[maxMonths]}
-                                onValueChange={(value) => updateFormData("residencyIntentions.residencyPlans.maxMonthsWillingToReside", value[0])}
-                                max={12}
-                                min={0}
-                                step={1}
-                                className="w-full"
-                              />
-                              <div className="flex justify-between text-sm text-muted-foreground mt-1">
-                                <span>0 months</span>
-                                <span className="font-medium">{maxMonths} months</span>
-                                <span>12 months</span>
-                              </div>
-                            </div>
-                          </div>
+                  <div className="px-3">
+                    <Slider
+                      value={[maxMonths]}
+                      onValueChange={(value) => updateFormData("residencyIntentions.residencyPlans.maxMonthsWillingToReside", value[0])}
+                      max={12}
+                      min={0}
+                      step={1}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-sm text-muted-foreground mt-1">
+                      <span>0 months</span>
+                      <span className="font-medium">{maxMonths} months</span>
+                      <span>12 months</span>
+                    </div>
+                </div>
+              </div>
 
                           {maxMonths === 0 && (
                             <div className="space-y-3">
@@ -409,15 +555,15 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                                 </AlertDescription>
                               </Alert>
                               <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
-                                <Checkbox
-                                  id="open_visiting"
-                                  checked={openToVisiting}
-                                  onCheckedChange={(v) => updateFormData("residencyIntentions.residencyPlans.openToVisiting", !!v)}
-                                />
+              <Checkbox
+                id="open_visiting"
+                checked={openToVisiting}
+                onCheckedChange={(v) => updateFormData("residencyIntentions.residencyPlans.openToVisiting", !!v)}
+              />
                                 <Label htmlFor="open_visiting" className="text-sm font-medium">
                                   I'm open to occasional visits if required
-                                </Label>
-                              </div>
+              </Label>
+            </div>
                             </div>
                           )}
 
@@ -493,35 +639,35 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                       </div>
                     </>
                   )}
-                </div>
-              </CardContent>
-            </Card>
+          </div>
+        </CardContent>
+      </Card>
           )}
 
-          {/* Citizenship Plans (only show if not already citizen and interested) */}
-          {!isAlreadyCitizen && !citizenshipStatus && (
+          {/* Citizenship Plans (only show if not already citizen/EU and interested) */}
+          {!hasNoVisaRequirement && !citizenshipStatus && (
             <Card className="shadow-sm border-l-4 border-l-orange-500">
               <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
-                <CardTitle className="text-xl flex items-center gap-3">
+          <CardTitle className="text-xl flex items-center gap-3">
                   <Shield className="w-6 h-6 text-orange-600" />
                   Citizenship Interest
-                </CardTitle>
+          </CardTitle>
                 <p className="text-sm text-muted-foreground">Your interest in obtaining citizenship in {destCountry}</p>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
-                    <Checkbox
-                      id="interested_citizenship"
-                      checked={interestedInCitizenship}
-                      onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipPlans.interestedInCitizenship", !!v)}
-                    />
-                    <Label htmlFor="interested_citizenship" className="text-base font-medium">
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
+              <Checkbox
+                id="interested_citizenship"
+                checked={interestedInCitizenship}
+                onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipPlans.interestedInCitizenship", !!v)}
+              />
+              <Label htmlFor="interested_citizenship" className="text-base font-medium">
                       I am interested in becoming a citizen of {destCountry}
-                    </Label>
-                  </div>
+              </Label>
+            </div>
 
-                  {interestedInCitizenship && (
+            {interestedInCitizenship && (
                     <>
                       <p className="text-sm text-muted-foreground">
                         N.B. For most countries, being a resident (and taxpayer) for some number of years is a way to obtain citizenship. I will inform you whether this is so for {destCountry}.
@@ -613,17 +759,17 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                               <p className="text-sm text-muted-foreground">Citizenship by investment</p>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                              <div className="flex items-center gap-3">
-                                <Checkbox
+                <div className="flex items-center gap-3">
+                  <Checkbox
                                   id="investment"
                                   checked={investmentWilling}
                                   onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipPlans.investment.willing", !!v)}
                                 />
                                 <Label htmlFor="investment" className="text-sm font-medium">
                                   I am open to investment
-                                </Label>
-                              </div>
-                              
+                  </Label>
+                </div>
+
                               {investmentWilling && (
                                 <div className="grid grid-cols-2 gap-3">
                                   <div className="space-y-2">
@@ -669,15 +815,15 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                               <p className="text-sm text-muted-foreground">Citizenship by donation</p>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                              <div className="flex items-center gap-3">
-                                <Checkbox
+                <div className="flex items-center gap-3">
+                  <Checkbox
                                   id="donation"
                                   checked={donationWilling}
                                   onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipPlans.donation.willing", !!v)}
                                 />
                                 <Label htmlFor="donation" className="text-sm font-medium">
                                   I am open to donate
-                                </Label>
+                  </Label>
                               </div>
                               
                               {donationWilling && (
@@ -709,35 +855,253 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                                         ))}
                                       </SelectContent>
                                     </Select>
-                                  </div>
-                                </div>
+                </div>
+              </div>
                               )}
                             </CardContent>
                           </Card>
                         </div>
                       </div>
                     </>
-                  )}
+            )}
+          </div>
+        </CardContent>
+      </Card>
+          )}
+
+        </>
+                )}
+
+          {/* Family Visa Planning - Only show if family requires visas */}
+          {familyVisaAnalysis && familyVisaAnalysis.familyRequiresVisas && (
+            <Card className="shadow-sm border-l-4 border-l-blue-500">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
+                <CardTitle className="text-xl flex items-center gap-3">
+                  <Users className="w-6 h-6 text-blue-600" />
+                  Family Visa Planning
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Plan visa applications and timeline coordination for family members
+                </p>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-6">
+                  
+                  {/* Visa Application Timeline Preference */}
+                  <div className="space-y-4">
+                    <Label className="text-base font-medium">Preferred Visa Application Timeline</Label>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="timeline-together"
+                          name="familyVisaTimeline"
+                          value="together"
+                          checked={getFormData("residencyIntentions.familyVisaPlanning.applicationTimeline") === "together"}
+                          onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.applicationTimeline", e.target.value)}
+                          className="h-4 w-4"
+                        />
+                        <Label htmlFor="timeline-together" className="text-sm">
+                          Apply for all family visas together (coordinated timeline)
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="timeline-sequential"
+                          name="familyVisaTimeline" 
+                          value="sequential"
+                          checked={getFormData("residencyIntentions.familyVisaPlanning.applicationTimeline") === "sequential"}
+                          onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.applicationTimeline", e.target.value)}
+                          className="h-4 w-4"
+                        />
+                        <Label htmlFor="timeline-sequential" className="text-sm">
+                          Apply sequentially (primary applicant first, then family)
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="timeline-flexible"
+                          name="familyVisaTimeline"
+                          value="flexible"
+                          checked={getFormData("residencyIntentions.familyVisaPlanning.applicationTimeline") === "flexible"}
+                          onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.applicationTimeline", e.target.value)}
+                          className="h-4 w-4"
+                        />
+                        <Label htmlFor="timeline-flexible" className="text-sm">
+                          Flexible timing based on processing requirements
+                        </Label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Family Relocation Priority */}
+                  <div className="space-y-4">
+                    <Label className="text-base font-medium">Family Relocation Priority</Label>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="priority-together"
+                          name="familyRelocationPriority"
+                          value="moveTogetherEssential"
+                          checked={getFormData("residencyIntentions.familyVisaPlanning.relocationPriority") === "moveTogetherEssential"}
+                          onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.relocationPriority", e.target.value)}
+                          className="h-4 w-4"
+                        />
+                        <Label htmlFor="priority-together" className="text-sm">
+                          Moving together is essential - will delay if needed
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="priority-primary-first"
+                          name="familyRelocationPriority"
+                          value="primaryFirstAcceptable"
+                          checked={getFormData("residencyIntentions.familyVisaPlanning.relocationPriority") === "primaryFirstAcceptable"}
+                          onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.relocationPriority", e.target.value)}
+                          className="h-4 w-4"
+                        />
+                        <Label htmlFor="priority-primary-first" className="text-sm">
+                          Primary applicant can move first, family follows later
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="priority-flexible-timing"
+                          name="familyRelocationPriority"
+                          value="flexibleTiming"
+                          checked={getFormData("residencyIntentions.familyVisaPlanning.relocationPriority") === "flexibleTiming"}
+                          onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.relocationPriority", e.target.value)}
+                          className="h-4 w-4"
+                        />
+                        <Label htmlFor="priority-flexible-timing" className="text-sm">
+                          Flexible timing - optimize for fastest overall process
+                        </Label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Document Preparation Concerns */}
+                  <div className="space-y-4">
+                    <Label className="text-base font-medium">Main Document/Process Concerns</Label>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="concern-documents"
+                          checked={getFormData("residencyIntentions.familyVisaPlanning.concerns")?.includes("documentPreparation") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentConcerns = getFormData("residencyIntentions.familyVisaPlanning.concerns") || []
+                            const newConcerns = checked 
+                              ? [...currentConcerns, "documentPreparation"]
+                              : currentConcerns.filter((c: string) => c !== "documentPreparation")
+                            updateFormData("residencyIntentions.familyVisaPlanning.concerns", newConcerns)
+                          }}
+                        />
+                        <Label htmlFor="concern-documents" className="text-sm">
+                          Document preparation and apostille/legalization requirements
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="concern-costs"
+                          checked={getFormData("residencyIntentions.familyVisaPlanning.concerns")?.includes("applicationCosts") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentConcerns = getFormData("residencyIntentions.familyVisaPlanning.concerns") || []
+                            const newConcerns = checked 
+                              ? [...currentConcerns, "applicationCosts"]
+                              : currentConcerns.filter((c: string) => c !== "applicationCosts")
+                            updateFormData("residencyIntentions.familyVisaPlanning.concerns", newConcerns)
+                          }}
+                        />
+                        <Label htmlFor="concern-costs" className="text-sm">
+                          Total application costs for multiple family members
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="concern-timing"
+                          checked={getFormData("residencyIntentions.familyVisaPlanning.concerns")?.includes("processingTiming") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentConcerns = getFormData("residencyIntentions.familyVisaPlanning.concerns") || []
+                            const newConcerns = checked 
+                              ? [...currentConcerns, "processingTiming"]
+                              : currentConcerns.filter((c: string) => c !== "processingTiming")
+                            updateFormData("residencyIntentions.familyVisaPlanning.concerns", newConcerns)
+                          }}
+                        />
+                        <Label htmlFor="concern-timing" className="text-sm">
+                          Processing times and potential delays
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="concern-schooling"
+                          checked={getFormData("residencyIntentions.familyVisaPlanning.concerns")?.includes("childSchooling") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentConcerns = getFormData("residencyIntentions.familyVisaPlanning.concerns") || []
+                            const newConcerns = checked 
+                              ? [...currentConcerns, "childSchooling"]
+                              : currentConcerns.filter((c: string) => c !== "childSchooling")
+                            updateFormData("residencyIntentions.familyVisaPlanning.concerns", newConcerns)
+                          }}
+                        />
+                        <Label htmlFor="concern-schooling" className="text-sm">
+                          School enrollment and academic year timing for children
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="concern-work"
+                          checked={getFormData("residencyIntentions.familyVisaPlanning.concerns")?.includes("spouseWork") ?? false}
+                          onCheckedChange={(checked) => {
+                            const currentConcerns = getFormData("residencyIntentions.familyVisaPlanning.concerns") || []
+                            const newConcerns = checked 
+                              ? [...currentConcerns, "spouseWork"]
+                              : currentConcerns.filter((c: string) => c !== "spouseWork")
+                            updateFormData("residencyIntentions.familyVisaPlanning.concerns", newConcerns)
+                          }}
+                        />
+                        <Label htmlFor="concern-work" className="text-sm">
+                          Spouse/partner work authorization and employment timeline
+                        </Label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Special Family Circumstances */}
+                  <div className="space-y-4">
+                    <Label htmlFor="family-circumstances" className="text-base font-medium">
+                      Special Family Circumstances
+                    </Label>
+                    <Textarea
+                      id="family-circumstances"
+                      placeholder="Any special family circumstances that might affect visa applications (e.g., medical needs, elderly dependents, dual citizenship considerations, previous visa history, etc.)"
+                      value={getFormData("residencyIntentions.familyVisaPlanning.specialCircumstances") || ""}
+                      onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.specialCircumstances", e.target.value)}
+                      rows={3}
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>
           )}
 
-        </>
-      )}
-
-      {/* Language Skills - Only show for non-citizens */}
-      {destCountry && !isAlreadyCitizen && (
+      {/* Language Skills - Only show for non-citizens/non-EU */}
+      {destCountry && !hasNoVisaRequirement && (
         <Card className="shadow-sm border-l-4 border-l-indigo-500">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-transparent dark:from-indigo-950/20">
-              <CardTitle className="text-xl flex items-center gap-3">
+            <CardTitle className="text-xl flex items-center gap-3">
                 <Languages className="w-6 h-6 text-indigo-600" />
-                Language Skills
-              </CardTitle>
+              Language Skills
+            </CardTitle>
               <p className="text-sm text-muted-foreground">Your proficiency in languages for immigration and integration</p>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="space-y-6">
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="space-y-6">
                 {languages.length > 0 ? (
                   <>
                     <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
@@ -748,30 +1112,30 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                     </div>
 
                     {/* Your Language Skills */}
-                    <div className="space-y-4">
+                <div className="space-y-4">
                       <h4 className="font-medium text-base">📊 Your Language Skills</h4>
                       {languages.map((lang: string) => {
-                        const currentLevel = Number(getFormData(`residencyIntentions.languageProficiency.individual.${lang}`) || 0)
+                    const currentLevel = Number(getFormData(`residencyIntentions.languageProficiency.individual.${lang}`) || 0)
                         const willingToLearn = getFormData(`residencyIntentions.languageProficiency.willing_to_learn`) || []
-                        
-                        return (
+                    
+                    return (
                           <div key={`individual-${lang}`} className="space-y-3 p-4 border rounded-lg">
-                            <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center">
                               <Label className="text-base font-medium">Your proficiency in {lang}</Label>
-                              <Badge variant="secondary">{proficiencyLabels[currentLevel]}</Badge>
-                            </div>
-                            <Slider
-                              value={[currentLevel]}
-                              onValueChange={(value) => {
-                                updateFormData(`residencyIntentions.languageProficiency.individual.${lang}`, value[0])
-                              }}
-                              max={6}
-                              min={0}
-                              step={1}
-                              className="w-full"
-                            />
-                            <div className="flex justify-between text-xs text-muted-foreground">
-                              <span>None</span>
+                          <Badge variant="secondary">{proficiencyLabels[currentLevel]}</Badge>
+                        </div>
+                        <Slider
+                          value={[currentLevel]}
+                          onValueChange={(value) => {
+                            updateFormData(`residencyIntentions.languageProficiency.individual.${lang}`, value[0])
+                          }}
+                          max={6}
+                          min={0}
+                          step={1}
+                          className="w-full"
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>None</span>
                               <span>A1</span>
                               <span>A2</span>
                               <span>B1</span>
@@ -856,12 +1220,12 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                                 <span>B2</span>
                                 <span>C1</span>
                                 <span>C2</span>
-                              </div>
-                            </div>
-                          )
-                        })}
+                        </div>
                       </div>
-                    )}
+                    )
+                  })}
+                </div>
+              )}
 
                     {/* Dependents' Language Skills */}
                     {numDependents > 0 && (
@@ -920,37 +1284,37 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                 )}
 
                 {/* Other Languages You Can Teach */}
-                <div className="space-y-4 border-t pt-6">
+              <div className="space-y-4 border-t pt-6">
                   <h4 className="font-medium text-base">🔤 Other languages you speak (and could teach)</h4>
                   <p className="text-sm text-muted-foreground">Add any other languages you can teach that aren't listed above</p>
-                  
+                
                   <div className="flex gap-3 items-end">
-                    <div className="flex-1">
+                  <div className="flex-1">
                       <Label className="text-sm">Language name</Label>
-                      <Input
+                    <Input
                         value={newTeachingLang.language}
                         onChange={(e) => setNewTeachingLang({...newTeachingLang, language: e.target.value})}
                         placeholder="Enter language name"
-                      />
-                    </div>
+                    />
+                  </div>
                     <div>
                       <Label className="text-sm">Teaching capability</Label>
-                      <Select
+                    <Select
                         value={newTeachingLang.capability}
                         onValueChange={(value) => setNewTeachingLang({...newTeachingLang, capability: value})}
-                      >
-                        <SelectTrigger className="w-48">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
+                    >
+                      <SelectTrigger className="w-48">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
                           <SelectItem value="Not interested">Not interested</SelectItem>
-                          <SelectItem value="Informally">Informally</SelectItem>
-                          <SelectItem value="Formally with credentials">Formally with credentials</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button
-                      onClick={() => {
+                        <SelectItem value="Informally">Informally</SelectItem>
+                        <SelectItem value="Formally with credentials">Formally with credentials</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button
+                    onClick={() => {
                         if (newTeachingLang.language && !otherLanguages[newTeachingLang.language]) {
                           const updated = {
                             ...otherLanguages,
@@ -963,21 +1327,21 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                       disabled={!newTeachingLang.language || !!otherLanguages[newTeachingLang.language]}
                     >
                       💾 Add Language
-                    </Button>
-                  </div>
+                  </Button>
+                </div>
 
                   {Object.keys(otherLanguages).length > 0 && (
-                    <div className="space-y-2">
+                  <div className="space-y-2">
                       <h5 className="font-medium">🔤 Languages you can teach:</h5>
                       {Object.entries(otherLanguages).map(([lang, level]: [string, any]) => (
                         <div key={lang} className="flex items-center justify-between p-3 border rounded-lg bg-card">
-                          <div>
+                        <div>
                             <span className="font-medium">{lang}</span>
                             <span className="text-sm text-muted-foreground ml-2">({level})</span>
-                          </div>
-                          <Button
+                        </div>
+                        <Button
                             variant="destructive"
-                            size="sm"
+                          size="sm"
                             onClick={() => {
                               const updated = {...otherLanguages}
                               delete updated[lang]
@@ -985,20 +1349,20 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                             }}
                           >
                             ❌ Remove
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Motivation & Compliance - Only show for non-citizens */}
-      {!isAlreadyCitizen && (
-        <Card className="shadow-sm border-l-4 border-l-amber-500">
+      {/* Motivation & Compliance - Only show for non-citizens/non-EU */}
+      {!hasNoVisaRequirement && (
+      <Card className="shadow-sm border-l-4 border-l-amber-500">
         <CardHeader className="bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
             <Heart className="w-6 h-6 text-amber-600" />
@@ -1048,11 +1412,11 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                 <AlertDescription>
                   <div>
                     <strong>⚠️ Please fix the following errors:</strong>
-                    <ul className="list-disc list-inside mt-2 space-y-1">
+                  <ul className="list-disc list-inside mt-2 space-y-1">
                       {errors.map((error, idx) => (
                         <li key={idx}>{error}</li>
                       ))}
-                    </ul>
+                  </ul>
                   </div>
                 </AlertDescription>
               </Alert>
@@ -1094,4 +1458,4 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
       />
     </div>
   )
-}
+} 

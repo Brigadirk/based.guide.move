@@ -481,7 +481,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                   <div className="space-y-4">
                     <h4 className="font-medium">📋 Your Planned Asset Sales</h4>
                     <div className="space-y-3">
-                      {capitalGains.map((gain, idx) => (
+                      {capitalGains.map((gain: any, idx: number) => (
                         <div key={idx} className="p-4 border rounded-lg bg-card">
                           <div className="grid md:grid-cols-5 gap-4 items-start">
                             <div>
@@ -505,7 +505,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                                 variant="destructive"
                                 size="sm"
                                 onClick={() => {
-                                  const updatedGains = capitalGains.filter((_, i) => i !== idx)
+                                  const updatedGains = capitalGains.filter((_: any, i: number) => i !== idx)
                                   updateFormData("finance.capitalGains", updatedGains)
                                 }}
                               >
@@ -846,17 +846,17 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                     <div className="space-y-4">
                       <h4 className="font-medium">📋 Your Income Sources</h4>
                       <div className="space-y-3">
-                        {incomeSources.map((source, idx) => (
+                        {incomeSources.map((source: any, idx: number) => (
                           <div key={idx} className="p-4 border rounded-lg bg-card">
                             <div className="grid md:grid-cols-5 gap-4 items-start">
                               <div>
                                 <p className="font-medium">{source.category}</p>
-                                {source.fields && Object.entries(source.fields).map(([key, value]) => 
-                                  value && (
+                                {source.fields && Object.entries(source.fields).map(([key, value]: [string, any]) => 
+                                  value ? (
                                     <p key={key} className="text-sm text-muted-foreground">
                                       {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: {value}
                                     </p>
-                                  )
+                                  ) : null
                                 )}
                               </div>
                               <div>
@@ -876,7 +876,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                                   variant="destructive"
                                   size="sm"
                                   onClick={() => {
-                                    const updatedSources = incomeSources.filter((_, i) => i !== idx)
+                                    const updatedSources = incomeSources.filter((_: any, i: number) => i !== idx)
                                     updateFormData("finance.incomeSources", updatedSources)
                                   }}
                                 >
@@ -1181,17 +1181,17 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                   <div className="space-y-4">
                     <h4 className="font-medium">📋 Your Liabilities</h4>
                     <div className="space-y-3">
-                      {liabilities.map((liability, idx) => (
+                      {liabilities.map((liability: any, idx: number) => (
                         <div key={idx} className="p-4 border rounded-lg bg-card">
                           <div className="grid md:grid-cols-6 gap-4 items-start">
                             <div>
                               <p className="font-medium">{liability.category}</p>
-                              {liability.fields && Object.entries(liability.fields).map(([key, value]) => 
-                                value && (
+                              {liability.fields && Object.entries(liability.fields).map(([key, value]: [string, any]) => 
+                                value ? (
                                   <p key={key} className="text-sm text-muted-foreground">
                                     {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: {value}
                                   </p>
-                                )
+                                ) : null
                               )}
                             </div>
                             <div>
@@ -1215,7 +1215,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                                 variant="destructive"
                                 size="sm"
                                 onClick={() => {
-                                  const updatedLiabilities = liabilities.filter((_, i) => i !== idx)
+                                  const updatedLiabilities = liabilities.filter((_: any, i: number) => i !== idx)
                                   updateFormData("finance.liabilities", updatedLiabilities)
                                 }}
                               >

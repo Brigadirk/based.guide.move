@@ -113,7 +113,62 @@
           "required": ["country", "moveType"],
           "properties": {
             "country": {"type": "string"},
-            "moveType": {"type": "string"}
+            "moveType": {"type": "string"},
+            "intendedTemporaryDurationOfStay": {"type": "number", "minimum": 1},
+            "citizenshipStatus": {"type": "boolean"}
+          }
+        },
+        "residencyPlans": {
+          "type": "object",
+          "properties": {
+            "applyForResidency": {"type": "boolean"},
+            "maxMonthsWillingToReside": {"type": "number", "minimum": 1},
+            "openToVisiting": {"type": "boolean"}
+          }
+        },
+        "citizenshipPlans": {
+          "type": "object",
+          "properties": {
+            "interestedInCitizenship": {"type": "boolean"},
+            "familyTies": {"type": "object"},
+            "investment": {"type": "object"},
+            "donation": {"type": "object"}
+          }
+        },
+        "languageSkills": {
+          "type": "object",
+          "properties": {
+            "currentProficiency": {"type": "object"},
+            "interestedInLearning": {"type": "boolean"},
+            "learningCommitment": {"type": "object"}
+          }
+        },
+        "motivationAndCompliance": {
+          "type": "object",
+          "properties": {
+            "motivations": {"type": "array", "items": {"type": "string"}},
+            "complianceCommitment": {"type": "object"}
+          }
+        },
+        "familyVisaPlanning": {
+          "type": "object",
+          "properties": {
+            "applicationTimeline": {
+              "type": "string",
+              "enum": ["together", "sequential", "flexible"]
+            },
+            "relocationPriority": {
+              "type": "string", 
+              "enum": ["moveTogetherEssential", "primaryFirstAcceptable", "flexibleTiming"]
+            },
+            "concerns": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["documentPreparation", "applicationCosts", "processingTiming", "childSchooling", "spouseWork"]
+              }
+            },
+            "specialCircumstances": {"type": "string"}
           }
         }
       }

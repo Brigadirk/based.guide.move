@@ -19,6 +19,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
+import { hasEUCitizenship, getUserEUCountries } from "@/lib/utils/eu-utils"
 
 // Hooks can't run outside components – compute once as a plain constant.
 const COUNTRY_LIST = Object.keys(countryInfo).sort()
@@ -587,6 +588,16 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
             <Alert variant="destructive">
               <AlertDescription>
                 ⚠️ You must be a citizen of at least one country!
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* EU Citizenship Indicator */}
+          {natList.length > 0 && hasEUCitizenship(natList) && (
+            <Alert className="border-blue-200 bg-blue-50 dark:bg-blue-950/20">
+              <Globe className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-blue-800 dark:text-blue-200">
+                🇪🇺 <strong>You're an EU citizen!</strong> You have citizenship in: {getUserEUCountries(natList).join(", ")}
               </AlertDescription>
             </Alert>
           )}

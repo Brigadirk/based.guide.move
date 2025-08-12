@@ -12,6 +12,7 @@ from datetime import date, datetime
 
 from modules.currency_utils import country_to_currency
 from exchange_rate_fetcher.exchange_rate_service import convert
+from modules.eu_utils import can_move_within_eu, has_eu_citizenship, is_eu_country
 
 
 LINE_BREAK = "\n\n"
@@ -149,7 +150,7 @@ def _summarise_language(prof: Dict[str, int]) -> str:
     return ", ".join(parts)
 
 
-def residency_section(ri: Dict[str, Any]) -> str:
+def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None) -> str:
     if not ri:
         return "Residency intentions have not been completed yet."
 
@@ -165,6 +166,100 @@ def residency_section(ri: Dict[str, Any]) -> str:
         if duration:
             sent = sent.rstrip(".") + f" for approximately {duration} months."
     sentences.append(sent)
+    
+    # Analyze family visa situation if personal info is available
+    if personal_info and country != "an unspecified country":
+        user_nationalities = personal_info.get("nationalities", [])
+        partner_info = personal_info.get("relocationPartnerInfo", {})
+        dependents_info = personal_info.get("relocationDependents", [])
+        
+        # Check if user has visa-free access
+        user_is_citizen = any(nat.get("country") == country for nat in user_nationalities)
+        user_has_eu_freedom = can_move_within_eu(user_nationalities, country)
+        user_has_visa_free = user_is_citizen or user_has_eu_freedom
+        
+        # Analyze family visa requirements
+        family_visa_needed = []
+        
+        # Check partner
+        if partner_info.get("partnerNationalities"):
+            partner_nats = partner_info["partnerNationalities"]
+            partner_is_citizen = any(nat.get("country") == country for nat in partner_nats)
+            partner_has_eu = can_move_within_eu(partner_nats, country)
+            if not (partner_is_citizen or partner_has_eu):
+                family_visa_needed.append("spouse/partner")
+        
+        # Check dependents
+        dependent_visa_count = 0
+        for dep in dependents_info:
+            if dep.get("nationalities"):
+                dep_nats = dep["nationalities"]
+                dep_is_citizen = any(nat.get("country") == country for nat in dep_nats)
+                dep_has_eu = can_move_within_eu(dep_nats, country)
+                if not (dep_is_citizen or dep_has_eu):
+                    dependent_visa_count += 1
+        
+        if dependent_visa_count > 0:
+            family_visa_needed.append(f"{dependent_visa_count} dependent{'s' if dependent_visa_count > 1 else ''}")
+        
+        # Add family visa context to story
+        if family_visa_needed:
+            if user_has_visa_free:
+                if user_has_eu_freedom and not user_is_citizen:
+                    sentences.append(f"As an EU citizen, they have freedom of movement to {country}.")
+                elif user_is_citizen:
+                    sentences.append(f"They are already a citizen of {country}.")
+                
+                family_desc = " and ".join(family_visa_needed)
+                sentences.append(f"However, their {family_desc} will require family reunion/dependent visas.")
+                
+                if is_eu_country(country) and has_eu_citizenship(user_nationalities):
+                    sentences.append("EU family reunion directives may provide beneficial pathways for family members.")
+            else:
+                total_family = len(family_visa_needed) + 1  # +1 for primary applicant
+                sentences.append(f"This will involve {total_family} separate visa applications for the complete family unit.")
+        elif partner_info or dependents_info:
+            # Family exists but no visas needed
+            if user_has_eu_freedom or any(
+                can_move_within_eu(partner_info.get("partnerNationalities", []), country) if partner_info else False
+            ):
+                sentences.append("The entire family benefits from EU freedom of movement rights.")
+            else:
+                sentences.append("All family members have visa-free access to the destination.")
+        
+        # Add family visa planning preferences if specified
+        family_planning = ri.get("familyVisaPlanning", {})
+        if family_planning:
+            timeline = family_planning.get("applicationTimeline")
+            if timeline == "together":
+                sentences.append("They prefer to coordinate all family visa applications together.")
+            elif timeline == "sequential":
+                sentences.append("They plan to apply for their own visa first, then family members.")
+            
+            priority = family_planning.get("relocationPriority")
+            if priority == "moveTogetherEssential":
+                sentences.append("Moving together as a family unit is essential to their plans.")
+            elif priority == "primaryFirstAcceptable":
+                sentences.append("They are willing to relocate first and have family join later.")
+            
+            concerns = family_planning.get("concerns", [])
+            if concerns:
+                concern_map = {
+                    "documentPreparation": "document preparation and legalization",
+                    "applicationCosts": "visa application costs for multiple family members",
+                    "processingTiming": "processing times and coordination",
+                    "childSchooling": "school enrollment timing for children",
+                    "spouseWork": "spouse work authorization"
+                }
+                concern_text = [concern_map.get(c, c) for c in concerns]
+                if len(concern_text) == 1:
+                    sentences.append(f"Their main family visa concern is {concern_text[0]}.")
+                else:
+                    sentences.append(f"Their main family visa concerns include {', '.join(concern_text[:-1])}, and {concern_text[-1]}.")
+            
+            special_circumstances = family_planning.get("specialCircumstances", "").strip()
+            if special_circumstances:
+                sentences.append(f"Special family circumstances: {special_circumstances}")
 
     # Residency plans - only mention if explicitly provided
     rp = ri.get("residencyPlans", {})
@@ -667,7 +762,7 @@ def make_story(profile: Dict[str, Any]) -> str:
     dest_currency = country_to_currency(dest_country) if dest_country else "USD"
 
     sections = [
-        ("Residency Plans", residency_section(profile.get("residencyIntentions", {}))),
+        ("Residency Plans", residency_section(profile.get("residencyIntentions", {}), profile.get("personalInformation", {}))),
         ("Finance", finance_section(profile.get("finance", {}), dest_currency)),
         ("Personal Information", personal_section(profile.get("personalInformation", {}))),
         ("Education", education_section(profile.get("education", {}))),
