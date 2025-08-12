@@ -130,7 +130,7 @@ def personal_section(pi: Dict[str, Any]) -> str:
         more = f" and {len(deps)-3} other(s)" if len(deps) > 3 else ""
         lines.append("Accompanying dependents: " + ", ".join(dep_summaries) + more + ".")
 
-    return " ".join(lines) or "No personal information provided."
+    return " ".join(lines) or "Personal information has not been completed yet."
 
 
 def _bool_sentence(flag: bool, when_true: str, when_false: str | None = None) -> str:
@@ -151,7 +151,7 @@ def _summarise_language(prof: Dict[str, int]) -> str:
 
 def residency_section(ri: Dict[str, Any]) -> str:
     if not ri:
-        return "No residency intentions provided."
+        return "Residency intentions have not been completed yet."
 
     sentences: List[str] = []
 
@@ -166,27 +166,30 @@ def residency_section(ri: Dict[str, Any]) -> str:
             sent = sent.rstrip(".") + f" for approximately {duration} months."
     sentences.append(sent)
 
-    # Residency plans
+    # Residency plans - only mention if explicitly provided
     rp = ri.get("residencyPlans", {})
-    if rp.get("applyForResidency"):
+    if rp.get("applyForResidency") is True:
         sentences.append("They intend to apply for legal residency.")
-    elif rp:
+    elif rp.get("applyForResidency") is False:
         sentences.append("They have no immediate plans to obtain residency status.")
 
     if rp:
         months = rp.get("maxMonthsWillingToReside")
         if months:
             sentences.append(f"They are willing to reside for up to {months} month{'s' if months!=1 else ''} initially.")
-        if rp.get("openToVisiting"):
+        if rp.get("openToVisiting") is True:
             sentences.append("They are open to short-term visits before a full move.")
-        else:
+        elif rp.get("openToVisiting") is False:
             sentences.append("They are not planning any exploratory visits prior to relocation.")
 
-    # Citizenship ambitions
+    # Citizenship ambitions - only mention if explicitly provided
     cp = ri.get("citizenshipPlans", {})
     if cp:
         interested = cp.get("interestedInCitizenship")
-        sentences.append(_bool_sentence(interested, "Ultimately, they wish to obtain citizenship.", "They are not currently pursuing citizenship."))
+        if interested is True:
+            sentences.append("Ultimately, they wish to obtain citizenship.")
+        elif interested is False:
+            sentences.append("They are not currently pursuing citizenship.")
 
         # Investment / donation paths
         investment = cp.get("investment", {})
@@ -356,6 +359,13 @@ def _summarise_capital_gains(cg: Dict[str, Any], dest_currency: str) -> str:
 
 
 def finance_section(fin: Dict[str, Any], dest_currency: str) -> str:
+    # Check if user chose to skip finance details
+    if fin.get("skipDetails") is True:
+        return "The user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
+    
+    if not fin:
+        return "Financial information has not been completed yet."
+
     parts: List[str] = []
 
     # Income situation summary
@@ -371,28 +381,27 @@ def finance_section(fin: Dict[str, Any], dest_currency: str) -> str:
         )
 
     income_sources = fin.get("incomeSources", [])
-    if not income_sources:
-        parts.append("They do not currently earn any income.")
-    parts.append(_summarise_income_sources(income_sources, dest_currency))
+    if income_sources:
+        parts.append(_summarise_income_sources(income_sources, dest_currency))
 
     exp_jobs = fin.get("expectedEmployment", [])
-    if not exp_jobs:
-        parts.append("They have not outlined any expected employment opportunities yet.")
-    parts.append(_summarise_income_sources(exp_jobs, dest_currency))
     if exp_jobs:
+        parts.append(_summarise_income_sources(exp_jobs, dest_currency))
         for j in exp_jobs[:3]:
             role = j.get("fields", {}).get("role", "a role")
             employer = j.get("fields", {}).get("employer", "an employer")
             salary = _format_money(j.get("amount", 0), j.get("currency", "USD"), dest_currency)
             parts.append(f"• Anticipated employment as {role} at {employer} earning {salary}.")
 
-    parts.append(_summarise_capital_gains(fin.get("capitalGains", {}), dest_currency))
+    capital_gains_summary = _summarise_capital_gains(fin.get("capitalGains", []), dest_currency)
+    if capital_gains_summary:
+        parts.append(capital_gains_summary)
 
     liabs = fin.get("liabilities", [])
-    parts.append(_summarise_liabilities(liabs, dest_currency))
-    if not liabs:
-        parts.append("They report no outstanding liabilities.")
     if liabs:
+        liabs_summary = _summarise_liabilities(liabs, dest_currency)
+        if liabs_summary:
+            parts.append(liabs_summary)
         for l in liabs[:3]:
             cat = l.get("category", "Liability")
             amt = _format_money(l.get("amount", 0), l.get("currency", "USD"), dest_currency)
@@ -400,57 +409,39 @@ def finance_section(fin: Dict[str, Any], dest_currency: str) -> str:
             parts.append(f"• {cat} with {lender}: {amt} outstanding.")
 
     # Assets summary
-    assets = fin.get("assets", {})
+    assets = fin.get("assets", [])
     if assets:
         asset_sentences = []
-        for key, label in [
-            ("realEstate", "real-estate property"),
-            ("financial", "financial asset"),
-            ("taxAdvantagedAccounts", "tax-advantaged account"),
-            ("cryptocurrency", "cryptocurrency holding"),
-        ]:
-            items = assets.get(key, [])
-            if items:
-                asset_sentences.append(f"{len(items)} {label}{'s' if len(items)!=1 else ''}")
-        if asset_sentences:
-            parts.append("They hold " + ", ".join(asset_sentences) + ".")
-        else:
-            parts.append("They have not listed any significant assets.")
-
-        # list details for first few assets in each category
-        for key, label in [
-            ("realEstate", "property"),
-            ("financial", "financial asset"),
-            ("cryptocurrency", "crypto holding"),
-        ]:
-            items = assets.get(key, [])
-            for itm in items[:2]:
-                desc = itm.get("description") or itm.get("asset") or label
-                val = itm.get("value") or itm.get("amount")
-                curr = itm.get("currency", "USD")
-                if val:
-                    val_str = _format_money(val, curr, dest_currency)
-                    parts.append(f"• {desc}: {val_str}.")
-                else:
-                    parts.append(f"• {desc} (value not specified).")
+        for asset in assets[:5]:  # Show first 5 assets
+            desc = asset.get("description") or asset.get("type", "asset")
+            val = asset.get("value")
+            curr = asset.get("currency", "USD")
+            if val:
+                val_str = _format_money(val, curr, dest_currency)
+                parts.append(f"• {desc}: {val_str}.")
+            else:
+                parts.append(f"• {desc} (value not specified).")
+        if len(assets) > 5:
+            parts.append(f"…and {len(assets)-5} more assets.")
 
     # Filter empties
     parts = [p for p in parts if p]
 
-    return " " .join(parts) if parts else "No financial data provided."
+    return " ".join(parts) if parts else "Financial information has not been completed yet."
 
 
 def education_section(edu: Dict[str, Any]) -> str:
     if not edu:
-        return "No education data provided."
+        return "Education information has not been completed yet."
 
     segments: List[str] = []
 
-    if edu.get("isStudent"):
+    # Only mention student status if explicitly provided
+    if edu.get("isStudent") is True:
         school = edu.get("currentSchool") or "an unspecified institution"
         field = edu.get("currentFieldOfStudy") or "various subjects"
         segments.append(f"The individual is currently studying {field} at {school}.")
-    else:
+    elif edu.get("isStudent") is False:
         segments.append("The individual is not currently enrolled as a student.")
 
     # Previous degrees
@@ -482,10 +473,10 @@ def education_section(edu: Dict[str, Any]) -> str:
         if len(vskills) > 3:
             segments.append(f"…and {len(vskills)-3} more skills.")
 
-    # Future study interests
-    if edu.get("interestedInStudying"):
+    # Future study interests - only mention if explicitly provided
+    if edu.get("interestedInStudying") is True:
         segments.append("They are interested in pursuing further studies in the destination country.")
-    else:
+    elif edu.get("interestedInStudying") is False:
         segments.append("They are not looking to study in the destination country.")
 
     # Learning interests
@@ -506,35 +497,35 @@ def education_section(edu: Dict[str, Any]) -> str:
         if len(offers) > 3:
             segments.append(f"…and {len(offers)-3} more offers.")
 
-    # Military service background
+    # Military service background - only mention if explicitly provided
     military = edu.get("militaryService", {})
-    if military.get("hasService"):
+    if military.get("hasService") is True:
         country = military.get("country", "their home country")
         branch = military.get("branch", "the military")
         segments.append(f"They have military service experience in {country} with {branch}.")
-    elif military:
+    elif military.get("hasService") is False:
         segments.append("They have no military service background.")
 
-    return " ".join(segments)
+    return " ".join(segments) if segments else "Education information has not been completed yet."
 
 
 def ssp_section(ssp: Dict[str, Any], dest_currency: str) -> str:
     if not ssp:
-        return "No social-security or pension information provided."
+        return "Social security and pension information has not been completed yet."
 
     segments: List[str] = []
 
     curr = ssp.get("currentCountryContributions", {})
-    if curr.get("isContributing") and curr.get("country"):
+    if curr.get("isContributing") is True and curr.get("country"):
         yrs = curr.get("yearsOfContribution", 0)
         segments.append(
             f"They are currently contributing to the social-security system in {curr['country']} (about {yrs} years credited)."
         )
-    else:
+    elif curr.get("isContributing") is False:
         segments.append("They are not presently contributing to any social-security system.")
 
     future = ssp.get("futurePensionContributions", {})
-    if future.get("isPlanning"):
+    if future.get("isPlanning") is True:
         segments.append("They plan to continue pension contributions after relocation.")
         details = future.get("details", [])
         if details:
@@ -555,31 +546,34 @@ def ssp_section(ssp: Dict[str, Any], dest_currency: str) -> str:
                     segments.append(f"• Plans to contribute to {plan}{location} (amount not specified).")
             if len(details) > 3:
                 segments.append(f"…and {len(details)-3} more contribution plan(s).")
-    else:
-        segments.append("They are not presently contributing to any social-security system.")
+    elif future.get("isPlanning") is False:
+        segments.append("They are not planning any pension contributions after relocation.")
 
     existing = ssp.get("existingPlans", {})
-    if existing.get("hasPlans"):
+    if existing.get("hasPlans") is True:
         details = existing.get("details", [])
-        total = sum(d.get("currentValue", 0) for d in details)
-        currency = details[0].get("currency", "USD") if details else "USD"
-        segments.append(
-            f"They hold {len(details)} existing pension plan(s) valued at approximately {_format_money(total, currency, dest_currency)}."
-        )
-        for plan in details[:3]:
-            ptype = plan.get("planType", "Pension plan")
-            val = _format_money(plan.get("currentValue", 0), plan.get("currency", "USD"), dest_currency)
-            country = plan.get("country", "various countries")
-            segments.append(f"• {ptype} in {country}: current value {val}.")
-        if len(details) > 3:
-            segments.append(f"…and {len(details)-3} more pension plans.")
+        if details:
+            total = sum(d.get("currentValue", 0) for d in details)
+            currency = details[0].get("currency", "USD") if details else "USD"
+            segments.append(
+                f"They hold {len(details)} existing pension plan(s) valued at approximately {_format_money(total, currency, dest_currency)}."
+            )
+            for plan in details[:3]:
+                ptype = plan.get("planType", "Pension plan")
+                val = _format_money(plan.get("currentValue", 0), plan.get("currency", "USD"), dest_currency)
+                country = plan.get("country", "various countries")
+                segments.append(f"• {ptype} in {country}: current value {val}.")
+            if len(details) > 3:
+                segments.append(f"…and {len(details)-3} more pension plans.")
+    elif existing.get("hasPlans") is False:
+        segments.append("They have no existing pension plans.")
 
-    return " ".join(segments)
+    return " ".join(segments) if segments else "Social security and pension information has not been completed yet."
 
 
 def future_plans_section(fut: Dict[str, Any], dest_currency: str) -> str:
     if not fut:
-        return "No future financial plans specified."
+        return "Future financial plans information has not been completed yet."
 
     segs: List[str] = []
 
@@ -621,13 +615,16 @@ def future_plans_section(fut: Dict[str, Any], dest_currency: str) -> str:
         )
     )
 
-    return " " .join(segs) if segs else "No significant future financial moves are planned."
+    return " " .join(segs) if segs else "Future financial plans information has not been completed yet."
 
 
 def deductions_section(ded: Dict[str, Any], dest_currency: str) -> str:
-    lst = ded.get("potentialDeductions", []) if ded else []
+    if not ded:
+        return "Tax deductions and credits information has not been completed yet."
+        
+    lst = ded.get("potentialDeductions", [])
     if not lst:
-        return "No potential deductions or credits reported."
+        return "Tax deductions and credits information has not been completed yet."
 
     total_usd = _mixed_total(lst, "amount")
     total_dest = convert(total_usd, "USD", dest_currency)
@@ -650,7 +647,7 @@ def deductions_section(ded: Dict[str, Any], dest_currency: str) -> str:
 
 def additional_section(add: Dict[str, Any]) -> str:
     if not add:
-        return "No additional information provided."
+        return "Additional information has not been completed yet."
 
     notes = add.get("generalNotes")
     special = add.get("specialSections", [])
@@ -662,7 +659,7 @@ def additional_section(add: Dict[str, Any]) -> str:
             segs.append(f"User note: {sec[:200]}{'…' if len(sec)>200 else ''}")
         if len(special) > 2:
             segs.append(f"…and {len(special)-2} more note sections.")
-    return " " .join(segs) if segs else "No additional comments."
+    return " " .join(segs) if segs else "Additional information has not been completed yet."
 
 
 def make_story(profile: Dict[str, Any]) -> str:
@@ -728,18 +725,24 @@ def make_finance_story(finance_info: Dict[str, Any], dest_currency: str = "USD")
     return f"Finance:\n{finance_section(finance_info, dest_currency)}"
 
 
-def make_social_security_story(ssp_info: Dict[str, Any], dest_currency: str = "USD") -> str:
+def make_social_security_story(ssp_info: Dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False) -> str:
     """Generate a story for just the social security and pensions section."""
+    if skip_finance_details:
+        return f"Social Security & Pensions:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
     return f"Social Security & Pensions:\n{ssp_section(ssp_info, dest_currency)}"
 
 
-def make_tax_deductions_story(tax_info: Dict[str, Any], dest_currency: str = "USD") -> str:
+def make_tax_deductions_story(tax_info: Dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False) -> str:
     """Generate a story for just the tax deductions and credits section."""
+    if skip_finance_details:
+        return f"Tax Deductions & Credits:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
     return f"Tax Deductions & Credits:\n{deductions_section(tax_info, dest_currency)}"
 
 
-def make_future_financial_plans_story(future_info: Dict[str, Any], dest_currency: str = "USD") -> str:
+def make_future_financial_plans_story(future_info: Dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False) -> str:
     """Generate a story for just the future financial plans section."""
+    if skip_finance_details:
+        return f"Future Financial Plans:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
     return f"Future Financial Plans:\n{future_plans_section(future_info, dest_currency)}"
 
 

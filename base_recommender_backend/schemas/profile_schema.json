@@ -122,6 +122,7 @@
     "finance": {
       "type": "object",
       "properties": {
+        "skipDetails": {"type": "boolean"},
         "incomeSituation": {"type": "string"},
         "totalWealth": {
           "type": "object",

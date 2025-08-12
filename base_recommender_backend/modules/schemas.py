@@ -124,6 +124,7 @@ class SocialSecurityRequest(BaseModel):
     """Schema for social security and pensions section story generation."""
     social_security_and_pensions: Dict
     destination_country: Optional[str] = None
+    skip_finance_details: Optional[bool] = False
     
     class Config:
         extra = "allow"
@@ -133,6 +134,7 @@ class TaxDeductionsRequest(BaseModel):
     """Schema for tax deductions and credits section story generation."""
     tax_deductions_and_credits: Dict
     destination_country: Optional[str] = None
+    skip_finance_details: Optional[bool] = False
     
     class Config:
         extra = "allow"
@@ -142,6 +144,7 @@ class FutureFinancialPlansRequest(BaseModel):
     """Schema for future financial plans section story generation."""
     future_financial_plans: Dict
     destination_country: Optional[str] = None
+    skip_finance_details: Optional[bool] = False
     
     class Config:
         extra = "allow"

@@ -125,7 +125,7 @@ def get_social_security_story(request: SocialSecurityRequest):
         if request.destination_country:
             dest_currency = country_to_currency(request.destination_country)
         
-        story = make_social_security_story(request.social_security_and_pensions, dest_currency)
+        story = make_social_security_story(request.social_security_and_pensions, dest_currency, request.skip_finance_details)
         return {
             "status": "success",
             "section": "social_security_and_pensions",
@@ -143,7 +143,7 @@ def get_tax_deductions_story(request: TaxDeductionsRequest):
         if request.destination_country:
             dest_currency = country_to_currency(request.destination_country)
         
-        story = make_tax_deductions_story(request.tax_deductions_and_credits, dest_currency)
+        story = make_tax_deductions_story(request.tax_deductions_and_credits, dest_currency, request.skip_finance_details)
         return {
             "status": "success",
             "section": "tax_deductions_and_credits",
@@ -161,7 +161,7 @@ def get_future_financial_plans_story(request: FutureFinancialPlansRequest):
         if request.destination_country:
             dest_currency = country_to_currency(request.destination_country)
         
-        story = make_future_financial_plans_story(request.future_financial_plans, dest_currency)
+        story = make_future_financial_plans_story(request.future_financial_plans, dest_currency, request.skip_finance_details)
         return {
             "status": "success",
             "section": "future_financial_plans",
