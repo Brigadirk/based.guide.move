@@ -54,9 +54,11 @@ def personal_section(pi: Dict[str, Any]) -> str:
     if dob:
         age = int((date.today() - datetime.strptime(dob, "%Y-%m-%d").date()).days / 365.25)
         lines.append(f"The individual was born on {_fmt_date(dob)} (age {age}).")
+    
     ms = pi.get("maritalStatus")
     if ms:
         lines.append(f"Marital status: {ms}.")
+    
     nats_data = pi.get("nationalities", [])
     if nats_data:
         nat_parts = []
@@ -66,7 +68,8 @@ def personal_section(pi: Dict[str, Any]) -> str:
                 continue
             renounce = n.get("willingToRenounce")
             nat_parts.append(f"{country}{' (willing to renounce)' if renounce else ''}")
-        lines.append("Nationality/ies held: " + ", ".join(nat_parts) + ".")
+        if nat_parts:
+            lines.append("Nationality/ies held: " + ", ".join(nat_parts) + ".")
 
     # Current residence details
     res = pi.get("currentResidency", {})
@@ -160,13 +163,67 @@ def personal_section(pi: Dict[str, Any]) -> str:
             lines.append("They can provide documentation to prove their relationship (photos, correspondence, joint accounts, etc.).")
         elif can_prove is False:
             lines.append("They have indicated they may have limited documentation to prove their relationship.")
+    elif has_partner is False:
+        lines.append("The individual is not bringing a partner or spouse with them.")
+    # Note: If has_partner is not explicitly set (None/undefined), we don't mention partner status
 
     # Dependents
     deps = pi.get("dependents", [])
     if deps and len(deps) > 0:
-        dep_summaries = []
-        for d in deps[:3]:
+        # Group dependents by who they're related to for clearer description
+        user_deps = []
+        partner_deps = []
+        
+        for d in deps:
             rel = d.get("relationship", "dependent")
+            
+            # Handle new detailed relationship structure
+            rel_details = d.get("relationshipDetails", {})
+            bio_rel = rel_details.get("biologicalRelationTo", "user")
+            legal_rel = rel_details.get("legalRelationTo", "user") 
+            custodial_rel = rel_details.get("custodialRelationTo", "user")
+            
+            # Determine primary relationship for grouping
+            primary_relation = "user"  # default
+            if bio_rel == "partner" or legal_rel == "partner" or custodial_rel == "partner":
+                if bio_rel == "both" or legal_rel == "both" or custodial_rel == "both":
+                    primary_relation = "both"
+                else:
+                    primary_relation = "partner"
+            elif bio_rel == "both" or legal_rel == "both" or custodial_rel == "both":
+                primary_relation = "both"
+            
+            # Build relationship context for description
+            rel_context_parts = []
+            if rel_details.get("isStepRelation"):
+                rel_context_parts.append("step-")
+            if rel_details.get("isAdopted"):
+                rel_context_parts.append("adopted ")
+            
+            # Add guardianship info if relevant
+            guardianship = rel_details.get("guardianshipType", "none")
+            if guardianship != "none":
+                rel_context_parts.append(f"({guardianship} guardian)")
+            
+            # Create comprehensive relationship description
+            rel_desc = "".join(rel_context_parts) + rel.lower()
+            
+            # Add biological/legal context if complex
+            if bio_rel != legal_rel or bio_rel != custodial_rel or legal_rel != custodial_rel:
+                context_details = []
+                if bio_rel == "partner":
+                    context_details.append("biologically partner's")
+                elif bio_rel == "user":
+                    context_details.append("biologically user's")
+                
+                if legal_rel != bio_rel:
+                    if legal_rel == "user":
+                        context_details.append("legally user's")
+                    elif legal_rel == "partner":
+                        context_details.append("legally partner's")
+                
+                if context_details:
+                    rel_desc += f" ({', '.join(context_details)})"
             
             # Get dependent's nationalities
             dep_nats = d.get("nationalities", [])
@@ -192,10 +249,46 @@ def personal_section(pi: Dict[str, Any]) -> str:
             
             # Build dependent description
             nationality_text = f" with citizenship of {', '.join(nat_list)}" if nat_list else ""
-            dep_summaries.append(f"{rel}{age_str}{nationality_text}{student_status}")
+            dep_desc = f"{rel_desc}{age_str}{nationality_text}{student_status}"
+            
+            # Include additional notes if provided
+            notes = rel_details.get("additionalNotes", "").strip()
+            if notes:
+                dep_desc += f" (Note: {notes})"
+            
+            # Group by primary relationship
+            if primary_relation == "partner":
+                partner_deps.append(dep_desc)
+            elif primary_relation == "both":
+                # For relationships to both, add to a separate category or user category with note
+                user_deps.append(f"{dep_desc} [related to both]")
+            else:
+                user_deps.append(dep_desc)
         
-        more = f" and {len(deps)-3} other dependent(s)" if len(deps) > 3 else ""
-        lines.append("They are also relocating with: " + "; ".join(dep_summaries) + more + ".")
+        # Create description based on relationships
+        dep_parts = []
+        if user_deps:
+            if len(user_deps) == 1:
+                dep_parts.append(f"their {user_deps[0]}")
+            else:
+                dep_parts.append(f"their {len(user_deps)} dependents: {'; '.join(user_deps[:3])}")
+                if len(user_deps) > 3:
+                    dep_parts[-1] += f" and {len(user_deps)-3} others"
+        
+        if partner_deps:
+            if len(partner_deps) == 1:
+                dep_parts.append(f"their partner's {partner_deps[0]}")
+            else:
+                dep_parts.append(f"their partner's {len(partner_deps)} dependents: {'; '.join(partner_deps[:3])}")
+                if len(partner_deps) > 3:
+                    dep_parts[-1] += f" and {len(partner_deps)-3} others"
+        
+        if dep_parts:
+            lines.append("They are also relocating with " + " and ".join(dep_parts) + ".")
+    else:
+        # Check if dependents field was explicitly set to empty vs not filled out
+        if "dependents" in pi or "numDependents" in pi:
+            lines.append("The individual is not bringing any dependents (children or other dependents) with them.")
 
     return " ".join(lines) or "User has not submitted any information on this section."
 
@@ -347,9 +440,18 @@ def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None, 
         sentences.append("They have no immediate plans to obtain residency status.")
 
     if rp:
+        # Handle minimum requirement preference vs specific months
+        want_minimum_only = rp.get("wantMinimumOnly")
         months = rp.get("maxMonthsWillingToReside")
-        if months:
-            sentences.append(f"They are willing to reside for up to {months} month{'s' if months!=1 else ''} initially.")
+        
+        if want_minimum_only:
+            sentences.append("They prefer to know the minimum residency requirements rather than set a specific preference.")
+        elif months is not None:
+            if months == 0:
+                sentences.append("They initially indicated zero months of residence willingness.")
+            else:
+                sentences.append(f"They are willing to reside for up to {months} month{'s' if months!=1 else ''} initially.")
+        
         if rp.get("openToVisiting") is True:
             sentences.append("They are open to short-term visits before a full move.")
         elif rp.get("openToVisiting") is False:
@@ -430,9 +532,16 @@ def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None, 
     elif ties_text:
         sentences.append("Regarding centre-of-life ties, they note: " + ties_text + ".")
 
-    # Tax compliance
-    if ri.get("taxCompliantEverywhere") is False:
+    # Tax compliance - explicit mention for both compliant and non-compliant
+    tax_compliant = ri.get("taxCompliantEverywhere")
+    if tax_compliant is True:
+        sentences.append("They are fully tax compliant in all jurisdictions where they have lived.")
+    elif tax_compliant is False:
         sentences.append("They are **not** tax compliant in all jurisdictions, which may pose compliance risks.")
+        # Include explanation if provided
+        explanation = ri.get("taxComplianceExplanation", "").strip()
+        if explanation:
+            sentences.append(f"Tax compliance explanation: {explanation}")
 
     # Military service willingness
     msrv = cp.get("militaryService", {}) if cp else {}

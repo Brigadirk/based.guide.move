@@ -18,6 +18,7 @@ import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { getLanguages } from "@/lib/utils/country-utils"
+import { Slider } from "@/components/ui/slider"
 import { Plus, Trash2, GraduationCap, BookOpen, Award, Users, Info, Target, Brain, School, Shield, Languages } from "lucide-react"
 
 type Degree = {
@@ -66,7 +67,7 @@ export function Education({ onComplete }: { onComplete: () => void }) {
   })
 
   // Get destination country for context
-  const destCountry = getFormData("destination.country") ?? ""
+  const destCountry = getFormData("residencyIntentions.destinationCountry.country") ?? ""
   const countryPhrase = destCountry || "your destination country"
 
   const degrees: Degree[] = getFormData("education.previousDegrees") ?? []
@@ -114,7 +115,12 @@ export function Education({ onComplete }: { onComplete: () => void }) {
     onComplete()
   }
 
-  const canContinue = degrees.length > 0 // At least one degree required
+  // Check language proficiency requirement
+  const languageData = getFormData("residencyIntentions.languageProficiency") ?? {}
+  const individualProficiency = languageData.individual || {}
+  const hasLanguageProficiency = Object.keys(individualProficiency).length > 0
+
+  const canContinue = degrees.length > 0 && hasLanguageProficiency // At least one degree and language proficiency required
 
   const canAddDegree = degreeDraft.degree && degreeDraft.institution && degreeDraft.start_year && degreeDraft.end_year
   const canAddSkill = skillDraft.skill.trim().length > 0
@@ -138,8 +144,8 @@ export function Education({ onComplete }: { onComplete: () => void }) {
         Educational qualifications and professional skills are crucial for visa applications, especially for skilled worker visas and professional registration in your destination country.
       </SectionHint>
 
-      {/* Language Proficiency Summary Card */}
-      <LanguageProficiencySummary />
+      {/* Language Proficiency Card */}
+      <LanguageProficiencyFull />
 
       {/* Previous Degrees Card */}
       <Card className="shadow-sm border-l-4 border-l-primary">
@@ -1044,6 +1050,7 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                   <strong>Complete required fields:</strong>
                   <ul className="list-disc list-inside mt-2 space-y-1">
                     {degrees.length === 0 && <li>At least one degree</li>}
+                    {!hasLanguageProficiency && <li>Language proficiency (fill in your language skills above)</li>}
                   </ul>
                 </AlertDescription>
               </Alert>
@@ -1080,14 +1087,19 @@ export function Education({ onComplete }: { onComplete: () => void }) {
   )
 }
 
-function LanguageProficiencySummary() {
-  const { getFormData } = useFormStore()
+function LanguageProficiencyFull() {
+  const { getFormData, updateFormData } = useFormStore()
   
-  const destCountry = getFormData("destination.country") ?? ""
-  const destRegion = getFormData("destination.region") ?? ""
+  // State for adding new teaching languages
+  const [newTeachingLang, setNewTeachingLang] = useState({
+    language: '', 
+    capability: 'Informally'
+  })
   
-  // Get language data from residency intentions
-  const languageData = getFormData("residencyIntentions.languageProficiency") ?? {}
+  const destCountry = getFormData("residencyIntentions.destinationCountry.country") ?? ""
+  const destRegion = getFormData("residencyIntentions.destinationCountry.region") ?? ""
+  
+  // Family information
   const hasPartner = getFormData("personalInformation.relocationPartner") ?? false
   const numDependents = getFormData("personalInformation.numRelocationDependents") ?? 0
   
@@ -1100,18 +1112,23 @@ function LanguageProficiencySummary() {
     }
   })()
   
-  const proficiencyLevelNames = {
-    0: "None",
-    1: "Basic/Beginner (A1)",
-    2: "Elementary (A2)",
-    3: "Intermediate (B1)",
-    4: "Upper Intermediate (B2)",
-    5: "Advanced (C1)",
-    6: "Native/Fluent (C2)"
-  }
+  // Get existing language data
+  const languageData = getFormData("residencyIntentions.languageProficiency") ?? {}
+  const individualProficiency = languageData.individual || {}
+  const partnerProficiency = languageData.partner || {}
+  const dependentsProficiency = languageData.dependents || []
+  const willingToLearn = languageData.willing_to_learn || []
+  const canTeach = languageData.can_teach || {}
+  const otherLanguages = languageData.other_languages || {}
   
-  const getProficiencyLabel = (level: number) => {
-    return proficiencyLevelNames[level as keyof typeof proficiencyLevelNames] || `Level ${level}`
+  const proficiencyLabels: {[key: number]: string} = {
+    0: "None",
+    1: "A1 Basic",
+    2: "A2 Elementary", 
+    3: "B1 Intermediate",
+    4: "B2 Upper Intermediate",
+    5: "C1 Advanced",
+    6: "C2 Native/Fluent"
   }
   
   if (!destCountry) {
@@ -1120,45 +1137,43 @@ function LanguageProficiencySummary() {
         <CardHeader className="bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
             <Languages className="w-6 h-6 text-amber-600" />
-            Language Proficiency Summary
+            Language Skills
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
           <Alert>
             <Info className="h-4 w-4" />
             <AlertDescription>
-              Please complete the <strong>Residency Intentions</strong> section first to see language requirements for your destination.
+              Please complete the <strong>Destination</strong> section first to see language requirements.
             </AlertDescription>
           </Alert>
         </CardContent>
       </Card>
     )
   }
-  
-  const individualProficiency = languageData.individual || {}
-  const partnerProficiency = languageData.partner || {}
-  const dependentsProficiency = languageData.dependents || []
-  const willingToLearn = languageData.willing_to_learn || []
-  const canTeach = { ...languageData.can_teach || {}, ...languageData.other_languages || {} }
-  
-  const hasAnyLanguageData = 
-    Object.keys(individualProficiency).length > 0 ||
-    Object.keys(partnerProficiency).length > 0 ||
-    dependentsProficiency.some((dep: any) => Object.keys(dep).length > 0) ||
-    willingToLearn.length > 0 ||
-    Object.keys(canTeach).length > 0
-  
+
+  // Check if user has basic language proficiency
+  const hasBasicLanguageData = Object.keys(individualProficiency).length > 0
+
   return (
     <Card className="shadow-sm border-l-4 border-l-indigo-500">
       <CardHeader className="bg-gradient-to-r from-indigo-50 to-transparent dark:from-indigo-950/20">
         <CardTitle className="text-xl flex items-center gap-3">
           <Languages className="w-6 h-6 text-indigo-600" />
-          Language Proficiency Summary
+          Language Skills
         </CardTitle>
-        <p className="text-sm text-muted-foreground">Language skills for all moving persons</p>
+        <p className="text-sm text-muted-foreground">Your proficiency in languages for immigration and integration</p>
       </CardHeader>
       <CardContent className="pt-6">
         <div className="space-y-6">
+          {/* Required notice */}
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              <strong>Language proficiency is required to complete this section.</strong> Please fill in your language skills for at least the destination country languages.
+            </AlertDescription>
+          </Alert>
+
           {/* Destination Language Info */}
           {languages.length > 0 && (
             <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
@@ -1173,114 +1188,241 @@ function LanguageProficiencySummary() {
               )}
             </div>
           )}
-          
-          {!hasAnyLanguageData ? (
-            <Alert>
-              <Info className="h-4 w-4" />
-              <AlertDescription>
-                <strong>No language proficiency data found.</strong><br />
-                Go to the <strong>Residency Intentions</strong> section to record language skills for visa applications and integration planning.
-              </AlertDescription>
-            </Alert>
-          ) : (
-            <div className="space-y-4">
-              {/* Individual's Proficiency */}
-              <div className="space-y-3">
-                <h4 className="font-medium text-base">📊 Your Language Skills</h4>
-                {Object.keys(individualProficiency).length > 0 ? (
-                  <div className="grid gap-2">
-                    {Object.entries(individualProficiency).map(([lang, level]: [string, any]) => (
-                      <div key={lang} className="flex items-center justify-between p-3 border rounded-lg bg-card">
-                        <span className="font-medium">{lang}</span>
-                        <Badge variant="secondary">{getProficiencyLabel(Number(level))}</Badge>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">❌ No language skills recorded yet.</p>
-                )}
-              </div>
+
+          {/* Your Language Skills */}
+          <div className="space-y-4">
+            <h4 className="font-medium text-base">📊 Your Language Skills</h4>
+            {languages.map((lang: string) => {
+              const currentLevel = Number(individualProficiency[lang] || 0)
+              const willingToLearnThis = willingToLearn.includes(lang)
               
-              {/* Partner's Proficiency */}
-              {hasPartner && (
-                <div className="space-y-3">
-                  <h4 className="font-medium text-base">👥 Partner's Language Skills</h4>
-                  {Object.keys(partnerProficiency).length > 0 ? (
-                    <div className="grid gap-2">
-                      {Object.entries(partnerProficiency).map(([lang, level]: [string, any]) => (
-                        <div key={lang} className="flex items-center justify-between p-3 border rounded-lg bg-card">
-                          <span className="font-medium">{lang}</span>
-                          <Badge variant="secondary">{getProficiencyLabel(Number(level))}</Badge>
-                        </div>
-                      ))}
+              return (
+                <div key={`individual-${lang}`} className="space-y-3 p-4 border rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-base font-medium">Your proficiency in {lang}</Label>
+                    <Badge variant="secondary">{proficiencyLabels[currentLevel]}</Badge>
+                  </div>
+                  <Slider
+                    value={[currentLevel]}
+                    onValueChange={(value) => {
+                      updateFormData(`residencyIntentions.languageProficiency.individual.${lang}`, value[0])
+                    }}
+                    max={6}
+                    min={0}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>None</span>
+                    <span>A1</span>
+                    <span>A2</span>
+                    <span>B1</span>
+                    <span>B2</span>
+                    <span>C1</span>
+                    <span>C2</span>
+                  </div>
+                  
+                  {/* Willing to learn checkbox */}
+                  {currentLevel < 3 && (
+                    <div className="flex items-center gap-2 mt-3">
+                      <Checkbox
+                        id={`learn-${lang}`}
+                        checked={willingToLearnThis}
+                        onCheckedChange={(checked) => {
+                          const updated = checked 
+                            ? [...willingToLearn, lang]
+                            : willingToLearn.filter((l: string) => l !== lang)
+                          updateFormData("residencyIntentions.languageProficiency.willing_to_learn", updated)
+                        }}
+                      />
+                      <Label htmlFor={`learn-${lang}`} className="text-sm">
+                        Willing to learn {lang}
+                      </Label>
                     </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">❌ No language skills recorded yet.</p>
+                  )}
+
+                  {/* Teaching capability for advanced speakers */}
+                  {currentLevel >= 4 && (
+                    <div className="space-y-2 mt-3">
+                      <Label className="text-sm font-medium">Can you teach {lang}?</Label>
+                      <div className="flex gap-4">
+                        {["No", "Informally", "Formally with credentials"].map((option) => (
+                          <div key={option} className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id={`teach-${lang}-${option}`}
+                              name={`teach-${lang}`}
+                              value={option}
+                              checked={canTeach[lang] === option}
+                              onChange={() => updateFormData(`residencyIntentions.languageProficiency.can_teach.${lang}`, option)}
+                            />
+                            <label htmlFor={`teach-${lang}-${option}`} className="text-sm cursor-pointer">{option}</label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </div>
-              )}
-              
-              {/* Dependents' Proficiency */}
-              {numDependents > 0 && (
-                <div className="space-y-3">
-                  <h4 className="font-medium text-base">👨‍👩‍👧‍👦 Dependents' Language Skills</h4>
-                  {Array.from({length: numDependents}, (_, i) => {
-                    const depData = dependentsProficiency[i] || {}
-                    return (
-                      <div key={i} className="space-y-2">
-                        <h5 className="text-sm font-medium">Dependent {i + 1}</h5>
-                        {Object.keys(depData).length > 0 ? (
-                          <div className="grid gap-2 ml-4">
-                            {Object.entries(depData).map(([lang, level]: [string, any]) => (
-                              <div key={lang} className="flex items-center justify-between p-3 border rounded-lg bg-card">
-                                <span className="font-medium">{lang}</span>
-                                <Badge variant="secondary">{getProficiencyLabel(Number(level))}</Badge>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-sm text-muted-foreground ml-4">❌ No language skills recorded yet.</p>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-              
-              {/* Learning Willingness */}
-              {willingToLearn.length > 0 && (
-                <div className="space-y-3">
-                  <h4 className="font-medium text-base">📚 Languages Willing to Learn</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {willingToLearn.map((lang: string) => (
-                      <Badge key={lang} variant="outline">{lang}</Badge>
-                    ))}
+              )
+            })}
+          </div>
+
+          {/* Partner's Language Skills */}
+          {hasPartner && (
+            <div className="space-y-4">
+              <h4 className="font-medium text-base">👥 Partner's Language Skills</h4>
+              {languages.map((lang: string) => {
+                const currentLevel = Number(partnerProficiency[lang] || 0)
+                
+                return (
+                  <div key={`partner-${lang}`} className="space-y-3 p-4 border rounded-lg">
+                    <div className="flex justify-between items-center">
+                      <Label className="text-base font-medium">Partner's proficiency in {lang}</Label>
+                      <Badge variant="secondary">{proficiencyLabels[currentLevel]}</Badge>
+                    </div>
+                    <Slider
+                      value={[currentLevel]}
+                      onValueChange={(value) => {
+                        updateFormData(`residencyIntentions.languageProficiency.partner.${lang}`, value[0])
+                      }}
+                      max={6}
+                      min={0}
+                      step={1}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>None</span>
+                      <span>A1</span>
+                      <span>A2</span>
+                      <span>B1</span>
+                      <span>B2</span>
+                      <span>C1</span>
+                      <span>C2</span>
+                    </div>
                   </div>
-                </div>
-              )}
-              
-              {/* Teaching Capabilities */}
-              {Object.keys(canTeach).length > 0 && (
-                <div className="space-y-3">
-                  <h4 className="font-medium text-base">🎓 Languages You Can Teach</h4>
-                  <div className="grid gap-2">
-                    {Object.entries(canTeach).map(([lang, level]: [string, any]) => (
-                      <div key={lang} className="flex items-center justify-between p-3 border rounded-lg bg-card">
-                        <span className="font-medium">{lang}</span>
-                        <Badge variant="outline">{level}</Badge>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                )
+              })}
             </div>
           )}
+
+          {/* Dependents' Language Skills */}
+          {numDependents > 0 && (
+            <div className="space-y-4">
+              <h4 className="font-medium text-base">👨‍👩‍👧‍👦 Dependents' Language Skills</h4>
+              {Array.from({length: numDependents}, (_, i) => (
+                <Card key={i} className="border">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Dependent {i + 1}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {languages.map((lang: string) => {
+                      const currentLevel = Number((dependentsProficiency[i] && dependentsProficiency[i][lang]) || 0)
+                      
+                      return (
+                        <div key={`dependent-${i}-${lang}`} className="space-y-3">
+                          <div className="flex justify-between items-center">
+                            <Label className="text-sm font-medium">Proficiency in {lang}</Label>
+                            <Badge variant="outline">{proficiencyLabels[currentLevel]}</Badge>
+                          </div>
+                          <Slider
+                            value={[currentLevel]}
+                            onValueChange={(value) => {
+                              updateFormData(`residencyIntentions.languageProficiency.dependents.${i}.${lang}`, value[0])
+                            }}
+                            max={6}
+                            min={0}
+                            step={1}
+                            className="w-full"
+                          />
+                          <div className="flex justify-between text-xs text-muted-foreground">
+                            <span>None</span>
+                            <span>A1</span>
+                            <span>A2</span>
+                            <span>B1</span>
+                            <span>B2</span>
+                            <span>C1</span>
+                            <span>C2</span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* Other Languages You Can Teach */}
+          <div className="space-y-4 border-t pt-6">
+            <h4 className="font-medium text-base">🔤 Other languages you speak (and could teach)</h4>
+            <p className="text-sm text-muted-foreground">Add any other languages you can teach that aren't listed above</p>
           
-          {/* Link to update */}
-          <div className="border-t pt-4">
-            <p className="text-sm text-muted-foreground">
-              💡 <strong>Want to update language skills?</strong> Go to the <strong>Residency Intentions</strong> section to modify language proficiency details.
-            </p>
+            <div className="flex gap-3 items-end">
+              <div className="flex-1">
+                <Label className="text-sm">Language name</Label>
+                <Input
+                  value={newTeachingLang.language}
+                  onChange={(e) => setNewTeachingLang({...newTeachingLang, language: e.target.value})}
+                  placeholder="Enter language name"
+                />
+              </div>
+              <div>
+                <Label className="text-sm">Teaching capability</Label>
+                <Select
+                  value={newTeachingLang.capability}
+                  onValueChange={(value) => setNewTeachingLang({...newTeachingLang, capability: value})}
+                >
+                  <SelectTrigger className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Not interested">Not interested</SelectItem>
+                    <SelectItem value="Informally">Informally</SelectItem>
+                    <SelectItem value="Formally with credentials">Formally with credentials</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                onClick={() => {
+                  if (newTeachingLang.language && !otherLanguages[newTeachingLang.language]) {
+                    const updated = {
+                      ...otherLanguages,
+                      [newTeachingLang.language]: newTeachingLang.capability
+                    }
+                    updateFormData("residencyIntentions.languageProficiency.other_languages", updated)
+                    setNewTeachingLang({language: '', capability: 'Informally'})
+                  }
+                }}
+                disabled={!newTeachingLang.language || !!otherLanguages[newTeachingLang.language]}
+              >
+                💾 Add Language
+              </Button>
+            </div>
+
+            {Object.keys(otherLanguages).length > 0 && (
+              <div className="space-y-2">
+                <h5 className="font-medium">🔤 Languages you can teach:</h5>
+                {Object.entries(otherLanguages).map(([lang, level]: [string, any]) => (
+                  <div key={lang} className="flex items-center justify-between p-3 border rounded-lg bg-card">
+                    <div>
+                      <span className="font-medium">{lang}</span>
+                      <span className="text-sm text-muted-foreground ml-2">({level})</span>
+                    </div>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        const updated = {...otherLanguages}
+                        delete updated[lang]
+                        updateFormData("residencyIntentions.languageProficiency.other_languages", updated)
+                      }}
+                    >
+                      ❌ Remove
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

@@ -156,6 +156,8 @@ export default function HomePage() {
     markSectionComplete(SECTIONS[currentSection].id)
     if (currentSection < SECTIONS.length - 1) {
       setCurrentSection(currentSection + 1);
+      // Scroll to top of the page when navigating to next section
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -163,12 +165,16 @@ export default function HomePage() {
   const handleNavigateNext = () => {
     if (currentSection < SECTIONS.length - 1) {
       setCurrentSection(currentSection + 1);
+      // Scroll to top when navigating
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handlePrevious = () => {
     if (currentSection > 0) {
       setCurrentSection(currentSection - 1);
+      // Scroll to top when navigating
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -388,7 +394,12 @@ export default function HomePage() {
                           ? "bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 border border-green-200 dark:border-green-800"
                           : "hover:bg-muted"
                       } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
-                      onClick={() => !disabled && setCurrentSection(index)}
+                      onClick={() => {
+                        if (!disabled) {
+                          setCurrentSection(index)
+                          window.scrollTo({ top: 0, behavior: 'smooth' })
+                        }
+                      }}
                     >
                       <Icon className={`w-4 h-4 mr-3 flex-shrink-0 ${isCurrent ? "text-white" : ""}`} />
                       <span className="flex-1 text-left truncate">
@@ -470,7 +481,12 @@ export default function HomePage() {
                       title={!canAccess ? "Complete previous sections first" : undefined}
                       variant={isCurrent ? "default" : isCompleted ? "secondary" : "outline"}
                       className={`transition-all relative px-3 py-2 ${isCurrent ? "ring-2 ring-primary" : ""} ${!canAccess ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                      onClick={() => canAccess && setCurrentSection(index)}
+                      onClick={() => {
+                        if (canAccess) {
+                          setCurrentSection(index)
+                          window.scrollTo({ top: 0, behavior: 'smooth' })
+                        }
+                      }}
                     >
                       <Icon className={`w-4 h-4 mr-2 flex-shrink-0 ${isCurrent ? "text-white" : ""}`} />
                       <span className="truncate max-w-[120px]">{section.title}</span>

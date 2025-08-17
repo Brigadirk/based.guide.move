@@ -10,9 +10,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { useFormStore } from "@/lib/stores"
 import { useState, useEffect, useMemo } from "react"
 import { SectionHint } from "@/components/ui/section-hint"
-import { getLanguages } from "@/lib/utils/country-utils"
 import { Slider } from "@/components/ui/slider"
-import { Plus, Trash2, Plane, MapPin, Languages, Heart, DollarSign, FileText, Clock, Globe, Target, Users, Shield, Info, AlertTriangle, CheckCircle } from "lucide-react"
+import { Plus, Trash2, Plane, MapPin, Heart, DollarSign, FileText, Clock, Globe, Target, Users, Shield, Info, AlertTriangle, CheckCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
@@ -88,6 +87,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   // Residency plans
   const applyForResidency = getFormData("residencyIntentions.residencyPlans.applyForResidency") ?? false
   const maxMonths = getFormData("residencyIntentions.residencyPlans.maxMonthsWillingToReside") ?? 6
+  const wantMinimumOnly = getFormData("residencyIntentions.residencyPlans.wantMinimumOnly") ?? false
   const openToVisiting = getFormData("residencyIntentions.residencyPlans.openToVisiting") ?? false
 
   // Citizenship plans
@@ -112,30 +112,12 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   const maintainsSignificantTies = getFormData("residencyIntentions.centerOfLife.maintainsSignificantTies") ?? false
   const tiesDescription = getFormData("residencyIntentions.centerOfLife.tiesDescription") ?? ""
 
-  // Language proficiency
-  const languages = useMemo(() => {
-    try {
-      const result = getLanguages(destCountry, destRegion)
-      return Array.isArray(result) ? result : (result as any)?.country_languages || []
-    } catch {
-      return []
-    }
-  }, [destCountry, destRegion])
 
-  // Family member data
-  const hasPartner = getFormData("personalInformation.relocationPartner") ?? false
-  const numDependents = getFormData("personalInformation.numRelocationDependents") ?? 0
-
-  // Language teaching capabilities
-  const [newTeachingLang, setNewTeachingLang] = useState({
-    language: '', 
-    capability: 'Informally'
-  })
-  const otherLanguages = getFormData("residencyIntentions.languageProficiency.other_languages") ?? {}
 
   // Motivation and compliance
   const motivation = getFormData("residencyIntentions.moveMotivation") ?? ""
   const taxCompliant = getFormData("residencyIntentions.taxCompliantEverywhere") ?? true
+  const taxComplianceExplanation = getFormData("residencyIntentions.taxComplianceExplanation") ?? ""
 
   const handleComplete = () => {
     markSectionComplete("residency")
@@ -486,28 +468,53 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                             </AlertDescription>
                           </Alert>
 
-                          <div className="space-y-3">
-                            <Label className="text-base font-medium">
-                              Maximum months per year I am willing to reside in {destCountry} in my first year
-                            </Label>
-                  <div className="px-3">
-                    <Slider
-                      value={[maxMonths]}
-                      onValueChange={(value) => updateFormData("residencyIntentions.residencyPlans.maxMonthsWillingToReside", value[0])}
-                      max={12}
-                      min={0}
-                      step={1}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-sm text-muted-foreground mt-1">
-                      <span>0 months</span>
-                      <span className="font-medium">{maxMonths} months</span>
-                      <span>12 months</span>
-                    </div>
-                </div>
+                                                    <div className="space-y-3">
+                            {!wantMinimumOnly && (
+                              <>
+                                <Label className="text-base font-medium">
+                                  Maximum months per year I am willing to reside in {destCountry} in my first year
+                                </Label>
+                                <div className="px-3">
+                                  <Slider
+                                    value={[maxMonths]}
+                                    onValueChange={(value) => {
+                                      updateFormData("residencyIntentions.residencyPlans.maxMonthsWillingToReside", value[0])
+                                    }}
+                                    max={12}
+                                    min={0}
+                                    step={1}
+                                    className="w-full"
+                                  />
+                                  <div className="flex justify-between text-sm text-muted-foreground mt-1">
+                                    <span>0 months</span>
+                                    <span className="font-medium">{maxMonths} months</span>
+                                    <span>12 months</span>
+                                  </div>
+                                </div>
+                              </>
+                            )}
+
+                            {/* Checkbox for minimum requirement */}
+                            <div className="flex items-center space-x-2 mt-4">
+                              <Checkbox
+                                id="want-minimum-only"
+                                checked={wantMinimumOnly}
+                                onCheckedChange={(checked) => {
+                                  updateFormData("residencyIntentions.residencyPlans.wantMinimumOnly", checked)
+                                  // When checked, we don't set a specific month value, 
+                                  // letting the backend determine the minimum requirement
+                                }}
+                              />
+                              <Label 
+                                htmlFor="want-minimum-only" 
+                                className="text-sm font-normal cursor-pointer"
+                              >
+                                Just let me know about minimum stay requirements
+                              </Label>
+                            </div>
               </div>
 
-                          {maxMonths === 0 && (
+                          {maxMonths === 0 && !wantMinimumOnly && (
                             <div className="space-y-3">
                               <Alert variant="destructive">
                                 <AlertTriangle className="h-4 w-4" />
@@ -528,7 +535,16 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                             </div>
                           )}
 
-                          {maxMonths <= 6 && maxMonths > 0 && (
+                          {wantMinimumOnly && (
+                            <Alert>
+                              <Info className="h-4 w-4" />
+                              <AlertDescription>
+                                ✅ We'll provide recommendations based on the minimum residency requirements for your destination country. This typically ranges from a few days to a few months per year, depending on the visa type.
+                              </AlertDescription>
+                            </Alert>
+                          )}
+
+                          {maxMonths <= 6 && maxMonths > 0 && !wantMinimumOnly && (
                             <Alert>
                               <Info className="h-4 w-4" />
                               <AlertDescription>
@@ -630,13 +646,17 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
 
             {interestedInCitizenship && (
                     <>
-                      <p className="text-sm text-muted-foreground">
-                        N.B. For most countries, being a resident (and taxpayer) for some number of years is a way to obtain citizenship. I will inform you whether this is so for {destCountry}.
-                      </p>
+                      {/* Important Note about Residency Path to Citizenship */}
+                      <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950">
+                        <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                        <AlertDescription className="text-blue-800 dark:text-blue-200">
+                          <strong>Important:</strong> For most countries, being a resident (and taxpayer) for some number of years is a way to obtain citizenship. I will inform you whether this is so for {destCountry}. <strong>You may not need to select any of the options below.</strong>
+                        </AlertDescription>
+                      </Alert>
 
                       {/* Citizenship Options */}
                       <div className="space-y-6">
-                        <h4 className="font-semibold text-lg">🪪 Citizenship Options</h4>
+                        <h4 className="font-semibold text-lg">🪪 Alternative Citizenship Options</h4>
                         
                         <div className="grid md:grid-cols-2 gap-6">
                           {/* Family Connections */}
@@ -1051,275 +1071,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
             </Card>
           )}
 
-      {/* Language Skills - Only show for non-citizens/non-EU */}
-      {destCountry && !hasNoVisaRequirement && (
-        <Card className="shadow-sm border-l-4 border-l-indigo-500">
-            <CardHeader className="bg-gradient-to-r from-indigo-50 to-transparent dark:from-indigo-950/20">
-            <CardTitle className="text-xl flex items-center gap-3">
-                <Languages className="w-6 h-6 text-indigo-600" />
-              Language Skills
-            </CardTitle>
-              <p className="text-sm text-muted-foreground">Your proficiency in languages for immigration and integration</p>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="space-y-6">
-                {languages.length > 0 ? (
-                  <>
-                    <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                      <p className="text-sm text-blue-800 dark:text-blue-200">
-                        🌐 The dominant language{languages.length > 1 ? 's' : ''} in {destCountry} {languages.length > 1 ? 'are' : 'is'}{' '}
-                        <strong>{languages.join(', ')}</strong>.
-                      </p>
-                    </div>
 
-                    {/* Your Language Skills */}
-                <div className="space-y-4">
-                      <h4 className="font-medium text-base">📊 Your Language Skills</h4>
-                      {languages.map((lang: string) => {
-                    const currentLevel = Number(getFormData(`residencyIntentions.languageProficiency.individual.${lang}`) || 0)
-                        const willingToLearn = getFormData(`residencyIntentions.languageProficiency.willing_to_learn`) || []
-                    
-                    return (
-                          <div key={`individual-${lang}`} className="space-y-3 p-4 border rounded-lg">
-                        <div className="flex justify-between items-center">
-                              <Label className="text-base font-medium">Your proficiency in {lang}</Label>
-                          <Badge variant="secondary">{proficiencyLabels[currentLevel]}</Badge>
-                        </div>
-                        <Slider
-                          value={[currentLevel]}
-                          onValueChange={(value) => {
-                            updateFormData(`residencyIntentions.languageProficiency.individual.${lang}`, value[0])
-                          }}
-                          max={6}
-                          min={0}
-                          step={1}
-                          className="w-full"
-                        />
-                        <div className="flex justify-between text-xs text-muted-foreground">
-                          <span>None</span>
-                              <span>A1</span>
-                              <span>A2</span>
-                              <span>B1</span>
-                              <span>B2</span>
-                              <span>C1</span>
-                              <span>C2</span>
-                            </div>
-                            
-                            {/* Willing to learn checkbox */}
-                            {currentLevel < 3 && (
-                              <div className="flex items-center gap-2 mt-3">
-                                <Checkbox
-                                  id={`learn-${lang}`}
-                                  checked={willingToLearn.includes(lang)}
-                                  onCheckedChange={(checked) => {
-                                    const updated = checked 
-                                      ? [...willingToLearn, lang]
-                                      : willingToLearn.filter((l: string) => l !== lang)
-                                    updateFormData("residencyIntentions.languageProficiency.willing_to_learn", updated)
-                                  }}
-                                />
-                                <Label htmlFor={`learn-${lang}`} className="text-sm">
-                                  Willing to learn {lang}
-                                </Label>
-                              </div>
-                            )}
-
-                            {/* Teaching capability for advanced speakers */}
-                            {currentLevel >= 4 && (
-                              <div className="space-y-2 mt-3">
-                                <Label className="text-sm font-medium">Can you teach {lang}?</Label>
-                                <div className="flex gap-4">
-                                  {["No", "Informally", "Formally with credentials"].map((option) => (
-                                    <div key={option} className="flex items-center space-x-2">
-                                      <input
-                                        type="radio"
-                                        id={`teach-${lang}-${option}`}
-                                        name={`teach-${lang}`}
-                                        value={option}
-                                        checked={getFormData(`residencyIntentions.languageProficiency.can_teach.${lang}`) === option}
-                                        onChange={() => updateFormData(`residencyIntentions.languageProficiency.can_teach.${lang}`, option)}
-                                      />
-                                      <label htmlFor={`teach-${lang}-${option}`} className="text-sm cursor-pointer">{option}</label>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-
-                    {/* Partner's Language Skills */}
-                    {hasPartner && (
-                      <div className="space-y-4">
-                        <h4 className="font-medium text-base">👥 Partner's Language Skills</h4>
-                        {languages.map((lang: string) => {
-                          const currentLevel = Number(getFormData(`residencyIntentions.languageProficiency.partner.${lang}`) || 0)
-                          
-                          return (
-                            <div key={`partner-${lang}`} className="space-y-3 p-4 border rounded-lg">
-                              <div className="flex justify-between items-center">
-                                <Label className="text-base font-medium">Partner's proficiency in {lang}</Label>
-                                <Badge variant="secondary">{proficiencyLabels[currentLevel]}</Badge>
-                              </div>
-                              <Slider
-                                value={[currentLevel]}
-                                onValueChange={(value) => {
-                                  updateFormData(`residencyIntentions.languageProficiency.partner.${lang}`, value[0])
-                                }}
-                                max={6}
-                                min={0}
-                                step={1}
-                                className="w-full"
-                              />
-                              <div className="flex justify-between text-xs text-muted-foreground">
-                                <span>None</span>
-                                <span>A1</span>
-                                <span>A2</span>
-                                <span>B1</span>
-                                <span>B2</span>
-                                <span>C1</span>
-                                <span>C2</span>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-
-                    {/* Dependents' Language Skills */}
-                    {numDependents > 0 && (
-                      <div className="space-y-4">
-                        <h4 className="font-medium text-base">👨‍👩‍👧‍👦 Dependents' Language Skills</h4>
-                        {Array.from({length: numDependents}, (_, i) => (
-                          <Card key={i} className="border">
-                            <CardHeader className="pb-3">
-                              <CardTitle className="text-base">Dependent {i + 1}</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                              {languages.map((lang: string) => {
-                                const currentLevel = Number(getFormData(`residencyIntentions.languageProficiency.dependents.${i}.${lang}`) || 0)
-                                
-                                return (
-                                  <div key={`dependent-${i}-${lang}`} className="space-y-3">
-                                    <div className="flex justify-between items-center">
-                                      <Label className="text-sm font-medium">Proficiency in {lang}</Label>
-                                      <Badge variant="outline">{proficiencyLabels[currentLevel]}</Badge>
-                                    </div>
-                                    <Slider
-                                      value={[currentLevel]}
-                                      onValueChange={(value) => {
-                                        updateFormData(`residencyIntentions.languageProficiency.dependents.${i}.${lang}`, value[0])
-                                      }}
-                                      max={6}
-                                      min={0}
-                                      step={1}
-                                      className="w-full"
-                                    />
-                                    <div className="flex justify-between text-xs text-muted-foreground">
-                                      <span>None</span>
-                                      <span>A1</span>
-                                      <span>A2</span>
-                                      <span>B1</span>
-                                      <span>B2</span>
-                                      <span>C1</span>
-                                      <span>C2</span>
-                                    </div>
-                                  </div>
-                                )
-                              })}
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <Alert>
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertDescription>
-                      ⚠️ No language information available for {destCountry}.
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                {/* Other Languages You Can Teach */}
-              <div className="space-y-4 border-t pt-6">
-                  <h4 className="font-medium text-base">🔤 Other languages you speak (and could teach)</h4>
-                  <p className="text-sm text-muted-foreground">Add any other languages you can teach that aren't listed above</p>
-                
-                  <div className="flex gap-3 items-end">
-                  <div className="flex-1">
-                      <Label className="text-sm">Language name</Label>
-                    <Input
-                        value={newTeachingLang.language}
-                        onChange={(e) => setNewTeachingLang({...newTeachingLang, language: e.target.value})}
-                        placeholder="Enter language name"
-                    />
-                  </div>
-                    <div>
-                      <Label className="text-sm">Teaching capability</Label>
-                    <Select
-                        value={newTeachingLang.capability}
-                        onValueChange={(value) => setNewTeachingLang({...newTeachingLang, capability: value})}
-                    >
-                      <SelectTrigger className="w-48">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                          <SelectItem value="Not interested">Not interested</SelectItem>
-                        <SelectItem value="Informally">Informally</SelectItem>
-                        <SelectItem value="Formally with credentials">Formally with credentials</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button
-                    onClick={() => {
-                        if (newTeachingLang.language && !otherLanguages[newTeachingLang.language]) {
-                          const updated = {
-                            ...otherLanguages,
-                            [newTeachingLang.language]: newTeachingLang.capability
-                          }
-                          updateFormData("residencyIntentions.languageProficiency.other_languages", updated)
-                          setNewTeachingLang({language: '', capability: 'Informally'})
-                        }
-                      }}
-                      disabled={!newTeachingLang.language || !!otherLanguages[newTeachingLang.language]}
-                    >
-                      💾 Add Language
-                  </Button>
-                </div>
-
-                  {Object.keys(otherLanguages).length > 0 && (
-                  <div className="space-y-2">
-                      <h5 className="font-medium">🔤 Languages you can teach:</h5>
-                      {Object.entries(otherLanguages).map(([lang, level]: [string, any]) => (
-                        <div key={lang} className="flex items-center justify-between p-3 border rounded-lg bg-card">
-                        <div>
-                            <span className="font-medium">{lang}</span>
-                            <span className="text-sm text-muted-foreground ml-2">({level})</span>
-                        </div>
-                        <Button
-                            variant="destructive"
-                          size="sm"
-                            onClick={() => {
-                              const updated = {...otherLanguages}
-                              delete updated[lang]
-                              updateFormData("residencyIntentions.languageProficiency.other_languages", updated)
-                            }}
-                          >
-                            ❌ Remove
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Motivation & Compliance - Only show for non-citizens/non-EU */}
       {!hasNoVisaRequirement && (
@@ -1354,10 +1106,29 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                   I have been fully tax compliant in every country I have lived in
                 </Label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Check this if you have always filed and paid taxes as required in every country where you have lived.
+                  Uncheck this if you have NOT always filed and paid taxes as required in every country where you have lived. 
                 </p>
               </div>
             </div>
+
+            {!taxCompliant && (
+              <div className="space-y-3">
+                <Label htmlFor="tax_compliance_explanation" className="text-base font-medium">
+                  Please explain your tax compliance situation
+                </Label>
+                <Textarea
+                  id="tax_compliance_explanation"
+                  placeholder="Please provide details about your tax compliance history. For example: missed filings in certain years, outstanding tax obligations, or other relevant circumstances..."
+                  value={taxComplianceExplanation}
+                  onChange={(e) => updateFormData("residencyIntentions.taxComplianceExplanation", e.target.value)}
+                  rows={4}
+                  className="resize-none"
+                />
+                <p className="text-sm text-muted-foreground">
+                  This information helps us provide more accurate recommendations and identify potential issues before they become problems.
+                </p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
