@@ -141,6 +141,7 @@
           "required": ["country", "moveType"],
           "properties": {
             "country": {"type": "string"},
+            "region": {"type": "string", "description": "Specific region or city within the destination country"},
             "moveType": {"type": "string"},
             "intendedTemporaryDurationOfStay": {"type": "number", "minimum": 1},
             "citizenshipStatus": {"type": "boolean"}
@@ -150,8 +151,20 @@
           "type": "object",
           "properties": {
             "applyForResidency": {"type": "boolean"},
-            "maxMonthsWillingToReside": {"type": "number", "minimum": 1},
-            "openToVisiting": {"type": "boolean"}
+            "maxMonthsWillingToReside": {"type": "number", "minimum": 0},
+            "wantMinimumOnly": {"type": "boolean", "description": "Whether user prefers to know minimum requirements rather than set specific preference"},
+            "openToVisiting": {"type": "boolean"},
+            "exploratoryVisits": {
+              "type": "object",
+              "description": "Information about planned exploratory visits",
+              "properties": {
+                "details": {
+                  "type": "string",
+                  "maxLength": 280,
+                  "description": "User's description of their exploratory visit plans, including timing, purpose, and duration"
+                }
+              }
+            }
           }
         },
         "citizenshipPlans": {
@@ -210,6 +223,37 @@
         "informationDepth": {
           "type": "string",
           "enum": ["overview", "practical", "detailed"]
+        },
+        "moveMotivation": {
+          "type": "string",
+          "description": "User's motivation for moving to the destination country"
+        },
+        "taxCompliantEverywhere": {
+          "type": "boolean",
+          "description": "Whether user has been fully tax compliant in all jurisdictions"
+        },
+        "taxComplianceExplanation": {
+          "type": "string",
+          "description": "Explanation of tax compliance situation if not fully compliant"
+        },
+        "centerOfLife": {
+          "type": "object",
+          "properties": {
+            "maintainsSignificantTies": {"type": "boolean"},
+            "tiesDescription": {"type": "string"}
+          }
+        },
+        "languageProficiency": {
+          "type": "object",
+          "description": "Language proficiency for individual, partner, and dependents",
+          "properties": {
+            "individual": {"type": "object"},
+            "partner": {"type": "object"},
+            "dependents": {"type": "array", "items": {"type": "object"}},
+            "willing_to_learn": {"type": "array", "items": {"type": "string"}},
+            "can_teach": {"type": "object"},
+            "other_languages": {"type": "object"}
+          }
         }
       }
     },

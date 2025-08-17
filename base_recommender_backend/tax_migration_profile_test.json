@@ -70,7 +70,7 @@
   "residencyIntentions": {
     "destinationCountry": {
       "country": "Argentina",
-      "region": "Buenos Aires",
+      "region": "Mendoza",
       "citizenshipStatus": false,
       "moveType": "Permanent",
       "intendedTemporaryDurationOfStay": 0.0
@@ -78,10 +78,14 @@
     "residencyPlans": {
       "applyForResidency": true,
       "maxMonthsWillingToReside": 6,
-      "openToVisiting": false
+      "wantMinimumOnly": true,
+      "openToVisiting": true,
+      "exploratoryVisits": {
+        "details": "I am open to visiting first if this helps the move."
+      }
     },
     "citizenshipPlans": {
-      "interestedInCitizenship": false,
+      "interestedInCitizenship": true,
       "familyTies": {
         "hasConnections": false,
         "closestRelation": ""
@@ -123,8 +127,9 @@
       "maintainsSignificantTies": false,
       "tiesDescription": ""
     },
-    "moveMotivation": "",
-    "taxCompliantEverywhere": true
+    "moveMotivation": "Seeking better work-life balance and exploring opportunities in South America",
+    "taxCompliantEverywhere": true,
+    "taxComplianceExplanation": ""
   },
   "socialSecurityAndPensions": {
     "currentCountryContributions": {

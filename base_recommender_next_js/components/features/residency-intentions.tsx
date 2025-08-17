@@ -90,6 +90,12 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   const wantMinimumOnly = getFormData("residencyIntentions.residencyPlans.wantMinimumOnly") ?? false
   const openToVisiting = getFormData("residencyIntentions.residencyPlans.openToVisiting") ?? false
 
+  // Exploratory visit details
+  const visitPurpose = getFormData("residencyIntentions.residencyPlans.exploratoryVisits.purpose") ?? ""
+  const visitTiming = getFormData("residencyIntentions.residencyPlans.exploratoryVisits.timing") ?? ""
+  const visitDuration = getFormData("residencyIntentions.residencyPlans.exploratoryVisits.duration") ?? ""
+  const multipleVisits = getFormData("residencyIntentions.residencyPlans.exploratoryVisits.multipleVisits") ?? false
+
   // Citizenship plans
   const interestedInCitizenship = getFormData("residencyIntentions.citizenshipPlans.interestedInCitizenship") ?? false
   
@@ -515,24 +521,12 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
               </div>
 
                           {maxMonths === 0 && !wantMinimumOnly && (
-                            <div className="space-y-3">
-                              <Alert variant="destructive">
-                                <AlertTriangle className="h-4 w-4" />
-                                <AlertDescription>
-                                  ⚠️ You've indicated you don't want to be physically present at all.
-                                </AlertDescription>
-                              </Alert>
-                              <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
-              <Checkbox
-                id="open_visiting"
-                checked={openToVisiting}
-                onCheckedChange={(v) => updateFormData("residencyIntentions.residencyPlans.openToVisiting", !!v)}
-              />
-                                <Label htmlFor="open_visiting" className="text-sm font-medium">
-                                  I'm open to occasional visits if required
-              </Label>
-            </div>
-                            </div>
+                            <Alert variant="destructive">
+                              <AlertTriangle className="h-4 w-4" />
+                              <AlertDescription>
+                                ⚠️ You've indicated you don't want to be physically present at all.
+                              </AlertDescription>
+                            </Alert>
                           )}
 
                           {wantMinimumOnly && (
@@ -619,6 +613,60 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
           </div>
         </CardContent>
       </Card>
+          )}
+
+          {/* Exploratory Visits Section */}
+          {!hasNoVisaRequirement && !isAlreadyCitizen && (
+            <Card className="shadow-sm border-l-4 border-l-blue-500">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
+                <CardTitle className="text-xl flex items-center gap-3">
+                  <Plane className="w-6 h-6 text-blue-600" />
+                  Exploratory Visits
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">Planning visits before your main relocation</p>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
+                    <Checkbox
+                      id="open_visiting"
+                      checked={openToVisiting}
+                      onCheckedChange={(v) => updateFormData("residencyIntentions.residencyPlans.openToVisiting", !!v)}
+                    />
+                    <Label htmlFor="open_visiting" className="text-base font-medium">
+                      I plan or I am open to making exploratory visits before relocating
+                    </Label>
+                  </div>
+
+                  {openToVisiting && (
+                    <div className="space-y-4 mt-4 p-4 border rounded-lg bg-blue-50/30 dark:bg-blue-950/10">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">Tell us about your visit plans</Label>
+                        <Textarea
+                          className="resize-none text-sm"
+                          placeholder="e.g., I want to visit in spring to find housing and check out schools for my kids. Planning 2-3 weeks initially, maybe multiple trips..."
+                          maxLength={280}
+                          rows={4}
+                          value={getFormData("residencyIntentions.residencyPlans.exploratoryVisits.details") || ""}
+                          onChange={(e) => updateFormData("residencyIntentions.residencyPlans.exploratoryVisits.details", e.target.value)}
+                        />
+                        <div className="flex justify-between items-center text-xs text-muted-foreground">
+                          <span>Be specific about timing, purpose, and duration</span>
+                          <span>{(getFormData("residencyIntentions.residencyPlans.exploratoryVisits.details") || "").length}/280</span>
+                        </div>
+                      </div>
+
+                      <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950">
+                        <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                        <AlertDescription className="text-blue-800 dark:text-blue-200">
+                          <strong>Important:</strong> Exploratory visits may count toward annual tax residency day limits and affect visa application timing. We'll factor this into your recommendations.
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           )}
 
           {/* Citizenship Plans (only show if not already citizen/EU and interested) */}

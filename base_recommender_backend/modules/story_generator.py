@@ -254,7 +254,7 @@ def personal_section(pi: Dict[str, Any]) -> str:
             # Include additional notes if provided
             notes = rel_details.get("additionalNotes", "").strip()
             if notes:
-                dep_desc += f" (Note: {notes})"
+                dep_desc += f" (Note: \"{notes}\")"
             
             # Group by primary relationship
             if primary_relation == "partner":
@@ -325,6 +325,16 @@ def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None, 
         if duration:
             sent = sent.rstrip(".") + f" for approximately {duration} months."
     sentences.append(sent)
+    
+    # Add region information if specified
+    region = dest.get("region", "").strip()
+    if region:
+        sentences.append(f"They are specifically interested in the {region} region.")
+    
+    # Move motivation
+    motivation = ri.get("moveMotivation", "").strip()
+    if motivation:
+        sentences.append(f"Their motivation for moving: \"{motivation}\"")
     
     # Analyze family visa situation if personal info is available
     if personal_info and country != "an unspecified country":
@@ -418,7 +428,7 @@ def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None, 
             
             special_circumstances = family_planning.get("specialCircumstances", "").strip()
             if special_circumstances:
-                sentences.append(f"Special family circumstances: {special_circumstances}")
+                sentences.append(f"Special family circumstances: \"{special_circumstances}\"")
     
     # Alternative interests section for those with no visa issues and finance skipped
     if alternative_interests:
@@ -427,7 +437,7 @@ def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None, 
         
         if purpose:
             sentences.append("Since they have no visa requirements and are not interested in detailed taxation advice, they are seeking alternative information.")
-            sentences.append(f"Their specific purpose for using this system: {purpose}")
+            sentences.append(f"Their specific purpose for using this system: \"{purpose}\"")
             
             if completed_via_summary:
                 sentences.append("They chose to complete their profile via the alternative pathway and proceed directly to a targeted summary.")
@@ -445,15 +455,22 @@ def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None, 
         months = rp.get("maxMonthsWillingToReside")
         
         if want_minimum_only:
-            sentences.append("They prefer to know the minimum residency requirements rather than set a specific preference.")
+            sentences.append("They prefer to know the minimum physical presence requirements (days/months per year to maintain residency status) rather than set a specific preference.")
         elif months is not None:
             if months == 0:
                 sentences.append("They initially indicated zero months of residence willingness.")
             else:
                 sentences.append(f"They are willing to reside for up to {months} month{'s' if months!=1 else ''} initially.")
         
+        # Exploratory visits with user's details
         if rp.get("openToVisiting") is True:
-            sentences.append("They are open to short-term visits before a full move.")
+            visit_details = rp.get("exploratoryVisits", {})
+            user_details = visit_details.get("details", "").strip()
+            
+            if user_details:
+                sentences.append(f"Individual has expressed planning or being open to exploratory visits before relocation: \"{user_details}\"")
+            else:
+                sentences.append("Individual has expressed planning or being open to exploratory visits before relocation but has not provided specific details yet.")
         elif rp.get("openToVisiting") is False:
             sentences.append("They are not planning any exploratory visits prior to relocation.")
 
@@ -483,54 +500,13 @@ def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None, 
         if ties.get("hasConnections"):
             sentences.append(f"They also have family connections in {country} (closest relation: {ties.get('closestRelation','unspecified')}).")
 
-    # Language proficiency
-    lp = ri.get("languageProficiency", {})
-    ind_lang = _summarise_language(lp.get("individual", {}))
-    if ind_lang:
-        sentences.append(f"The individual speaks: {ind_lang}.")
-    partner_lang = _summarise_language(lp.get("partner", {}))
-    if partner_lang:
-        sentences.append(f"Their partner speaks: {partner_lang}.")
-
-    # dependents languages
-    dep_langs = lp.get("dependents", [])
-    if dep_langs:
-        dep_summaries = []
-        for d in dep_langs[:3]:
-            dep_summary = _summarise_language(d)
-            if dep_summary:
-                dep_summaries.append(dep_summary)
-        if dep_summaries:
-            sentences.append("Dependents language abilities: " + "; ".join(dep_summaries) + ".")
-        if len(dep_langs) > 3:
-            sentences.append(f"…and {len(dep_langs)-3} more dependents' language data.")
-
-    # willing_to_learn
-    wtl = lp.get("willing_to_learn", [])
-    if wtl:
-        sentences.append("They are willing to learn: " + ", ".join(wtl) + ".")
-    else:
-        sentences.append("They are not currently planning to learn new languages.")
-
-    # can_teach
-    ct = lp.get("can_teach", {})
-    if ct:
-        teach_langs = ", ".join(ct.keys())
-        sentences.append("They can teach: " + teach_langs + ".")
-
-    # other_languages informal
-    other = lp.get("other_languages", {})
-    if other:
-        other_desc = "; ".join(f"{lang} ({level})" for lang, level in other.items())
-        sentences.append("Other language exposure: " + other_desc + ".")
-
     # Centre of life ties
     col = ri.get("centerOfLife", {})
     ties_text = col.get("tiesDescription")
     if col.get("maintainsSignificantTies"):
-        sentences.append("They maintain significant ties to their current country (" + (ties_text or "details not specified") + ").")
+        sentences.append("They maintain significant ties to their current country (" + (f"\"{ties_text}\"" if ties_text else "details not specified") + ").")
     elif ties_text:
-        sentences.append("Regarding centre-of-life ties, they note: " + ties_text + ".")
+        sentences.append("Regarding centre-of-life ties, they note: \"" + ties_text + "\".")
 
     # Tax compliance - explicit mention for both compliant and non-compliant
     tax_compliant = ri.get("taxCompliantEverywhere")
@@ -541,7 +517,7 @@ def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None, 
         # Include explanation if provided
         explanation = ri.get("taxComplianceExplanation", "").strip()
         if explanation:
-            sentences.append(f"Tax compliance explanation: {explanation}")
+            sentences.append(f"Tax compliance explanation: \"{explanation}\"")
 
     # Military service willingness
     msrv = cp.get("militaryService", {}) if cp else {}
