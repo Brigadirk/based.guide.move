@@ -920,6 +920,198 @@ def additional_section(add: Dict[str, Any]) -> str:
     return " ".join(segs) if segs else "User has not submitted any information on this section."
 
 
+def education_section(edu: Dict[str, Any], residency_intentions: Dict[str, Any] = None) -> str:
+    """Generate education section including language proficiency."""
+    if not edu and not residency_intentions:
+        return "Education information has not been completed yet."
+    
+    sentences: List[str] = []
+    
+    # Previous degrees
+    degrees = edu.get("previousDegrees", [])
+    if degrees:
+        degree_count = len(degrees)
+        if degree_count == 1:
+            degree = degrees[0]
+            degree_name = degree.get("degree", "Unspecified degree")
+            institution = degree.get("institution", "Unspecified institution")
+            field = degree.get("field", "Unspecified field")
+            start_year = degree.get("start_year", "")
+            end_year = degree.get("end_year", "")
+            in_progress = degree.get("in_progress", False)
+            
+            year_info = ""
+            if start_year and end_year:
+                if in_progress:
+                    year_info = f" ({start_year} - present, in progress)"
+                else:
+                    year_info = f" ({start_year} - {end_year})"
+            elif start_year:
+                year_info = f" (started {start_year})"
+            
+            sentences.append(f"They hold a {degree_name} in {field} from {institution}{year_info}.")
+        else:
+            sentences.append(f"They hold {degree_count} degrees from various institutions.")
+            for degree in degrees[:3]:  # Show first 3 degrees in detail
+                degree_name = degree.get("degree", "Unspecified degree")
+                institution = degree.get("institution", "Unspecified institution")
+                field = degree.get("field", "Unspecified field")
+                sentences.append(f"• {degree_name} in {field} from {institution}")
+            if degree_count > 3:
+                sentences.append(f"...and {degree_count - 3} additional degrees.")
+    else:
+        sentences.append("No formal degrees have been reported.")
+    
+    # Professional skills/credentials
+    skills = edu.get("visaSkills", [])
+    if skills:
+        skill_count = len(skills)
+        if skill_count == 1:
+            skill = skills[0]
+            skill_name = skill.get("skill", "Unspecified skill")
+            credential = skill.get("credentialName", "")
+            institute = skill.get("credentialInstitute", "")
+            
+            skill_desc = skill_name
+            if credential:
+                skill_desc += f" ({credential}"
+                if institute:
+                    skill_desc += f" from {institute}"
+                skill_desc += ")"
+            
+            sentences.append(f"They have professional expertise in {skill_desc}.")
+        else:
+            sentences.append(f"They have {skill_count} professional skills and credentials:")
+            for skill in skills[:3]:  # Show first 3 skills
+                skill_name = skill.get("skill", "Unspecified skill")
+                credential = skill.get("credentialName", "")
+                if credential:
+                    sentences.append(f"• {skill_name} ({credential})")
+                else:
+                    sentences.append(f"• {skill_name}")
+            if skill_count > 3:
+                sentences.append(f"...and {skill_count - 3} additional skills.")
+    
+    # Military service
+    military = edu.get("militaryService", {})
+    if military.get("hasService"):
+        country = military.get("country", "Unspecified country")
+        branch = military.get("branch", "Unspecified branch")
+        sentences.append(f"They have military service experience with the {branch} in {country}.")
+    
+    # Language proficiency (stored in residencyIntentions but reported in education)
+    if residency_intentions:
+        lp = residency_intentions.get("languageProficiency", {})
+        dest_country = residency_intentions.get("destinationCountry", {}).get("country", "")
+        
+        if lp:
+            # Individual language proficiency
+            ind_lang = lp.get("individual", {})
+            if ind_lang:
+                lang_summaries = []
+                for lang, level in ind_lang.items():
+                    if level > 0:
+                        level_names = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Native/Fluent"]
+                        level_name = level_names[min(level, 6)]
+                        
+                        lang_desc = f"{lang} ({level_name})"
+                        
+                        # Add credential info if available
+                        individual_creds = lp.get("individual_credentials", {})
+                        if individual_creds.get(lang):
+                            lang_desc += " with formal credentials"
+                        
+                        # Add teaching capability if B1+
+                        can_teach = lp.get("can_teach", {})
+                        teaching_capability = can_teach.get(lang)
+                        if level >= 3 and teaching_capability and teaching_capability != "No/not interested":
+                            if teaching_capability == "Formally with credentials":
+                                lang_desc += ", qualified to teach formally"
+                            elif teaching_capability == "Informally":
+                                lang_desc += ", able to teach informally"
+                        
+                        lang_summaries.append(lang_desc)
+                
+                if lang_summaries:
+                    if dest_country:
+                        sentences.append(f"Language skills for {dest_country}: " + "; ".join(lang_summaries) + ".")
+                    else:
+                        sentences.append("Destination country language skills: " + "; ".join(lang_summaries) + ".")
+            
+            # Willing to learn languages
+            willing_to_learn = lp.get("willing_to_learn", [])
+            if willing_to_learn:
+                sentences.append("Languages they are willing to learn: " + ", ".join(willing_to_learn) + ".")
+            
+            # Partner language proficiency (if present)
+            partner_lang = lp.get("partner", {})
+            if partner_lang:
+                partner_summaries = []
+                for lang, level in partner_lang.items():
+                    if level > 0:
+                        level_names = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Native/Fluent"]
+                        level_name = level_names[min(level, 6)]
+                        
+                        partner_desc = f"{lang} ({level_name})"
+                        
+                        # Add partner credential info if available
+                        partner_creds = lp.get("partner_credentials", {})
+                        if partner_creds.get(lang):
+                            partner_desc += " with formal credentials"
+                        
+                        # Add partner teaching capability if B1+
+                        partner_can_teach = lp.get("partner_can_teach", {})
+                        partner_teaching = partner_can_teach.get(lang)
+                        if level >= 3 and partner_teaching and partner_teaching != "No/not interested":
+                            if partner_teaching == "Formally with credentials":
+                                partner_desc += ", qualified to teach formally"
+                            elif partner_teaching == "Informally":
+                                partner_desc += ", able to teach informally"
+                        
+                        partner_summaries.append(partner_desc)
+                
+                if partner_summaries:
+                    sentences.append("Partner's language skills: " + "; ".join(partner_summaries) + ".")
+            
+            # Partner willing to learn
+            partner_willing = lp.get("partner_willing_to_learn", [])
+            if partner_willing:
+                sentences.append("Languages the partner is willing to learn: " + ", ".join(partner_willing) + ".")
+            
+            # Additional languages
+            other_langs = lp.get("other_languages", {})
+            if other_langs:
+                other_summaries = []
+                for lang, lang_data in other_langs.items():
+                    if isinstance(lang_data, dict):
+                        # New format
+                        proficiency = lang_data.get("proficiency", 1)
+                        can_teach = lang_data.get("canTeach", "No/not interested")
+                        has_credentials = lang_data.get("hasCredentials", False)
+                        
+                        level_names = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Native/Fluent"]
+                        level_name = level_names[min(proficiency, 6)]
+                        
+                        other_desc = f"{lang} ({level_name})"
+                        if has_credentials:
+                            other_desc += " with formal credentials"
+                        if proficiency >= 3 and can_teach != "No/not interested":
+                            if can_teach == "Formally with credentials":
+                                other_desc += ", qualified to teach formally"
+                            elif can_teach == "Informally":
+                                other_desc += ", able to teach informally"
+                        
+                        other_summaries.append(other_desc)
+                    else:
+                        # Old format (just teaching capability)
+                        other_summaries.append(f"{lang} (teaching capability: {lang_data})")
+                
+                if other_summaries:
+                    sentences.append("Additional languages: " + "; ".join(other_summaries) + ".")
+    
+    return " ".join(sentences) if sentences else "User has not submitted any information on this section."
+
+
 def make_story(profile: Dict[str, Any]) -> str:
     dest_country = profile.get("residencyIntentions", {}).get("destinationCountry", {}).get("country", "")
     dest_currency = country_to_currency(dest_country) if dest_country else "USD"
@@ -928,7 +1120,7 @@ def make_story(profile: Dict[str, Any]) -> str:
         ("Residency Plans", residency_section(profile.get("residencyIntentions", {}), profile.get("personalInformation", {}), profile.get("alternativeInterests", {}))),
         ("Finance", finance_section(profile.get("finance", {}), dest_currency)),
         ("Personal Information", personal_section(profile.get("personalInformation", {}))),
-        ("Education", education_section(profile.get("education", {}))),
+        ("Education", education_section(profile.get("education", {}), profile.get("residencyIntentions", {}))),
         ("Social Security & Pensions", ssp_section(profile.get("socialSecurityAndPensions", {}), dest_currency)),
         ("Future Financial Plans", future_plans_section(profile.get("futureFinancialPlans", {}), dest_currency)),
         ("Tax Deductions & Credits", deductions_section(profile.get("taxDeductionsAndCredits", {}), dest_currency)),
@@ -968,9 +1160,9 @@ def make_personal_story(personal_info: Dict[str, Any]) -> str:
     return f"Personal Information:\n{personal_section(personal_info)}"
 
 
-def make_education_story(education_info: Dict[str, Any]) -> str:
+def make_education_story(education_info: Dict[str, Any], residency_intentions: Dict[str, Any] = None) -> str:
     """Generate a story for just the education section."""
-    return f"Education:\n{education_section(education_info)}"
+    return f"Education:\n{education_section(education_info, residency_intentions)}"
 
 
 def make_residency_intentions_story(residency_info: Dict[str, Any]) -> str:

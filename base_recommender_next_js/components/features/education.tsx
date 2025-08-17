@@ -1222,6 +1222,27 @@ function LanguageProficiencyFull() {
                     <span>C2</span>
                   </div>
                   
+                  {/* Credential verification option */}
+                  {currentLevel > 0 && (
+                    <div className="flex items-center gap-2 mt-3">
+                      <Checkbox
+                        id={`individual-credentials-${lang}`}
+                        checked={languageData.individual_credentials?.[lang] || false}
+                        onCheckedChange={(checked) => {
+                          const currentCredentials = languageData.individual_credentials || {}
+                          const updated = {
+                            ...currentCredentials,
+                            [lang]: !!checked
+                          }
+                          updateFormData("residencyIntentions.languageProficiency.individual_credentials", updated)
+                        }}
+                      />
+                      <Label htmlFor={`individual-credentials-${lang}`} className="text-sm">
+                        I have formal credentials to prove this proficiency level
+                      </Label>
+                    </div>
+                  )}
+
                   {/* Willing to learn checkbox */}
                   {currentLevel < 3 && (
                     <div className="flex items-center gap-2 mt-3">
@@ -1241,12 +1262,12 @@ function LanguageProficiencyFull() {
                     </div>
                   )}
 
-                  {/* Teaching capability for advanced speakers */}
-                  {currentLevel >= 4 && (
+                  {/* Teaching capability for intermediate+ speakers */}
+                  {currentLevel >= 3 && (
                     <div className="space-y-2 mt-3">
                       <Label className="text-sm font-medium">Can you teach {lang}?</Label>
                       <div className="flex gap-4">
-                        {["No", "Informally", "Formally with credentials"].map((option) => (
+                        {["No/not interested", "Informally", "Formally with credentials"].map((option) => (
                           <div key={option} className="flex items-center space-x-2">
                             <input
                               type="radio"
@@ -1299,6 +1320,76 @@ function LanguageProficiencyFull() {
                       <span>C1</span>
                       <span>C2</span>
                     </div>
+
+                    {/* Partner credential verification option */}
+                    {currentLevel > 0 && (
+                      <div className="flex items-center gap-2 mt-3">
+                        <Checkbox
+                          id={`partner-credentials-${lang}`}
+                          checked={languageData.partner_credentials?.[lang] || false}
+                          onCheckedChange={(checked) => {
+                            const currentCredentials = languageData.partner_credentials || {}
+                            const updated = {
+                              ...currentCredentials,
+                              [lang]: !!checked
+                            }
+                            updateFormData("residencyIntentions.languageProficiency.partner_credentials", updated)
+                          }}
+                        />
+                        <Label htmlFor={`partner-credentials-${lang}`} className="text-sm">
+                          Partner has formal credentials to prove this proficiency level
+                        </Label>
+                      </div>
+                    )}
+
+                    {/* Partner willing to learn checkbox */}
+                    {currentLevel < 3 && (
+                      <div className="flex items-center gap-2 mt-3">
+                        <Checkbox
+                          id={`partner-learn-${lang}`}
+                          checked={languageData.partner_willing_to_learn?.includes(lang) || false}
+                          onCheckedChange={(checked) => {
+                            const currentWilling = languageData.partner_willing_to_learn || []
+                            const updated = checked 
+                              ? [...currentWilling, lang]
+                              : currentWilling.filter((l: string) => l !== lang)
+                            updateFormData("residencyIntentions.languageProficiency.partner_willing_to_learn", updated)
+                          }}
+                        />
+                        <Label htmlFor={`partner-learn-${lang}`} className="text-sm">
+                          Partner is willing to learn {lang}
+                        </Label>
+                      </div>
+                    )}
+
+                    {/* Partner teaching capability for intermediate+ speakers */}
+                    {currentLevel >= 3 && (
+                      <div className="space-y-2 mt-3">
+                        <Label className="text-sm font-medium">Can your partner teach {lang}?</Label>
+                        <div className="flex gap-4">
+                          {["No/not interested", "Informally", "Formally with credentials"].map((option) => (
+                            <div key={option} className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                id={`partner-teach-${lang}-${option}`}
+                                name={`partner-teach-${lang}`}
+                                value={option}
+                                checked={languageData.partner_can_teach?.[lang] === option}
+                                onChange={() => {
+                                  const currentCanTeach = languageData.partner_can_teach || {}
+                                  const updated = {
+                                    ...currentCanTeach,
+                                    [lang]: option
+                                  }
+                                  updateFormData("residencyIntentions.languageProficiency.partner_can_teach", updated)
+                                }}
+                              />
+                              <label htmlFor={`partner-teach-${lang}-${option}`} className="text-sm cursor-pointer">{option}</label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )
               })}
@@ -1352,75 +1443,161 @@ function LanguageProficiencyFull() {
             </div>
           )}
 
-          {/* Other Languages You Can Teach */}
-          <div className="space-y-4 border-t pt-6">
-            <h4 className="font-medium text-base">🔤 Other languages you speak (and could teach)</h4>
-            <p className="text-sm text-muted-foreground">Add any other languages you can teach that aren't listed above</p>
+          {/* Other Languages You Speak */}
+          <div className="space-y-6 border-t pt-6">
+            <div className="space-y-2">
+              <h4 className="font-medium text-base">🔤 Other languages you speak</h4>
+              <p className="text-sm text-muted-foreground">Add any other languages you know that aren't listed above</p>
+            </div>
           
+            {/* Add new language input */}
             <div className="flex gap-3 items-end">
               <div className="flex-1">
                 <Label className="text-sm">Language name</Label>
                 <Input
                   value={newTeachingLang.language}
                   onChange={(e) => setNewTeachingLang({...newTeachingLang, language: e.target.value})}
-                  placeholder="Enter language name"
+                  placeholder="e.g., French, German, Mandarin..."
                 />
-              </div>
-              <div>
-                <Label className="text-sm">Teaching capability</Label>
-                <Select
-                  value={newTeachingLang.capability}
-                  onValueChange={(value) => setNewTeachingLang({...newTeachingLang, capability: value})}
-                >
-                  <SelectTrigger className="w-48">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Not interested">Not interested</SelectItem>
-                    <SelectItem value="Informally">Informally</SelectItem>
-                    <SelectItem value="Formally with credentials">Formally with credentials</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
               <Button
                 onClick={() => {
                   if (newTeachingLang.language && !otherLanguages[newTeachingLang.language]) {
-                    const updated = {
+                    // Initialize with default values
+                    const updatedOtherLanguages = {
                       ...otherLanguages,
-                      [newTeachingLang.language]: newTeachingLang.capability
+                      [newTeachingLang.language]: {
+                        proficiency: 3, // Default to B1 Intermediate - A1 is minimum, B1 is reasonable default
+                        canTeach: "No/not interested",
+                        hasCredentials: false
+                      }
                     }
-                    updateFormData("residencyIntentions.languageProficiency.other_languages", updated)
+                    updateFormData("residencyIntentions.languageProficiency.other_languages", updatedOtherLanguages)
                     setNewTeachingLang({language: '', capability: 'Informally'})
                   }
                 }}
                 disabled={!newTeachingLang.language || !!otherLanguages[newTeachingLang.language]}
               >
-                💾 Add Language
+                <Plus className="w-4 h-4 mr-2" />
+                Add Language
               </Button>
             </div>
 
+            {/* Display added languages with full controls */}
             {Object.keys(otherLanguages).length > 0 && (
-              <div className="space-y-2">
-                <h5 className="font-medium">🔤 Languages you can teach:</h5>
-                {Object.entries(otherLanguages).map(([lang, level]: [string, any]) => (
-                  <div key={lang} className="flex items-center justify-between p-3 border rounded-lg bg-card">
-                    <div>
-                      <span className="font-medium">{lang}</span>
-                      <span className="text-sm text-muted-foreground ml-2">({level})</span>
+              <div className="space-y-4">
+                <h5 className="font-medium">Your additional languages:</h5>
+                {Object.entries(otherLanguages).map(([lang, langData]: [string, any]) => {
+                  // Handle both old format (string) and new format (object)
+                  // For additional languages, minimum is A1 (1), not None (0)
+                  const proficiency = typeof langData === 'object' ? Math.max(langData.proficiency || 1, 1) : 1
+                  const canTeach = typeof langData === 'object' ? (langData.canTeach || "No/not interested") : langData
+                  const hasCredentials = typeof langData === 'object' ? (langData.hasCredentials || false) : false
+                  
+                  return (
+                    <div key={lang} className="space-y-3 p-4 border rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="flex justify-between items-center flex-1">
+                          <Label className="text-base font-medium">Your proficiency in {lang}</Label>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary">{proficiencyLabels[proficiency]}</Badge>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => {
+                                const updated = {...otherLanguages}
+                                delete updated[lang]
+                                updateFormData("residencyIntentions.languageProficiency.other_languages", updated)
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <Slider
+                        value={[proficiency]}
+                        onValueChange={(value) => {
+                          const updated = {
+                            ...otherLanguages,
+                            [lang]: {
+                              ...langData,
+                              proficiency: value[0]
+                            }
+                          }
+                          updateFormData("residencyIntentions.languageProficiency.other_languages", updated)
+                        }}
+                        max={6}
+                        min={1}
+                        step={1}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>A1</span>
+                        <span>A2</span>
+                        <span>B1</span>
+                        <span>B2</span>
+                        <span>C1</span>
+                        <span>C2</span>
+                      </div>
+
+                      {/* Credential verification option */}
+                      {proficiency >= 1 && (
+                        <div className="flex items-center gap-2 mt-3">
+                          <Checkbox
+                            id={`credentials-${lang}`}
+                            checked={hasCredentials}
+                            onCheckedChange={(checked) => {
+                              const updated = {
+                                ...otherLanguages,
+                                [lang]: {
+                                  ...langData,
+                                  hasCredentials: !!checked
+                                }
+                              }
+                              updateFormData("residencyIntentions.languageProficiency.other_languages", updated)
+                            }}
+                          />
+                          <Label htmlFor={`credentials-${lang}`} className="text-sm">
+                            I have formal credentials to prove this proficiency level
+                          </Label>
+                        </div>
+                      )}
+                      
+                      {/* Teaching capability for intermediate+ speakers */}
+                      {proficiency >= 3 && (
+                        <div className="space-y-2 mt-3">
+                          <Label className="text-sm font-medium">Can you teach {lang}?</Label>
+                          <div className="flex gap-4">
+                            {["No/not interested", "Informally", "Formally with credentials"].map((option) => (
+                              <div key={option} className="flex items-center space-x-2">
+                                <input
+                                  type="radio"
+                                  id={`teach-other-${lang}-${option}`}
+                                  name={`teach-other-${lang}`}
+                                  value={option}
+                                  checked={canTeach === option}
+                                  onChange={() => {
+                                    const updated = {
+                                      ...otherLanguages,
+                                      [lang]: {
+                                        ...langData,
+                                        canTeach: option
+                                      }
+                                    }
+                                    updateFormData("residencyIntentions.languageProficiency.other_languages", updated)
+                                  }}
+                                />
+                                <label htmlFor={`teach-other-${lang}-${option}`} className="text-sm cursor-pointer">{option}</label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => {
-                        const updated = {...otherLanguages}
-                        delete updated[lang]
-                        updateFormData("residencyIntentions.languageProficiency.other_languages", updated)
-                      }}
-                    >
-                      ❌ Remove
-                    </Button>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>

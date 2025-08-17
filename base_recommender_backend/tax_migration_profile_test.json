@@ -107,10 +107,10 @@
     },
     "languageProficiency": {
       "individual": {
-        "Spanish": 3
+        "Spanish": 4
       },
       "partner": {
-        "Spanish": 2
+        "Spanish": 3
       },
       "dependents": [
         {
@@ -118,9 +118,30 @@
         }
       ],
       "willing_to_learn": [],
-      "can_teach": {},
+      "can_teach": {
+        "Spanish": "Informally"
+      },
+      "individual_credentials": {
+        "Spanish": true
+      },
+      "partner_credentials": {
+        "Spanish": false
+      },
+      "partner_willing_to_learn": [],
+      "partner_can_teach": {
+        "Spanish": "No/not interested"
+      },
       "other_languages": {
-        "Dutch": "Informally"
+        "Dutch": {
+          "proficiency": 3,
+          "canTeach": "Informally",
+          "hasCredentials": false
+        },
+        "French": {
+          "proficiency": 5,
+          "canTeach": "Formally with credentials",
+          "hasCredentials": true
+        }
       }
     },
     "centerOfLife": {
