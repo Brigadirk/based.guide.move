@@ -52,8 +52,8 @@ const SECTIONS: Section[] = [
   { id: "disclaimer", title: "Disclaimer", icon: AlertCircle, required: true, showDot: true },
   { id: "destination", title: "Desired Destination", icon: Globe, required: true, showDot: true },
   { id: "personal", title: "Personal Information", icon: User, required: true, showDot: true },
-  { id: "education", title: "Education", icon: BookOpen, required: false, showDot: true },
   { id: "residency", title: "Residency Intentions", icon: Plane, required: true, showDot: true },
+  { id: "education", title: "Education", icon: BookOpen, required: false, showDot: true },
   { id: "finance", title: "Income and Assets", icon: Banknote, required: true, showDot: true },
   { id: "social-security", title: "Social Security and Pensions", icon: Briefcase, required: false, showDot: true },
   { id: "tax-deductions", title: "Tax Deductions and Credits", icon: Calculator, required: false, showDot: true },
@@ -212,10 +212,10 @@ export default function HomePage() {
         return <Destination onComplete={handleContinue} />;
       case "personal":
         return <PersonalInformation onComplete={handleContinue} />;
-      case "education":
-        return <Education onComplete={handleContinue} />;
       case "residency":
         return <ResidencyIntentions onComplete={handleContinue} />;
+      case "education":
+        return <Education onComplete={handleContinue} />;
       case "finance":
         return <Finance onComplete={handleContinue} />;
       case "social-security":
@@ -301,7 +301,7 @@ export default function HomePage() {
             
             <nav className="space-y-1 sticky top-24">
               {SECTIONS.map((section, index) => {
-                // Insert Finance Skip Toggle between Residency Intentions (index 4) and Income and Assets (index 5)
+                // Insert Finance Skip Toggle between Education (index 4) and Income and Assets (index 5)
                 const showFinanceToggle = index === 5 // Before Income and Assets section
                 
                 const Icon = section.icon
@@ -496,8 +496,8 @@ export default function HomePage() {
                     {currentSection === 0 && "Please read and accept the disclaimer to continue"}
                     {currentSection === 1 && "Select your desired destination country and region"}
                     {currentSection === 2 && "Tell us about yourself and your family"}
-                    {currentSection === 3 && "Share your educational background and skills"}
-                    {currentSection === 4 && "Describe your residency intentions and timeline"}
+                    {currentSection === 3 && "Describe your residency intentions and timeline"}
+                    {currentSection === 4 && "Share your educational background and skills"}
                     {currentSection === 5 && "Provide details about your income and assets"}
                     {currentSection === 6 && "Information about your social security and pension plans"}
                     {currentSection === 7 && "Potential tax deductions and credits you may qualify for"}

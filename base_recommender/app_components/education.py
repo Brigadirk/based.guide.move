@@ -4,6 +4,8 @@ from app_components.helpers import (
     update_data,
     display_section,
     format_country_name,
+    get_languages,
+    get_language_proficiency_levels,
 )
 
 def education(anchor):
@@ -16,6 +18,11 @@ def education(anchor):
     if not st.toggle(f"📋 Show {anchor}", value=True, key=f"show_{anchor}"):
         st.info(f"🔍 {anchor} section is hidden. Toggle to show. Your previously entered data is preserved.")
         return
+
+    # ======================= LANGUAGE PROFICIENCY SECTION =======================
+    display_language_proficiency_summary()
+
+    st.divider()
 
     # -------------------- EDUCATION HISTORY --------------------
     st.subheader("📚 Education History (past & present)")
@@ -297,3 +304,113 @@ def education(anchor):
 
     st.divider()
     display_section("individual.education", "Education")
+
+def display_language_proficiency_summary():
+    """Display a summary of language proficiency for all moving persons"""
+    st.subheader("🗣️ Language Proficiency Summary")
+    
+    # DATA INITIALIZATION 
+    destination_country = get_data("individual.residencyIntentions.destinationCountry.country")
+    destination_region = get_data("individual.residencyIntentions.destinationCountry.region")
+    
+    if not destination_country:
+        st.warning("⚠️ Please complete the Residency Intentions section first to see language requirements.")
+        return
+        
+    # Get language data
+    language_data = get_data("individual.residencyIntentions.languageProficiency") or {}
+    
+    # Get languages for the country/region
+    language_info = get_languages(destination_country, destination_region)
+    if not language_info:
+        st.warning("⚠️ No language information available for this country.")
+        return
+        
+    # Format language information
+    country_languages = sorted(language_info.get("country_languages", []))
+    region_languages = sorted(language_info.get("region_languages", []))
+    all_languages = list(set(country_languages + (region_languages or [])))
+    
+    # Get proficiency levels
+    proficiency_levels = get_language_proficiency_levels()
+    
+    # INFORMATION DISPLAY 
+    if country_languages:
+        if len(country_languages) == 1:
+            country_lang_text = country_languages[0]
+        else:
+            country_lang_text = f"{', '.join(country_languages[:-1])} and {country_languages[-1]}"
+        st.info(f"🌐 The dominant language{'s' if len(country_languages) > 1 else ''} "
+                f"in {destination_country} {'are' if len(country_languages) > 1 else 'is'} "
+                f"**{country_lang_text}**.")
+    
+    if destination_region and destination_region != "I don't know" and region_languages:
+        if len(region_languages) == 1:
+            region_lang_text = region_languages[0]
+        else:
+            region_lang_text = f"{', '.join(region_languages[:-1])} and {region_languages[-1]}"
+        st.info(f"📍 In {destination_region}, the dominant language{'s' if len(region_languages) > 1 else ''} "
+                f"{'are' if len(region_languages) > 1 else 'is'} **{region_lang_text}**.")
+    
+    # Display current proficiency summary
+    with st.expander("📊 Current Language Skills Summary (Click to expand)", expanded=False):
+        
+        # Individual's proficiency
+        individual_proficiency = language_data.get("individual", {})
+        if individual_proficiency:
+            st.markdown("**📋 Your Language Skills:**")
+            for lang, level in individual_proficiency.items():
+                level_text = proficiency_levels.get(level, f"Level {level}")
+                st.write(f"- {lang}: {level_text}")
+        else:
+            st.write("❌ **You:** No language proficiency data recorded yet.")
+        
+        # Partner's proficiency
+        has_partner = get_data("individual.personalInformation.relocationPartner")
+        if has_partner:
+            partner_proficiency = language_data.get("partner", {})
+            if partner_proficiency:
+                st.markdown("**👥 Partner's Language Skills:**")
+                for lang, level in partner_proficiency.items():
+                    level_text = proficiency_levels.get(level, f"Level {level}")
+                    st.write(f"- {lang}: {level_text}")
+            else:
+                st.write("❌ **Partner:** No language proficiency data recorded yet.")
+        
+        # Dependents' proficiency
+        num_dependents = get_data("individual.personalInformation.numRelocationDependents") or 0
+        if num_dependents > 0:
+            dependents_proficiency = language_data.get("dependents", [])
+            st.markdown("**👨‍👩‍👧‍👦 Dependents' Language Skills:**")
+            for i in range(num_dependents):
+                if i < len(dependents_proficiency) and dependents_proficiency[i]:
+                    st.write(f"**Dependent {i+1}:**")
+                    for lang, level in dependents_proficiency[i].items():
+                        level_text = proficiency_levels.get(level, f"Level {level}")
+                        st.write(f"  - {lang}: {level_text}")
+                else:
+                    st.write(f"❌ **Dependent {i+1}:** No language proficiency data recorded yet.")
+        
+        # Learning willingness
+        willing_to_learn = language_data.get("willing_to_learn", [])
+        if willing_to_learn:
+            st.markdown("**📚 Languages willing to learn:**")
+            for lang in willing_to_learn:
+                st.write(f"- {lang}")
+        
+        # Teaching capabilities
+        can_teach = language_data.get("can_teach", {})
+        other_languages = language_data.get("other_languages", {})
+        all_teaching = {**can_teach, **other_languages}
+        if all_teaching:
+            st.markdown("**🎓 Languages you can teach:**")
+            for lang, level in all_teaching.items():
+                st.write(f"- {lang}: {level}")
+    
+    # Link to edit language proficiency
+    st.markdown("---")
+    st.markdown("💡 **Want to update your language skills?** Go back to the **Residency Intentions** section to modify language proficiency details.")
+    
+    # Show missing data warning if needed
+    if not individual_proficiency and all_languages:
+        st.warning("⚠️ **Missing language data:** Consider recording your language proficiency levels in the Residency Intentions section, as they may be important for visa applications and integration.")

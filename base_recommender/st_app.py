@@ -62,12 +62,12 @@ def main():
     personal("Personal Information")
 
     st.divider()
-    
-    education("Education")
-
-    st.divider()
 
     residency_intentions("Residency Intentions")
+
+    st.divider()
+    
+    education("Education")
 
     st.divider()
       

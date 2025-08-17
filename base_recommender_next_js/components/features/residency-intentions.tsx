@@ -78,8 +78,12 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   const moveType = getFormData("residencyIntentions.destinationCountry.moveType") ?? ""
   const tempDuration = getFormData("residencyIntentions.destinationCountry.intendedTemporaryDurationOfStay") ?? 0
 
-  // Citizenship status (derived or selected)
-  const citizenshipStatus = getFormData("residencyIntentions.destinationCountry.citizenshipStatus") ?? isAlreadyCitizen
+  // Automatically update citizenship status based on personal information
+  useEffect(() => {
+    if (destCountry) {
+      updateFormData("residencyIntentions.destinationCountry.citizenshipStatus", isAlreadyCitizen)
+    }
+  }, [destCountry, isAlreadyCitizen, updateFormData])
 
   // Residency plans
   const applyForResidency = getFormData("residencyIntentions.residencyPlans.applyForResidency") ?? false
@@ -228,51 +232,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
         </CardContent>
       </Card>
 
-          {/* Citizenship Status */}
-          {!isAlreadyCitizen && (
-            <Card className="shadow-sm border-l-4 border-l-green-500">
-              <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
-                <CardTitle className="text-xl flex items-center gap-3">
-                  <Shield className="w-6 h-6 text-green-600" />
-                  Citizenship Status
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">Your current or potential citizenship status in {destCountry}</p>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <div className="space-y-3">
-                    <Label className="text-base font-medium">
-                      Are you already a citizen of {destCountry}, OR on track for citizenship?
-                    </Label>
-                    <div className="flex gap-4">
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          id="citizen-yes"
-                          name="citizenStatus"
-                          value="true"
-                          checked={citizenshipStatus === true}
-                          onChange={() => updateFormData("residencyIntentions.destinationCountry.citizenshipStatus", true)}
-                        />
-                        <label htmlFor="citizen-yes" className="text-sm font-medium cursor-pointer">Yes</label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          id="citizen-no"
-                          name="citizenStatus"
-                          value="false"
-                          checked={citizenshipStatus === false}
-                          onChange={() => updateFormData("residencyIntentions.destinationCountry.citizenshipStatus", false)}
-                        />
-                        <label htmlFor="citizen-no" className="text-sm font-medium cursor-pointer">No</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+
 
           {/* Display citizenship confirmation and tax focus if already citizen OR EU movement */}
           {(isAlreadyCitizen || canMoveWithinEUFreedom) && (
@@ -476,7 +436,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
           )}
 
           {/* Residency Plans (only show if not already citizen or EU) */}
-          {!hasNoVisaRequirement && !citizenshipStatus && (
+          {!hasNoVisaRequirement && !isAlreadyCitizen && (
             <Card className="shadow-sm border-l-4 border-l-purple-500">
               <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
@@ -646,7 +606,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
           )}
 
           {/* Citizenship Plans (only show if not already citizen/EU and interested) */}
-          {!hasNoVisaRequirement && !citizenshipStatus && (
+          {!hasNoVisaRequirement && !isAlreadyCitizen && (
             <Card className="shadow-sm border-l-4 border-l-orange-500">
               <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
@@ -1430,7 +1390,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
               sectionId="residency"
               onContinue={handleComplete}
               canContinue={canContinue}
-              nextSectionName="Income and Assets"
+              nextSectionName="Education"
             />
           </div>
         </CardFooter>

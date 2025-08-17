@@ -45,7 +45,17 @@ def residency_intentions(anchor):
     with st.container(): 
         st.markdown("\n")
         if destination:    
-            if citizen_status(destination) == "No":
+            # Check if user is already a citizen based on personal information nationalities
+            user_nationalities = get_data("individual.personalInformation.nationalities") or []
+            is_already_citizen = destination in user_nationalities
+            
+            # Update citizenship status automatically based on personal information
+            update_data("individual.residencyIntentions.destinationCountry.citizenshipStatus", is_already_citizen)
+            
+            if is_already_citizen:
+                dest_label = format_country_name(destination)
+                st.success(f"✅ You are already a citizen of {dest_label}.")
+            else:
                 apply_for_residency = residency(destination)
                 interested_in_citizenship = citizenship(destination)
             
@@ -128,28 +138,7 @@ def duration_of_stay():
             help="Enter how long you plan to stay in the destination country")
     update_data("individual.residencyIntentions.destinationCountry.intendedTemporaryDurationOfStay", duration_of_stay)
 
-def citizen_status(destination):
-    """Handle citizenship status with data binding and conditional display"""
-    # CONDITIONAL DISPLAY PATTERN
-    if destination in get_data("individual.personalInformation.nationalities") or []:
-        # Automatically set citizen_status to "Yes" and make it unchangeable
-        dest_label = format_country_name(destination)
-        st.success(f"✅ You are already a citizen of {dest_label}.")
-        citizen_status = "Yes"
-        update_data("individual.residencyIntentions.destinationCountry.citizenshipStatus", True)
-    else:
-        # CONSISTENT RADIO BUTTON PATTERN
-        dest_label = format_country_name(destination)
-        citizen_status = st.radio(
-            f"Are you already a citizen of {dest_label}, OR on track for citizenship?",
-            options=["Yes", "No"],
-            index=1 if not get_data("individual.residencyIntentions.destinationCountry.citizenshipStatus") else 0,
-            horizontal=True,
-            key="citizen_status"
-        )
-        update_data("individual.residencyIntentions.destinationCountry.citizenshipStatus", citizen_status == "Yes")
-    
-    return citizen_status
+
 
 def residency(destination):
     """Handle residency application checkbox with data binding"""

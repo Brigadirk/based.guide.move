@@ -17,7 +17,8 @@ import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
-import { Plus, Trash2, GraduationCap, BookOpen, Award, Users, Info, Target, Brain, School, Shield } from "lucide-react"
+import { getLanguages } from "@/lib/utils/country-utils"
+import { Plus, Trash2, GraduationCap, BookOpen, Award, Users, Info, Target, Brain, School, Shield, Languages } from "lucide-react"
 
 type Degree = {
   degree: string
@@ -136,6 +137,9 @@ export function Education({ onComplete }: { onComplete: () => void }) {
       <SectionHint title="About this section">
         Educational qualifications and professional skills are crucial for visa applications, especially for skilled worker visas and professional registration in your destination country.
       </SectionHint>
+
+      {/* Language Proficiency Summary Card */}
+      <LanguageProficiencySummary />
 
       {/* Previous Degrees Card */}
       <Card className="shadow-sm border-l-4 border-l-primary">
@@ -1052,7 +1056,7 @@ export function Education({ onComplete }: { onComplete: () => void }) {
               sectionId="education"
               onContinue={handleComplete}
               canContinue={canContinue}
-              nextSectionName="Residency Intentions"
+              nextSectionName="Income and Assets"
             />
           </div>
         </CardFooter>
@@ -1073,5 +1077,213 @@ export function Education({ onComplete }: { onComplete: () => void }) {
         onNavigateToSection={navigateToSection}
       />
     </div>
+  )
+}
+
+function LanguageProficiencySummary() {
+  const { getFormData } = useFormStore()
+  
+  const destCountry = getFormData("destination.country") ?? ""
+  const destRegion = getFormData("destination.region") ?? ""
+  
+  // Get language data from residency intentions
+  const languageData = getFormData("residencyIntentions.languageProficiency") ?? {}
+  const hasPartner = getFormData("personalInformation.relocationPartner") ?? false
+  const numDependents = getFormData("personalInformation.numRelocationDependents") ?? 0
+  
+  // Get languages for the destination
+  const languages = (() => {
+    try {
+      return getLanguages(destCountry, destRegion)
+    } catch {
+      return []
+    }
+  })()
+  
+  const proficiencyLevelNames = {
+    0: "None",
+    1: "Basic/Beginner (A1)",
+    2: "Elementary (A2)",
+    3: "Intermediate (B1)",
+    4: "Upper Intermediate (B2)",
+    5: "Advanced (C1)",
+    6: "Native/Fluent (C2)"
+  }
+  
+  const getProficiencyLabel = (level: number) => {
+    return proficiencyLevelNames[level as keyof typeof proficiencyLevelNames] || `Level ${level}`
+  }
+  
+  if (!destCountry) {
+    return (
+      <Card className="shadow-sm border-l-4 border-l-amber-500">
+        <CardHeader className="bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Languages className="w-6 h-6 text-amber-600" />
+            Language Proficiency Summary
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              Please complete the <strong>Residency Intentions</strong> section first to see language requirements for your destination.
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
+    )
+  }
+  
+  const individualProficiency = languageData.individual || {}
+  const partnerProficiency = languageData.partner || {}
+  const dependentsProficiency = languageData.dependents || []
+  const willingToLearn = languageData.willing_to_learn || []
+  const canTeach = { ...languageData.can_teach || {}, ...languageData.other_languages || {} }
+  
+  const hasAnyLanguageData = 
+    Object.keys(individualProficiency).length > 0 ||
+    Object.keys(partnerProficiency).length > 0 ||
+    dependentsProficiency.some((dep: any) => Object.keys(dep).length > 0) ||
+    willingToLearn.length > 0 ||
+    Object.keys(canTeach).length > 0
+  
+  return (
+    <Card className="shadow-sm border-l-4 border-l-indigo-500">
+      <CardHeader className="bg-gradient-to-r from-indigo-50 to-transparent dark:from-indigo-950/20">
+        <CardTitle className="text-xl flex items-center gap-3">
+          <Languages className="w-6 h-6 text-indigo-600" />
+          Language Proficiency Summary
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">Language skills for all moving persons</p>
+      </CardHeader>
+      <CardContent className="pt-6">
+        <div className="space-y-6">
+          {/* Destination Language Info */}
+          {languages.length > 0 && (
+            <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+              <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">🌐 {destCountry} Languages</h4>
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                Dominant language{languages.length > 1 ? 's' : ''}: <strong>{languages.join(', ')}</strong>
+              </p>
+              {destRegion && destRegion !== "I don't know" && (
+                <p className="text-sm text-blue-800 dark:text-blue-200 mt-1">
+                  Region: {destRegion}
+                </p>
+              )}
+            </div>
+          )}
+          
+          {!hasAnyLanguageData ? (
+            <Alert>
+              <Info className="h-4 w-4" />
+              <AlertDescription>
+                <strong>No language proficiency data found.</strong><br />
+                Go to the <strong>Residency Intentions</strong> section to record language skills for visa applications and integration planning.
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <div className="space-y-4">
+              {/* Individual's Proficiency */}
+              <div className="space-y-3">
+                <h4 className="font-medium text-base">📊 Your Language Skills</h4>
+                {Object.keys(individualProficiency).length > 0 ? (
+                  <div className="grid gap-2">
+                    {Object.entries(individualProficiency).map(([lang, level]: [string, any]) => (
+                      <div key={lang} className="flex items-center justify-between p-3 border rounded-lg bg-card">
+                        <span className="font-medium">{lang}</span>
+                        <Badge variant="secondary">{getProficiencyLabel(Number(level))}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">❌ No language skills recorded yet.</p>
+                )}
+              </div>
+              
+              {/* Partner's Proficiency */}
+              {hasPartner && (
+                <div className="space-y-3">
+                  <h4 className="font-medium text-base">👥 Partner's Language Skills</h4>
+                  {Object.keys(partnerProficiency).length > 0 ? (
+                    <div className="grid gap-2">
+                      {Object.entries(partnerProficiency).map(([lang, level]: [string, any]) => (
+                        <div key={lang} className="flex items-center justify-between p-3 border rounded-lg bg-card">
+                          <span className="font-medium">{lang}</span>
+                          <Badge variant="secondary">{getProficiencyLabel(Number(level))}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">❌ No language skills recorded yet.</p>
+                  )}
+                </div>
+              )}
+              
+              {/* Dependents' Proficiency */}
+              {numDependents > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-medium text-base">👨‍👩‍👧‍👦 Dependents' Language Skills</h4>
+                  {Array.from({length: numDependents}, (_, i) => {
+                    const depData = dependentsProficiency[i] || {}
+                    return (
+                      <div key={i} className="space-y-2">
+                        <h5 className="text-sm font-medium">Dependent {i + 1}</h5>
+                        {Object.keys(depData).length > 0 ? (
+                          <div className="grid gap-2 ml-4">
+                            {Object.entries(depData).map(([lang, level]: [string, any]) => (
+                              <div key={lang} className="flex items-center justify-between p-3 border rounded-lg bg-card">
+                                <span className="font-medium">{lang}</span>
+                                <Badge variant="secondary">{getProficiencyLabel(Number(level))}</Badge>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-muted-foreground ml-4">❌ No language skills recorded yet.</p>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+              
+              {/* Learning Willingness */}
+              {willingToLearn.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-medium text-base">📚 Languages Willing to Learn</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {willingToLearn.map((lang: string) => (
+                      <Badge key={lang} variant="outline">{lang}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Teaching Capabilities */}
+              {Object.keys(canTeach).length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-medium text-base">🎓 Languages You Can Teach</h4>
+                  <div className="grid gap-2">
+                    {Object.entries(canTeach).map(([lang, level]: [string, any]) => (
+                      <div key={lang} className="flex items-center justify-between p-3 border rounded-lg bg-card">
+                        <span className="font-medium">{lang}</span>
+                        <Badge variant="outline">{level}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* Link to update */}
+          <div className="border-t pt-4">
+            <p className="text-sm text-muted-foreground">
+              💡 <strong>Want to update language skills?</strong> Go to the <strong>Residency Intentions</strong> section to modify language proficiency details.
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 } 
