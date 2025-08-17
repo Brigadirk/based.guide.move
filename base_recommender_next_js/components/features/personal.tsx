@@ -19,6 +19,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
+import { ValidationAlert } from "@/components/ui/validation-alert"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { hasEUCitizenship, getUserEUCountries } from "@/lib/utils/eu-utils"
 
@@ -428,7 +429,18 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   const currentDuration = parseFloat(tempDuration) || 0
   const mainPersonDurationValid = curStatus === "Citizen" || !dob || currentDuration <= userAge
   
-  const canContinue = !!dob && !!curCountry && !!curStatus && natList.length > 0 && !!maritalStatus && (!hasPartner || partnerSaved) && allDependentsSaved && mainPersonDurationValid
+  // Validation
+  const errors = []
+  if (!dob) errors.push("Date of birth is required")
+  if (!curCountry) errors.push("Current residency country is required") 
+  if (!curStatus) errors.push("Current residency status is required")
+  if (natList.length === 0) errors.push("At least one citizenship is required")
+  if (!maritalStatus) errors.push("Marital status is required")
+  if (hasPartner && !partnerSaved) errors.push("Partner information must be completed and saved")
+  if (!allDependentsSaved) errors.push("All dependents information must be completed and saved")
+  if (!mainPersonDurationValid) errors.push("Duration in current status cannot exceed your age")
+  
+  const canContinue = errors.length === 0
 
   const nationalityExists = (country: string) =>
     natList.some((n) => n.country === country)
@@ -2364,6 +2376,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                 </AlertDescription>
               </Alert>
             )}
+
+            {/* Validation Alert */}
+            <ValidationAlert 
+              errors={errors} 
+              isComplete={canContinue}
+            />
 
             {/* Section Footer */}
             <SectionFooter

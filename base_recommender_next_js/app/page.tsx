@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { CountryFlag } from "@/components/features/country/CountryFlag";
 import { Disclaimer } from "@/components/features/disclaimer";
 import { Destination } from "@/components/features/destination";
 import { PersonalInformation } from "@/components/features/personal";
@@ -294,8 +295,8 @@ export default function HomePage() {
         <div className="flex flex-col lg:flex-row lg:items-start lg:gap-8">
           {/* Sidebar - Desktop only */}
           <aside className="hidden lg:block w-64">
-            {/* Selected Destination Card - Only show after section completion */}
-            {destCountry && destRegion && destCountry.trim() !== "" && destRegion.trim() !== "" && isSectionComplete('destination') ? (
+            {/* Selected Destination Card - Show immediately when country is selected */}
+            {destCountry && destCountry.trim() !== "" ? (
               <div className="mb-4">
                 <SelectedDestinationCard 
                   country={destCountry} 

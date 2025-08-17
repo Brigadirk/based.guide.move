@@ -10,20 +10,110 @@ const countryToCode: Record<string, string> = {
   'a9daf3eb-c719-4a21-b9b6-a17baf4d7692': 'us', // United States
   '593ced75-3cad-4c99-a24d-cd79ff4b1672': 'nl', // Netherlands
   '5c337e62-4176-49d1-9195-d02117dae979': 'pt', // Portugal
-  // String IDs
-  'spain': 'es',
-  'switzerland': 'ch',
+  // String IDs - Comprehensive country mapping
+  'afghanistan': 'af',
+  'albania': 'al',
+  'algeria': 'dz',
+  'andorra': 'ad',
+  'angola': 'ao',
+  'argentina': 'ar',
+  'armenia': 'am',
+  'australia': 'au',
+  'austria': 'at',
+  'azerbaijan': 'az',
+  'bahrain': 'bh',
+  'bangladesh': 'bd',
+  'belarus': 'by',
+  'belgium': 'be',
+  'bolivia': 'bo',
+  'bosnia-and-herzegovina': 'ba',
+  'brazil': 'br',
+  'bulgaria': 'bg',
+  'cambodia': 'kh',
+  'canada': 'ca',
+  'chile': 'cl',
+  'china': 'cn',
+  'colombia': 'co',
+  'costa-rica': 'cr',
+  'croatia': 'hr',
+  'cyprus': 'cy',
+  'czech-republic': 'cz',
+  'denmark': 'dk',
+  'dominican-republic': 'do',
+  'ecuador': 'ec',
+  'egypt': 'eg',
   'el-salvador': 'sv',
   'el_salvador': 'sv',
   'el': 'sv',
-  'united-states': 'us',
-  'united-kingdom': 'gb',
+  'estonia': 'ee',
+  'finland': 'fi',
+  'france': 'fr',
+  'georgia': 'ge',
   'germany': 'de',
-  'singapore': 'sg',
-  'portugal': 'pt',
+  'ghana': 'gh',
+  'greece': 'gr',
+  'guatemala': 'gt',
+  'honduras': 'hn',
+  'hungary': 'hu',
+  'iceland': 'is',
+  'india': 'in',
+  'indonesia': 'id',
+  'ireland': 'ie',
+  'israel': 'il',
+  'italy': 'it',
+  'japan': 'jp',
+  'jordan': 'jo',
+  'kazakhstan': 'kz',
+  'kenya': 'ke',
+  'kuwait': 'kw',
+  'latvia': 'lv',
+  'lebanon': 'lb',
+  'lithuania': 'lt',
+  'luxembourg': 'lu',
+  'malaysia': 'my',
+  'malta': 'mt',
+  'mexico': 'mx',
+  'moldova': 'md',
+  'monaco': 'mc',
+  'morocco': 'ma',
   'netherlands': 'nl',
-  'canada': 'ca',
-  'australia': 'au',
+  'new-zealand': 'nz',
+  'nicaragua': 'ni',
+  'nigeria': 'ng',
+  'north-macedonia': 'mk',
+  'norway': 'no',
+  'oman': 'om',
+  'panama': 'pa',
+  'paraguay': 'py',
+  'peru': 'pe',
+  'philippines': 'ph',
+  'poland': 'pl',
+  'portugal': 'pt',
+  'qatar': 'qa',
+  'romania': 'ro',
+  'russia': 'ru',
+  'san-marino': 'sm',
+  'saudi-arabia': 'sa',
+  'serbia': 'rs',
+  'singapore': 'sg',
+  'slovakia': 'sk',
+  'slovenia': 'si',
+  'south-africa': 'za',
+  'south-korea': 'kr',
+  'spain': 'es',
+  'sweden': 'se',
+  'switzerland': 'ch',
+  'thailand': 'th',
+  'tunisia': 'tn',
+  'turkey': 'tr',
+  'ukraine': 'ua',
+  'united-arab-emirates': 'ae',
+  'united-kingdom': 'gb',
+  'united-states': 'us',
+  'uruguay': 'uy',
+  'venezuela': 've',
+  'vietnam': 'vn',
+  // Legacy mappings
   'united': 'us',
   'kingdom': 'gb'
 }
@@ -35,25 +125,28 @@ function getIsoCode(countryId: string): string {
     return countryId.toLowerCase()
   }
 
+  // Normalize to lowercase for lookup
+  const normalizedId = countryId.toLowerCase()
+
   // Check the mapping
-  if (countryToCode[countryId]) {
-    return countryToCode[countryId]
+  if (countryToCode[normalizedId]) {
+    return countryToCode[normalizedId]
   }
 
   // Try to extract from UUID description
-  const uuidMatch = countryId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)
-  if (uuidMatch && countryToCode[countryId]) {
-    return countryToCode[countryId]
+  const uuidMatch = normalizedId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)
+  if (uuidMatch && countryToCode[normalizedId]) {
+    return countryToCode[normalizedId]
   }
 
   // Handle special cases
-  if (countryId.includes('united')) {
-    if (countryId.includes('states')) return 'us'
-    if (countryId.includes('kingdom')) return 'gb'
+  if (normalizedId.includes('united')) {
+    if (normalizedId.includes('states')) return 'us'
+    if (normalizedId.includes('kingdom')) return 'gb'
   }
 
   // Default to lowercase ID if no match found
-  return countryId.toLowerCase()
+  return normalizedId
 }
 
 export interface CountryFlagProps {

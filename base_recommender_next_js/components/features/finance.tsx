@@ -13,6 +13,7 @@ import { SectionHint } from "@/components/ui/section-hint"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
+import { ValidationAlert } from "@/components/ui/validation-alert"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { Icons } from "@/components/icons"
 import { Separator } from "@/components/ui/separator"
@@ -132,7 +133,12 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
   const totalDebts = debts.reduce((sum: number, debt: any) => sum + (debt.amount || 0), 0)
   const netWorth = totalAssets - totalDebts
 
-  const canContinue = incomeSources.length > 0 // At least one income source required
+  // Validation
+  const errors = []
+  if (!skipDetails && incomeSources.length === 0) errors.push("At least one income source is required")
+  if (!skipDetails && !incomeSituation) errors.push("Income situation description is required")
+  
+  const canContinue = skipDetails || (incomeSources.length > 0 && !!incomeSituation)
 
   const canAddIncomeSource = newIncomeSource.category && newIncomeSource.amount > 0 && newIncomeSource.country
   const canAddAsset = newAsset.type && newAsset.value > 0 && newAsset.description
@@ -1238,13 +1244,11 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
         <CardFooter className="pt-6">
           <div className="w-full space-y-4">
             {/* Update continue logic for new income situation approach */}
-            {!skipDetails && !incomeSituation && (
-              <Alert variant="destructive">
-                <AlertDescription>
-                  <strong>Please select your income situation to continue.</strong>
-                </AlertDescription>
-              </Alert>
-            )}
+            {/* Validation Alert */}
+            <ValidationAlert 
+              errors={errors} 
+              isComplete={canContinue}
+            />
 
             {/* Section Footer */}
             <SectionFooter
@@ -1252,7 +1256,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
               isCheckingInfo={isCheckingInfo}
               sectionId="finance"
               onContinue={handleComplete}
-              canContinue={skipDetails || !!incomeSituation}
+              canContinue={canContinue}
               nextSectionName="Social Security & Pensions"
             />
           </div>

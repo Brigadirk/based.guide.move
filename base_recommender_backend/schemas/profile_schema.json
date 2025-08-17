@@ -250,19 +250,19 @@
             "individual": {
               "type": "object",
               "description": "Individual's proficiency levels for destination country languages",
-              "additionalProperties": {"type": "number", "minimum": 0, "maximum": 6}
+              "additionalProperties": {"type": "number", "minimum": 0, "maximum": 7}
             },
             "partner": {
               "type": "object", 
               "description": "Partner's proficiency levels for destination country languages",
-              "additionalProperties": {"type": "number", "minimum": 0, "maximum": 6}
+              "additionalProperties": {"type": "number", "minimum": 0, "maximum": 7}
             },
             "dependents": {
               "type": "array",
               "description": "Dependents' proficiency levels for destination country languages",
               "items": {
                 "type": "object",
-                "additionalProperties": {"type": "number", "minimum": 0, "maximum": 6}
+                "additionalProperties": {"type": "number", "minimum": 0, "maximum": 7}
               }
             },
             "willing_to_learn": {
@@ -304,7 +304,7 @@
                   {
                     "type": "object",
                     "properties": {
-                      "proficiency": {"type": "number", "minimum": 1, "maximum": 6},
+                      "proficiency": {"type": "number", "minimum": 1, "maximum": 7},
                       "canTeach": {"type": "string", "enum": ["No/not interested", "Informally", "Formally with credentials"]},
                       "hasCredentials": {"type": "boolean"}
                     },

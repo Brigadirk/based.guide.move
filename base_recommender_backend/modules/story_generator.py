@@ -749,9 +749,10 @@ def education_section(edu: Dict[str, Any]) -> str:
         for off in offers[:3]:
             sch = off.get("school", "an institution")
             prog = off.get("program", "a programme")
-            year = off.get("year", "N/A")
+            start_date = off.get("startDate", "N/A")
+            start_formatted = start_date[:4] if start_date != "N/A" and len(start_date) >= 4 else start_date
             status = off.get("financial_status", "")
-            segments.append(f"• Offer from {sch} for {prog} ({year}) – {status}.")
+            segments.append(f"• Offer from {sch} for {prog} ({start_formatted}) – {status}.")
         if len(offers) > 3:
             segments.append(f"…and {len(offers)-3} more offers.")
 
@@ -936,20 +937,23 @@ def education_section(edu: Dict[str, Any], residency_intentions: Dict[str, Any] 
             degree_name = degree.get("degree", "Unspecified degree")
             institution = degree.get("institution", "Unspecified institution")
             field = degree.get("field", "Unspecified field")
-            start_year = degree.get("start_year", "")
-            end_year = degree.get("end_year", "")
+            start_date = degree.get("start_date", "")
+            end_date = degree.get("end_date", "")
             in_progress = degree.get("in_progress", False)
             
-            year_info = ""
-            if start_year and end_year:
+            date_info = ""
+            if start_date and end_date:
+                start_formatted = start_date[:4] if len(start_date) >= 4 else start_date  # Extract year from date
+                end_formatted = end_date[:4] if len(end_date) >= 4 else end_date
                 if in_progress:
-                    year_info = f" ({start_year} - present, in progress)"
+                    date_info = f" ({start_formatted} - present, in progress)"
                 else:
-                    year_info = f" ({start_year} - {end_year})"
-            elif start_year:
-                year_info = f" (started {start_year})"
+                    date_info = f" ({start_formatted} - {end_formatted})"
+            elif start_date:
+                start_formatted = start_date[:4] if len(start_date) >= 4 else start_date
+                date_info = f" (started {start_formatted})"
             
-            sentences.append(f"They hold a {degree_name} in {field} from {institution}{year_info}.")
+            sentences.append(f"They hold a {degree_name} in {field} from {institution}{date_info}.")
         else:
             sentences.append(f"They hold {degree_count} degrees from various institutions.")
             for degree in degrees[:3]:  # Show first 3 degrees in detail
@@ -960,7 +964,7 @@ def education_section(edu: Dict[str, Any], residency_intentions: Dict[str, Any] 
             if degree_count > 3:
                 sentences.append(f"...and {degree_count - 3} additional degrees.")
     else:
-        sentences.append("No formal degrees have been reported.")
+        sentences.append("User did not provide more information on education.")
     
     # Professional skills/credentials
     skills = edu.get("visaSkills", [])
@@ -1011,8 +1015,8 @@ def education_section(edu: Dict[str, Any], residency_intentions: Dict[str, Any] 
                 lang_summaries = []
                 for lang, level in ind_lang.items():
                     if level > 0:
-                        level_names = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Native/Fluent"]
-                        level_name = level_names[min(level, 6)]
+                        level_names = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Proficient", "Native Speaker"]
+                        level_name = level_names[min(level, 7)]
                         
                         lang_desc = f"{lang} ({level_name})"
                         
@@ -1049,8 +1053,8 @@ def education_section(edu: Dict[str, Any], residency_intentions: Dict[str, Any] 
                 partner_summaries = []
                 for lang, level in partner_lang.items():
                     if level > 0:
-                        level_names = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Native/Fluent"]
-                        level_name = level_names[min(level, 6)]
+                        level_names = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Proficient", "Native Speaker"]
+                        level_name = level_names[min(level, 7)]
                         
                         partner_desc = f"{lang} ({level_name})"
                         
@@ -1089,8 +1093,8 @@ def education_section(edu: Dict[str, Any], residency_intentions: Dict[str, Any] 
                         can_teach = lang_data.get("canTeach", "No/not interested")
                         has_credentials = lang_data.get("hasCredentials", False)
                         
-                        level_names = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Native/Fluent"]
-                        level_name = level_names[min(proficiency, 6)]
+                        level_names = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Proficient", "Native Speaker"]
+                        level_name = level_names[min(proficiency, 7)]
                         
                         other_desc = f"{lang} ({level_name})"
                         if has_credentials:
