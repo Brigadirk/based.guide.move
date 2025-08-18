@@ -33,6 +33,15 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   
+  // Output configuration to prevent manifest issues
+  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  
+  // Build configuration
+  generateBuildId: async () => {
+    // Generate a unique build ID to prevent caching issues
+    return `build-${Date.now()}`
+  },
+  
   // TypeScript strict mode
   typescript: {
     // Enable strict type checking during build
@@ -43,6 +52,16 @@ const nextConfig = {
   eslint: {
     // Temporarily ignore ESLint during builds
     ignoreDuringBuilds: true,
+  },
+  
+  // Webpack configuration to handle module resolution
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Prevent build cache issues
+    if (!dev) {
+      config.cache = false
+    }
+    
+    return config
   },
 }
 

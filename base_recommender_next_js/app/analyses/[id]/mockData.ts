@@ -17,11 +17,13 @@ export interface AnalysisCategory {
     score: number
   }
   alternativeVisas?: Array<{
+    name: string
     type: string
     description: string
     requirements: string[]
     processingTime: string
     cost: string
+    score: number
   }>
 }
 
@@ -75,6 +77,7 @@ export const mockAnalysisData: AnalysisCategory[] = [
     },
     alternativeVisas: [
       {
+        name: "D2 Visa (Investment)",
         type: "D2 Visa (Investment)",
         description: "For entrepreneurs and investors",
         requirements: [
@@ -83,7 +86,8 @@ export const mockAnalysisData: AnalysisCategory[] = [
           "Portuguese bank account"
         ],
         processingTime: "4-8 months",
-        cost: "€83 + legal fees"
+        cost: "€83 + legal fees",
+        score: 70
       }
     ]
   },

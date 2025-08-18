@@ -328,11 +328,27 @@
           "properties": {
             "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
             "total": {"type": "number", "minimum": 0},
-            "primaryResidence": {"type": "number", "minimum": 0}
+            "primary_residence": {"type": "number", "minimum": 0}
           }
         },
-        "incomeSources": {"type": "array", "items": {"type": "object"}},
-        "expectedEmployment": {"type": "array", "items": {"type": "object"}},
+        "incomeSources": {
+          "type": "array", 
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {"type": "string"},
+              "fields": {"type": "object"},
+              "country": {"type": "string"},
+              "amount": {"type": "number", "minimum": 0},
+              "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+              "continue_in_destination": {"type": "boolean"},
+              "timeline": {"type": "string"},
+              "confidence": {"type": "string"},
+              "notes": {"type": "string"}
+            },
+            "required": ["category", "amount", "currency"]
+          }
+        },
         "liabilities": {"type": "array", "items": {"type": "object"}},
         "capitalGains": {
           "type": "object",

@@ -45,7 +45,7 @@ export function CountryCard({ country }: CountryCardProps) {
         </div>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <CountryFlag countryCode={country.code} size="sm" />
+            <CountryFlag countryCode={country.id} size="sm" />
             <CardTitle className="text-xl">{country.name}</CardTitle>
           </div>
         </CardHeader>
@@ -54,7 +54,7 @@ export function CountryCard({ country }: CountryCardProps) {
             <div className="flex flex-col items-center p-3 bg-muted/50 rounded-lg">
               <div className="text-xs font-medium text-muted-foreground mb-1">Tax Score</div>
               <TaxScore 
-                score={country.scores.tax}
+                score={country.scores?.tax || 0}
                 size="lg"
                 showLabel={false}
               />
@@ -62,7 +62,7 @@ export function CountryCard({ country }: CountryCardProps) {
             <div className="flex flex-col items-center p-3 bg-muted/50 rounded-lg">
               <div className="text-xs font-medium text-muted-foreground mb-1">Visa Access</div>
               <VisaScore
-                score={country.scores.visa}
+                score={country.scores?.visa || 0}
                 size="lg"
                 showLabel={false}
               />

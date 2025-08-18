@@ -537,28 +537,90 @@ def residency_section(ri: Dict[str, Any], personal_info: Dict[str, Any] = None, 
 def _summarise_income_sources(sources: List[Dict[str, Any]], dest_currency: str) -> str:
     if not sources:
         return ""
-    # Compute total in USD to handle mixed currencies, then convert to dest
-    total_usd = 0.0
-    for src in sources:
-        amt = src.get("amount", 0)
-        cur = src.get("currency", "USD")
-        try:
-            total_usd += convert(amt, cur, "USD")
-        except Exception:
-            total_usd += amt  # fallback assume original is USD
-
-    total_dest = convert(total_usd, "USD", dest_currency)
-    lines = [
-        f"They have {len(sources)} active income source{'s' if len(sources)!=1 else ''} totalling "
-        f"{total_dest:,.0f} {dest_currency.upper()} ({total_usd:,.0f} USD) per year."
-    ]
-    for src in sources:
-        cat = src.get("category", "Unknown")
-        amt = _format_money(src.get("amount", 0), src.get("currency", "USD"), dest_currency)
-        country = src.get("country", "")
-        cont = "will continue after moving" if src.get("continue_in_destination") else "will cease upon relocation"
-        lines.append(f"• {cat} income of {amt} from {country or 'various'}, which {cont}.")
-    return " " .join(lines)
+    
+    # Separate current and expected sources
+    current_sources = [src for src in sources if src.get("continue_in_destination", True)]
+    expected_sources = [src for src in sources if not src.get("continue_in_destination", True)]
+    
+    lines = []
+    
+    # Process current sources
+    if current_sources:
+        total_usd = 0.0
+        for src in current_sources:
+            amt = src.get("amount", 0)
+            cur = src.get("currency", "USD")
+            try:
+                total_usd += convert(amt, cur, "USD")
+            except Exception:
+                total_usd += amt
+        
+        total_dest = convert(total_usd, "USD", dest_currency)
+        lines.append(
+            f"They have {len(current_sources)} current income source{'s' if len(current_sources)!=1 else ''} totalling "
+            f"{total_dest:,.0f} {dest_currency.upper()} ({total_usd:,.0f} USD) per year, which will continue after moving."
+        )
+        
+        for src in current_sources:
+            cat = src.get("category", "Unknown")
+            amt = _format_money(src.get("amount", 0), src.get("currency", "USD"), dest_currency)
+            country = src.get("country", "")
+            lines.append(f"• {cat} income of {amt} from {country or 'various'}.")
+    
+    # Process expected sources with enhanced information
+    if expected_sources:
+        total_usd = 0.0
+        for src in expected_sources:
+            amt = src.get("amount", 0)
+            cur = src.get("currency", "USD")
+            try:
+                total_usd += convert(amt, cur, "USD")
+            except Exception:
+                total_usd += amt
+        
+        total_dest = convert(total_usd, "USD", dest_currency)
+        lines.append(
+            f"They expect {len(expected_sources)} new income source{'s' if len(expected_sources)!=1 else ''} totalling "
+            f"{total_dest:,.0f} {dest_currency.upper()} ({total_usd:,.0f} USD) per year after moving."
+        )
+        
+        for src in expected_sources:
+            cat = src.get("category", "Unknown")
+            amt = _format_money(src.get("amount", 0), src.get("currency", "USD"), dest_currency)
+            country = src.get("country", "")
+            timeline = src.get("timeline", "")
+            confidence = src.get("confidence", "")
+            notes = src.get("notes", "")
+            
+            # Build detailed description for expected sources
+            details = []
+            if timeline:
+                details.append(f"expected {timeline.lower()}")
+            if confidence:
+                details.append(f"{confidence.lower()} confidence")
+            
+            detail_str = f" ({', '.join(details)})" if details else ""
+            base_desc = f"• Expected {cat} income of {amt} from {country or 'various'}{detail_str}."
+            
+            # Add role/employer details for employment
+            if cat == "Employment" and src.get("fields"):
+                fields = src.get("fields", {})
+                role = fields.get("role", "")
+                employer = fields.get("employer", "")
+                if role and employer:
+                    base_desc = f"• Expected {role} position at {employer} earning {amt}{detail_str}."
+                elif role:
+                    base_desc = f"• Expected {role} position earning {amt}{detail_str}."
+                elif employer:
+                    base_desc = f"• Expected employment at {employer} earning {amt}{detail_str}."
+            
+            lines.append(base_desc)
+            
+            # Add notes if provided
+            if notes and notes.strip():
+                lines.append(f"  Note: {notes.strip()}")
+    
+    return " ".join(lines)
 
 
 def _mixed_total(items: List[Dict[str, Any]], amount_key: str, currency_key: str = "currency") -> float:
@@ -571,6 +633,16 @@ def _mixed_total(items: List[Dict[str, Any]], amount_key: str, currency_key: str
         except Exception:
             total += amt  # assume USD if conversion fails
     return total
+
+
+def _get_capital_gain_value(sale: Dict[str, Any]) -> float:
+    """Get surplus value, handling both snake_case and camelCase field names"""
+    return sale.get("surplus_value", sale.get("surplusValue", 0))
+
+
+def _get_holding_time(sale: Dict[str, Any]) -> str:
+    """Get holding time, handling both snake_case and camelCase field names"""
+    return sale.get("holding_time", sale.get("holdingTime", "N/A"))
 
 
 def _summarise_liabilities(liabs: List[Dict[str, Any]], dest_currency: str) -> str:
@@ -587,7 +659,17 @@ def _summarise_capital_gains(cg: Dict[str, Any], dest_currency: str) -> str:
     future = cg.get("futureSales", [])
     if not future:
         return ""
-    tot_usd = _mixed_total(future, "surplus_value")
+    
+    # Calculate total using both field name variants
+    tot_usd = 0.0
+    for sale in future:
+        gain_value = _get_capital_gain_value(sale)
+        cur = sale.get("currency", "USD")
+        try:
+            tot_usd += convert(gain_value, cur, "USD")
+        except Exception:
+            tot_usd += gain_value  # fallback assume USD
+    
     tot_dest = convert(tot_usd, "USD", dest_currency)
     lines = [
         f"They plan to sell {len(future)} asset(s) in their first year after moving, expecting total gains of "
@@ -595,8 +677,10 @@ def _summarise_capital_gains(cg: Dict[str, Any], dest_currency: str) -> str:
     ]
     for sale in future[:3]:
         asset = sale.get("asset", "asset")
-        gain = _format_money(sale.get("surplus_value", 0), sale.get("currency", "USD"), dest_currency)
-        lines.append(f"• {asset} with expected profit {gain} (holding {sale.get('holding_time','N/A')}).")
+        gain_value = _get_capital_gain_value(sale)
+        gain = _format_money(gain_value, sale.get("currency", "USD"), dest_currency)
+        holding_time = _get_holding_time(sale)
+        lines.append(f"• {asset} with expected profit {gain} (holding {holding_time}).")
     if len(future) > 3:
         lines.append(f"…and {len(future)-3} more planned sales.")
 
@@ -633,23 +717,16 @@ def finance_section(fin: Dict[str, Any], dest_currency: str) -> str:
 
     tw = fin.get("totalWealth")
     if tw and tw.get("total"):
+        # Handle both camelCase (legacy) and snake_case (transformed) field names
+        primary_residence = tw.get('primary_residence', tw.get('primaryResidence', 0))
         parts.append(
             f"Reported net worth is {_format_money(tw['total'], tw.get('currency', 'USD'), dest_currency)}; "
-            f"primary residence accounts for {tw.get('primaryResidence', 0):,.0f} {tw.get('currency','USD')}."
+            f"primary residence accounts for {primary_residence:,.0f} {tw.get('currency','USD')}."
         )
 
     income_sources = fin.get("incomeSources", [])
     if income_sources:
         parts.append(_summarise_income_sources(income_sources, dest_currency))
-
-    exp_jobs = fin.get("expectedEmployment", [])
-    if exp_jobs:
-        parts.append(_summarise_income_sources(exp_jobs, dest_currency))
-        for j in exp_jobs[:3]:
-            role = j.get("fields", {}).get("role", "a role")
-            employer = j.get("fields", {}).get("employer", "an employer")
-            salary = _format_money(j.get("amount", 0), j.get("currency", "USD"), dest_currency)
-            parts.append(f"• Anticipated employment as {role} at {employer} earning {salary}.")
 
     capital_gains_summary = _summarise_capital_gains(fin.get("capitalGains", []), dest_currency)
     if capital_gains_summary:

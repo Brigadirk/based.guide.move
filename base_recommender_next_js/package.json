@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "npm run clean && next build",
+    "build:force": "npm run clean:all && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
@@ -14,7 +15,10 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "analyze": "ANALYZE=true next build",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "clean": "node scripts/build-clean.js",
+    "clean:all": "node scripts/build-clean.js",
+    "postinstall": "npm run clean"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",

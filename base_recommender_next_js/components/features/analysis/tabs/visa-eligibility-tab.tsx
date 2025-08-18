@@ -34,11 +34,11 @@ export function VisaEligibilityTab({ category }: VisaEligibilityTabProps) {
             size="lg"
             showLabel={true} 
           />
-          <p className="text-muted-foreground">{category.mostEligibleVisa.summary}</p>
+          <p className="text-muted-foreground">{category.mostEligibleVisa.description}</p>
         </div>
-        {category.otherVisas && (
+        {category.alternativeVisas && (
           <Accordion type="single" collapsible>
-            {category.otherVisas.map((visa, index) => (
+            {category.alternativeVisas.map((visa, index) => (
               <AccordionItem key={index} value={visa.name.toLowerCase().replace(" ", "-")}
                 className="border-b">
                 <AccordionTrigger>
@@ -49,7 +49,7 @@ export function VisaEligibilityTab({ category }: VisaEligibilityTabProps) {
                   />
                 </AccordionTrigger>
                 <AccordionContent>
-                  <p className="text-muted-foreground">{visa.summary}</p>
+                  <p className="text-muted-foreground">{visa.description}</p>
                 </AccordionContent>
               </AccordionItem>
             ))}
