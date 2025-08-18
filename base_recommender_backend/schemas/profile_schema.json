@@ -334,7 +334,12 @@
         "incomeSources": {"type": "array", "items": {"type": "object"}},
         "expectedEmployment": {"type": "array", "items": {"type": "object"}},
         "liabilities": {"type": "array", "items": {"type": "object"}},
-        "capitalGains": {"type": "array", "items": {"type": "object"}},
+        "capitalGains": {
+          "type": "object",
+          "properties": {
+            "futureSales": {"type": "array", "items": {"type": "object"}}
+          }
+        },
         "assets": {"type": "array", "items": {"type": "object"}}
       }
     },
