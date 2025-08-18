@@ -294,7 +294,7 @@ export default function HomePage() {
 
         <div className="flex flex-col lg:flex-row lg:items-start lg:gap-8">
           {/* Sidebar - Desktop only */}
-          <aside className="hidden lg:block w-64">
+          <aside className="hidden lg:block w-80">
             {/* Selected Destination Card - Show immediately when country is selected */}
             {destCountry && destCountry.trim() !== "" ? (
               <div className="mb-4">
@@ -340,17 +340,17 @@ export default function HomePage() {
                   <div key={section.id}>
                     {showFinanceToggle && (
                       <Card className="mb-3 border-emerald-200/60 bg-stone-50/50 dark:bg-stone-950/20">
-                        <CardContent className="p-3">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <div className="p-1.5 rounded-full bg-stone-100 dark:bg-stone-900/50">
-                                <Zap className="w-3 h-3 text-emerald-600" />
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 rounded-full bg-stone-100 dark:bg-stone-900/50">
+                                <Zap className="w-4 h-4 text-emerald-600" />
                               </div>
                               <div>
-                                <Label htmlFor="finance-skip-main" className="text-xs font-medium text-stone-800 dark:text-stone-200 cursor-pointer">
+                                <Label htmlFor="finance-skip-main" className="text-sm font-medium text-stone-800 dark:text-stone-200 cursor-pointer">
                                   Quick Finance Skip
                                 </Label>
-                                <p className="text-[10px] text-stone-700 dark:text-stone-300">
+                                <p className="text-xs text-stone-700 dark:text-stone-300">
                                   Skip detailed finance sections
                                 </p>
                               </div>
@@ -359,7 +359,6 @@ export default function HomePage() {
                               id="finance-skip-main"
                               checked={skipFinanceDetails}
                               onCheckedChange={handleFinanceSkipToggle}
-                              className="scale-75"
                             />
                           </div>
                           
@@ -388,7 +387,7 @@ export default function HomePage() {
                     <button
                       key={`${section.id}-button`}
                       title={disabled ? "Complete previous sections first" : undefined}
-                      className={`flex items-center w-full px-4 py-3 rounded-md text-sm transition-colors relative min-w-0 ${
+                      className={`flex items-center w-full px-4 py-3 rounded-md text-sm transition-colors relative ${
                         isCurrent
                           ? "bg-primary text-primary-foreground"
                           : isCompleted
@@ -403,7 +402,7 @@ export default function HomePage() {
                       }}
                     >
                       <Icon className={`w-4 h-4 mr-3 flex-shrink-0 ${isCurrent ? "text-white" : ""}`} />
-                      <span className="flex-1 text-left truncate">
+                      <span className="flex-1 text-left">
                         {section.title}
                       </span>
                       

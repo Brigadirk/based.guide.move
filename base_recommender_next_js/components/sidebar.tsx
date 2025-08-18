@@ -77,7 +77,7 @@ export function Sidebar({ steps, currentStep, onStepChange }: SidebarProps) {
     }
   }
   return (
-    <div className="w-96 bg-card border-r border-border p-4 h-screen overflow-y-auto">
+    <div className="w-[26rem] bg-card border-r border-border p-4 h-screen overflow-y-auto">
       <div className="mb-6">
         <h2 className="text-lg font-semibold text-foreground mb-2">Assessment Steps</h2>
         <p className="text-sm text-muted-foreground">Complete each section to generate your personalized analysis</p>
