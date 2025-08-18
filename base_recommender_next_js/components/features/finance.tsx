@@ -14,6 +14,7 @@ import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useCurrencies } from "@/lib/hooks/use-currencies"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Trash2, Plus, DollarSign, TrendingUp, Wallet, CreditCard, Target, Info } from "lucide-react"
 
 // Income Categories (Streamlit structure)
@@ -82,7 +83,11 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
     country: "",
     amount: 0,
     currency: "USD",
-    continueInDestination: true
+    continueInDestination: true,
+    // Enhanced fields from Expected Employment
+    timeline: "Within 3 months",
+    confidence: "High",
+    notes: ""
   })
 
   // Capital Gains - Future Sales (Streamlit structure)
@@ -108,8 +113,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
     interestRate: 0
   })
 
-  // Expected Employment (if needed for seeking/mixed income)
-  const expectedEmployment = getFormData("finance.expectedEmployment") ?? []
+
 
   const handleComplete = () => {
     markSectionComplete("finance")
@@ -124,10 +128,26 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
   }
   
   if (!skipDetails && incomeSituation) {
-    // For income-generating situations, require at least one income source
-    if (["continuing_income", "current_and_new_income", "seeking_income"].includes(incomeSituation)) {
+    // For continuing income, require current income sources
+    if (incomeSituation === "continuing_income") {
+      const currentSources = incomeSources.filter((source: any) => source.continueInDestination)
+      if (currentSources.length === 0) {
+        errors.push("At least one current income source is required for continuing income")
+      }
+    }
+    
+    // For seeking income, require expected income sources
+    if (incomeSituation === "seeking_income") {
+      const expectedSources = incomeSources.filter((source: any) => !source.continueInDestination)
+      if (expectedSources.length === 0) {
+        errors.push("At least one expected income source is required when seeking new income")
+      }
+    }
+    
+    // For mixed income situation, require at least one income source (current or expected)
+    if (incomeSituation === "current_and_new_income") {
       if (incomeSources.length === 0) {
-        errors.push("At least one income source is required for your selected situation")
+        errors.push("At least one income source (current or expected) is required for mixed income situation")
       }
     }
   }
@@ -156,6 +176,133 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
       <SectionHint title="About this section">
         We'll calculate your tax liability for your first year in the destination country, which should give you an indication of what it would cost for you to live there long term. This information is also crucial for visa applications and ensuring you meet minimum income requirements.
       </SectionHint>
+
+      {/* Financial Information Guide - Collapsible */}
+      <Card className="shadow-sm border-l-4 border-l-blue-500">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Info className="w-6 h-6 text-blue-600" />
+            How Governments Assess Your Finances
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Understanding wealth taxes vs capital gains taxation</p>
+        </CardHeader>
+        <CardContent className="pt-2">
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="financial-guide" className="border-none">
+              <AccordionTrigger className="text-sm font-medium text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200">
+                📚 Show detailed explanation of tax approaches
+              </AccordionTrigger>
+              <AccordionContent className="space-y-6 pt-4">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Wealth Tax Approach */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                      <h4 className="font-semibold text-purple-700 dark:text-purple-300">Wealth Tax Countries</h4>
+                    </div>
+                    <div className="pl-5 space-y-3">
+                      <p className="text-sm text-muted-foreground">
+                        <strong>Examples:</strong> Spain, Norway, Switzerland (some cantons)
+                      </p>
+                      <p className="text-sm">
+                        These countries tax your <strong>total net worth</strong> annually, typically starting at €1-3 million. 
+                        They look at everything you own worldwide: real estate, investments, cash, business interests, 
+                        minus your debts.
+                      </p>
+                      <div className="bg-purple-50 dark:bg-purple-950/20 p-3 rounded-lg">
+                        <p className="text-sm text-purple-800 dark:text-purple-200">
+                          <strong>💡 Key Point:</strong> Your total wealth matters more than individual transactions. 
+                          Even if you don't sell anything, you pay tax on what you own.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Capital Gains Approach */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                      <h4 className="font-semibold text-emerald-700 dark:text-emerald-300">Capital Gains Tax Countries</h4>
+                    </div>
+                    <div className="pl-5 space-y-3">
+                      <p className="text-sm text-muted-foreground">
+                        <strong>Examples:</strong> Portugal, Germany, UK, most countries
+                      </p>
+                      <p className="text-sm">
+                        These countries only tax you when you <strong>sell assets for a profit</strong>. 
+                        You can own millions in assets, but pay no tax until you realize gains by selling. 
+                        Holding periods often affect rates.
+                      </p>
+                      <div className="bg-emerald-50 dark:bg-emerald-950/20 p-3 rounded-lg">
+                        <p className="text-sm text-emerald-800 dark:text-emerald-200">
+                          <strong>💡 Key Point:</strong> Timing of sales matters greatly. You control when 
+                          you trigger tax liability through your selling decisions.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Visa Requirements Section */}
+                <div className="border-t pt-6 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                    <h4 className="font-semibold text-amber-700 dark:text-amber-300">Visa & Immigration Considerations</h4>
+                  </div>
+                  <div className="pl-5 space-y-3">
+                    <p className="text-sm">
+                      <strong>Financial Proof Requirements:</strong> Most countries require proof of financial stability 
+                      for visa applications. This typically includes:
+                    </p>
+                    <ul className="text-sm space-y-1 ml-4 list-disc text-muted-foreground">
+                      <li><strong>Income Sources:</strong> Regular income to support yourself (employment, business, investments)</li>
+                      <li><strong>Bank Statements:</strong> 3-6 months showing sufficient funds (often €5,000-15,000+)</li>
+                      <li><strong>Asset Documentation:</strong> Property ownership, investment portfolios, business ownership</li>
+                      <li><strong>Debt Information:</strong> Outstanding loans and payment schedules</li>
+                    </ul>
+                    <div className="bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg">
+                      <p className="text-sm text-amber-800 dark:text-amber-200">
+                        <strong>⚖️ Legal Requirement:</strong> Most visa applications require full financial disclosure. 
+                        Incomplete or inaccurate information can lead to rejection or future legal issues.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tax Planning Section */}
+                <div className="border-t pt-6 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-indigo-500"></div>
+                    <h4 className="font-semibold text-indigo-700 dark:text-indigo-300">Why This Information Matters</h4>
+                  </div>
+                  <div className="pl-5 space-y-3">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">Tax Planning:</p>
+                        <ul className="text-sm space-y-1 text-muted-foreground">
+                          <li>• Estimate your first-year tax liability</li>
+                          <li>• Plan asset sales timing strategically</li>
+                          <li>• Understand wealth tax thresholds</li>
+                          <li>• Consider tax-advantaged structures</li>
+                        </ul>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">Relocation Planning:</p>
+                        <ul className="text-sm space-y-1 text-muted-foreground">
+                          <li>• Meet visa financial requirements</li>
+                          <li>• Optimize pre-move asset sales</li>
+                          <li>• Plan international transfers</li>
+                          <li>• Structure investments tax-efficiently</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </CardContent>
+      </Card>
 
       {/* Skip Mode Indicator */}
       {skipDetails && (
@@ -273,10 +420,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
             />
           )}
 
-          {/* Expected Employment Section - for seeking income */}
-          {(incomeSituation === "seeking_income" || incomeSituation === "current_and_new_income") && (
-            <ExpectedEmploymentSection />
-          )}
+
 
           {/* Total Wealth Section - Streamlit Simple Structure */}
           <TotalWealthSection 
@@ -487,11 +631,78 @@ function IncomeSourcesSection({ incomeSources, newIncomeSource, setNewIncomeSour
                       className="h-4 w-4 text-green-600"
                     />
                     <label htmlFor="hypothetical_income" className="text-sm cursor-pointer">
-                      This is a hypothetical income source that I expect to have after moving and want to know taxation of
+                      This is an expected income source after moving (for tax planning)
                     </label>
                   </div>
                 </div>
               </div>
+              
+              {/* Enhanced fields for expected/future income */}
+              {!newIncomeSource.continueInDestination && (
+                <div className="space-y-4 p-4 bg-orange-50 dark:bg-orange-950/20 rounded-lg border">
+                  <h5 className="font-medium text-orange-800 dark:text-orange-200">Expected Income Details</h5>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Expected Timeline</Label>
+                      <Select
+                        value={newIncomeSource.timeline}
+                        onValueChange={(value) => setNewIncomeSource({...newIncomeSource, timeline: value})}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select timeline" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[
+                            "Within 1 month",
+                            "Within 3 months", 
+                            "Within 6 months",
+                            "Within 1 year",
+                            "1-2 years",
+                            "Uncertain timing"
+                          ].map((timeline) => (
+                            <SelectItem key={timeline} value={timeline}>
+                              {timeline}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Confidence Level</Label>
+                      <Select
+                        value={newIncomeSource.confidence}
+                        onValueChange={(value) => setNewIncomeSource({...newIncomeSource, confidence: value})}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select confidence" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[
+                            "Very High (Job offer/contract)",
+                            "High (Strong prospects)",
+                            "Medium (Good chances)",
+                            "Low (Uncertain)",
+                            "Speculative"
+                          ].map((confidence) => (
+                            <SelectItem key={confidence} value={confidence}>
+                              {confidence}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Additional Notes (Optional)</Label>
+                    <Textarea
+                      value={newIncomeSource.notes}
+                      onChange={(e) => setNewIncomeSource({...newIncomeSource, notes: e.target.value})}
+                      placeholder="Any additional details about this expected income source (e.g., industry, application status, networking contacts, etc.)"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              )}
               
               <Button 
                 onClick={() => {
@@ -504,7 +715,10 @@ function IncomeSourcesSection({ incomeSources, newIncomeSource, setNewIncomeSour
                       country: "",
                       amount: 0,
                       currency: "USD",
-                      continueInDestination: true
+                      continueInDestination: true,
+                      timeline: "Within 3 months",
+                      confidence: "High",
+                      notes: ""
                     })
                   }
                 }}
@@ -619,7 +833,21 @@ function IncomeSourcesList({ incomeSources, updateFormData }: any) {
               </div>
               <div>
                 <p className="font-medium">Status</p>
-                <p className="text-sm">{source.continueInDestination ? "Current" : "Future"}</p>
+                <p className="text-sm">{source.continueInDestination ? "Current" : "Expected"}</p>
+                {!source.continueInDestination && (
+                  <>
+                    <p className="font-medium mt-2">Timeline</p>
+                    <p className="text-xs text-muted-foreground">{source.timeline || "—"}</p>
+                    <p className="font-medium mt-2">Confidence</p>
+                    <p className="text-xs text-muted-foreground">{source.confidence || "—"}</p>
+                  </>
+                )}
+                {source.notes && (
+                  <>
+                    <p className="font-medium mt-2">Notes</p>
+                    <p className="text-xs text-muted-foreground">{source.notes.length > 50 ? `${source.notes.substring(0, 50)}...` : source.notes}</p>
+                  </>
+                )}
                 <div className="flex justify-end mt-2">
                   <Button
                     variant="destructive"
@@ -641,29 +869,7 @@ function IncomeSourcesList({ incomeSources, updateFormData }: any) {
   )
 }
 
-function ExpectedEmploymentSection() {
-  return (
-    <Card className="shadow-sm border-l-4 border-l-orange-500">
-      <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
-        <CardTitle className="text-xl flex items-center gap-3">
-          <Target className="w-6 h-6 text-orange-600" />
-          Expected Employment
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">Future income sources you plan to establish</p>
-      </CardHeader>
-      <CardContent className="pt-6">
-        <div className="p-4 bg-orange-50 dark:bg-orange-950/20 rounded-lg">
-          <p className="text-sm text-orange-800 dark:text-orange-200">
-            💼 This section helps estimate your future tax obligations and visa requirements based on expected income in your destination country.
-          </p>
-          <p className="text-sm text-orange-700 dark:text-orange-300 mt-2">
-            📝 <strong>Note:</strong> This functionality is planned for a future update. For now, use the Income Sources section above to describe both current and future income.
-          </p>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
+
 
 function TotalWealthSection({ totalWealth, updateFormData, currencies }: any) {
   const [editMode, setEditMode] = useState(false)
@@ -677,6 +883,17 @@ function TotalWealthSection({ totalWealth, updateFormData, currencies }: any) {
           Total Wealth
         </CardTitle>
         <p className="text-sm text-muted-foreground">Enter everything you own, then indicate how much is tied up in your primary residence</p>
+        <div className="mt-3 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg space-y-3">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
+            <strong>🏛️ Government Perspective:</strong> Some countries (Spain, Norway, Switzerland) impose annual wealth taxes 
+            on your total net worth, typically starting at €1-3 million. Even if you don't sell anything, you may owe tax 
+            just for owning assets above these thresholds.
+          </p>
+          <p className="text-sm text-blue-800 dark:text-blue-200">
+            <strong>📋 What to Include:</strong> Real estate, investment accounts, cash, business ownership, vehicles, 
+            valuable collections, cryptocurrency - minus mortgages, loans, and other debts.
+          </p>
+        </div>
       </CardHeader>
       <CardContent className="pt-6">
         <div className="space-y-6">
@@ -791,11 +1008,26 @@ function CapitalGainsSection({ capitalGains, newCapitalGain, setNewCapitalGain, 
           Planned Asset Sales in Your First Year (Capital Gains)
         </CardTitle>
         <p className="text-sm text-muted-foreground">Capital gains planning for your first year after moving</p>
-        <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>ℹ️ What are capital gains?</strong> Generally: Sale price – (Purchase price + improvements + fees). 
-            If that number is positive you have a gain; if negative it's a loss.
-          </p>
+        <div className="mt-2 space-y-3">
+          <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+            <p className="text-sm text-blue-800 dark:text-blue-200">
+              <strong>ℹ️ What are capital gains?</strong> Generally: Sale price – (Purchase price + improvements + fees). 
+              If that number is positive you have a gain; if negative it's a loss.
+            </p>
+          </div>
+          <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
+            <p className="text-sm text-amber-800 dark:text-amber-200">
+              <strong>⏰ Timing Strategy:</strong> Most countries tax capital gains only when you sell. This means you can 
+              optimize by selling before moving (under current country rules) or after establishing tax residency 
+              (under new country rules). Some countries have different rates for short vs. long-term holdings.
+            </p>
+          </div>
+          <div className="p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+            <p className="text-sm text-purple-800 dark:text-purple-200">
+              <strong>🌍 Why Report This:</strong> First-year sales help estimate your initial tax burden in the new country. 
+              Some visa programs require proof you can support yourself, and planned sales might factor into that calculation.
+            </p>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pt-6">
@@ -1231,3 +1463,5 @@ function LiabilitiesList({ liabilities, updateFormData }: any) {
     </div>
   )
 }
+
+

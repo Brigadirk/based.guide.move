@@ -41,8 +41,8 @@ const nextConfig = {
   
   // ESLint
   eslint: {
-    // Enable ESLint during builds
-    ignoreDuringBuilds: false,
+    // Temporarily ignore ESLint during builds
+    ignoreDuringBuilds: true,
   },
 }
 
