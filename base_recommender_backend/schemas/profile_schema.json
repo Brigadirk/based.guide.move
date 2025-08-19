@@ -439,14 +439,40 @@
           "type": "object",
           "properties": {
             "isPlanning": {"type": "boolean"},
-            "details": {"type": "array", "items": {"type": "object"}}
+            "details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pensionType": {"type": "string"},
+                  "otherPensionType": {"type": "string"},
+                  "contributionAmount": {"type": "number", "minimum": 0},
+                  "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+                  "country": {"type": "string"}
+                },
+                "required": ["pensionType", "contributionAmount", "currency"]
+              }
+            }
           }
         },
         "existingPlans": {
           "type": "object",
           "properties": {
             "hasPlans": {"type": "boolean"},
-            "details": {"type": "array", "items": {"type": "object"}}
+            "details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "planType": {"type": "string"},
+                  "currentValue": {"type": "number", "minimum": 0},
+                  "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+                  "country": {"type": "string"},
+                  "description": {"type": "string"}
+                },
+                "required": ["planType", "currentValue", "currency"]
+              }
+            }
           }
         }
       }

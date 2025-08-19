@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { CalendarDays, UserPlus, Plus, Trash2, Users, Lightbulb, Home, Globe, Heart, Baby, Pencil, Check, User, Calendar, Clock, MapPin, Flag, CheckCircle, GraduationCap, School, BookOpen, Network } from "lucide-react"
-import countryInfo from "@/data/country_info.json"
+
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
 import { Separator } from "@/components/ui/separator"
@@ -22,9 +22,7 @@ import { SectionFooter } from "@/components/ui/section-footer"
 import { ValidationAlert } from "@/components/ui/validation-alert"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { hasEUCitizenship, getUserEUCountries } from "@/lib/utils/eu-utils"
-
-// Hooks can't run outside components – compute once as a plain constant.
-const COUNTRY_LIST = Object.keys(countryInfo).sort()
+import { getCountries } from "@/lib/utils/country-utils"
 
 const RESIDENCY_OPTIONS = ["Citizen", "Permanent Resident", "Temporary Resident", "Work Visa", "Student Visa", "Refugee", "Other"] as const
 const MARITAL_OPTIONS = [
@@ -38,6 +36,9 @@ const MARITAL_OPTIONS = [
 export function PersonalInformation({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
+  
+  // Get full country list
+  const countries = getCountries()
 
   // Basic Information
   const dob: string = getFormData("personalInformation.dateOfBirth") ?? ""
@@ -519,7 +520,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                   <SelectValue placeholder="Select country" />
                 </SelectTrigger>
                 <SelectContent>
-                  {COUNTRY_LIST.map((c) => (
+                  {countries.map((c) => (
                     <SelectItem key={c} value={c}>
                       {c}
                     </SelectItem>
@@ -621,7 +622,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                 <SelectValue placeholder="Add citizenship" />
               </SelectTrigger>
               <SelectContent>
-                {COUNTRY_LIST.filter((c) => !nationalityExists(c)).map((c) => (
+                {countries.filter((c) => !nationalityExists(c)).map((c) => (
                   <SelectItem key={c} value={c}>
                     {c}
                   </SelectItem>
@@ -1268,7 +1269,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             <SelectValue placeholder="Select country" />
                           </SelectTrigger>
                           <SelectContent>
-                            {COUNTRY_LIST.map((c) => (
+                            {countries.map((c) => (
                               <SelectItem key={c} value={c}>
                                 {c}
                               </SelectItem>
@@ -1395,7 +1396,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                         <SelectValue placeholder="Add partner citizenship" />
                       </SelectTrigger>
                       <SelectContent>
-                        {COUNTRY_LIST.filter(c => {
+                        {countries.filter(c => {
                           const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
                           return !partnerNats.some((n: any) => n.country === c)
                         }).map((c) => (
@@ -2200,7 +2201,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                         <SelectValue placeholder="Add citizenship" />
                       </SelectTrigger>
                       <SelectContent>
-                        {COUNTRY_LIST.filter(c => {
+                        {countries.filter(c => {
                           const currentNats = dep.nationalities || []
                           return !currentNats.some((n: any) => n.country === c)
                         }).map((c) => (

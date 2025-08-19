@@ -13,7 +13,8 @@ import { useEffect, useState } from 'react'
 import { Country } from '@/types/api'
 import Fuse from 'fuse.js'
 import { CountryFlag } from "@/components/features/country/CountryFlag"
-import axios from "axios"
+import { getCountries } from "@/lib/utils/country-utils"
+import countryInfo from "@/data/country_info.json"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
 
 interface CountrySearchComboboxProps {
@@ -28,12 +29,16 @@ interface EnhancedCountry extends Country {
 
 // Common country aliases and alternative names
 const COUNTRY_ALIASES: Record<string, string[]> = {
-  'US': ['USA', 'United States', 'United States of America', 'The United States', 'America'],
-  'GB': ['UK', 'United Kingdom', 'Great Britain', 'Britain'],
-  'CZ': ['Czechia', 'Czech Republic', 'The Czech Republic'],
-  'DE': ['Germany', 'Deutschland', 'Federal Republic of Germany'],
-  'FR': ['France', 'French Republic'],
-  'JP': ['Japan', 'Nippon', 'Land of the Rising Sun'],
+  'United States': ['USA', 'US', 'United States of America', 'The United States', 'America'],
+  'United Kingdom': ['UK', 'GB', 'Great Britain', 'Britain'],
+  'Czech Republic': ['Czechia', 'CZ', 'The Czech Republic'],
+  'Germany': ['DE', 'Deutschland', 'Federal Republic of Germany'],
+  'France': ['FR', 'French Republic'],
+  'Japan': ['JP', 'Nippon', 'Land of the Rising Sun'],
+  'South Korea': ['Korea', 'Republic of Korea', 'ROK'],
+  'North Korea': ['DPRK', 'Democratic People\'s Republic of Korea'],
+  'Russia': ['Russian Federation', 'RU'],
+  'China': ['People\'s Republic of China', 'PRC', 'CN'],
   // Add more as needed
 }
 
@@ -55,29 +60,27 @@ export function CountrySearchCombobox({ onSelect, className, placeholder = "Sear
     })
   }, [countries])
 
-  // Fetch countries and enhance with aliases
+  // Initialize countries from local data
   useEffect(() => {
-    const fetchAndEnhanceCountries = async () => {
-      try {
-        setIsLoading(true)
-        setError(null)
-        const response = await axios.get('/api/countries')
-        const fetchedCountries = response.data
-        const enhancedCountries = fetchedCountries.map((country: Country) => ({
-          ...country,
-          aliases: COUNTRY_ALIASES[country.id] || []
-        }))
-        setCountries(enhancedCountries)
-        setSearchResults(enhancedCountries)
-      } catch (error) {
-        console.error('Failed to fetch countries:', error)
-        setError('Failed to load countries. Please try again.')
-      } finally {
-        setIsLoading(false)
-      }
+    try {
+      setIsLoading(true)
+      setError(null)
+      
+      const countryNames = getCountries()
+      const enhancedCountries: EnhancedCountry[] = countryNames.map((name) => ({
+        id: name.toLowerCase().replace(/\s+/g, '-'), // Simple ID generation
+        name: name,
+        aliases: COUNTRY_ALIASES[name] || []
+      }))
+      
+      setCountries(enhancedCountries)
+      setSearchResults(enhancedCountries)
+    } catch (error) {
+      console.error('Failed to load countries:', error)
+      setError('Failed to load countries. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
-
-    fetchAndEnhanceCountries()
   }, [])
 
   // Update search results when search term changes

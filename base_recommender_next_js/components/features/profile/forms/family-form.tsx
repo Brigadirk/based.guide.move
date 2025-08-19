@@ -11,6 +11,7 @@ import { Trash2, Plus, Users } from "lucide-react"
 import { Profile, PersonalInformation, FinancialInformation, Dependent, IncomeSource } from "@/types/profile"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { InfoDrawer } from "@/components/ui/info-drawer"
+import { getCountries } from "@/lib/utils/country-utils"
 
 interface FamilyFormProps {
   data: { 
@@ -25,7 +26,7 @@ interface FamilyFormProps {
   }) => void
 }
 
-const COUNTRIES = ["United States", "Switzerland", "Portugal", "Spain", "Netherlands", "El Salvador"]
+
 const RESIDENCY_STATUSES = ["Citizen", "Permanent resident", "Temporary resident"] as const
 const INCOME_TYPES = ["Salary", "Business Income", "Investment Income", "Rental Income", "Pension", "Other"] as const
 const CURRENCIES = ["USD", "EUR", "CHF", "GBP"]
@@ -38,6 +39,8 @@ type PartnerInfo = {
 }
 
 export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
+  const countries = getCountries()
+  
   const [hasPartner, setHasPartner] = useState(Boolean(data.partner))
   const [partnerInfo] = useState<PartnerInfo>({
     personalInformation: {
@@ -173,7 +176,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                         <SelectValue placeholder="Select country" />
                       </SelectTrigger>
                       <SelectContent>
-                        {COUNTRIES.map((country) => (
+                        {countries.map((country) => (
                           <SelectItem key={country} value={country}>
                             {country}
                           </SelectItem>
@@ -205,7 +208,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                         <SelectValue placeholder="Select country" />
                       </SelectTrigger>
                       <SelectContent>
-                        {COUNTRIES.map((country) => (
+                        {countries.map((country) => (
                           <SelectItem key={country} value={country}>
                             {country}
                           </SelectItem>

@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/popover"
 import { Country } from "@/types/country"
 import { CountryFlag } from "@/components/features/country/CountryFlag"
+import { getCountries } from "@/lib/utils/country-utils"
+import countryInfo from "@/data/country_info.json"
 
 interface CountryComboboxProps {
   selectedCountry: Country | null
@@ -86,7 +88,66 @@ export function CountryCombobox({
           }
         ]
         
-        setCountries(fallbackCountries)
+        const countryNames = getCountries()
+        const localCountries: Country[] = countryNames.map((name) => {
+          const info = (countryInfo as any)[name] || {}
+          return {
+            id: name.toLowerCase().replace(/\s+/g, '-'),
+            name: name,
+            region: "",
+            flag_emoji: "",
+            flag_png: "",
+            capital: "",
+            currency_code: info.currency_shorthand || "USD",
+            currency_name: info.currency_name || "Unknown",
+            currency_symbol: "",
+            language: info.dominant_language || ["Unknown"],
+            population: 0,
+            area: 0,
+            timezone: "",
+            phone_code: "",
+            internet_tld: "",
+            visa_free_score: 0,
+            safety_score: 0,
+            cost_of_living_index: 0,
+            freedom_index: 0,
+            happiness_score: 0,
+            gdp_per_capita: 0,
+            tax_burden: 0,
+            ease_of_business: 0,
+            innovation_index: 0,
+            education_index: 0,
+            healthcare_index: 0,
+            climate: "",
+            best_time_to_visit: "",
+            main_languages: info.dominant_language || ["Unknown"],
+            government_type: "",
+            driving_side: "",
+            electrical_outlet: "",
+            emergency_numbers: {
+              police: "",
+              medical: "",
+              fire: ""
+            },
+            visa_requirements: "",
+            time_to_citizenship: "",
+            dual_citizenship: false,
+            scores: {
+              overall: 0,
+              visa: 0,
+              cost: 0,
+              safety: 0,
+              lifestyle: 0,
+              tax: 0,
+              climate: 0,
+              healthcare: 0,
+              education: 0,
+              infrastructure: 0
+            }
+          }
+        })
+        
+        setCountries(localCountries)
       } catch (err) {
         console.error('Error fetching countries for combobox:', err)
         setIsError(true)

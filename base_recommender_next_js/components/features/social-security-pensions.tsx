@@ -18,6 +18,7 @@ import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { useCurrencies } from "@/lib/hooks/use-currencies"
+import { getCountries } from "@/lib/utils/country-utils"
 
 const PENSION_SCHEME_TYPES = [
   "Employer-sponsored plan",
@@ -32,6 +33,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
   const currencies = useCurrencies()
+  const countries = getCountries()
 
   // Check if finance details are being skipped
   const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
@@ -167,7 +169,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                           {currentResidence && (
                             <SelectItem value={currentResidence}>{currentResidence} (Current)</SelectItem>
                           )}
-                          {["United States", "United Kingdom", "Canada", "Germany", "France", "Australia", "Netherlands", "Sweden", "Other"].map((country) => (
+                          {countries.map((country) => (
                             <SelectItem key={country} value={country}>
                               {country}
                             </SelectItem>
@@ -303,7 +305,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                             </SelectTrigger>
                             <SelectContent>
 
-                              {["United States", "United Kingdom", "Canada", "Germany", "France", "Australia", "Netherlands", "Sweden", "Other"].map((country) => (
+                              {countries.map((country) => (
                                 <SelectItem key={country} value={country}>
                                   {country}
                                 </SelectItem>
@@ -489,7 +491,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                             </SelectTrigger>
                             <SelectContent>
 
-                              {["United States", "United Kingdom", "Canada", "Germany", "France", "Australia", "Netherlands", "Sweden", "Other"].map((country) => (
+                              {countries.map((country) => (
                                 <SelectItem key={country} value={country}>
                                   {country}
                                 </SelectItem>

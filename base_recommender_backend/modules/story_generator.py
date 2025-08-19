@@ -35,12 +35,10 @@ def _format_money(amount: float, currency: str, dest_currency: str) -> str:
         conv_usd = convert(amount, currency, "USD")
 
         parts = []
-        # destination currency suffix
-        if dest_up not in (cur_up, "USD"):
+        # destination currency suffix (if different from original)
+        if dest_up != cur_up:
             parts.append(f"≈{fmt(conv_dest)} {dest_up}")
-        # USD suffix
-        if cur_up != "USD":
-            parts.append(f"{fmt(conv_usd)} USD")
+        # No USD conversion needed since we only show destination currency
 
         suffix = ", ".join(parts)
         return f"{fmt(amount)} {cur_up} ({suffix})" if suffix else f"{fmt(amount)} {cur_up}"

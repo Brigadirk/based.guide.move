@@ -18,6 +18,7 @@ import { Plus, Info, AlertTriangle, HelpCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
+import { getCountries } from "@/lib/utils/country-utils"
 import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { useCurrencies } from "@/lib/hooks/use-currencies"
@@ -26,6 +27,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
   const currencies = useCurrencies()
+  const countries = getCountries()
 
   // Check if finance details are being skipped
   const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
@@ -194,7 +196,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                           </SelectTrigger>
                           <SelectContent>
 
-                            {["United States", "United Kingdom", "Canada", "Germany", "France", "Australia", "Netherlands", "Sweden", "Other"].map((country) => (
+                            {countries.map((country) => (
                               <SelectItem key={country} value={country}>
                                 {country}
                               </SelectItem>
@@ -376,7 +378,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                         </SelectTrigger>
                         <SelectContent>
 
-                          {["United States", "United Kingdom", "Canada", "Germany", "France", "Australia", "Netherlands", "Sweden", "Other"].map((country) => (
+                          {countries.map((country) => (
                             <SelectItem key={country} value={country}>
                               {country}
                             </SelectItem>
