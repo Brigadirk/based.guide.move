@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo, useCallback, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -16,6 +16,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useCurrencies } from "@/lib/hooks/use-currencies"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Trash2, Plus, DollarSign, TrendingUp, Wallet, CreditCard, Target, Info } from "lucide-react"
+import { validateFinanceData } from "@/lib/utils/finance-validation"
+import { ValidationSummary, ValidationBadge, RealTimeValidation } from "@/components/ui/enhanced-validation"
+import { useAutoSave } from "@/lib/hooks/use-auto-save"
+import { SaveStatus } from "@/components/ui/loading-states"
+import { FinanciallySupportedSection } from "./financially-supported-section"
 
 // Income Categories (Streamlit structure)
 const INCOME_CATEGORIES = {
@@ -77,6 +82,35 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
   
   // Income Sources (Streamlit structure)
   const incomeSources = getFormData("finance.incomeSources") ?? []
+  
+  // Capital Gains - Future Sales (Streamlit structure)
+  const capitalGains = getFormData("finance.capitalGains") ?? { futureSales: [] }
+  
+  // Liabilities (Streamlit structure)
+  const liabilities = getFormData("finance.liabilities") ?? []
+
+  // Enhanced validation with memoization
+  const financeData = useMemo(() => ({
+    skipDetails,
+    incomeSituation,
+    totalWealth,
+    incomeSources,
+    capitalGains,
+    liabilities
+  }), [skipDetails, incomeSituation, totalWealth, incomeSources, capitalGains, liabilities])
+
+  const validation = useMemo(() => 
+    validateFinanceData(financeData), 
+    [financeData]
+  )
+
+  // Auto-save functionality
+  const { isSaving, lastSaved } = useAutoSave(financeData, (data) => {
+    Object.entries(data).forEach(([key, value]) => {
+      updateFormData(`finance.${key}`, value)
+    })
+  })
+
   const [newIncomeSource, setNewIncomeSource] = useState({
     category: "Employment",
     fields: {} as Record<string, string>,
@@ -90,8 +124,16 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
     notes: ""
   })
 
-  // Capital Gains - Future Sales (Streamlit structure)
-  const capitalGains = getFormData("finance.capitalGains") ?? { futureSales: [] }
+  // Auto-adjust continueInDestination based on income situation
+  useEffect(() => {
+    if (incomeSituation === "seeking_income" && newIncomeSource.continueInDestination) {
+      setNewIncomeSource(prev => ({
+        ...prev,
+        continueInDestination: false
+      }))
+    }
+  }, [incomeSituation, newIncomeSource.continueInDestination])
+
   const [newCapitalGain, setNewCapitalGain] = useState({
     asset: "",
     type: "Real Estate",
@@ -101,8 +143,6 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
     reason: ""
   })
 
-  // Liabilities (Streamlit structure)
-  const liabilities = getFormData("finance.liabilities") ?? []
   const [newLiability, setNewLiability] = useState({
     category: "Mortgage",
     fields: {} as Record<string, string>,
@@ -115,44 +155,21 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
 
 
 
-  const handleComplete = () => {
+  // Performance optimized callbacks
+  const handleComplete = useCallback(() => {
     markSectionComplete("finance")
     onComplete()
-  }
+  }, [markSectionComplete, onComplete])
 
-  // Validation based on Streamlit logic
-  const errors = []
-  
-  if (!skipDetails && !incomeSituation) {
-    errors.push("Please select your income situation after moving")
-  }
-  
-  if (!skipDetails && incomeSituation) {
-    // For continuing income, require current income sources
-    if (incomeSituation === "continuing_income") {
-      const currentSources = incomeSources.filter((source: any) => source.continueInDestination)
-      if (currentSources.length === 0) {
-        errors.push("At least one current income source is required for continuing income")
-      }
-    }
-    
-    // For seeking income, require expected income sources
-    if (incomeSituation === "seeking_income") {
-      const expectedSources = incomeSources.filter((source: any) => !source.continueInDestination)
-      if (expectedSources.length === 0) {
-        errors.push("At least one expected income source is required when seeking new income")
-      }
-    }
-    
-    // For mixed income situation, require at least one income source (current or expected)
-    if (incomeSituation === "current_and_new_income") {
-      if (incomeSources.length === 0) {
-        errors.push("At least one income source (current or expected) is required for mixed income situation")
-      }
-    }
-  }
-  
-  const canContinue = skipDetails || (!!incomeSituation && errors.length === 0)
+  const handleUpdateFormData = useCallback((path: string, value: any) => {
+    updateFormData(path, value)
+  }, [updateFormData])
+
+  // Enhanced validation status
+  const canContinue = useMemo(() => 
+    skipDetails || validation.isValid,
+    [skipDetails, validation.isValid]
+  )
 
   // Helper functions for form management
   const getCountryOptions = () => [
@@ -304,6 +321,8 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
         </CardContent>
       </Card>
 
+
+
       {/* Skip Mode Indicator */}
       {skipDetails && (
         <Card className="shadow-sm border-l-4 border-l-green-500">
@@ -409,7 +428,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
           </Card>
 
           {/* Income Sources Section - Conditional based on situation (Streamlit logic) */}
-          {(incomeSituation === "continuing_income" || incomeSituation === "current_and_new_income") && (
+          {(incomeSituation === "continuing_income" || incomeSituation === "current_and_new_income" || incomeSituation === "seeking_income") && (
             <IncomeSourcesSection 
               incomeSources={incomeSources} 
               newIncomeSource={newIncomeSource}
@@ -417,6 +436,16 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
               updateFormData={updateFormData}
               currencies={currencies}
               getCountryOptions={getCountryOptions}
+              incomeSituation={incomeSituation}
+            />
+          )}
+
+          {/* Special Stipend Section for Financially Supported */}
+          {incomeSituation === "dependent/supported" && (
+            <FinanciallySupportedSection 
+              incomeSources={incomeSources}
+              updateFormData={updateFormData}
+              currencies={currencies}
             />
           )}
 
@@ -427,6 +456,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
             totalWealth={totalWealth}
             updateFormData={updateFormData}
             currencies={currencies}
+            incomeSituation={incomeSituation}
           />
 
           {/* Capital Gains Section - Streamlit Structure */}
@@ -455,19 +485,11 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
       <Card className="shadow-md">
         <CardFooter className="pt-6">
           <div className="w-full space-y-4">
-            {/* Validation Alert */}
-            {errors.length > 0 && (
-              <Alert variant="destructive">
-                <AlertDescription>
-                  <strong>Complete required fields:</strong>
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    {errors.map((error, index) => (
-                      <li key={index}>{error}</li>
-                    ))}
-                  </ul>
-                </AlertDescription>
-              </Alert>
-            )}
+            {/* Enhanced Validation Summary */}
+            <ValidationSummary validation={validation} />
+            
+            {/* Auto-save Status */}
+            <SaveStatus isSaving={isSaving} lastSaved={lastSaved} />
 
             {/* Section Footer */}
             <SectionFooter
@@ -504,7 +526,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
 
 // Component functions - Beautiful implementation matching Streamlit exactly
 
-function IncomeSourcesSection({ incomeSources, newIncomeSource, setNewIncomeSource, updateFormData, currencies, getCountryOptions }: any) {
+function IncomeSourcesSection({ incomeSources, newIncomeSource, setNewIncomeSource, updateFormData, currencies, getCountryOptions, incomeSituation }: any) {
   return (
     <Card className="shadow-sm border-l-4 border-l-green-500">
       <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
@@ -615,9 +637,10 @@ function IncomeSourcesSection({ incomeSources, newIncomeSource, setNewIncomeSour
                       name="timing"
                       checked={newIncomeSource.continueInDestination}
                       onChange={() => setNewIncomeSource({...newIncomeSource, continueInDestination: true})}
-                      className="h-4 w-4 text-green-600"
+                      disabled={incomeSituation === "seeking_income"}
+                      className={`h-4 w-4 ${incomeSituation === "seeking_income" ? "text-gray-400 cursor-not-allowed" : "text-green-600"}`}
                     />
-                    <label htmlFor="current_income" className="text-sm cursor-pointer">
+                    <label htmlFor="current_income" className={`text-sm ${incomeSituation === "seeking_income" ? "text-gray-400 cursor-not-allowed" : "cursor-pointer"}`}>
                       This is a current source of income that I will continue
                     </label>
                   </div>
@@ -635,6 +658,11 @@ function IncomeSourcesSection({ incomeSources, newIncomeSource, setNewIncomeSour
                     </label>
                   </div>
                 </div>
+                {incomeSituation === "seeking_income" && (
+                  <div className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20 p-2 rounded">
+                    <strong>Note:</strong> Since you're seeking new income sources, all entries will be treated as expected income after moving.
+                  </div>
+                )}
               </div>
               
               {/* Enhanced fields for expected/future income */}
@@ -871,7 +899,7 @@ function IncomeSourcesList({ incomeSources, updateFormData }: any) {
 
 
 
-function TotalWealthSection({ totalWealth, updateFormData, currencies }: any) {
+function TotalWealthSection({ totalWealth, updateFormData, currencies, incomeSituation }: any) {
   const [editMode, setEditMode] = useState(false)
   const [tempWealth, setTempWealth] = useState(totalWealth)
 
@@ -894,6 +922,16 @@ function TotalWealthSection({ totalWealth, updateFormData, currencies }: any) {
             valuable collections, cryptocurrency - minus mortgages, loans, and other debts.
           </p>
         </div>
+        {incomeSituation === "gainfully_unemployed" && (
+          <div className="mt-3 p-4 bg-orange-50 dark:bg-orange-950/20 rounded-lg border-l-4 border-l-orange-400">
+            <p className="text-sm text-orange-800 dark:text-orange-200">
+              <strong>💰 Self-Funded Requirement:</strong> Since you're living off savings, this information is 
+              <span className="font-semibold"> required</span> to show visa officers you have sufficient funds 
+              to support yourself without working. Many visa categories require proof of substantial savings 
+              (often €10,000-€50,000+ depending on duration and country).
+            </p>
+          </div>
+        )}
       </CardHeader>
       <CardContent className="pt-6">
         <div className="space-y-6">

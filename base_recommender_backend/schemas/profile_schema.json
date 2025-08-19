@@ -322,7 +322,17 @@
       "type": "object",
       "properties": {
         "skipDetails": {"type": "boolean"},
-        "incomeSituation": {"type": "string"},
+        "incomeSituation": {
+          "type": "string",
+          "enum": [
+            "continuing_income",
+            "current_and_new_income", 
+            "seeking_income",
+            "gainfully_unemployed",
+            "dependent/supported"
+          ],
+          "description": "User's income situation after moving to the destination country"
+        },
         "totalWealth": {
           "type": "object",
           "properties": {
@@ -336,24 +346,78 @@
           "items": {
             "type": "object",
             "properties": {
-              "category": {"type": "string"},
-              "fields": {"type": "object"},
+              "category": {
+                "type": "string",
+                "enum": ["Employment", "Self-Employment", "Investments", "Rental Income", "Financial Support", "Other"]
+              },
+              "fields": {
+                "type": "object",
+                "description": "Category-specific fields",
+                "properties": {
+                  "sourceType": {"type": "string", "description": "Type of financial support (Family, Partner, Scholarship, etc.)"},
+                  "source": {"type": "string", "description": "Specific source of support (e.g., Parents, University Name)"},
+                  "frequency": {"type": "string", "description": "Payment frequency (Monthly, Annually, etc.)"},
+                  "duration": {"type": "string", "description": "Expected duration of support"},
+                  "employer": {"type": "string", "description": "Employer name for Employment category"},
+                  "role": {"type": "string", "description": "Job role for Employment category"},
+                  "business_name": {"type": "string", "description": "Business name for Self-Employment"},
+                  "business_type": {"type": "string", "description": "Type of business for Self-Employment"},
+                  "investment_type": {"type": "string", "description": "Type of investment for Investments"},
+                  "issuer": {"type": "string", "description": "Investment issuer for Investments"},
+                  "property_type": {"type": "string", "description": "Property type for Rental Income"},
+                  "property_description": {"type": "string", "description": "Property description for Rental Income"},
+                  "source_name": {"type": "string", "description": "Source name for Other category"},
+                  "source_type": {"type": "string", "description": "Source type for Other category"}
+                }
+              },
               "country": {"type": "string"},
               "amount": {"type": "number", "minimum": 0},
               "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
               "continue_in_destination": {"type": "boolean"},
-              "timeline": {"type": "string"},
-              "confidence": {"type": "string"},
-              "notes": {"type": "string"}
+              "timeline": {"type": "string", "description": "For expected income: when income will start"},
+              "confidence": {"type": "string", "description": "For expected income: confidence level"},
+              "notes": {"type": "string", "description": "Additional notes about income source"}
             },
             "required": ["category", "amount", "currency"]
           }
         },
-        "liabilities": {"type": "array", "items": {"type": "object"}},
+        "liabilities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "string",
+                "enum": ["Mortgage", "Loan", "Credit Card", "Other"]
+              },
+              "fields": {"type": "object"},
+              "country": {"type": "string"},
+              "amount": {"type": "number", "minimum": 0},
+              "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+              "paybackYears": {"type": "number", "minimum": 0},
+              "interestRate": {"type": "number", "minimum": 0}
+            },
+            "required": ["category", "amount", "currency"]
+          }
+        },
         "capitalGains": {
           "type": "object",
           "properties": {
-            "futureSales": {"type": "array", "items": {"type": "object"}}
+            "futureSales": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "asset": {"type": "string"},
+                  "type": {"type": "string"},
+                  "holding_time": {"type": "string"},
+                  "surplus_value": {"type": "number"},
+                  "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+                  "reason": {"type": "string"}
+                },
+                "required": ["asset", "surplus_value", "currency"]
+              }
+            }
           }
         },
         "assets": {"type": "array", "items": {"type": "object"}}

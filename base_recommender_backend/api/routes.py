@@ -107,13 +107,36 @@ def get_finance_story(request: FinanceRequest):
         if request.destination_country:
             dest_currency = country_to_currency(request.destination_country)
         
+        # Debug logging for finance data structure
+        print(f"DEBUG: Finance data type: {type(request.finance)}")
+        print(f"DEBUG: Finance data keys: {list(request.finance.keys()) if isinstance(request.finance, dict) else 'Not a dict'}")
+        print(f"DEBUG: Full finance data: {request.finance}")
+        
+        if isinstance(request.finance, dict):
+            # Check income sources specifically (handle both naming conventions)
+            income_sources = request.finance.get('incomeSources', request.finance.get('income_sources', []))
+            print(f"DEBUG: Income sources count: {len(income_sources)}")
+            for i, source in enumerate(income_sources):
+                print(f"DEBUG: Income source {i}: {source}")
+            
+            # Check income situation
+            income_situation = request.finance.get('income_situation', request.finance.get('incomeSituation'))
+            print(f"DEBUG: Income situation: {income_situation}")
+            
+            if 'capitalGains' in request.finance:
+                cg = request.finance['capitalGains']
+                print(f"DEBUG: capitalGains type: {type(cg)}, value: {cg}")
+        
         story = make_finance_story(request.finance, dest_currency)
         return {
             "status": "success",
-            "section": "finance",
+            "section": "finance", 
             "story": story
         }
     except Exception as e:
+        import traceback
+        error_details = f"Error generating finance story: {str(e)}\nTraceback: {traceback.format_exc()}"
+        print(f"ERROR: {error_details}")
         raise HTTPException(status_code=500, detail=f"Error generating finance story: {str(e)}")
 
 

@@ -554,18 +554,96 @@ def _summarise_income_sources(sources: List[Dict[str, Any]], dest_currency: str)
                 total_usd += convert(amt, cur, "USD")
             except Exception:
                 total_usd += amt
-        
-        total_dest = convert(total_usd, "USD", dest_currency)
-        lines.append(
-            f"They have {len(current_sources)} current income source{'s' if len(current_sources)!=1 else ''} totalling "
-            f"{total_dest:,.0f} {dest_currency.upper()} ({total_usd:,.0f} USD) per year, which will continue after moving."
-        )
+
+        # Only show summary if there are multiple sources or non-Financial Support sources
+        has_non_financial_support = any(src.get("category") != "Financial Support" for src in current_sources)
+        if len(current_sources) > 1 or has_non_financial_support:
+            total_dest = convert(total_usd, "USD", dest_currency)
+            lines.append(
+                f"They have {len(current_sources)} current income source{'s' if len(current_sources)!=1 else ''} totalling "
+                f"{total_dest:,.0f} {dest_currency.upper()} ({total_usd:,.0f} USD) per year, which will continue after moving."
+            )
         
         for src in current_sources:
             cat = src.get("category", "Unknown")
             amt = _format_money(src.get("amount", 0), src.get("currency", "USD"), dest_currency)
             country = src.get("country", "")
-            lines.append(f"• {cat} income of {amt} from {country or 'various'}.")
+            
+            # Enhanced description based on category
+            if cat == "Employment" and src.get("fields"):
+                fields = src.get("fields", {})
+                role = fields.get("role", "")
+                employer = fields.get("employer", "")
+                if role and employer:
+                    lines.append(f"• {role} at {employer}: {amt} from {country or 'various'}.")
+                elif role:
+                    lines.append(f"• {role} position: {amt} from {country or 'various'}.")
+                elif employer:
+                    lines.append(f"• Employment at {employer}: {amt} from {country or 'various'}.")
+                else:
+                    lines.append(f"• {cat} income: {amt} from {country or 'various'}.")
+            elif cat == "Financial Support" and src.get("fields"):
+                fields = src.get("fields", {})
+                # Handle both camelCase and snake_case field names
+                source_type = fields.get("sourceType", fields.get("source_type", ""))
+                source = fields.get("source", "")
+                frequency = fields.get("frequency", "")
+                duration = fields.get("duration", "")
+                notes = fields.get("notes", "")
+                
+                if source_type and source:
+                    support_desc = f"• {source_type} support from {source}"
+                    if frequency == "Monthly":
+                        monthly_amt = src.get("amount", 0) / 12
+                        monthly_formatted = _format_money(monthly_amt, src.get('currency', 'USD'), dest_currency)
+                        annual_formatted = _format_money(src.get("amount", 0), src.get('currency', 'USD'), dest_currency)
+                        support_desc += f": {monthly_formatted}/month ({annual_formatted} annually)"
+                    else:
+                        support_desc += f": {amt}"
+                    if duration:
+                        support_desc += f" for {duration.lower()}"
+                    support_desc += "."
+                    lines.append(support_desc)
+                    
+                    # Add notes if provided
+                    if notes and notes.strip():
+                        lines.append(f"  Note: {notes.strip()}")
+                else:
+                    lines.append(f"• {cat}: {amt}.")
+            elif cat in ["Self-Employment", "Investments", "Rental Income", "Other"] and src.get("fields"):
+                fields = src.get("fields", {})
+                # Add specific field handling for other categories
+                if cat == "Self-Employment":
+                    business_name = fields.get("business_name", "")
+                    business_type = fields.get("business_type", "")
+                    if business_name and business_type:
+                        lines.append(f"• {business_type} business ({business_name}): {amt} from {country or 'various'}.")
+                    elif business_name:
+                        lines.append(f"• Self-employment ({business_name}): {amt} from {country or 'various'}.")
+                    else:
+                        lines.append(f"• {cat} income: {amt} from {country or 'various'}.")
+                elif cat == "Investments":
+                    investment_type = fields.get("investment_type", "")
+                    issuer = fields.get("issuer", "")
+                    if investment_type and issuer:
+                        lines.append(f"• {investment_type} from {issuer}: {amt}.")
+                    elif investment_type:
+                        lines.append(f"• {investment_type} income: {amt}.")
+                    else:
+                        lines.append(f"• {cat} income: {amt}.")
+                elif cat == "Rental Income":
+                    property_type = fields.get("property_type", "")
+                    property_desc = fields.get("property_description", "")
+                    if property_type and property_desc:
+                        lines.append(f"• {property_type} rental ({property_desc}): {amt} from {country or 'various'}.")
+                    elif property_type:
+                        lines.append(f"• {property_type} rental income: {amt} from {country or 'various'}.")
+                    else:
+                        lines.append(f"• {cat}: {amt} from {country or 'various'}.")
+                else:
+                    lines.append(f"• {cat} income: {amt} from {country or 'various'}.")
+            else:
+                lines.append(f"• {cat} income: {amt} from {country or 'various'}.")
     
     # Process expected sources with enhanced information
     if expected_sources:
@@ -602,7 +680,7 @@ def _summarise_income_sources(sources: List[Dict[str, Any]], dest_currency: str)
             detail_str = f" ({', '.join(details)})" if details else ""
             base_desc = f"• Expected {cat} income of {amt} from {country or 'various'}{detail_str}."
             
-            # Add role/employer details for employment
+            # Add category-specific details for expected income
             if cat == "Employment" and src.get("fields"):
                 fields = src.get("fields", {})
                 role = fields.get("role", "")
@@ -613,6 +691,59 @@ def _summarise_income_sources(sources: List[Dict[str, Any]], dest_currency: str)
                     base_desc = f"• Expected {role} position earning {amt}{detail_str}."
                 elif employer:
                     base_desc = f"• Expected employment at {employer} earning {amt}{detail_str}."
+            elif cat == "Financial Support" and src.get("fields"):
+                fields = src.get("fields", {})
+                # Handle both camelCase and snake_case field names
+                source_type = fields.get("sourceType", fields.get("source_type", ""))
+                source = fields.get("source", "")
+                duration = fields.get("duration", "")
+                frequency = fields.get("frequency", "")
+                
+                if source_type and source:
+                    support_desc = f"• {source_type} support"
+                    if source:
+                        support_desc += f" from {source}"
+                    if frequency == "Monthly":
+                        monthly_amt = src.get("amount", 0) / 12
+                        monthly_formatted = _format_money(monthly_amt, src.get('currency', 'USD'), dest_currency)
+                        annual_formatted = _format_money(src.get("amount", 0), src.get('currency', 'USD'), dest_currency)
+                        support_desc += f" of {monthly_formatted}/month ({annual_formatted} annually)"
+                    else:
+                        support_desc += f" of {amt}"
+                    if duration:
+                        support_desc += f" for {duration.lower()}"
+                    support_desc += f"{detail_str}."
+                    base_desc = support_desc
+            elif cat == "Self-Employment" and src.get("fields"):
+                fields = src.get("fields", {})
+                business_name = fields.get("business_name", "")
+                business_type = fields.get("business_type", "")
+                if business_name and business_type:
+                    base_desc = f"• Expected {business_type} business ({business_name}) earning {amt}{detail_str}."
+                elif business_name:
+                    base_desc = f"• Expected self-employment ({business_name}) earning {amt}{detail_str}."
+                else:
+                    base_desc = f"• Expected {cat} income of {amt}{detail_str}."
+            elif cat == "Investments" and src.get("fields"):
+                fields = src.get("fields", {})
+                investment_type = fields.get("investment_type", "")
+                issuer = fields.get("issuer", "")
+                if investment_type and issuer:
+                    base_desc = f"• Expected {investment_type} income from {issuer}: {amt}{detail_str}."
+                elif investment_type:
+                    base_desc = f"• Expected {investment_type} income: {amt}{detail_str}."
+                else:
+                    base_desc = f"• Expected {cat} income of {amt}{detail_str}."
+            elif cat == "Rental Income" and src.get("fields"):
+                fields = src.get("fields", {})
+                property_type = fields.get("property_type", "")
+                property_desc = fields.get("property_description", "")
+                if property_type and property_desc:
+                    base_desc = f"• Expected {property_type} rental income ({property_desc}): {amt}{detail_str}."
+                elif property_type:
+                    base_desc = f"• Expected {property_type} rental income: {amt}{detail_str}."
+                else:
+                    base_desc = f"• Expected {cat}: {amt}{detail_str}."
             
             lines.append(base_desc)
             
@@ -650,9 +781,67 @@ def _summarise_liabilities(liabs: List[Dict[str, Any]], dest_currency: str) -> s
         return ""
     total_usd = _mixed_total(liabs, "amount")
     total_dest = convert(total_usd, "USD", dest_currency)
-    return (
-        f"Liabilities amount to {total_dest:,.0f} {dest_currency.upper()} ({total_usd:,.0f} USD) across {len(liabs)} obligation(s)."
-    )
+    
+    lines = [f"Liabilities amount to {total_dest:,.0f} {dest_currency.upper()} ({total_usd:,.0f} USD) across {len(liabs)} obligation(s)."]
+    
+    # Add details for each liability
+    for liab in liabs[:3]:  # Limit to first 3 for readability
+        cat = liab.get("category", "Liability")
+        amt = _format_money(liab.get("amount", 0), liab.get("currency", "USD"), dest_currency)
+        country = liab.get("country", "")
+        fields = liab.get("fields", {})
+        
+        # Build description based on category
+        if cat == "Mortgage" and fields:
+            property_desc = fields.get("property_description", "")
+            property_type = fields.get("property_type", "")
+            if property_desc and property_type:
+                desc = f"• {cat}: {property_type} mortgage ({property_desc}) - {amt}"
+            elif property_type:
+                desc = f"• {cat}: {property_type} mortgage - {amt}"
+            else:
+                desc = f"• {cat}: {amt}"
+        elif cat == "Loan" and fields:
+            lender = fields.get("lender", "")
+            purpose = fields.get("purpose", "")
+            if lender and purpose:
+                desc = f"• {cat}: {purpose} loan from {lender} - {amt}"
+            elif lender:
+                desc = f"• {cat}: loan from {lender} - {amt}"
+            elif purpose:
+                desc = f"• {cat}: {purpose} loan - {amt}"
+            else:
+                desc = f"• {cat}: {amt}"
+        elif cat == "Credit Card" and fields:
+            issuer = fields.get("card_issuer", "")
+            if issuer:
+                desc = f"• {cat}: debt with {issuer} - {amt}"
+            else:
+                desc = f"• {cat}: debt - {amt}"
+        else:
+            desc = f"• {cat}: {amt}"
+        
+        if country:
+            desc += f" ({country})"
+        
+        # Add terms information
+        payback_years = liab.get("paybackYears", 0)
+        interest_rate = liab.get("interestRate", 0)
+        if payback_years > 0 or interest_rate > 0:
+            terms = []
+            if payback_years > 0:
+                terms.append(f"{payback_years} years")
+            if interest_rate > 0:
+                terms.append(f"{interest_rate}% interest")
+            if terms:
+                desc += f" - {', '.join(terms)}"
+        
+        lines.append(desc + ".")
+    
+    if len(liabs) > 3:
+        lines.append(f"…and {len(liabs)-3} more liabilities.")
+    
+    return " ".join(lines)
 
 
 def _summarise_capital_gains(cg: Dict[str, Any], dest_currency: str) -> str:
@@ -677,10 +866,24 @@ def _summarise_capital_gains(cg: Dict[str, Any], dest_currency: str) -> str:
     ]
     for sale in future[:3]:
         asset = sale.get("asset", "asset")
+        asset_type = sale.get("type", "")
         gain_value = _get_capital_gain_value(sale)
         gain = _format_money(gain_value, sale.get("currency", "USD"), dest_currency)
         holding_time = _get_holding_time(sale)
-        lines.append(f"• {asset} with expected profit {gain} (holding {holding_time}).")
+        reason = sale.get("reason", "")
+        
+        # Build enhanced description
+        if asset_type:
+            asset_desc = f"{asset_type}: {asset}"
+        else:
+            asset_desc = asset
+        
+        detail_parts = [f"holding {holding_time}"]
+        if reason:
+            detail_parts.append(f"reason: {reason}")
+        
+        details = ", ".join(detail_parts)
+        lines.append(f"• {asset_desc} with expected profit {gain} ({details}).")
     if len(future) > 3:
         lines.append(f"…and {len(future)-3} more planned sales.")
 
@@ -710,10 +913,20 @@ def finance_section(fin: Dict[str, Any], dest_currency: str) -> str:
 
     parts: List[str] = []
 
-    # Income situation summary
-    income_situation = fin.get("incomeSituation")
+    # Income situation summary with human-readable descriptions
+    # Handle both camelCase (legacy) and snake_case (transformed) field names
+    income_situation = fin.get("income_situation", fin.get("incomeSituation"))
     if income_situation:
-        parts.append(f"Their current income situation: {income_situation}.")
+        situation_descriptions = {
+            "continuing_income": "plans to continue all current income sources after moving (remote work, investments, rental income, etc.)",
+            "current_and_new_income": "will maintain some existing income sources while adding new ones in the destination country",
+            "seeking_income": "plans to find new employment, start a business, or develop other new income sources after moving",
+            "gainfully_unemployed": "will be self-funded, living off savings, gifts, or investment returns without active employment",
+            "dependent/supported": "will be financially supported by family, partner, scholarship, or institutional funding"
+        }
+        
+        description = situation_descriptions.get(income_situation, income_situation)
+        parts.append(f"Their income situation after moving: {description}.")
 
     tw = fin.get("totalWealth")
     if tw and tw.get("total"):
@@ -724,11 +937,12 @@ def finance_section(fin: Dict[str, Any], dest_currency: str) -> str:
             f"primary residence accounts for {primary_residence:,.0f} {tw.get('currency','USD')}."
         )
 
-    income_sources = fin.get("incomeSources", [])
+    # Handle both camelCase and snake_case field names
+    income_sources = fin.get("incomeSources", fin.get("income_sources", []))
     if income_sources:
         parts.append(_summarise_income_sources(income_sources, dest_currency))
 
-    capital_gains_summary = _summarise_capital_gains(fin.get("capitalGains", []), dest_currency)
+    capital_gains_summary = _summarise_capital_gains(fin.get("capitalGains", {}), dest_currency)
     if capital_gains_summary:
         parts.append(capital_gains_summary)
 

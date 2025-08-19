@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "npm run clean && next build",
-    "build:force": "npm run clean:all && next build",
+    "dev": "npm run pre-build-check && next dev",
+    "build": "npm run pre-build-check && node scripts/build-monitor.js 'npx next build'",
+    "build:force": "npm run clean && npm run pre-build-check && node scripts/build-monitor.js 'npx next build'",
+    "build:safe": "npm run clean && npm run pre-build-check && node scripts/build-monitor.js 'npx next build'",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
@@ -14,10 +15,11 @@
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "analyze": "ANALYZE=true next build",
+    "analyze": "ANALYZE=true npm run build",
     "prepare": "husky install",
     "clean": "node scripts/build-clean.js",
     "clean:all": "node scripts/build-clean.js",
+    "pre-build-check": "node scripts/pre-build-check.js",
     "postinstall": "npm run clean"
   },
   "dependencies": {

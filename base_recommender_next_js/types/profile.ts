@@ -80,8 +80,15 @@ export interface LanguageSkill {
   certification?: string
 }
 
+export type IncomeSituation = 
+  | "continuing_income"
+  | "current_and_new_income" 
+  | "seeking_income"
+  | "gainfully_unemployed"
+  | "dependent/supported"
+
 export interface FinancialInformation {
-  incomeSituation: string
+  incomeSituation: IncomeSituation
   incomeSources: IncomeSource[]
   expectedEmployment: ExpectedEmployment[]
   totalWealth: {

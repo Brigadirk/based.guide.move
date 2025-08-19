@@ -56,6 +56,7 @@ class IncomeSource(BaseModel):
 
 
 class Finance(BaseModel):
+    income_situation: Optional[str] = Field(None, pattern="^(continuing_income|current_and_new_income|seeking_income|gainfully_unemployed|dependent/supported)$")
     incomeSources: List[IncomeSource] = Field(..., min_items=1)
 
     class Config:

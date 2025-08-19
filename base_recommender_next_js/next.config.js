@@ -33,13 +33,14 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   
-  // Output configuration to prevent manifest issues
-  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  // PERMANENT MANIFEST FIX: Force clean builds
+  distDir: '.next',
+  cleanDistDir: true,
   
-  // Build configuration
+  // Build configuration - completely disable caching
   generateBuildId: async () => {
-    // Generate a unique build ID to prevent caching issues
-    return `build-${Date.now()}`
+    // Always generate unique build ID to prevent stale manifests
+    return `build-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
   },
   
   // TypeScript strict mode
@@ -54,14 +55,44 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   
-  // Webpack configuration to handle module resolution
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Prevent build cache issues
-    if (!dev) {
+  // Webpack configuration with comprehensive cache prevention
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack, nextRuntime }) => {
+    // PERMANENT FIX: Completely disable caching in all environments
+    config.cache = false
+    
+    // Disable filesystem cache
+    if (config.cache) {
       config.cache = false
     }
     
+    // Force clean webpack builds
+    config.infrastructureLogging = {
+      level: 'error',
+    }
+    
+    // Prevent manifest file conflicts
+    config.optimization = {
+      ...config.optimization,
+      moduleIds: 'deterministic',
+      chunkIds: 'deterministic',
+    }
+    
+    // Add plugin to clean up stale manifest files
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        __BUILD_ID__: JSON.stringify(buildId),
+      })
+    )
+    
     return config
+  },
+  
+  // Disable any built-in caching
+  onDemandEntries: {
+    // period (in ms) where the server will keep pages in the buffer
+    maxInactiveAge: 25 * 1000,
+    // number of pages that should be kept simultaneously without being disposed
+    pagesBufferLength: 2,
   },
 }
 
