@@ -15,8 +15,9 @@ from api.perplexity import get_tax_advice
 from exchange_rate_fetcher.exchange_rate_service import fetch_and_save_latest_rates
 from exchange_rate_fetcher.exchange_rate_service import _latest_snapshot_file
 
-# Load environment variables early
-load_dotenv()
+# Load environment variables early - check both current dir and parent (root) dir
+load_dotenv()  # First try current directory (base_recommender_backend/)
+load_dotenv("../.env")  # Then try parent directory (root folder)
 
 # ---------------------------------------------------------------------------
 # Lifespan context to manage scheduler (replaces deprecated on_event)

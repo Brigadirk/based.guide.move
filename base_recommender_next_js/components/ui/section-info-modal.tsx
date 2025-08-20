@@ -19,6 +19,7 @@ interface SectionInfoModalProps {
   isFullView?: boolean
   onGoToSection?: (section: string) => void
   onNavigateToSection?: (section: string) => void
+  onNavigateToResults?: () => void
 }
 
 export function SectionInfoModal({ 
@@ -32,7 +33,8 @@ export function SectionInfoModal({
   currentSection,
   isFullView = false,
   onGoToSection,
-  onNavigateToSection
+  onNavigateToSection,
+  onNavigateToResults
 }: SectionInfoModalProps) {
   
   // Helper function to get section display name
@@ -212,6 +214,19 @@ export function SectionInfoModal({
               >
                 <Minimize2 className="w-4 h-4 text-white" />
                 Unexpand
+              </Button>
+            )}
+            {isFullView && onNavigateToResults && (
+              <Button 
+                variant="default" 
+                onClick={() => {
+                  onNavigateToResults()
+                  onClose()
+                }}
+                className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+              >
+                <ArrowRight className="w-4 h-4 text-white" />
+                Go to Results
               </Button>
             )}
           </div>

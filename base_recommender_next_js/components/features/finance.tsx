@@ -18,7 +18,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Trash2, Plus, DollarSign, TrendingUp, Wallet, CreditCard, Target, Info } from "lucide-react"
 import { validateFinanceData } from "@/lib/utils/finance-validation"
 import { ValidationSummary, ValidationBadge, RealTimeValidation } from "@/components/ui/enhanced-validation"
-import { useAutoSave } from "@/lib/hooks/use-auto-save"
+import { useAutoSave, useAutoSaveStatus } from "@/lib/hooks/use-auto-save"
 import { SaveStatus } from "@/components/ui/loading-states"
 import { FinanciallySupportedSection } from "./financially-supported-section"
 
@@ -105,11 +105,8 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
   )
 
   // Auto-save functionality
-  const { isSaving, lastSaved } = useAutoSave(financeData, (data) => {
-    Object.entries(data).forEach(([key, value]) => {
-      updateFormData(`finance.${key}`, value)
-    })
-  })
+  const { manualSave, isAutoSaveEnabled } = useAutoSave(financeData, 'finance')
+  const { isSaving, lastSaved } = useAutoSaveStatus()
 
   const [newIncomeSource, setNewIncomeSource] = useState({
     category: "Employment",

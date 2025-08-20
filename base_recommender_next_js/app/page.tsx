@@ -35,6 +35,7 @@ import { TaxDeductionsAndCredits } from "@/components/features/tax-deductions-an
 import { FutureFinancialPlans } from "@/components/features/future-financial-plans";
 import { AdditionalInformation } from "@/components/features/additional-information";
 import { Summary } from "@/components/features/summary";
+import { Results } from "@/components/features/results";
 import { useFormStore } from "@/lib/stores";
 import { DevStateViewer } from "@/components/dev/state-viewer";
 import { AlternativeInterestsModal } from "@/components/ui/alternative-interests-modal";
@@ -61,6 +62,7 @@ const SECTIONS: Section[] = [
   { id: "future-plans", title: "Future Financial Plans", icon: TrendingUp, required: false, showDot: true },
   { id: "additional", title: "Additional Information", icon: Info, required: false, showDot: true },
   { id: "summary", title: "Summary", icon: CheckCircle, required: false, showDot: false }, // No red dot for summary
+  { id: "results", title: "Results", icon: Zap, required: false, showDot: false }, // No red dot for results
 ];
 
 export default function HomePage() {
@@ -198,7 +200,7 @@ export default function HomePage() {
     const destinationComplete = destCountry && destCountry.trim() !== "";
     
     if (
-      !["disclaimer", "destination", "summary"].includes(section.id) &&
+      !["disclaimer", "destination", "summary", "results"].includes(section.id) &&
       (!disclaimerComplete || !destinationComplete)
     ) {
       const missingSteps = [];
@@ -234,7 +236,9 @@ export default function HomePage() {
       case "additional":
         return <AdditionalInformation onComplete={handleContinue} />;
       case "summary":
-        return <Summary />;
+        return <Summary onNavigateToResults={() => setCurrentSection(10)} />;
+      case "results":
+        return <Results />;
       default:
         return <div>Section not found</div>;
     }

@@ -220,3 +220,61 @@ def get_summary_story(request: SummaryRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating summary story: {str(e)}")
+
+
+@router.post("/generate-full-story")
+def generate_full_story(request: SummaryRequest):
+    """Generate the complete profile story for Perplexity AI analysis."""
+    try:
+        story = make_story(request.profile)
+        return {
+            "status": "success",
+            "section": "full_story", 
+            "story": story
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating full story: {str(e)}")
+
+
+@router.post("/perplexity-analysis")
+def perplexity_analysis(payload: dict):
+    """Send a prompt to Perplexity AI for comprehensive analysis."""
+    try:
+        if not payload:
+            raise HTTPException(status_code=400, detail="No data provided")
+        
+        if "prompt" not in payload or "model" not in payload:
+            raise HTTPException(status_code=400, detail="Missing required fields. Provide 'prompt' and 'model'.")
+        
+        # Create the request format expected by the Perplexity API
+        perplexity_request = {
+            "system_prompt": "You are an expert immigration lawyer and tax advisor with extensive knowledge of international tax law, visa requirements, and relocation strategies.",
+            "user_prompt": payload["prompt"],
+            "model": payload["model"]
+        }
+        
+        response = get_tax_advice(perplexity_request)
+        
+        # Extract the result from the Perplexity API response
+        if isinstance(response, dict) and response.get("status") == "success":
+            data = response.get("data", {})
+            choices = data.get("choices", [])
+            if choices and len(choices) > 0:
+                result = choices[0].get("message", {}).get("content", "No content received")
+            else:
+                result = "No response received from the AI"
+        elif isinstance(response, dict) and response.get("status") == "error":
+            raise HTTPException(status_code=500, detail=response.get("message", "API error"))
+        else:
+            result = str(response)
+        
+        return {
+            "status": "success",
+            "result": result
+        }
+        
+    except Exception as e:
+        import traceback
+        error_details = f"Error in Perplexity analysis: {str(e)}\nTraceback: {traceback.format_exc()}"
+        print(f"ERROR: {error_details}")
+        raise HTTPException(status_code=500, detail=f"Error in Perplexity analysis: {str(e)}")

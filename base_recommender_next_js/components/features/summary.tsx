@@ -5,44 +5,35 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
 import { useFormStore } from "@/lib/stores"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { apiClient } from "@/lib/api-client"
 import { 
-  Download, 
   FileText, 
-  RotateCcw, 
-  Eye, 
-  EyeOff, 
   CheckCircle, 
   User, 
   MapPin, 
   GraduationCap, 
   Heart, 
   DollarSign, 
-  Lightbulb, 
-  PiggyBank, 
   Receipt, 
   TrendingUp, 
   FileEdit,
-  Calendar,
   Shield,
   Target,
-  AlertCircle,
   Info,
-  ChevronDown,
   Loader2
 } from "lucide-react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { canMoveWithinEU, hasEUCitizenship, isEUCountry } from "@/lib/utils/eu-utils"
-import { analyzeFamilyVisaRequirements } from "@/lib/utils/family-visa-utils"
 
-export function Summary() {
+
+interface SummaryProps {
+  onNavigateToResults?: () => void
+}
+
+export function Summary({ onNavigateToResults }: SummaryProps = {}) {
   const { formData, hasRequiredData, completedSections, isSectionMarkedComplete } = useFormStore()
-  const [showJSON, setShowJSON] = useState(false)
   
   // Section info modal functionality
   const { 
@@ -76,6 +67,17 @@ export function Summary() {
       const skipFinanceDetails = formData.finance?.skipDetails ?? false
       
       switch (sectionId) {
+        case "destination":
+          // Handle destination locally without backend call
+          const destData = formData.residencyIntentions?.destinationCountry
+          if (destData) {
+            const story = `Destination Country: ${destData.country}${destData.region && destData.region !== "I don't know yet / open to any" ? `\nRegion: ${destData.region}` : ''}${destData.moveType ? `\nMove Type: ${destData.moveType}` : ''}`
+            setSectionStories(prev => ({ ...prev, [sectionId]: story }))
+            setLoadingSections(prev => ({ ...prev, [sectionId]: false }))
+            return
+          } else {
+            throw new Error("No destination information found")
+          }
         case "personal":
           const personalInfo = formData.personalInformation || {}
           response = await apiClient.getPersonalInformationStory(personalInfo, destCountry)
@@ -108,6 +110,10 @@ export function Summary() {
           const additionalInfo = formData.additionalInformation || {}
           response = await apiClient.getAdditionalInformationStory(additionalInfo, destCountry)
           break
+        case "fullSummary":
+          // Handle full summary by triggering the complete profile generation
+          expandFullInformation()
+          return
         default:
           throw new Error(`Unknown section: ${sectionId}`)
       }
@@ -121,104 +127,14 @@ export function Summary() {
     }
   }
 
-  const json = JSON.stringify(formData, null, 2)
-  
-  // Check if this is an alternative interests completion
-  const alternativeInterests = formData.alternativeInterests
-  const userPurpose = alternativeInterests?.purpose
-  
-  // Check user's citizenship and finance status
-  const destCountry = formData.residencyIntentions?.destinationCountry?.country
-  const userNationalities = formData.personalInformation?.nationalities || []
-  const partnerInfo = formData.personalInformation?.relocationPartnerInfo 
-  const dependentsInfo = formData.personalInformation?.relocationDependents || []
-  const hasSkippedFinance = formData.finance?.skipDetails
-  
-  // Check if user is already a citizen of destination country
-  const isAlreadyCitizen = destCountry && userNationalities.some((nat: any) => nat.country === destCountry)
-  
-  // Check EU movement rights for primary user
-  const canMoveWithinEUFreedom = destCountry && canMoveWithinEU(userNationalities, destCountry)
-  
-  // Treat EU movement the same as direct citizenship for most purposes
-  const hasNoVisaRequirement = isAlreadyCitizen || canMoveWithinEUFreedom
-  
-  // Analyze family visa requirements
-  const familyVisaAnalysis = destCountry ? (() => {
-    // Convert partner info to our format
-    const partner = partnerInfo ? {
-      nationalities: partnerInfo.partnerNationalities || [],
-      relationship: 'spouse'
-    } : undefined
-    
-    // Convert dependents info to our format  
-    const dependents = dependentsInfo.map((dep: any) => ({
-      nationalities: dep.nationalities || [],
-      relationship: dep.relationship || 'child',
-      age: dep.age || 0,
-      dateOfBirth: dep.dateOfBirth
-    }))
-    
-    return analyzeFamilyVisaRequirements(userNationalities, destCountry, partner, dependents)
-  })() : null
-  
-  const hasNoFamilyVisaIssues = !familyVisaAnalysis || !familyVisaAnalysis.familyRequiresVisas
-  
-  // Check if Personal Information section is completed (required to have complete family data)
-  const isPersonalInfoComplete = isSectionMarkedComplete("personal")
-  
-  // Check if user CURRENTLY qualifies for alternative pathway
-  // Must meet ALL original conditions: Personal Info complete + citizen/EU + finance skipped + no family visa issues
-  const currentlyQualifiesForAlternative = isPersonalInfoComplete && hasSkippedFinance && hasNoVisaRequirement && hasNoFamilyVisaIssues && destCountry
-  
-  // Only show alternative pathway if user completed via that pathway AND still qualifies for it
-  // The section should disappear completely if ANY condition is no longer met
-  const isCurrentlyAlternativeCase = Boolean(
-    alternativeInterests?.completedViaSummary && 
-    isPersonalInfoComplete &&
-    hasSkippedFinance && 
-    hasNoVisaRequirement && 
-    hasNoFamilyVisaIssues && 
-    destCountry && 
-    userPurpose
-  )
-  
-  // Temporary debug - remove after fixing
-  console.log('🔍 Alternative Summary Debug:', {
-    'completedViaSummary': alternativeInterests?.completedViaSummary,
-    'isPersonalInfoComplete': isPersonalInfoComplete,
-    'hasSkippedFinance': hasSkippedFinance,
-    'hasNoVisaRequirement': hasNoVisaRequirement,
-    'hasNoFamilyVisaIssues': hasNoFamilyVisaIssues,
-    'destCountry': destCountry,
-    'userPurpose': !!userPurpose,
-    'FINAL_RESULT': isCurrentlyAlternativeCase
-  })
 
-  const downloadJSON = () => {
-    const blob = new Blob([json], { type: "application/json" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "tax_migration_profile.json"
-    a.click()
-    URL.revokeObjectURL(url)
-  }
 
-  const printPDF = () => {
-    window.print()
-  }
 
-  const resetData = () => {
-    if (confirm("Are you sure you want to reset all data? This cannot be undone.")) {
-      localStorage.removeItem("tax-migration-form")
-      window.location.reload()
-    }
-  }
+
 
   // Section completion status
   const sections = [
-    { id: "destination", name: "Destination Country", icon: MapPin, data: formData.destination },
+    { id: "destination", name: "Destination Country", icon: MapPin, data: formData.residencyIntentions?.destinationCountry },
     { id: "personal", name: "Personal Information", icon: User, data: formData.personalInformation },
     { id: "education", name: "Education & Skills", icon: GraduationCap, data: formData.education },
     { id: "residency", name: "Residency Intentions", icon: Heart, data: formData.residencyIntentions },
@@ -226,14 +142,16 @@ export function Summary() {
     { id: "socialSecurity", name: "Social Security & Pensions", icon: Shield, data: formData.socialSecurityAndPensions },
     { id: "taxDeductions", name: "Tax Deductions & Credits", icon: Receipt, data: formData.taxDeductionsAndCredits },
     { id: "futurePlans", name: "Future Financial Plans", icon: TrendingUp, data: formData.futureFinancialPlans },
-    { id: "additional", name: "Additional Information", icon: FileEdit, data: formData.additionalInformation }
+    { id: "additional", name: "Additional Information", icon: FileEdit, data: formData.additionalInformation },
+    { id: "fullSummary", name: "Full Summary", icon: FileText, data: { hasData: true }, isSpecial: true }
   ]
 
   const completedCount = sections.filter(section => 
-    (section.data && Object.keys(section.data).length > 0)
+    !section.isSpecial && (section.data && Object.keys(section.data).length > 0)
   ).length
 
-  const completionPercentage = Math.round((completedCount / sections.length) * 100)
+  const totalRegularSections = sections.filter(section => !section.isSpecial).length
+  const completionPercentage = Math.round((completedCount / totalRegularSections) * 100)
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
@@ -243,64 +161,7 @@ export function Summary() {
           <FileText className="w-7 h-7 text-primary" />
           <h1 className="text-3xl font-bold tracking-tight">Profile Summary</h1>
         </div>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Review your tax migration profile and view your complete information
-        </p>
-        
-        {/* Prominent View Full Profile Button */}
-        <div className="mt-6 flex justify-center">
-          <CheckInfoButton
-            onClick={() => {
-              // Immediately expand to full information view
-              expandFullInformation()
-            }}
-            isLoading={isCheckingInfo}
-            variant="default"
-            size="lg"
-            className="px-8 py-3 text-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
-            icon={<Eye className="w-5 h-5" />}
-            loadingText="Generating Complete Profile..."
-          >
-            View Complete Profile
-          </CheckInfoButton>
-        </div>
       </div>
-
-      {/* Special Alternative Interests Summary */}
-      {isCurrentlyAlternativeCase && (
-        <Card className="shadow-sm border-l-4 border-l-purple-500">
-          <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
-            <CardTitle className="text-xl flex items-center gap-3">
-              <Target className="w-6 h-6 text-purple-600" />
-              Alternative Pathway Summary
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <Alert className="border-purple-200 bg-purple-50 dark:bg-purple-950/20">
-              <Info className="h-4 w-4 text-purple-600" />
-              <AlertDescription className="text-purple-800 dark:text-purple-200">
-                <div className="space-y-3">
-                  <p>
-                    <strong>Status:</strong> You are already a citizen of {destCountry} and do not need taxation advice.
-                  </p>
-                  {hasSkippedFinance && (
-                    <p>
-                      <strong>Financial Details:</strong> You chose to skip detailed financial information.
-                    </p>
-                  )}
-                  <div>
-                    <strong>Your Specific Purpose:</strong>
-                    <p className="mt-1 italic">"{userPurpose}"</p>
-                  </div>
-                  <p className="text-sm text-purple-700 dark:text-purple-300 mt-4">
-                    All sections have been marked as complete based on your alternative pathway completion.
-                  </p>
-                </div>
-              </AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Completion Overview Card */}
       <Card className="shadow-sm border-l-4 border-l-primary">
@@ -318,69 +179,123 @@ export function Summary() {
               <div className="text-4xl font-bold text-primary mb-2">{completionPercentage}%</div>
               <div className="text-lg font-medium mb-1">Profile Complete</div>
               <div className="text-sm text-muted-foreground">
-                {completedCount} of {sections.length} sections completed
+                {completedCount} of {totalRegularSections} sections completed
               </div>
             </div>
 
             {/* Expandable Section breakdown */}
             <Accordion type="multiple" className="w-full">
               {sections.map((section) => {
-                const hasData = section.data && Object.keys(section.data).length > 0
+                const hasData = section.isSpecial || (section.data && Object.keys(section.data).length > 0)
                 const status = hasData
                 const isLoading = loadingSections[section.id]
                 const story = sectionStories[section.id]
                 
                 if (!status) {
-                  // Show non-expandable item for incomplete sections
+                  // Show beautiful non-expandable item for incomplete sections
                   return (
-                    <div key={section.id} className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50/50">
-                      <div className="p-2 rounded-full bg-card text-gray-500">
-                        <section.icon className="w-4 h-4" />
+                    <div key={section.id} className="flex items-center gap-4 p-5 border border-slate-300 dark:border-slate-600 rounded-xl bg-gradient-to-r from-slate-100/80 to-gray-100/60 dark:from-slate-700/60 dark:to-slate-800/40 shadow-sm hover:shadow-lg transition-all duration-200">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-600 dark:to-slate-700 text-slate-500 dark:text-slate-400 shadow-inner">
+                        <section.icon className="w-6 h-6" />
                       </div>
                       <div className="flex-1">
-                        <div className="font-medium text-gray-600">{section.name}</div>
+                        <div className="font-bold text-slate-700 dark:text-slate-200 text-base">{section.name}</div>
+                        <div className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Section not completed</div>
                       </div>
-                      <Badge variant="secondary">Incomplete</Badge>
+                      <Badge variant="outline" className="bg-slate-200/80 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 border-slate-400 dark:border-slate-500 font-semibold px-3 py-1">
+                        Incomplete
+                      </Badge>
                     </div>
                   )
                 }
                 
+                // Special styling for Full Summary section
+                const isFullSummary = section.id === "fullSummary"
+                const borderClass = isFullSummary 
+                  ? "border-2 border-purple-300 dark:border-purple-700" 
+                  : "border-2 border-emerald-300 dark:border-emerald-700"
+                const bgClass = isFullSummary 
+                  ? "bg-gradient-to-r from-purple-100/90 to-indigo-100/70 dark:from-purple-900/40 dark:to-indigo-900/30" 
+                  : "bg-gradient-to-r from-emerald-100/90 to-green-100/70 dark:from-emerald-900/40 dark:to-green-900/30"
+                const hoverClass = isFullSummary 
+                  ? "hover:bg-purple-100/80 dark:hover:bg-purple-900/50" 
+                  : "hover:bg-emerald-100/80 dark:hover:bg-emerald-900/50"
+                const iconBgClass = isFullSummary 
+                  ? "bg-gradient-to-br from-purple-200 to-indigo-200 dark:from-purple-800 dark:to-indigo-800" 
+                  : "bg-gradient-to-br from-emerald-200 to-green-200 dark:from-emerald-800 dark:to-green-800"
+                const iconTextClass = isFullSummary 
+                  ? "text-purple-700 dark:text-purple-200" 
+                  : "text-emerald-700 dark:text-emerald-200"
+                const titleClass = isFullSummary 
+                  ? "text-purple-900 dark:text-purple-100" 
+                  : "text-emerald-900 dark:text-emerald-100"
+                const subtitleClass = isFullSummary 
+                  ? "text-purple-700 dark:text-purple-300" 
+                  : "text-emerald-700 dark:text-emerald-300"
+                const badgeClass = isFullSummary 
+                  ? "bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-100 border-purple-400 dark:border-purple-600" 
+                  : "bg-emerald-200 dark:bg-emerald-800 text-emerald-800 dark:text-emerald-100 border-emerald-400 dark:border-emerald-600"
+                
                 return (
-                  <AccordionItem key={section.id} value={section.id} className="border rounded-lg">
+                  <AccordionItem key={section.id} value={section.id} className={`${borderClass} rounded-xl ${bgClass} shadow-md hover:shadow-lg transition-all duration-200`}>
                     <AccordionTrigger 
-                      className="flex items-center gap-3 p-3 hover:no-underline"
+                      className={`flex items-center gap-4 p-5 hover:no-underline ${hoverClass} rounded-xl transition-colors duration-200`}
                       onClick={() => fetchSectionStory(section.id)}
                     >
-                      <div className="flex items-center gap-3 flex-1">
-                        <div className="p-2 rounded-full bg-green-100 text-green-600">
-                          <CheckCircle className="w-4 h-4" />
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className={`p-3 rounded-xl ${iconBgClass} ${iconTextClass} shadow-inner`}>
+                          {isFullSummary ? <section.icon className="w-6 h-6" /> : <CheckCircle className="w-6 h-6" />}
                         </div>
                         <div className="flex-1 text-left">
-                          <div className="font-medium">{section.name}</div>
+                          <div className={`font-bold ${titleClass} text-base`}>{section.name}</div>
+                          <div className={`text-sm ${subtitleClass} mt-1 font-semibold`}>
+                            {isFullSummary ? "Click to view complete profile" : "Click to view section summary"}
+                          </div>
                         </div>
-                        <Badge variant="default">Complete</Badge>
+                        <Badge className={`${badgeClass} font-bold px-3 py-1 text-sm`}>
+                          {isFullSummary ? "Available" : "Complete"}
+                        </Badge>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-3 pb-3">
-                      <div className="ml-11 pt-2 border-t bg-gray-50/50 p-4 rounded">
-                        {isLoading ? (
-                          <div className="flex items-center gap-2 text-muted-foreground">
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            <span>Loading section information...</span>
-                          </div>
-                        ) : story ? (
-                          <div className="prose prose-sm max-w-none text-gray-700">
-                            {story.split('\n').map((paragraph, idx) => (
-                              paragraph.trim() ? (
-                                <p key={idx} className="mb-2 last:mb-0">{paragraph}</p>
-                              ) : null
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="text-muted-foreground text-sm">
-                            Click to load section information
-                          </div>
-                        )}
+                    <AccordionContent className="px-3 pb-4">
+                      <div className="ml-11 pt-4">
+                        <div className="bg-gradient-to-br from-blue-100/90 to-indigo-100/70 dark:from-blue-900/50 dark:to-indigo-900/40 border-2 border-blue-200 dark:border-blue-700 rounded-lg p-6 shadow-md">
+                          {isLoading ? (
+                            <div className="flex items-center gap-4 text-blue-700 dark:text-blue-200">
+                              <div className="p-3 bg-blue-200 dark:bg-blue-800 rounded-full">
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                              </div>
+                              <div>
+                                <div className="font-bold text-base">Loading section information...</div>
+                                <div className="text-sm text-blue-600 dark:text-blue-300 font-medium">Generating personalized summary</div>
+                              </div>
+                            </div>
+                          ) : story ? (
+                            <div className="space-y-4">
+                              <div className="flex items-center gap-3 mb-4 pb-3 border-b-2 border-blue-300/60 dark:border-blue-600/50">
+                                <div className="w-3 h-3 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                                <span className="text-base font-bold text-blue-800 dark:text-blue-200">Section Summary</span>
+                              </div>
+                              <div className="prose prose-base max-w-none text-slate-800 dark:text-slate-100 leading-relaxed">
+                                {story.split('\n').map((paragraph, idx) => (
+                                  paragraph.trim() ? (
+                                    <p key={idx} className="mb-4 last:mb-0 text-base leading-relaxed font-medium">{paragraph}</p>
+                                  ) : null
+                                ))}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-4 text-slate-600 dark:text-slate-300">
+                              <div className="p-3 bg-slate-200 dark:bg-slate-700 rounded-full">
+                                <Info className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <div className="font-bold text-base">Click to load section information</div>
+                                <div className="text-sm text-slate-500 dark:text-slate-400 font-medium">Tap the section header to view details</div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </AccordionContent>
                   </AccordionItem>
@@ -389,217 +304,22 @@ export function Summary() {
             </Accordion>
           </div>
         </CardContent>
-      </Card>
-
-      {/* Profile Overview Card */}
-      {formData && (
-        <Card className="shadow-sm border-l-4 border-l-blue-500">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
-            <CardTitle className="text-xl flex items-center gap-3">
-              <User className="w-6 h-6 text-blue-600" />
-              Profile Overview
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">Key information from your profile</p>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Destination */}
-              {formData.destination && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-muted-foreground" />
-                    <span className="font-medium">Destination</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground ml-6">
-                    {formData.destination.region && formData.destination.region !== "I don't know yet / open to any" 
-                      ? `${formData.destination.region}, ${formData.destination.country}`
-                      : formData.destination.country}
-                  </p>
-                </div>
-              )}
-
-              {/* Current Country */}
-              {formData.personalInformation?.currentResidency?.country && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-muted-foreground" />
-                    <span className="font-medium">Current Location</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground ml-6">
-                    {formData.personalInformation.currentResidency.country}
-                  </p>
-                </div>
-              )}
-
-              {/* Move Type */}
-              {formData.residencyIntentions?.destinationCountry?.moveType && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Heart className="w-4 h-4 text-muted-foreground" />
-                    <span className="font-medium">Move Type</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground ml-6">
-                    {formData.residencyIntentions.destinationCountry.moveType}
-                  </p>
-                </div>
-              )}
-
-                             {/* Income Sources */}
-               {formData.finance?.incomeSources && formData.finance.incomeSources.length > 0 && (
-                 <div className="space-y-2">
-                   <div className="flex items-center gap-2">
-                     <DollarSign className="w-4 h-4 text-muted-foreground" />
-                     <span className="font-medium">Income Sources</span>
-                   </div>
-                   <p className="text-sm text-muted-foreground ml-6">
-                     {formData.finance.incomeSources.length} source{formData.finance.incomeSources.length !== 1 ? 's' : ''}
-                   </p>
-                 </div>
-               )}
-
-               {/* Education */}
-               {formData.education?.previousDegrees && formData.education.previousDegrees.length > 0 && (
-                 <div className="space-y-2">
-                   <div className="flex items-center gap-2">
-                     <GraduationCap className="w-4 h-4 text-muted-foreground" />
-                     <span className="font-medium">Education</span>
-                   </div>
-                   <p className="text-sm text-muted-foreground ml-6">
-                     {formData.education.previousDegrees.length} degree{formData.education.previousDegrees.length !== 1 ? 's' : ''}
-                   </p>
-                 </div>
-               )}
-
-               {/* Family */}
-               {formData.personalInformation?.partner && (
-                 <div className="space-y-2">
-                   <div className="flex items-center gap-2">
-                     <User className="w-4 h-4 text-muted-foreground" />
-                     <span className="font-medium">Family</span>
-                   </div>
-                   <p className="text-sm text-muted-foreground ml-6">
-                     Relocating with partner
-                     {formData.personalInformation.dependents && formData.personalInformation.dependents.length > 0 && 
-                       ` and ${formData.personalInformation.dependents.length} dependent${formData.personalInformation.dependents.length !== 1 ? 's' : ''}`
-                     }
-                   </p>
-                 </div>
-               )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Actions Card */}
-      <Card className="shadow-sm border-l-4 border-l-green-500">
-        <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
-          <CardTitle className="text-xl flex items-center gap-3">
-            <Download className="w-6 h-6 text-green-600" />
-            Export & Actions
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">Download your profile or manage your data</p>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <div className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
-              <Button
-                onClick={downloadJSON}
-                variant="default"
-                className="w-full"
-                size="lg"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download Profile (JSON)
-              </Button>
-
-              <Button
-                onClick={printPDF}
-                variant="outline"
-                className="w-full"
-                size="lg"
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                Print Summary (PDF)
-              </Button>
-            </div>
-
-            <Separator />
-
-            <div className="space-y-3">
-              <Button
-                onClick={() => setShowJSON(!showJSON)}
-                variant="ghost"
-                className="w-full"
-              >
-                {showJSON ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
-                {showJSON ? "Hide" : "Show"} Raw Data
-              </Button>
-
-              <Button
-                onClick={resetData}
-                variant="destructive"
-                className="w-full"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Reset All Data
-              </Button>
-            </div>
+        <CardFooter className="pt-6">
+          <div className="w-full flex justify-center">
+            <Button
+              onClick={() => {
+                if (onNavigateToResults) {
+                  onNavigateToResults()
+                }
+              }}
+              variant="default"
+              size="lg"
+              className="px-8 py-3 text-lg font-semibold bg-green-600 hover:bg-green-700 text-white shadow-lg"
+            >
+              Information is Correct - Bring Me to Results
+            </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Raw Data Display */}
-      {showJSON && (
-        <Card className="shadow-sm border-l-4 border-l-amber-500">
-          <CardHeader className="bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-950/20">
-            <CardTitle className="text-xl flex items-center gap-3">
-              <FileText className="w-6 h-6 text-amber-600" />
-              Raw Profile Data
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">Your complete profile in JSON format</p>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="bg-card p-4 rounded-lg overflow-auto max-h-96">
-              <pre className="text-xs font-mono whitespace-pre-wrap">
-                {json}
-              </pre>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Important Notes Card */}
-      <Card className="shadow-sm border-l-4 border-l-amber-500">
-        <CardHeader className="bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-950/20">
-          <CardTitle className="text-xl flex items-center gap-3">
-            <Lightbulb className="w-6 h-6 text-amber-600" />
-            Important Notes
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <div className="space-y-4">
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                <strong>Privacy:</strong> Your data is stored locally in your browser and is not automatically shared with any third parties. Make sure to download your profile before clearing your browser data.
-              </AlertDescription>
-            </Alert>
-
-            <Alert>
-              <Info className="h-4 w-4" />
-              <AlertDescription>
-                <strong>Professional Advice:</strong> This profile is a starting point for your tax migration planning. Always consult with qualified tax professionals, immigration lawyers, and financial advisors for your specific situation.
-              </AlertDescription>
-            </Alert>
-
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                <strong>Accuracy:</strong> Tax laws and immigration requirements change frequently. Ensure you have the most current information before making any major decisions based on this profile.
-              </AlertDescription>
-            </Alert>
-          </div>
-        </CardContent>
+        </CardFooter>
       </Card>
       
       {/* Section Info Modal */}
@@ -615,6 +335,7 @@ export function Summary() {
         isFullView={isFullView}
         onGoToSection={goToSection}
         onNavigateToSection={navigateToSection}
+        onNavigateToResults={onNavigateToResults}
       />
     </div>
   )

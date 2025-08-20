@@ -1,6 +1,21 @@
+import os
 import requests
 from config import Config
 from typing import Union, Dict, Any
+
+# Perplexity API configuration with proper key handling
+_ENDPOINT = "https://api.perplexity.ai/chat/completions"
+
+def _get_api_key():
+    """Get the API key, ensuring it's properly stripped of whitespace."""
+    return os.getenv("PERPLEXITY_API_KEY", "").strip()
+
+def _get_headers():
+    """Get the headers with current API key."""
+    return {
+        "Authorization": f"Bearer {_get_api_key()}",
+        "Content-Type": "application/json",
+    }
 
 def get_tax_advice(prompt: Union[str, Dict[str, Any]]):
     """Call the Perplexity API.
@@ -10,11 +25,8 @@ def get_tax_advice(prompt: Union[str, Dict[str, Any]]):
     `system_prompt` and `user_prompt` allowing the caller to fully customise the
     conversation context.
     """
-    url = Config.PERPLEXITY_API_URL
-    headers = {
-        "Authorization": f"Bearer {Config.PERPLEXITY_API_KEY}",
-        "Content-Type": "application/json",
-    }
+    url = _ENDPOINT
+    headers = _get_headers()
     
     # Build the messages array depending on the prompt type
     if isinstance(prompt, dict):
