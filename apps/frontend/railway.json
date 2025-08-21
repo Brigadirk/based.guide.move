@@ -23,9 +23,5 @@
     "startCommand": "npm start",
     "healthcheckPath": "/",
     "healthcheckTimeout": 300
-  },
-  "environments": {
-    "NODE_ENV": "production",
-    "PORT": "3000"
   }
 }
