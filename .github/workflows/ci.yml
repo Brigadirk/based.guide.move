@@ -108,9 +108,7 @@ jobs:
         continue-on-error: true
 
       - name: Clear Jest cache
-        run: |
-          cd apps/frontend
-          npx jest --clearCache
+        run: npx jest --clearCache
 
       - name: Run tests
         run: pnpm run test
