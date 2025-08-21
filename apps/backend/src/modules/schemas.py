@@ -74,7 +74,8 @@ class TaxProfile(BaseModel):
         extra = "allow"
 
     @field_validator("personalInformation", "residencyIntentions", "finance")
-    def not_null(self, v):  # noqa: D401
+    @classmethod
+    def not_null(cls, v):  # noqa: D401
         if v is None:
             raise ValueError("Field must not be null")
         return v
