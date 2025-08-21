@@ -141,3 +141,13 @@ export interface Liability {
   paybackYears: number
   interestRate: number
 }
+
+export interface Profile {
+  nickname?: string
+  avatar?: string
+  personalInformation?: PersonalInformation
+  financialInformation?: FinancialInformation
+  dependents?: Dependent[]
+  assets?: any[]
+  liabilities?: Liability[]
+}

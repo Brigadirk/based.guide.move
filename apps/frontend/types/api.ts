@@ -1,4 +1,4 @@
-export interface Country {
+export interface ApiCountry {
   id: string
   name: string
   code: string
