@@ -1,3 +1,6 @@
+const { pathsToModuleNameMapper } = require('ts-jest')
+const { compilerOptions } = require('./tsconfig.json')
+
 /** @type {import('jest').Config} */
 const config = {
   testEnvironment: 'jsdom',
@@ -14,30 +17,15 @@ const config = {
     }],
   },
   
-  // Very explicit module name mapping - CI seems to have issues with regex groups
+  // 🔑 KEY: Use ts-jest to automatically map TypeScript paths
+  modulePaths: [compilerOptions.baseUrl || '.'],
   moduleNameMapper: {
-    // Static assets
+    // Static assets first
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
     
-    // Explicit mappings for common paths that we know exist
-    '^@/lib/hooks/use-currencies$': '<rootDir>/lib/hooks/use-currencies.ts',
-    '^@/lib/hooks/use-alternative-interests$': '<rootDir>/lib/hooks/use-alternative-interests.ts',
-    '^@/lib/hooks/use-auto-save$': '<rootDir>/lib/hooks/use-auto-save.ts',
-    '^@/lib/hooks/use-hydrated-store$': '<rootDir>/lib/hooks/use-hydrated-store.ts',
-    '^@/lib/hooks/use-section-info$': '<rootDir>/lib/hooks/use-section-info.ts',
-    '^@/data/country_info.json$': '<rootDir>/data/country_info.json',
-    '^@/data/eu-countries.json$': '<rootDir>/data/eu-countries.json',
-    
-    // Fallback patterns - these should work after explicit mappings
-    '^@/lib/(.+)$': '<rootDir>/lib/$1',
-    '^@/components/(.+)$': '<rootDir>/components/$1',
-    '^@/app/(.+)$': '<rootDir>/app/$1',
-    '^@/types/(.+)$': '<rootDir>/types/$1',
-    '^@/data/(.+)$': '<rootDir>/data/$1',
-    
-    // Final catch-all
-    '^@/(.+)$': '<rootDir>/$1',
+    // 🎯 SOLUTION: Auto-generate from tsconfig.json paths
+    ...pathsToModuleNameMapper(compilerOptions.paths || {}, { prefix: '<rootDir>/' }),
   },
   
   // Module file extensions
@@ -45,7 +33,6 @@ const config = {
   
   // Module paths
   roots: ['<rootDir>'],
-  modulePaths: ['<rootDir>'],
   
   // Transform ignore patterns
   transformIgnorePatterns: [
