@@ -24,6 +24,7 @@ load_dotenv()  # Load from backend/.env
 
 scheduler = AsyncIOScheduler()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):  # noqa: D401
     """Start background FX scheduler on app startup and shut it down gracefully."""
@@ -43,16 +44,19 @@ async def lifespan(app: FastAPI):  # noqa: D401
     # Shutdown actions
     scheduler.shutdown()
 
+
 # Instantiate FastAPI with lifespan handler
 app = FastAPI(title="Base Recommender Backend", version="1.0.0", lifespan=lifespan)
+
 
 # Add CORS middleware to handle preflight requests
 def get_allowed_origins():
     """Get allowed CORS origins from environment variable."""
     allowed_origins = Config.ALLOWED_ORIGINS
-    if allowed_origins == '*':
+    if allowed_origins == "*":
         return ["*"]
-    return [origin.strip() for origin in allowed_origins.split(',') if origin.strip()]
+    return [origin.strip() for origin in allowed_origins.split(",") if origin.strip()]
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -61,6 +65,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Health check endpoint for Railway
 @app.get("/health")
@@ -97,27 +102,25 @@ async def health_check():
                 "railway_service": Config.RAILWAY_SERVICE_NAME,
                 "railway_domain": Config.RAILWAY_PRIVATE_DOMAIN,
                 "is_railway": Config.is_railway(),
-                "is_production": Config.is_production()
+                "is_production": Config.is_production(),
             },
             "checks": {
                 "exchange_rates_accessible": rates_accessible,
                 "exchange_rates_fresh": rates_fresh,
                 "volume_accessible": volume_accessible,
-                "volume_path": volume_path
-            }
+                "volume_path": volume_path,
+            },
         }
 
         return status
 
     except Exception as e:
-        return {
-            "status": "unhealthy",
-            "error": str(e),
-            "timestamp": datetime.now().isoformat()
-        }
+        return {"status": "unhealthy", "error": str(e), "timestamp": datetime.now().isoformat()}
+
 
 # Prefix all routes with /api/v1 to stay consistent with repo conventions
 app.include_router(api_router, prefix="/api/v1")
+
 
 def run_cli_test(test_file: str):
     """Utility used by `python app.py --test <path>` to exercise the main flow without
@@ -140,6 +143,7 @@ def run_cli_test(test_file: str):
     advice_response = get_tax_advice(prompt)
     print(json.dumps(advice_response, indent=2, ensure_ascii=False))
 
+
 # Helper to refresh FX rates if snapshot older than 24h
 def ensure_rates_fresh():
     try:
@@ -147,12 +151,33 @@ def ensure_rates_fresh():
     except Exception as exc:
         print(f"[WARN] Could not refresh FX rates: {exc}")
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the Base Recommender backend.")
-    parser.add_argument("--test", metavar="JSON_PATH", nargs="?", const="tax_migration_profile_test.json", help="Run the full Perplexity pipeline locally using the specified JSON file. If no path is provided, defaults to 'tax_migration_profile_test.json'.")
-    parser.add_argument("--output", metavar="JSON_PATH", nargs="?", const="tax_migration_profile_test.json", help="Translate the JSON file into the text prompt that would be sent to Perplexity and print to stdout without performing the API call.")
-    parser.add_argument("--no-appendix", action="store_true", help="Omit the raw JSON appendix from the generated prompt.")
-    parser.add_argument("--exchange-rates", action="store_true", help="Fetch latest exchange rates now, print JSON, and exit.")
+    parser.add_argument(
+        "--test",
+        metavar="JSON_PATH",
+        nargs="?",
+        const="tax_migration_profile_test.json",
+        help="Run the full Perplexity pipeline locally using the specified JSON file. If no path is provided, defaults to 'tax_migration_profile_test.json'.",
+    )
+    parser.add_argument(
+        "--output",
+        metavar="JSON_PATH",
+        nargs="?",
+        const="tax_migration_profile_test.json",
+        help="Translate the JSON file into the text prompt that would be sent to Perplexity and print to stdout without performing the API call.",
+    )
+    parser.add_argument(
+        "--no-appendix",
+        action="store_true",
+        help="Omit the raw JSON appendix from the generated prompt.",
+    )
+    parser.add_argument(
+        "--exchange-rates",
+        action="store_true",
+        help="Fetch latest exchange rates now, print JSON, and exit.",
+    )
     parser.add_argument("--host", default="0.0.0.0", help="Host interface for uvicorn.")
     parser.add_argument("--port", type=int, default=5001, help="Port for uvicorn.")
     args = parser.parse_args()
@@ -195,4 +220,3 @@ if __name__ == "__main__":
         run_cli_test(args.test)
     else:
         uvicorn.run("app:app", host=args.host, port=args.port, reload=True)
-

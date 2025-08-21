@@ -63,7 +63,7 @@ jobs:
         run: |
           pip install ruff black
           ruff check src tests
-          black --check src tests
+          black --check src tests --diff
 
       - name: Run type checking
         run: |

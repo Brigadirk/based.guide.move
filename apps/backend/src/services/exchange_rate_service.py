@@ -28,12 +28,13 @@ from config import Config
 # Constants & paths
 # ---------------------------------------------------------------------------
 
+
 # Store snapshots - Railway volume support
 def _get_exchange_rates_folder() -> Path:
     """Get exchange rates folder with Railway volume support."""
     # Check if Railway volume mount is available
     volume_path = Config.RAILWAY_VOLUME_MOUNT_PATH
-    if volume_path and volume_path != '/app/data':
+    if volume_path and volume_path != "/app/data":
         # Use Railway volume for persistent storage
         folder = Path(volume_path) / "exchange_rates"
     elif Config.is_railway():
@@ -45,6 +46,7 @@ def _get_exchange_rates_folder() -> Path:
 
     folder.mkdir(exist_ok=True, parents=True)
     return folder
+
 
 EXCHANGE_RATES_FOLDER = _get_exchange_rates_folder()
 
@@ -61,6 +63,7 @@ LAST_SNAPSHOT_PATH: Path | None = None
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _latest_snapshot_file() -> Path | None:
     """Return the most-recently created snapshot file (including legacy dir)."""
@@ -101,6 +104,7 @@ def _hours_since(file: Path) -> float:
 # Public API
 # ---------------------------------------------------------------------------
 
+
 def fetch_and_save_latest_rates(force: bool = False) -> None:
     """Fetch fresh FX rates and save them to disk.
 
@@ -121,12 +125,16 @@ def fetch_and_save_latest_rates(force: bool = False) -> None:
         # Fetch failed; log and copy previous snapshot if available
         latest = _latest_snapshot_file()
         if latest is None:
-            raise RuntimeError("Unable to fetch exchange rates and no previous snapshot exists") from fetch_exc
+            raise RuntimeError(
+                "Unable to fetch exchange rates and no previous snapshot exists"
+            ) from fetch_exc
         # Reuse data from latest snapshot
         with open(latest, encoding="utf-8") as f:
             data = json.load(f)
         # We will still create a new file with today's timestamp to bump freshness
-        print(f"[WARN] Exchange-rate fetch failed ({fetch_exc}); reusing latest snapshot {latest.name}")
+        print(
+            f"[WARN] Exchange-rate fetch failed ({fetch_exc}); reusing latest snapshot {latest.name}"
+        )
 
     timestamp = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
     out_file = EXCHANGE_RATES_FOLDER / f"{timestamp}.json"
@@ -134,7 +142,9 @@ def fetch_and_save_latest_rates(force: bool = False) -> None:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
     # Trim backlog – keep only 3 most recent snapshots
-    files = sorted(EXCHANGE_RATES_FOLDER.glob("*.json"), key=lambda p: os.path.getctime(p), reverse=True)
+    files = sorted(
+        EXCHANGE_RATES_FOLDER.glob("*.json"), key=lambda p: os.path.getctime(p), reverse=True
+    )
     for old in files[3:]:
         try:
             old.unlink()
@@ -182,7 +192,9 @@ def convert(amount: float, source: str, target: str) -> float:
         print(f"[WARN] Exchange rate for '{source}' not found in snapshot – conversion ignored.")
         raise ValueError(f"Unknown source currency '{source}'.")
     if target != "USD" and target not in rates:
-        print(f"[WARN] Exchange rate for '{target}' not found in {LAST_SNAPSHOT_PATH}. Available keys: {list(rates.keys())[:10]} … total {len(rates)}")
+        print(
+            f"[WARN] Exchange rate for '{target}' not found in {LAST_SNAPSHOT_PATH}. Available keys: {list(rates.keys())[:10]} … total {len(rates)}"
+        )
         raise ValueError(f"Unknown target currency '{target}'.")
 
     # Convert to USD first

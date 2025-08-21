@@ -12,33 +12,33 @@ def generate_tax_prompt(data, *, include_appendix: bool = True):
     """
     # Extract relevant information from the JSON (robust defaults so the
     # function still works if fields are missing).
-    personal_info = data.get('personalInformation', {})
-    residency_intentions = data.get('residencyIntentions', {})
-    finance_data = data.get('finance', {})
+    personal_info = data.get("personalInformation", {})
+    residency_intentions = data.get("residencyIntentions", {})
+    finance_data = data.get("finance", {})
 
     # Get destination country
-    residency_intentions.get('destinationCountry', {}).get('country', 'Unknown')
+    residency_intentions.get("destinationCountry", {}).get("country", "Unknown")
 
     # Get current residency
-    personal_info.get('currentResidency', {}).get('country', 'Unknown')
+    personal_info.get("currentResidency", {}).get("country", "Unknown")
 
     # -------------------------------------------------------------------
     # Income handling – aggregate all incomeSources amounts
     # -------------------------------------------------------------------
-    income_sources = finance_data.get('incomeSources', [])
+    income_sources = finance_data.get("incomeSources", [])
     if income_sources:
         # For simplicity, take the first source's currency (assume consistent)
-        currency = income_sources[0].get('currency', 'USD').upper()
-        annual_amount = sum(src.get('amount', 0) for src in income_sources)
+        currency = income_sources[0].get("currency", "USD").upper()
+        annual_amount = sum(src.get("amount", 0) for src in income_sources)
     else:
         # Fallback to legacy fields if present
-        income = finance_data.get('income', {})
-        annual_amount = income.get('annualAmount', 0)
-        currency = income.get('currency', 'USD').upper()
+        income = finance_data.get("income", {})
+        annual_amount = income.get("annualAmount", 0)
+        currency = income.get("currency", "USD").upper()
 
     # Convert income to USD to provide additional clarity for the LLM
     try:
-        convert(float(annual_amount), currency, 'USD')
+        convert(float(annual_amount), currency, "USD")
     except Exception:
         # If conversion fails, fall back to original amount
         pass
@@ -73,12 +73,13 @@ def generate_tax_prompt(data, *, include_appendix: bool = True):
         "2. Outline the full tax obligations for the first five years after relocation (income, capital gains, wealth, exit taxes).",
         "3. Recommend tax-efficient structures or treaties to minimise double taxation between current and destination countries.",
         "4. List any compliance deadlines or forms (with official form numbers) the individual must file pre- and post-move.",
-        "5. Highlight additional steps required for the partner and dependents (e.g., medicals, language tests)."
+        "5. Highlight additional steps required for the partner and dependents (e.g., medicals, language tests).",
     ]
     story += (
         "\n\nIf any critical data required for accurate advice is missing or unclear, "
-        "list follow-up questions before proceeding.\n\n" +
-        "Please answer the following questions in order:\n" + "\n".join(questions)
+        "list follow-up questions before proceeding.\n\n"
+        + "Please answer the following questions in order:\n"
+        + "\n".join(questions)
     )
 
     if include_appendix:
@@ -88,6 +89,7 @@ def generate_tax_prompt(data, *, include_appendix: bool = True):
         prompt = story
 
     return prompt
+
 
 def build_summary(data: dict[str, Any]) -> str:
     """Return bullet list of headline risks/opportunities."""
@@ -100,7 +102,9 @@ def build_summary(data: dict[str, Any]) -> str:
     # Military service
     ms = data.get("residencyIntentions", {}).get("citizenshipPlans", {}).get("militaryService", {})
     if ms and ms.get("willing") is True:
-        bullets.append("🪖 Willingness to perform military service could unlock fast-track citizenship routes.")
+        bullets.append(
+            "🪖 Willingness to perform military service could unlock fast-track citizenship routes."
+        )
 
     # Crypto gains
     crypto_sales = data.get("finance", {}).get("capitalGains", {}).get("futureSales", [])

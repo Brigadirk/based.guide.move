@@ -55,7 +55,10 @@ class IncomeSource(BaseModel):
 
 
 class Finance(BaseModel):
-    income_situation: str | None = Field(None, pattern="^(continuing_income|current_and_new_income|seeking_income|gainfully_unemployed|dependent/supported)$")
+    income_situation: str | None = Field(
+        None,
+        pattern="^(continuing_income|current_and_new_income|seeking_income|gainfully_unemployed|dependent/supported)$",
+    )
     incomeSources: list[IncomeSource] = Field(..., min_items=1)
 
     class Config:
@@ -80,6 +83,7 @@ class TaxProfile(BaseModel):
 # Section-specific schemas for individual story generation
 class SectionRequest(BaseModel):
     """Base schema for individual section story generation requests."""
+
     section_data: dict
     destination_country: str | None = None  # For currency calculations
 
@@ -89,6 +93,7 @@ class SectionRequest(BaseModel):
 
 class PersonalInformationRequest(BaseModel):
     """Schema for personal information section story generation."""
+
     personal_information: dict
 
     class Config:
@@ -97,6 +102,7 @@ class PersonalInformationRequest(BaseModel):
 
 class EducationRequest(BaseModel):
     """Schema for education section story generation."""
+
     education: dict
 
     class Config:
@@ -105,6 +111,7 @@ class EducationRequest(BaseModel):
 
 class ResidencyIntentionsRequest(BaseModel):
     """Schema for residency intentions section story generation."""
+
     residency_intentions: dict
 
     class Config:
@@ -113,6 +120,7 @@ class ResidencyIntentionsRequest(BaseModel):
 
 class FinanceRequest(BaseModel):
     """Schema for finance section story generation."""
+
     finance: dict
     destination_country: str | None = None
 
@@ -122,6 +130,7 @@ class FinanceRequest(BaseModel):
 
 class SocialSecurityRequest(BaseModel):
     """Schema for social security and pensions section story generation."""
+
     social_security_and_pensions: dict
     destination_country: str | None = None
     skip_finance_details: bool | None = False
@@ -132,6 +141,7 @@ class SocialSecurityRequest(BaseModel):
 
 class TaxDeductionsRequest(BaseModel):
     """Schema for tax deductions and credits section story generation."""
+
     tax_deductions_and_credits: dict
     destination_country: str | None = None
     skip_finance_details: bool | None = False
@@ -142,6 +152,7 @@ class TaxDeductionsRequest(BaseModel):
 
 class FutureFinancialPlansRequest(BaseModel):
     """Schema for future financial plans section story generation."""
+
     future_financial_plans: dict
     destination_country: str | None = None
     skip_finance_details: bool | None = False
@@ -152,6 +163,7 @@ class FutureFinancialPlansRequest(BaseModel):
 
 class AdditionalInformationRequest(BaseModel):
     """Schema for additional information section story generation."""
+
     additional_information: dict
 
     class Config:
@@ -160,6 +172,7 @@ class AdditionalInformationRequest(BaseModel):
 
 class SummaryRequest(BaseModel):
     """Schema for complete summary story generation."""
+
     profile: dict
 
     class Config:

@@ -16,6 +16,7 @@ from services.exchange_rate_service import convert
 
 LINE_BREAK = "\n\n"
 
+
 def _fmt_date(d: str) -> str:
     try:
         return datetime.strptime(d, "%Y-%m-%d").strftime("%d %B %Y")
@@ -77,7 +78,9 @@ def personal_section(pi: dict[str, Any]) -> str:
             sent = f"Currently, the individual is a {status.lower()} in {res_country}"
             duration = res.get("duration")
             if duration:
-                sent += f" and has lived there for about {duration} year{'s' if duration != 1 else ''}"
+                sent += (
+                    f" and has lived there for about {duration} year{'s' if duration != 1 else ''}"
+                )
             sent += "."
             lines.append(sent)
 
@@ -108,7 +111,9 @@ def personal_section(pi: dict[str, Any]) -> str:
         official_years = partner_info.get("officialRelationshipDuration")
 
         if full_years is not None and full_years > 0:
-            dur_sentence = f"They have been together for {full_years} year{'s' if full_years != 1 else ''}"
+            dur_sentence = (
+                f"They have been together for {full_years} year{'s' if full_years != 1 else ''}"
+            )
 
             if official_years is not None:
                 if official_years > 0:
@@ -150,16 +155,22 @@ def personal_section(pi: dict[str, Any]) -> str:
                     elif rel_type == "Unmarried Partner":
                         dur_sentence += " but they do not live together"
                     else:
-                        dur_sentence += " in a romantic relationship but without official recognition"
+                        dur_sentence += (
+                            " in a romantic relationship but without official recognition"
+                        )
 
             lines.append(dur_sentence + ".")
 
         # Relationship proof
         can_prove = partner_info.get("canProveRelationship")
         if can_prove is True:
-            lines.append("They can provide documentation to prove their relationship (photos, correspondence, joint accounts, etc.).")
+            lines.append(
+                "They can provide documentation to prove their relationship (photos, correspondence, joint accounts, etc.)."
+            )
         elif can_prove is False:
-            lines.append("They have indicated they may have limited documentation to prove their relationship.")
+            lines.append(
+                "They have indicated they may have limited documentation to prove their relationship."
+            )
     elif has_partner is False:
         lines.append("The individual is not bringing a partner or spouse with them.")
     # Note: If has_partner is not explicitly set (None/undefined), we don't mention partner status
@@ -236,7 +247,9 @@ def personal_section(pi: dict[str, Any]) -> str:
             age_str = ""
             if dob:
                 try:
-                    age = int((date.today() - datetime.strptime(dob, "%Y-%m-%d").date()).days / 365.25)
+                    age = int(
+                        (date.today() - datetime.strptime(dob, "%Y-%m-%d").date()).days / 365.25
+                    )
                     age_str = f" (age {age})"
                 except Exception:
                     pass
@@ -251,7 +264,7 @@ def personal_section(pi: dict[str, Any]) -> str:
             # Include additional notes if provided
             notes = rel_details.get("additionalNotes", "").strip()
             if notes:
-                dep_desc += f" (Note: \"{notes}\")"
+                dep_desc += f' (Note: "{notes}")'
 
             # Group by primary relationship
             if primary_relation == "partner":
@@ -276,7 +289,9 @@ def personal_section(pi: dict[str, Any]) -> str:
             if len(partner_deps) == 1:
                 dep_parts.append(f"their partner's {partner_deps[0]}")
             else:
-                dep_parts.append(f"their partner's {len(partner_deps)} dependents: {'; '.join(partner_deps[:3])}")
+                dep_parts.append(
+                    f"their partner's {len(partner_deps)} dependents: {'; '.join(partner_deps[:3])}"
+                )
                 if len(partner_deps) > 3:
                     dep_parts[-1] += f" and {len(partner_deps)-3} others"
 
@@ -285,7 +300,9 @@ def personal_section(pi: dict[str, Any]) -> str:
     else:
         # Check if dependents field was explicitly set to empty vs not filled out
         if "dependents" in pi or "numDependents" in pi:
-            lines.append("The individual is not bringing any dependents (children or other dependents) with them.")
+            lines.append(
+                "The individual is not bringing any dependents (children or other dependents) with them."
+            )
 
     return " ".join(lines) or "User has not submitted any information on this section."
 
@@ -306,7 +323,11 @@ def _summarise_language(prof: dict[str, int]) -> str:
     return ", ".join(parts)
 
 
-def residency_section(ri: dict[str, Any], personal_info: dict[str, Any] = None, alternative_interests: dict[str, Any] = None) -> str:
+def residency_section(
+    ri: dict[str, Any],
+    personal_info: dict[str, Any] = None,
+    alternative_interests: dict[str, Any] = None,
+) -> str:
     if not ri:
         return "Residency intentions have not been completed yet."
 
@@ -331,7 +352,7 @@ def residency_section(ri: dict[str, Any], personal_info: dict[str, Any] = None, 
     # Move motivation
     motivation = ri.get("moveMotivation", "").strip()
     if motivation:
-        sentences.append(f"Their motivation for moving: \"{motivation}\"")
+        sentences.append(f'Their motivation for moving: "{motivation}"')
 
     # Analyze family visa situation if personal info is available
     if personal_info and country != "an unspecified country":
@@ -366,28 +387,40 @@ def residency_section(ri: dict[str, Any], personal_info: dict[str, Any] = None, 
                     dependent_visa_count += 1
 
         if dependent_visa_count > 0:
-            family_visa_needed.append(f"{dependent_visa_count} dependent{'s' if dependent_visa_count > 1 else ''}")
+            family_visa_needed.append(
+                f"{dependent_visa_count} dependent{'s' if dependent_visa_count > 1 else ''}"
+            )
 
         # Add family visa context to story
         if family_visa_needed:
             if user_has_visa_free:
                 if user_has_eu_freedom and not user_is_citizen:
-                    sentences.append(f"As an EU citizen, they have freedom of movement to {country}.")
+                    sentences.append(
+                        f"As an EU citizen, they have freedom of movement to {country}."
+                    )
                 elif user_is_citizen:
                     sentences.append(f"They are already a citizen of {country}.")
 
                 family_desc = " and ".join(family_visa_needed)
-                sentences.append(f"However, their {family_desc} will require family reunion/dependent visas.")
+                sentences.append(
+                    f"However, their {family_desc} will require family reunion/dependent visas."
+                )
 
                 if is_eu_country(country) and has_eu_citizenship(user_nationalities):
-                    sentences.append("EU family reunion directives may provide beneficial pathways for family members.")
+                    sentences.append(
+                        "EU family reunion directives may provide beneficial pathways for family members."
+                    )
             else:
                 total_family = len(family_visa_needed) + 1  # +1 for primary applicant
-                sentences.append(f"This will involve {total_family} separate visa applications for the complete family unit.")
+                sentences.append(
+                    f"This will involve {total_family} separate visa applications for the complete family unit."
+                )
         elif partner_info or dependents_info:
             # Family exists but no visas needed
             if user_has_eu_freedom or any(
-                can_move_within_eu(partner_info.get("partnerNationalities", []), country) if partner_info else False
+                can_move_within_eu(partner_info.get("partnerNationalities", []), country)
+                if partner_info
+                else False
             ):
                 sentences.append("The entire family benefits from EU freedom of movement rights.")
             else:
@@ -400,7 +433,9 @@ def residency_section(ri: dict[str, Any], personal_info: dict[str, Any] = None, 
             if timeline == "together":
                 sentences.append("They prefer to coordinate all family visa applications together.")
             elif timeline == "sequential":
-                sentences.append("They plan to apply for their own visa first, then family members.")
+                sentences.append(
+                    "They plan to apply for their own visa first, then family members."
+                )
 
             priority = family_planning.get("relocationPriority")
             if priority == "moveTogetherEssential":
@@ -415,17 +450,19 @@ def residency_section(ri: dict[str, Any], personal_info: dict[str, Any] = None, 
                     "applicationCosts": "visa application costs for multiple family members",
                     "processingTiming": "processing times and coordination",
                     "childSchooling": "school enrollment timing for children",
-                    "spouseWork": "spouse work authorization"
+                    "spouseWork": "spouse work authorization",
                 }
                 concern_text = [concern_map.get(c, c) for c in concerns]
                 if len(concern_text) == 1:
                     sentences.append(f"Their main family visa concern is {concern_text[0]}.")
                 else:
-                    sentences.append(f"Their main family visa concerns include {', '.join(concern_text[:-1])}, and {concern_text[-1]}.")
+                    sentences.append(
+                        f"Their main family visa concerns include {', '.join(concern_text[:-1])}, and {concern_text[-1]}."
+                    )
 
             special_circumstances = family_planning.get("specialCircumstances", "").strip()
             if special_circumstances:
-                sentences.append(f"Special family circumstances: \"{special_circumstances}\"")
+                sentences.append(f'Special family circumstances: "{special_circumstances}"')
 
     # Alternative interests section for those with no visa issues and finance skipped
     if alternative_interests:
@@ -433,11 +470,15 @@ def residency_section(ri: dict[str, Any], personal_info: dict[str, Any] = None, 
         completed_via_summary = alternative_interests.get("completedViaSummary", False)
 
         if purpose:
-            sentences.append("Since they have no visa requirements and are not interested in detailed taxation advice, they are seeking alternative information.")
-            sentences.append(f"Their specific purpose for using this system: \"{purpose}\"")
+            sentences.append(
+                "Since they have no visa requirements and are not interested in detailed taxation advice, they are seeking alternative information."
+            )
+            sentences.append(f'Their specific purpose for using this system: "{purpose}"')
 
             if completed_via_summary:
-                sentences.append("They chose to complete their profile via the alternative pathway and proceed directly to a targeted summary.")
+                sentences.append(
+                    "They chose to complete their profile via the alternative pathway and proceed directly to a targeted summary."
+                )
 
     # Residency plans - only mention if explicitly provided
     rp = ri.get("residencyPlans", {})
@@ -452,12 +493,16 @@ def residency_section(ri: dict[str, Any], personal_info: dict[str, Any] = None, 
         months = rp.get("maxMonthsWillingToReside")
 
         if want_minimum_only:
-            sentences.append("They prefer to know the minimum physical presence requirements (days/months per year to maintain residency status) rather than set a specific preference.")
+            sentences.append(
+                "They prefer to know the minimum physical presence requirements (days/months per year to maintain residency status) rather than set a specific preference."
+            )
         elif months is not None:
             if months == 0:
                 sentences.append("They initially indicated zero months of residence willingness.")
             else:
-                sentences.append(f"They are willing to reside for up to {months} month{'s' if months!=1 else ''} initially.")
+                sentences.append(
+                    f"They are willing to reside for up to {months} month{'s' if months!=1 else ''} initially."
+                )
 
         # Exploratory visits with user's details
         if rp.get("openToVisiting") is True:
@@ -465,9 +510,13 @@ def residency_section(ri: dict[str, Any], personal_info: dict[str, Any] = None, 
             user_details = visit_details.get("details", "").strip()
 
             if user_details:
-                sentences.append(f"Individual has expressed planning or being open to exploratory visits before relocation: \"{user_details}\"")
+                sentences.append(
+                    f'Individual has expressed planning or being open to exploratory visits before relocation: "{user_details}"'
+                )
             else:
-                sentences.append("Individual has expressed planning or being open to exploratory visits before relocation but has not provided specific details yet.")
+                sentences.append(
+                    "Individual has expressed planning or being open to exploratory visits before relocation but has not provided specific details yet."
+                )
         elif rp.get("openToVisiting") is False:
             sentences.append("They are not planning any exploratory visits prior to relocation.")
 
@@ -485,36 +534,48 @@ def residency_section(ri: dict[str, Any], personal_info: dict[str, Any] = None, 
         if investment.get("willing") and investment.get("amount"):
             amt = investment["amount"]
             curr = investment.get("currency", "USD")
-            sentences.append(f"They are willing to invest {amt:,} {curr} towards a citizenship-by-investment route.")
+            sentences.append(
+                f"They are willing to invest {amt:,} {curr} towards a citizenship-by-investment route."
+            )
         donation = cp.get("donation", {})
         if donation.get("willing") and donation.get("amount"):
-            sentences.append(f"They are open to making a donation of {donation['amount']:,} {donation.get('currency', 'USD')} as part of the naturalisation process.")
+            sentences.append(
+                f"They are open to making a donation of {donation['amount']:,} {donation.get('currency', 'USD')} as part of the naturalisation process."
+            )
         elif donation and donation.get("willing") is False:
             sentences.append("They are not willing to pursue a donation-based citizenship route.")
 
         # Family ties
         ties = cp.get("familyTies", {})
         if ties.get("hasConnections"):
-            sentences.append(f"They also have family connections in {country} (closest relation: {ties.get('closestRelation','unspecified')}).")
+            sentences.append(
+                f"They also have family connections in {country} (closest relation: {ties.get('closestRelation','unspecified')})."
+            )
 
     # Centre of life ties
     col = ri.get("centerOfLife", {})
     ties_text = col.get("tiesDescription")
     if col.get("maintainsSignificantTies"):
-        sentences.append("They maintain significant ties to their current country (" + (f"\"{ties_text}\"" if ties_text else "details not specified") + ").")
+        sentences.append(
+            "They maintain significant ties to their current country ("
+            + (f'"{ties_text}"' if ties_text else "details not specified")
+            + ")."
+        )
     elif ties_text:
-        sentences.append("Regarding centre-of-life ties, they note: \"" + ties_text + "\".")
+        sentences.append('Regarding centre-of-life ties, they note: "' + ties_text + '".')
 
     # Tax compliance - explicit mention for both compliant and non-compliant
     tax_compliant = ri.get("taxCompliantEverywhere")
     if tax_compliant is True:
         sentences.append("They are fully tax compliant in all jurisdictions where they have lived.")
     elif tax_compliant is False:
-        sentences.append("They are **not** tax compliant in all jurisdictions, which may pose compliance risks.")
+        sentences.append(
+            "They are **not** tax compliant in all jurisdictions, which may pose compliance risks."
+        )
         # Include explanation if provided
         explanation = ri.get("taxComplianceExplanation", "").strip()
         if explanation:
-            sentences.append(f"Tax compliance explanation: \"{explanation}\"")
+            sentences.append(f'Tax compliance explanation: "{explanation}"')
 
     # Military service willingness
     msrv = cp.get("militaryService", {}) if cp else {}
@@ -553,7 +614,9 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
                 total_usd += amt
 
         # Only show summary if there are multiple sources or non-Financial Support sources
-        has_non_financial_support = any(src.get("category") != "Financial Support" for src in current_sources)
+        has_non_financial_support = any(
+            src.get("category") != "Financial Support" for src in current_sources
+        )
         if len(current_sources) > 1 or has_non_financial_support:
             total_dest = convert(total_usd, "USD", dest_currency)
             lines.append(
@@ -592,8 +655,12 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
                     support_desc = f"• {source_type} support from {source}"
                     if frequency == "Monthly":
                         monthly_amt = src.get("amount", 0) / 12
-                        monthly_formatted = _format_money(monthly_amt, src.get('currency', 'USD'), dest_currency)
-                        annual_formatted = _format_money(src.get("amount", 0), src.get('currency', 'USD'), dest_currency)
+                        monthly_formatted = _format_money(
+                            monthly_amt, src.get("currency", "USD"), dest_currency
+                        )
+                        annual_formatted = _format_money(
+                            src.get("amount", 0), src.get("currency", "USD"), dest_currency
+                        )
                         support_desc += f": {monthly_formatted}/month ({annual_formatted} annually)"
                     else:
                         support_desc += f": {amt}"
@@ -607,16 +674,22 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
                         lines.append(f"  Note: {notes.strip()}")
                 else:
                     lines.append(f"• {cat}: {amt}.")
-            elif cat in ["Self-Employment", "Investments", "Rental Income", "Other"] and src.get("fields"):
+            elif cat in ["Self-Employment", "Investments", "Rental Income", "Other"] and src.get(
+                "fields"
+            ):
                 fields = src.get("fields", {})
                 # Add specific field handling for other categories
                 if cat == "Self-Employment":
                     business_name = fields.get("business_name", "")
                     business_type = fields.get("business_type", "")
                     if business_name and business_type:
-                        lines.append(f"• {business_type} business ({business_name}): {amt} from {country or 'various'}.")
+                        lines.append(
+                            f"• {business_type} business ({business_name}): {amt} from {country or 'various'}."
+                        )
                     elif business_name:
-                        lines.append(f"• Self-employment ({business_name}): {amt} from {country or 'various'}.")
+                        lines.append(
+                            f"• Self-employment ({business_name}): {amt} from {country or 'various'}."
+                        )
                     else:
                         lines.append(f"• {cat} income: {amt} from {country or 'various'}.")
                 elif cat == "Investments":
@@ -632,9 +705,13 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
                     property_type = fields.get("property_type", "")
                     property_desc = fields.get("property_description", "")
                     if property_type and property_desc:
-                        lines.append(f"• {property_type} rental ({property_desc}): {amt} from {country or 'various'}.")
+                        lines.append(
+                            f"• {property_type} rental ({property_desc}): {amt} from {country or 'various'}."
+                        )
                     elif property_type:
-                        lines.append(f"• {property_type} rental income: {amt} from {country or 'various'}.")
+                        lines.append(
+                            f"• {property_type} rental income: {amt} from {country or 'various'}."
+                        )
                     else:
                         lines.append(f"• {cat}: {amt} from {country or 'various'}.")
                 else:
@@ -683,7 +760,9 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
                 role = fields.get("role", "")
                 employer = fields.get("employer", "")
                 if role and employer:
-                    base_desc = f"• Expected {role} position at {employer} earning {amt}{detail_str}."
+                    base_desc = (
+                        f"• Expected {role} position at {employer} earning {amt}{detail_str}."
+                    )
                 elif role:
                     base_desc = f"• Expected {role} position earning {amt}{detail_str}."
                 elif employer:
@@ -702,9 +781,15 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
                         support_desc += f" from {source}"
                     if frequency == "Monthly":
                         monthly_amt = src.get("amount", 0) / 12
-                        monthly_formatted = _format_money(monthly_amt, src.get('currency', 'USD'), dest_currency)
-                        annual_formatted = _format_money(src.get("amount", 0), src.get('currency', 'USD'), dest_currency)
-                        support_desc += f" of {monthly_formatted}/month ({annual_formatted} annually)"
+                        monthly_formatted = _format_money(
+                            monthly_amt, src.get("currency", "USD"), dest_currency
+                        )
+                        annual_formatted = _format_money(
+                            src.get("amount", 0), src.get("currency", "USD"), dest_currency
+                        )
+                        support_desc += (
+                            f" of {monthly_formatted}/month ({annual_formatted} annually)"
+                        )
                     else:
                         support_desc += f" of {amt}"
                     if duration:
@@ -718,7 +803,9 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
                 if business_name and business_type:
                     base_desc = f"• Expected {business_type} business ({business_name}) earning {amt}{detail_str}."
                 elif business_name:
-                    base_desc = f"• Expected self-employment ({business_name}) earning {amt}{detail_str}."
+                    base_desc = (
+                        f"• Expected self-employment ({business_name}) earning {amt}{detail_str}."
+                    )
                 else:
                     base_desc = f"• Expected {cat} income of {amt}{detail_str}."
             elif cat == "Investments" and src.get("fields"):
@@ -726,7 +813,9 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
                 investment_type = fields.get("investment_type", "")
                 issuer = fields.get("issuer", "")
                 if investment_type and issuer:
-                    base_desc = f"• Expected {investment_type} income from {issuer}: {amt}{detail_str}."
+                    base_desc = (
+                        f"• Expected {investment_type} income from {issuer}: {amt}{detail_str}."
+                    )
                 elif investment_type:
                     base_desc = f"• Expected {investment_type} income: {amt}{detail_str}."
                 else:
@@ -751,7 +840,9 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
     return " ".join(lines)
 
 
-def _mixed_total(items: list[dict[str, Any]], amount_key: str, currency_key: str = "currency") -> float:
+def _mixed_total(
+    items: list[dict[str, Any]], amount_key: str, currency_key: str = "currency"
+) -> float:
     total = 0.0
     for itm in items:
         amt = itm.get(amount_key, 0)
@@ -779,7 +870,9 @@ def _summarise_liabilities(liabs: list[dict[str, Any]], dest_currency: str) -> s
     total_usd = _mixed_total(liabs, "amount")
     total_dest = convert(total_usd, "USD", dest_currency)
 
-    lines = [f"Liabilities amount to {total_dest:,.0f} {dest_currency.upper()} ({total_usd:,.0f} USD) across {len(liabs)} obligation(s)."]
+    lines = [
+        f"Liabilities amount to {total_dest:,.0f} {dest_currency.upper()} ({total_usd:,.0f} USD) across {len(liabs)} obligation(s)."
+    ]
 
     # Add details for each liability
     for liab in liabs[:3]:  # Limit to first 3 for readability
@@ -919,7 +1012,7 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
             "current_and_new_income": "will maintain some existing income sources while adding new ones in the destination country",
             "seeking_income": "plans to find new employment, start a business, or develop other new income sources after moving",
             "gainfully_unemployed": "will be self-funded, living off savings, gifts, or investment returns without active employment",
-            "dependent/supported": "will be financially supported by family, partner, scholarship, or institutional funding"
+            "dependent/supported": "will be financially supported by family, partner, scholarship, or institutional funding",
         }
 
         description = situation_descriptions.get(income_situation, income_situation)
@@ -928,7 +1021,7 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
     tw = fin.get("totalWealth")
     if tw and tw.get("total"):
         # Handle both camelCase (legacy) and snake_case (transformed) field names
-        primary_residence = tw.get('primary_residence', tw.get('primaryResidence', 0))
+        primary_residence = tw.get("primary_residence", tw.get("primaryResidence", 0))
         parts.append(
             f"Reported net worth is {_format_money(tw['total'], tw.get('currency', 'USD'), dest_currency)}; "
             f"primary residence accounts for {primary_residence:,.0f} {tw.get('currency','USD')}."
@@ -999,7 +1092,9 @@ def education_section(edu: dict[str, Any]) -> str:
         if len(prev) > 1:
             others = [d.get("degree") for d in prev[1:4] if d.get("degree")]
             if others:
-                segments.append("Other degrees: " + ", ".join(others) + (" …" if len(prev) > 4 else "") + ".")
+                segments.append(
+                    "Other degrees: " + ", ".join(others) + (" …" if len(prev) > 4 else "") + "."
+                )
 
     # Visa skills with credential details
     vskills = edu.get("visaSkills", [])
@@ -1020,7 +1115,9 @@ def education_section(edu: dict[str, Any]) -> str:
 
     # Future study interests - only mention if explicitly provided
     if edu.get("interestedInStudying") is True:
-        segments.append("They are interested in pursuing further studies in the destination country.")
+        segments.append(
+            "They are interested in pursuing further studies in the destination country."
+        )
     elif edu.get("interestedInStudying") is False:
         segments.append("They are not looking to study in the destination country.")
 
@@ -1037,7 +1134,9 @@ def education_section(edu: dict[str, Any]) -> str:
             sch = off.get("school", "an institution")
             prog = off.get("program", "a programme")
             start_date = off.get("startDate", "N/A")
-            start_formatted = start_date[:4] if start_date != "N/A" and len(start_date) >= 4 else start_date
+            start_formatted = (
+                start_date[:4] if start_date != "N/A" and len(start_date) >= 4 else start_date
+            )
             status = off.get("financial_status", "")
             segments.append(f"• Offer from {sch} for {prog} ({start_formatted}) – {status}.")
         if len(offers) > 3:
@@ -1052,7 +1151,11 @@ def education_section(edu: dict[str, Any]) -> str:
     elif military.get("hasService") is False:
         segments.append("They have no military service background.")
 
-    return " ".join(segments) if segments else "User has not submitted any information on this section."
+    return (
+        " ".join(segments)
+        if segments
+        else "User has not submitted any information on this section."
+    )
 
 
 def ssp_section(ssp: dict[str, Any], dest_currency: str) -> str:
@@ -1089,7 +1192,9 @@ def ssp_section(ssp: dict[str, Any], dest_currency: str) -> str:
                     segments.append(f"• Expected contribution of {amt_str} into {plan}{location}.")
                 else:
                     location = f" in {country}" if country else ""
-                    segments.append(f"• Plans to contribute to {plan}{location} (amount not specified).")
+                    segments.append(
+                        f"• Plans to contribute to {plan}{location} (amount not specified)."
+                    )
             if len(details) > 3:
                 segments.append(f"…and {len(details)-3} more contribution plan(s).")
     elif future.get("isPlanning") is False:
@@ -1106,7 +1211,9 @@ def ssp_section(ssp: dict[str, Any], dest_currency: str) -> str:
             )
             for plan in details[:3]:
                 ptype = plan.get("planType", "Pension plan")
-                val = _format_money(plan.get("currentValue", 0), plan.get("currency", "USD"), dest_currency)
+                val = _format_money(
+                    plan.get("currentValue", 0), plan.get("currency", "USD"), dest_currency
+                )
                 country = plan.get("country", "various countries")
                 segments.append(f"• {ptype} in {country}: current value {val}.")
             if len(details) > 3:
@@ -1114,7 +1221,11 @@ def ssp_section(ssp: dict[str, Any], dest_currency: str) -> str:
     elif existing.get("hasPlans") is False:
         segments.append("They have no existing pension plans.")
 
-    return " ".join(segments) if segments else "User has not submitted any information on this section."
+    return (
+        " ".join(segments)
+        if segments
+        else "User has not submitted any information on this section."
+    )
 
 
 def future_plans_section(fut: dict[str, Any], dest_currency: str) -> str:
@@ -1127,15 +1238,29 @@ def future_plans_section(fut: dict[str, Any], dest_currency: str) -> str:
         if not items:
             return ""
         sentences = []
-        sentences.append(f"They are considering {len(items)} {label}{'s' if len(items)!=1 else ''}.")
+        sentences.append(
+            f"They are considering {len(items)} {label}{'s' if len(items)!=1 else ''}."
+        )
         for itm in items[:3]:
             # Handle different field names for different plan types
-            desc = (itm.get("type") or itm.get("otherType") or
-                    itm.get("transactionType") or itm.get("accountType") or
-                    itm.get("otherAccountType") or itm.get("changeType") or
-                    itm.get("description") or itm.get("asset") or label)
-            amt = (itm.get("estimatedValue") or itm.get("estimatedValueImpact") or
-                   itm.get("contributionAmount") or itm.get("amount") or itm.get("value"))
+            desc = (
+                itm.get("type")
+                or itm.get("otherType")
+                or itm.get("transactionType")
+                or itm.get("accountType")
+                or itm.get("otherAccountType")
+                or itm.get("changeType")
+                or itm.get("description")
+                or itm.get("asset")
+                or label
+            )
+            amt = (
+                itm.get("estimatedValue")
+                or itm.get("estimatedValueImpact")
+                or itm.get("contributionAmount")
+                or itm.get("amount")
+                or itm.get("value")
+            )
             curr = itm.get("currency", "USD")
             country = itm.get("country", "")
             if amt:
@@ -1147,7 +1272,7 @@ def future_plans_section(fut: dict[str, Any], dest_currency: str) -> str:
                 sentences.append(f"• {desc}{location}.")
         if len(items) > 3:
             sentences.append(f"…and {len(items)-3} more.")
-        return " " .join(sentences)
+        return " ".join(sentences)
 
     segs.extend(
         filter(
@@ -1188,7 +1313,7 @@ def deductions_section(ded: dict[str, Any], dest_currency: str) -> str:
         segs.append(f"• {desc}: {amt}.")
     if len(lst) > 10:
         segs.append(f"…and {len(lst)-10} more deduction entries.")
-    return " " .join(segs)
+    return " ".join(segs)
 
 
 def additional_section(add: dict[str, Any]) -> str:
@@ -1230,7 +1355,9 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
 
             date_info = ""
             if start_date and end_date:
-                start_formatted = start_date[:4] if len(start_date) >= 4 else start_date  # Extract year from date
+                start_formatted = (
+                    start_date[:4] if len(start_date) >= 4 else start_date
+                )  # Extract year from date
                 end_formatted = end_date[:4] if len(end_date) >= 4 else end_date
                 if in_progress:
                     date_info = f" ({start_formatted} - present, in progress)"
@@ -1302,7 +1429,16 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                 lang_summaries = []
                 for lang, level in ind_lang.items():
                     if level > 0:
-                        level_names = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Proficient", "Native Speaker"]
+                        level_names = [
+                            "None",
+                            "A1 Basic",
+                            "A2 Elementary",
+                            "B1 Intermediate",
+                            "B2 Upper Intermediate",
+                            "C1 Advanced",
+                            "C2 Proficient",
+                            "Native Speaker",
+                        ]
                         level_name = level_names[min(level, 7)]
 
                         lang_desc = f"{lang} ({level_name})"
@@ -1315,7 +1451,11 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                         # Add teaching capability if B1+
                         can_teach = lp.get("can_teach", {})
                         teaching_capability = can_teach.get(lang)
-                        if level >= 3 and teaching_capability and teaching_capability != "No/not interested":
+                        if (
+                            level >= 3
+                            and teaching_capability
+                            and teaching_capability != "No/not interested"
+                        ):
                             if teaching_capability == "Formally with credentials":
                                 lang_desc += ", qualified to teach formally"
                             elif teaching_capability == "Informally":
@@ -1325,14 +1465,24 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
 
                 if lang_summaries:
                     if dest_country:
-                        sentences.append(f"Language skills for {dest_country}: " + "; ".join(lang_summaries) + ".")
+                        sentences.append(
+                            f"Language skills for {dest_country}: "
+                            + "; ".join(lang_summaries)
+                            + "."
+                        )
                     else:
-                        sentences.append("Destination country language skills: " + "; ".join(lang_summaries) + ".")
+                        sentences.append(
+                            "Destination country language skills: "
+                            + "; ".join(lang_summaries)
+                            + "."
+                        )
 
             # Willing to learn languages
             willing_to_learn = lp.get("willing_to_learn", [])
             if willing_to_learn:
-                sentences.append("Languages they are willing to learn: " + ", ".join(willing_to_learn) + ".")
+                sentences.append(
+                    "Languages they are willing to learn: " + ", ".join(willing_to_learn) + "."
+                )
 
             # Partner language proficiency (if present)
             partner_lang = lp.get("partner", {})
@@ -1340,7 +1490,16 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                 partner_summaries = []
                 for lang, level in partner_lang.items():
                     if level > 0:
-                        level_names = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Proficient", "Native Speaker"]
+                        level_names = [
+                            "None",
+                            "A1 Basic",
+                            "A2 Elementary",
+                            "B1 Intermediate",
+                            "B2 Upper Intermediate",
+                            "C1 Advanced",
+                            "C2 Proficient",
+                            "Native Speaker",
+                        ]
                         level_name = level_names[min(level, 7)]
 
                         partner_desc = f"{lang} ({level_name})"
@@ -1353,7 +1512,11 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                         # Add partner teaching capability if B1+
                         partner_can_teach = lp.get("partner_can_teach", {})
                         partner_teaching = partner_can_teach.get(lang)
-                        if level >= 3 and partner_teaching and partner_teaching != "No/not interested":
+                        if (
+                            level >= 3
+                            and partner_teaching
+                            and partner_teaching != "No/not interested"
+                        ):
                             if partner_teaching == "Formally with credentials":
                                 partner_desc += ", qualified to teach formally"
                             elif partner_teaching == "Informally":
@@ -1362,12 +1525,16 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                         partner_summaries.append(partner_desc)
 
                 if partner_summaries:
-                    sentences.append("Partner's language skills: " + "; ".join(partner_summaries) + ".")
+                    sentences.append(
+                        "Partner's language skills: " + "; ".join(partner_summaries) + "."
+                    )
 
             # Partner willing to learn
             partner_willing = lp.get("partner_willing_to_learn", [])
             if partner_willing:
-                sentences.append("Languages the partner is willing to learn: " + ", ".join(partner_willing) + ".")
+                sentences.append(
+                    "Languages the partner is willing to learn: " + ", ".join(partner_willing) + "."
+                )
 
             # Additional languages
             other_langs = lp.get("other_languages", {})
@@ -1380,7 +1547,16 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                         can_teach = lang_data.get("canTeach", "No/not interested")
                         has_credentials = lang_data.get("hasCredentials", False)
 
-                        level_names = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Proficient", "Native Speaker"]
+                        level_names = [
+                            "None",
+                            "A1 Basic",
+                            "A2 Elementary",
+                            "B1 Intermediate",
+                            "B2 Upper Intermediate",
+                            "C1 Advanced",
+                            "C2 Proficient",
+                            "Native Speaker",
+                        ]
                         level_name = level_names[min(proficiency, 7)]
 
                         other_desc = f"{lang} ({level_name})"
@@ -1400,21 +1576,46 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                 if other_summaries:
                     sentences.append("Additional languages: " + "; ".join(other_summaries) + ".")
 
-    return " ".join(sentences) if sentences else "User has not submitted any information on this section."
+    return (
+        " ".join(sentences)
+        if sentences
+        else "User has not submitted any information on this section."
+    )
 
 
 def make_story(profile: dict[str, Any]) -> str:
-    dest_country = profile.get("residencyIntentions", {}).get("destinationCountry", {}).get("country", "")
+    dest_country = (
+        profile.get("residencyIntentions", {}).get("destinationCountry", {}).get("country", "")
+    )
     dest_currency = country_to_currency(dest_country) if dest_country else "USD"
 
     sections = [
-        ("Residency Plans", residency_section(profile.get("residencyIntentions", {}), profile.get("personalInformation", {}), profile.get("alternativeInterests", {}))),
+        (
+            "Residency Plans",
+            residency_section(
+                profile.get("residencyIntentions", {}),
+                profile.get("personalInformation", {}),
+                profile.get("alternativeInterests", {}),
+            ),
+        ),
         ("Finance", finance_section(profile.get("finance", {}), dest_currency)),
         ("Personal Information", personal_section(profile.get("personalInformation", {}))),
-        ("Education", education_section(profile.get("education", {}), profile.get("residencyIntentions", {}))),
-        ("Social Security & Pensions", ssp_section(profile.get("socialSecurityAndPensions", {}), dest_currency)),
-        ("Future Financial Plans", future_plans_section(profile.get("futureFinancialPlans", {}), dest_currency)),
-        ("Tax Deductions & Credits", deductions_section(profile.get("taxDeductionsAndCredits", {}), dest_currency)),
+        (
+            "Education",
+            education_section(profile.get("education", {}), profile.get("residencyIntentions", {})),
+        ),
+        (
+            "Social Security & Pensions",
+            ssp_section(profile.get("socialSecurityAndPensions", {}), dest_currency),
+        ),
+        (
+            "Future Financial Plans",
+            future_plans_section(profile.get("futureFinancialPlans", {}), dest_currency),
+        ),
+        (
+            "Tax Deductions & Credits",
+            deductions_section(profile.get("taxDeductionsAndCredits", {}), dest_currency),
+        ),
         ("Additional Information", additional_section(profile.get("additionalInformation", {}))),
     ]
 
@@ -1434,9 +1635,11 @@ def make_story(profile: dict[str, Any]) -> str:
             continue
         if isinstance(value, dict) and value:
             from modules.translator import json_to_markdown  # local import to avoid circular
+
             sections.append((key, json_to_markdown(value)))
         elif isinstance(value, list) and value:
             from modules.translator import json_to_markdown
+
             sections.append((key, json_to_markdown({key: value})))
         else:
             sections.append((key, "No information provided."))
@@ -1451,7 +1654,9 @@ def make_personal_story(personal_info: dict[str, Any]) -> str:
     return f"Personal Information:\n{personal_section(personal_info)}"
 
 
-def make_education_story(education_info: dict[str, Any], residency_intentions: dict[str, Any] = None) -> str:
+def make_education_story(
+    education_info: dict[str, Any], residency_intentions: dict[str, Any] = None
+) -> str:
     """Generate a story for just the education section."""
     return f"Education:\n{education_section(education_info, residency_intentions)}"
 
@@ -1466,21 +1671,27 @@ def make_finance_story(finance_info: dict[str, Any], dest_currency: str = "USD")
     return f"Finance:\n{finance_section(finance_info, dest_currency)}"
 
 
-def make_social_security_story(ssp_info: dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False) -> str:
+def make_social_security_story(
+    ssp_info: dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False
+) -> str:
     """Generate a story for just the social security and pensions section."""
     if skip_finance_details:
         return "Social Security & Pensions:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
     return f"Social Security & Pensions:\n{ssp_section(ssp_info, dest_currency)}"
 
 
-def make_tax_deductions_story(tax_info: dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False) -> str:
+def make_tax_deductions_story(
+    tax_info: dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False
+) -> str:
     """Generate a story for just the tax deductions and credits section."""
     if skip_finance_details:
         return "Tax Deductions & Credits:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
     return f"Tax Deductions & Credits:\n{deductions_section(tax_info, dest_currency)}"
 
 
-def make_future_financial_plans_story(future_info: dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False) -> str:
+def make_future_financial_plans_story(
+    future_info: dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False
+) -> str:
     """Generate a story for just the future financial plans section."""
     if skip_finance_details:
         return "Future Financial Plans:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
@@ -1492,7 +1703,9 @@ def make_additional_information_story(additional_info: dict[str, Any]) -> str:
     return f"Additional Information:\n{additional_section(additional_info)}"
 
 
-def make_section_story(section_name: str, section_data: dict[str, Any], dest_currency: str = "USD") -> str:
+def make_section_story(
+    section_name: str, section_data: dict[str, Any], dest_currency: str = "USD"
+) -> str:
     """
     Generate a story for any individual section.
 
@@ -1509,9 +1722,13 @@ def make_section_story(section_name: str, section_data: dict[str, Any], dest_cur
         "education": lambda data, _: make_education_story(data),
         "residencyIntentions": lambda data, _: make_residency_intentions_story(data),
         "finance": lambda data, currency: make_finance_story(data, currency),
-        "socialSecurityAndPensions": lambda data, currency: make_social_security_story(data, currency),
+        "socialSecurityAndPensions": lambda data, currency: make_social_security_story(
+            data, currency
+        ),
         "taxDeductionsAndCredits": lambda data, currency: make_tax_deductions_story(data, currency),
-        "futureFinancialPlans": lambda data, currency: make_future_financial_plans_story(data, currency),
+        "futureFinancialPlans": lambda data, currency: make_future_financial_plans_story(
+            data, currency
+        ),
         "additionalInformation": lambda data, _: make_additional_information_story(data),
     }
 

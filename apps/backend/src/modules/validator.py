@@ -14,6 +14,7 @@ with open(SCHEMA_PATH, encoding="utf-8") as _f:
 
 _VALIDATOR = Draft202012Validator(_SCHEMA)
 
+
 def validate_tax_data(data):
     """Validate incoming JSON using `TaxProfile`.
 

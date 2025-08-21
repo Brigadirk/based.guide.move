@@ -7,12 +7,12 @@ def setup_module(module):
 
 
 def test_identity_conversion():
-    assert convert(100, 'USD', 'USD') == 100
+    assert convert(100, "USD", "USD") == 100
 
 
 def test_eur_to_usd_and_back():
     amount_eur = 50
-    usd = convert(amount_eur, 'EUR', 'USD')
+    usd = convert(amount_eur, "EUR", "USD")
     # Now convert back (may incur float error)
-    eur_back = convert(usd, 'USD', 'EUR')
+    eur_back = convert(usd, "USD", "EUR")
     assert abs(eur_back - amount_eur) < 0.5  # allow small tolerance

@@ -19,6 +19,7 @@ API_URL = f"https://openexchangerates.org/api/latest.json?app_id={API_ID}"
 # Ensure the exchange_rates folder exists
 Path(EXCHANGE_RATES_FOLDER).mkdir(exist_ok=True)
 
+
 def get_latest_exchange_rates():
     """Fetch the latest exchange rates from the API."""
     response = requests.get(API_URL)
@@ -30,6 +31,7 @@ def get_latest_exchange_rates():
         print(response.text)
         return None
 
+
 def save_exchange_rates(data):
     """Save the exchange rates as a JSON file."""
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -40,6 +42,7 @@ def save_exchange_rates(data):
         json.dump(data, f, indent=4)
         print(f"Exchange rates saved to {file_path}")
 
+
 def get_last_retrieval_time():
     """Get the timestamp of the most recent exchange rates file."""
     files = list(Path(EXCHANGE_RATES_FOLDER).glob("*.json"))
@@ -48,6 +51,7 @@ def get_last_retrieval_time():
     latest_file = max(files, key=os.path.getctime)
     return os.path.getctime(latest_file)
 
+
 def should_fetch_new_rates():
     """Check if it has been more than 24 hours since the last retrieval."""
     last_retrieval_time = get_last_retrieval_time()
@@ -55,6 +59,7 @@ def should_fetch_new_rates():
         return True  # No previous file exists, fetch new rates
     current_time = time.time()
     return (current_time - last_retrieval_time) > 24 * 60 * 60
+
 
 def main():
     """Main function to fetch and save exchange rates if 24 hours have passed."""
@@ -65,6 +70,7 @@ def main():
             save_exchange_rates(data)
     else:
         print("Exchange rates were retrieved less than 24 hours ago. Skipping fetch.")
+
 
 if __name__ == "__main__":
     main()

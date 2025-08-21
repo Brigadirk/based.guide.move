@@ -8,9 +8,11 @@ from config import Config
 # Perplexity API configuration with proper key handling
 _ENDPOINT = "https://api.perplexity.ai/chat/completions"
 
+
 def _get_api_key():
     """Get the API key, ensuring it's properly stripped of whitespace."""
     return os.getenv("PERPLEXITY_API_KEY", "").strip()
+
 
 def _get_headers():
     """Get the headers with current API key."""
@@ -18,6 +20,7 @@ def _get_headers():
         "Authorization": f"Bearer {_get_api_key()}",
         "Content-Type": "application/json",
     }
+
 
 def get_tax_advice(prompt: str | dict[str, Any]):
     """Call the Perplexity API.

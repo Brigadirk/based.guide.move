@@ -27,7 +27,7 @@ def _format_value(key: str, value: Any, context: dict[str, Any], dest_currency: 
 
     if isinstance(value, int | float):
         # Check for currency in same dict
-        currency = (context.get("currency") or context.get("Currency"))
+        currency = context.get("currency") or context.get("Currency")
         if currency:
             currency = currency.upper()
             if key != "currency":
@@ -59,7 +59,13 @@ def _walk(node: Any, lines: list[str], indent: int, parent_ctx: dict[str, Any], 
     if isinstance(node, list):
         for idx, item in enumerate(node, 1):
             lines.append(prefix + f"[{idx}]")
-            _walk(item, lines, indent + 1, item if isinstance(item, dict) else parent_ctx, dest_currency)
+            _walk(
+                item,
+                lines,
+                indent + 1,
+                item if isinstance(item, dict) else parent_ctx,
+                dest_currency,
+            )
         return
 
     if isinstance(node, dict):
@@ -75,9 +81,7 @@ def _walk(node: Any, lines: list[str], indent: int, parent_ctx: dict[str, Any], 
 def json_to_markdown(data: dict[str, Any]) -> str:
     """Return a deterministic markdown representation of *data*."""
     dest_country = (
-        data.get("residencyIntentions", {})
-        .get("destinationCountry", {})
-        .get("country", "")
+        data.get("residencyIntentions", {}).get("destinationCountry", {}).get("country", "")
     )
     dest_currency = country_to_currency(dest_country) if dest_country else "USD"
     lines: list[str] = []

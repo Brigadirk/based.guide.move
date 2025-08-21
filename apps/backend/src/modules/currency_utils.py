@@ -12,7 +12,9 @@ def _load_mapping() -> dict[str, str]:
     if COUNTRY_INFO_PATH.exists():
         try:
             data = json.loads(COUNTRY_INFO_PATH.read_text())
-            return {country: info.get("currency_shorthand", "USD") for country, info in data.items()}
+            return {
+                country: info.get("currency_shorthand", "USD") for country, info in data.items()
+            }
         except (json.JSONDecodeError, KeyError) as e:
             print(f"Error loading country info: {e}")
     else:
