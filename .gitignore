@@ -1,89 +1,9 @@
-# =============================================================================
-# COMPREHENSIVE .GITIGNORE FOR PYTHON + NEXT.JS PROJECT
-# =============================================================================
-
-# Custom/System Files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# =============================================================================
-# NEXT.JS / NODE.JS
-# =============================================================================
-
 # Dependencies
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Next.js build output
-.next/
-out/
-build/
-
-# Next.js cache
-.next/cache/
-
-# Production builds
-dist/
-
-# Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Vercel
-.vercel
-
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
-
-# =============================================================================
-# SPECIFICALLY EXCLUDE LARGE FILES THAT CAUSED GITHUB ISSUES
-# =============================================================================
-
-# Large SWC compiler binaries (the 121MB+ files causing GitHub issues)
-**/swc-darwin-arm64/
-**/swc-darwin-x64/
-**/swc-linux-arm64-gnu/
-**/swc-linux-arm64-musl/
-**/swc-linux-x64-gnu/
-**/swc-linux-x64-musl/
-**/swc-win32-arm64-msvc/
-**/swc-win32-ia32-msvc/
-**/swc-win32-x64-msvc/
-
-# Specifically the problematic file
-**/next-swc.darwin-arm64.node
-**/next-swc.*.node
-
-# Sharp image processing binaries (also large)
-**/sharp-*/**/*.dylib
-**/sharp-*/**/*.so
-**/sharp-*/**/*.dll
-
-# =============================================================================
-# PYTHON
-# =============================================================================
-
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
-
-# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -103,50 +23,150 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# PyInstaller
-*.manifest
-*.spec
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+# Next.js
+apps/frontend/.next/
+apps/frontend/out/
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
+# Production builds
+apps/frontend/build/
+apps/backend/dist/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
 .cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
+.parcel-cache
 
-# Translations
-*.mo
-*.pot
+# Next.js build output
+.next
+out
 
-# Django/Flask
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# Logs
+logs
 *.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-instance/
-.webassets-cache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
 
-# Scrapy
-.scrapy
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-# Sphinx documentation
-docs/_build/
+# Runtime data
+*.pid
+*.seed
+*.pid.lock
 
-# PyBuilder
-.pybuilder/
-target/
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Python virtual environments
+venv/
+ENV/
+env/
+.venv/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -164,42 +184,24 @@ Pipfile.lock
 # poetry
 poetry.lock
 
-# pdm
-.pdm.toml
-.pdm-python
-.pdm-build/
-
 # PEP 582
 __pypackages__/
 
-# Celery
+# Celery stuff
 celerybeat-schedule
 celerybeat.pid
 
-# SageMath
+# SageMath parsed files
 *.sage.py
 
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-.env.local
-.env.*.local
-!.env.example
-!.env.*.example
-
-# Spyder
+# Spyder project settings
 .spyderproject
 .spyproject
 
-# Rope
+# Rope project settings
 .ropeproject
 
-# mkdocs
+# mkdocs documentation
 /site
 
 # mypy
@@ -207,78 +209,34 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
-# Pyre
+# Pyre type checker
 .pyre/
 
-# pytype
+# pytype static type analyzer
 .pytype/
 
-# Cython
+# Cython debug symbols
 cython_debug/
 
-# PyCharm
-.idea/
+# Application specific
+apps/backend/src/services/exchange_rates/
+data/
+*.db
+*.sqlite
+*.sqlite3
 
-# Ruff
-.ruff_cache/
+# Railway
+.railway/
 
-# PyPI
-.pypirc
+# Docker
+.dockerignore
+Dockerfile*
 
-# =============================================================================
-# GIT TOOLS & ARTIFACTS
-# =============================================================================
+# Backup files
+*.bak
+*.backup
+*.orig
 
-# Git rewrite artifacts
-.git-rewrite/
-
-# =============================================================================
-# LARGE BINARY FILES (GENERAL EXCLUSIONS)
-# =============================================================================
-
-# Large media files
-*.mp4
-*.avi
-*.mkv
-*.mov
-*.wmv
-*.flv
-*.webm
-
-# Large archives
-*.zip
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.rar
-*.7z
-
-# Large database files
-*.dump
-*.sql
-
-# Large log files
-*.log
-
-# Temporary large files
-*.tmp
-*.temp
-*.swp
-*.swo
-*~
-
-# =============================================================================
-# PROJECT SPECIFIC
-# =============================================================================
-
-# Temporary profiles
-temp_profiles/
-
-# Large images (keep smaller ones)
-# Uncomment if you have large images:
-# *.png
-# *.jpg
-# *.jpeg
-# *.gif
-# *.bmp
-# *.tiff
+# Temporary files
+.tmp/
+.temp/

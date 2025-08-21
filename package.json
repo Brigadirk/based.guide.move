@@ -1,0 +1,64 @@
+{
+  "name": "basedguide-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BasedGuide Tax Migration Platform - Monorepo",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "scripts": {
+    "dev": "./dev-start.sh",
+    "dev:docker": "./dev-docker.sh",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "cd apps/backend && ./start-backend.sh",
+    "build": "pnpm run build:frontend && pnpm run build:backend",
+    "build:frontend": "pnpm --filter frontend build",
+    "build:backend": "cd apps/backend && python -m build",
+    "start": "pnpm run start:frontend",
+    "start:frontend": "pnpm --filter frontend start",
+    "start:backend": "cd apps/backend/src && uvicorn app:app --host 0.0.0.0 --port 5001",
+    "test": "pnpm run test:frontend && pnpm run test:backend",
+    "test:frontend": "pnpm --filter frontend test",
+    "test:backend": "cd apps/backend && python -m pytest",
+    "lint": "pnpm run lint:frontend && pnpm run lint:backend",
+    "lint:frontend": "pnpm --filter frontend lint",
+    "lint:backend": "cd apps/backend && ruff check src tests",
+    "format": "pnpm run format:frontend && pnpm run format:backend",
+    "format:frontend": "pnpm --filter frontend format",
+    "format:backend": "cd apps/backend && black src tests && ruff check --fix src tests",
+    "typecheck": "pnpm --filter frontend typecheck",
+    "clean": "pnpm --filter frontend clean && rm -rf apps/backend/dist",
+    "docker:up": "./dev-docker.sh",
+    "docker:down": "./dev-docker.sh stop",
+    "docker:logs": "./dev-docker.sh logs",
+    "docker:restart": "./dev-docker.sh restart",
+    "setup": "pnpm install && cd apps/frontend && pnpm install && cd ../backend && pip install -r requirements.txt",
+    "postinstall": "husky install || true"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/ts/*"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ],
+    "*.py": [
+      "black",
+      "ruff check --fix"
+    ]
+  }
+}
