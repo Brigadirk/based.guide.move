@@ -110,7 +110,7 @@ def fetch_and_save_latest_rates(force: bool = False) -> None:
 
     The function respects Config.EXCHANGE_UPDATE_INTERVAL_HOURS. If a snapshot
     newer than that already exists, the call is a no-op **unless** `force=True`.
-    
+
     If no API key is configured, this function will skip fetching and use
     existing snapshots if available, or create a minimal fallback.
     """
@@ -122,7 +122,7 @@ def fetch_and_save_latest_rates(force: bool = False) -> None:
             # Create a minimal fallback exchange rates file for basic functionality
             _create_fallback_exchange_rates()
         return
-    
+
     latest_file = _latest_snapshot_file()
     if not force and latest_file is not None:
         if _hours_since(latest_file) < Config.EXCHANGE_UPDATE_INTERVAL_HOURS:
@@ -137,7 +137,9 @@ def fetch_and_save_latest_rates(force: bool = False) -> None:
         # Fetch failed; log and copy previous snapshot if available
         latest = _latest_snapshot_file()
         if latest is None:
-            print(f"Warning: Failed to fetch exchange rates and no previous snapshot exists: {fetch_exc}")
+            print(
+                f"Warning: Failed to fetch exchange rates and no previous snapshot exists: {fetch_exc}"
+            )
             # Create a minimal fallback instead of crashing
             _create_fallback_exchange_rates()
             return
@@ -224,7 +226,7 @@ def convert(amount: float, source: str, target: str) -> float:
 
 def _create_fallback_exchange_rates() -> None:
     """Create a minimal fallback exchange rates file for basic functionality.
-    
+
     This is used when no API key is configured and no previous snapshots exist.
     Contains basic exchange rates for common currencies to prevent total failure.
     """
@@ -253,25 +255,25 @@ def _create_fallback_exchange_rates() -> None:
         "MXN": 17.0,
         "ZAR": 18.5,
     }
-    
+
     # Create the data structure expected by the exchange rate system
     fallback_data = {
         "disclaimer": "Fallback exchange rates - not for production use",
         "license": "https://openexchangerates.org/license",
         "timestamp": int(time.time()),
         "base": "USD",
-        "rates": fallback_rates
+        "rates": fallback_rates,
     }
-    
+
     # Ensure the exchange rates directory exists
     EXCHANGE_RATES_FOLDER.mkdir(parents=True, exist_ok=True)
-    
+
     # Create fallback file with current timestamp
     timestamp = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
     fallback_file = EXCHANGE_RATES_FOLDER / f"{timestamp}_fallback.json"
-    
+
     with open(fallback_file, "w", encoding="utf-8") as f:
         json.dump(fallback_data, f, indent=2, ensure_ascii=False)
-    
+
     print(f"Created fallback exchange rates file: {fallback_file}")
     print("Note: These are approximate rates for basic functionality only")
