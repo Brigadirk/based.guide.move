@@ -223,6 +223,8 @@ cython_debug/
 # Application specific
 apps/backend/src/services/exchange_rates/
 data/
+# But allow frontend data directory
+!apps/frontend/data/
 *.db
 *.sqlite
 *.sqlite3
