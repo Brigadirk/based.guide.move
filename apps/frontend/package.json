@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm run pre-build-check && next dev",
-    "build": "pwd && ls -la && ls -la lib/ && ls -la lib/stores/ && ls -la lib/hooks/ && cat tsconfig.json | grep -A5 paths && next build",
+    "build": "next build",
     "build:next": "next build",
     "build:force": "pnpm run clean && pnpm run pre-build-check && node scripts/build-monitor.js 'pnpm run build:next'",
     "build:safe": "pnpm run clean && pnpm run pre-build-check && node scripts/build-monitor.js 'pnpm run build:next'",
