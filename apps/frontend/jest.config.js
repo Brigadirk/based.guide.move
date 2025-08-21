@@ -14,19 +14,13 @@ const config = {
     }],
   },
   
-  // Explicit module name mapping
+  // Simplified module name mapping - use only the catch-all pattern
   moduleNameMapper: {
     // Static assets
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
     
-    // Path mappings that match tsconfig.json
-    '^@/data/(.*)$': '<rootDir>/data/$1',
-    '^@/lib/hooks/(.*)$': '<rootDir>/lib/hooks/$1',
-    '^@/lib/(.*)$': '<rootDir>/lib/$1',
-    '^@/components/(.*)$': '<rootDir>/components/$1',
-    '^@/app/(.*)$': '<rootDir>/app/$1',
-    '^@/types/(.*)$': '<rootDir>/types/$1',
+    // Single catch-all pattern for all @/ imports
     '^@/(.*)$': '<rootDir>/$1',
   },
   
