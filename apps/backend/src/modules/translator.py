@@ -12,20 +12,20 @@ that is accompanied by a `currency` field, the translator will append the USD
 conversion in parentheses using the exchange-rate service.
 """
 
-from typing import Any, List
+from typing import Any
 
-from services.exchange_rate_service import convert
 from modules.currency_utils import country_to_currency
+from services.exchange_rate_service import convert
 
 
 def _is_scalar(value: Any) -> bool:
-    return isinstance(value, (str, int, float, bool)) or value is None
+    return isinstance(value, str | int | float | bool) or value is None
 
 
 def _format_value(key: str, value: Any, context: dict[str, Any], dest_currency: str) -> str:
     """Format leaf value, handling currency conversion when applicable."""
 
-    if isinstance(value, (int, float)):
+    if isinstance(value, int | float):
         # Check for currency in same dict
         currency = (context.get("currency") or context.get("Currency"))
         if currency:
@@ -49,7 +49,7 @@ def _format_value(key: str, value: Any, context: dict[str, Any], dest_currency: 
     return str(value)
 
 
-def _walk(node: Any, lines: List[str], indent: int, parent_ctx: dict[str, Any], dest_currency: str):
+def _walk(node: Any, lines: list[str], indent: int, parent_ctx: dict[str, Any], dest_currency: str):
     prefix = "  " * indent + "- "
 
     if _is_scalar(node):
@@ -80,6 +80,6 @@ def json_to_markdown(data: dict[str, Any]) -> str:
         .get("country", "")
     )
     dest_currency = country_to_currency(dest_country) if dest_country else "USD"
-    lines: List[str] = []
+    lines: list[str] = []
     _walk(data, lines, 0, data, dest_currency)
-    return "\n".join(lines) 
+    return "\n".join(lines)

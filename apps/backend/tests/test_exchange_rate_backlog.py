@@ -1,8 +1,5 @@
 import json
-import os
 import time
-from pathlib import Path
-from importlib import reload
 
 from exchange_rate_fetcher import exchange_rate_service as ers
 
@@ -26,4 +23,4 @@ def test_backlog_trim(tmp_path, monkeypatch):
     ers.fetch_and_save_latest_rates(force=False)  # this will trigger trim code but not fetch
 
     files = list(ers.EXCHANGE_RATES_FOLDER.glob("*.json"))
-    assert len(files) == 3 
+    assert len(files) == 3

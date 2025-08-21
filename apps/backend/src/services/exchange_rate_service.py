@@ -15,11 +15,10 @@ but can also be imported directly from other modules.
 
 import json
 import os
+import re
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional
-import re
 
 import requests
 
@@ -43,7 +42,7 @@ def _get_exchange_rates_folder() -> Path:
     else:
         # Fallback to local folder for development
         folder = Path(__file__).resolve().parent / "exchange_rates"
-    
+
     folder.mkdir(exist_ok=True, parents=True)
     return folder
 
@@ -57,13 +56,13 @@ OPEN_EXCHANGE_API_URL = (
 )
 
 # Global variable storing path of rates loaded last
-LAST_SNAPSHOT_PATH: Optional[Path] = None
+LAST_SNAPSHOT_PATH: Path | None = None
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _latest_snapshot_file() -> Optional[Path]:
+def _latest_snapshot_file() -> Path | None:
     """Return the most-recently created snapshot file (including legacy dir)."""
     ts_pattern = re.compile(r"\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.json$")
 
@@ -124,7 +123,7 @@ def fetch_and_save_latest_rates(force: bool = False) -> None:
         if latest is None:
             raise RuntimeError("Unable to fetch exchange rates and no previous snapshot exists") from fetch_exc
         # Reuse data from latest snapshot
-        with open(latest, "r", encoding="utf-8") as f:
+        with open(latest, encoding="utf-8") as f:
             data = json.load(f)
         # We will still create a new file with today's timestamp to bump freshness
         print(f"[WARN] Exchange-rate fetch failed ({fetch_exc}); reusing latest snapshot {latest.name}")
@@ -143,7 +142,7 @@ def fetch_and_save_latest_rates(force: bool = False) -> None:
             pass
 
 
-def get_latest_rates() -> Dict[str, float]:
+def get_latest_rates() -> dict[str, float]:
     """Load rates from the newest snapshot on disk.
 
     If no snapshot exists, it will attempt to fetch one synchronously.
@@ -162,7 +161,7 @@ def get_latest_rates() -> Dict[str, float]:
 
     global LAST_SNAPSHOT_PATH
     LAST_SNAPSHOT_PATH = latest_file
-    with open(latest_file, "r", encoding="utf-8") as f:
+    with open(latest_file, encoding="utf-8") as f:
         return json.load(f).get("rates", {})
 
 
@@ -195,4 +194,4 @@ def convert(amount: float, source: str, target: str) -> float:
     # From USD to target
     if target == "USD":
         return usd_amount
-    return usd_amount * rates[target] 
+    return usd_amount * rates[target]

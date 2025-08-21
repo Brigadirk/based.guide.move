@@ -1,20 +1,19 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
 import argparse
 import json
-import os
-import uvicorn
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from config import Config
 from contextlib import asynccontextmanager
 
-from api.routes import router as api_router
-from modules.validator import validate_tax_data
-from modules.prompt_generator import generate_tax_prompt
+import uvicorn
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from dotenv import load_dotenv
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from api.perplexity import get_tax_advice
-from services.exchange_rate_service import fetch_and_save_latest_rates
-from services.exchange_rate_service import _latest_snapshot_file
+from api.routes import router as api_router
+from config import Config
+from modules.prompt_generator import generate_tax_prompt
+from modules.validator import validate_tax_data
+from services.exchange_rate_service import _latest_snapshot_file, fetch_and_save_latest_rates
 
 # Load environment variables from backend directory only
 load_dotenv()  # Load from backend/.env
@@ -68,17 +67,17 @@ app.add_middleware(
 async def health_check():
     """Health check endpoint for Railway deployment."""
     try:
-        from datetime import datetime
         import os
-        
+        from datetime import datetime
+
         # Check if exchange rates directory is accessible
         rates_dir = "services/exchange_rates"
         rates_accessible = os.path.exists(rates_dir) and os.access(rates_dir, os.W_OK)
-        
+
         # Check if we have recent exchange rates
         latest_file = _latest_snapshot_file()
         rates_fresh = latest_file and latest_file.exists()
-        
+
         # Check volume path (for Railway persistent storage)
         volume_path = Config.RAILWAY_VOLUME_MOUNT_PATH
         volume_accessible = True
@@ -88,7 +87,7 @@ async def health_check():
             volume_accessible = os.access(volume_path, os.W_OK)
         except Exception:
             volume_accessible = False
-        
+
         status = {
             "status": "healthy",
             "timestamp": datetime.now().isoformat(),
@@ -107,12 +106,12 @@ async def health_check():
                 "volume_path": volume_path
             }
         }
-        
+
         return status
-        
+
     except Exception as e:
         return {
-            "status": "unhealthy", 
+            "status": "unhealthy",
             "error": str(e),
             "timestamp": datetime.now().isoformat()
         }
@@ -125,7 +124,7 @@ def run_cli_test(test_file: str):
     spinning up the web-server. Prints the Perplexity API response to stdout.
     """
     try:
-        with open(test_file, "r", encoding="utf-8") as f:
+        with open(test_file, encoding="utf-8") as f:
             data = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as exc:
         print(f"[ERROR] Unable to load the JSON file '{test_file}': {exc}")
@@ -176,7 +175,7 @@ if __name__ == "__main__":
     elif args.output:
         # Simply render the prompt and print it.
         try:
-            with open(args.output, "r", encoding="utf-8") as f:
+            with open(args.output, encoding="utf-8") as f:
                 data_json = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError) as exc:
             print(f"[ERROR] Unable to load the JSON file '{args.output}': {exc}")

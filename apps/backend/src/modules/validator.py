@@ -9,7 +9,7 @@ from jsonschema import Draft202012Validator, ValidationError
 
 SCHEMA_PATH = Path(__file__).resolve().parents[2] / "schemas" / "profile_schema.json"
 
-with open(SCHEMA_PATH, "r", encoding="utf-8") as _f:
+with open(SCHEMA_PATH, encoding="utf-8") as _f:
     _SCHEMA = json.load(_f)
 
 _VALIDATOR = Draft202012Validator(_SCHEMA)

@@ -1,18 +1,31 @@
 from fastapi import APIRouter, HTTPException
-from modules.validator import validate_tax_data
-from modules.prompt_generator import generate_tax_prompt
-from modules.story_generator import (
-    make_personal_story, make_education_story, make_residency_intentions_story,
-    make_finance_story, make_social_security_story, make_tax_deductions_story,
-    make_future_financial_plans_story, make_additional_information_story, make_story
-)
-from modules.currency_utils import country_to_currency
-from modules.schemas import (
-    PersonalInformationRequest, EducationRequest, ResidencyIntentionsRequest,
-    FinanceRequest, SocialSecurityRequest, TaxDeductionsRequest,
-    FutureFinancialPlansRequest, AdditionalInformationRequest, SummaryRequest
-)
+
 from api.perplexity import get_tax_advice
+from modules.currency_utils import country_to_currency
+from modules.prompt_generator import generate_tax_prompt
+from modules.schemas import (
+    AdditionalInformationRequest,
+    EducationRequest,
+    FinanceRequest,
+    FutureFinancialPlansRequest,
+    PersonalInformationRequest,
+    ResidencyIntentionsRequest,
+    SocialSecurityRequest,
+    SummaryRequest,
+    TaxDeductionsRequest,
+)
+from modules.story_generator import (
+    make_additional_information_story,
+    make_education_story,
+    make_finance_story,
+    make_future_financial_plans_story,
+    make_personal_story,
+    make_residency_intentions_story,
+    make_social_security_story,
+    make_story,
+    make_tax_deductions_story,
+)
+from modules.validator import validate_tax_data
 
 # Instantiate the router (replaces Flask Blueprint)
 router = APIRouter()
@@ -29,7 +42,7 @@ def tax_advice(data: dict):
         raise HTTPException(status_code=400, detail=validation_result["message"])
 
     prompt = generate_tax_prompt(data)
-        
+
     advice_response = get_tax_advice(prompt)
     return advice_response
 
@@ -105,31 +118,31 @@ def get_finance_story(request: FinanceRequest):
         dest_currency = "USD"
         if request.destination_country:
             dest_currency = country_to_currency(request.destination_country)
-        
+
         # Debug logging for finance data structure
         print(f"DEBUG: Finance data type: {type(request.finance)}")
         print(f"DEBUG: Finance data keys: {list(request.finance.keys()) if isinstance(request.finance, dict) else 'Not a dict'}")
         print(f"DEBUG: Full finance data: {request.finance}")
-        
+
         if isinstance(request.finance, dict):
             # Check income sources specifically (handle both naming conventions)
             income_sources = request.finance.get('incomeSources', request.finance.get('income_sources', []))
             print(f"DEBUG: Income sources count: {len(income_sources)}")
             for i, source in enumerate(income_sources):
                 print(f"DEBUG: Income source {i}: {source}")
-            
+
             # Check income situation
             income_situation = request.finance.get('income_situation', request.finance.get('incomeSituation'))
             print(f"DEBUG: Income situation: {income_situation}")
-            
+
             if 'capitalGains' in request.finance:
                 cg = request.finance['capitalGains']
                 print(f"DEBUG: capitalGains type: {type(cg)}, value: {cg}")
-        
+
         story = make_finance_story(request.finance, dest_currency)
         return {
             "status": "success",
-            "section": "finance", 
+            "section": "finance",
             "story": story
         }
     except Exception as e:
@@ -146,7 +159,7 @@ def get_social_security_story(request: SocialSecurityRequest):
         dest_currency = "USD"
         if request.destination_country:
             dest_currency = country_to_currency(request.destination_country)
-        
+
         story = make_social_security_story(request.social_security_and_pensions, dest_currency, request.skip_finance_details)
         return {
             "status": "success",
@@ -164,7 +177,7 @@ def get_tax_deductions_story(request: TaxDeductionsRequest):
         dest_currency = "USD"
         if request.destination_country:
             dest_currency = country_to_currency(request.destination_country)
-        
+
         story = make_tax_deductions_story(request.tax_deductions_and_credits, dest_currency, request.skip_finance_details)
         return {
             "status": "success",
@@ -182,7 +195,7 @@ def get_future_financial_plans_story(request: FutureFinancialPlansRequest):
         dest_currency = "USD"
         if request.destination_country:
             dest_currency = country_to_currency(request.destination_country)
-        
+
         story = make_future_financial_plans_story(request.future_financial_plans, dest_currency, request.skip_finance_details)
         return {
             "status": "success",
@@ -228,7 +241,7 @@ def generate_full_story(request: SummaryRequest):
         story = make_story(request.profile)
         return {
             "status": "success",
-            "section": "full_story", 
+            "section": "full_story",
             "story": story
         }
     except Exception as e:
@@ -241,19 +254,19 @@ def perplexity_analysis(payload: dict):
     try:
         if not payload:
             raise HTTPException(status_code=400, detail="No data provided")
-        
+
         if "prompt" not in payload or "model" not in payload:
             raise HTTPException(status_code=400, detail="Missing required fields. Provide 'prompt' and 'model'.")
-        
+
         # Create the request format expected by the Perplexity API
         perplexity_request = {
             "system_prompt": "You are an expert immigration lawyer and tax advisor with extensive knowledge of international tax law, visa requirements, and relocation strategies.",
             "user_prompt": payload["prompt"],
             "model": payload["model"]
         }
-        
+
         response = get_tax_advice(perplexity_request)
-        
+
         # Extract the result from the Perplexity API response
         if isinstance(response, dict) and response.get("status") == "success":
             data = response.get("data", {})
@@ -266,12 +279,12 @@ def perplexity_analysis(payload: dict):
             raise HTTPException(status_code=500, detail=response.get("message", "API error"))
         else:
             result = str(response)
-        
+
         return {
             "status": "success",
             "result": result
         }
-        
+
     except Exception as e:
         import traceback
         error_details = f"Error in Perplexity analysis: {str(e)}\nTraceback: {traceback.format_exc()}"

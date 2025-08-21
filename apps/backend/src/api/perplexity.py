@@ -1,7 +1,9 @@
 import os
+from typing import Any
+
 import requests
+
 from config import Config
-from typing import Union, Dict, Any
 
 # Perplexity API configuration with proper key handling
 _ENDPOINT = "https://api.perplexity.ai/chat/completions"
@@ -17,7 +19,7 @@ def _get_headers():
         "Content-Type": "application/json",
     }
 
-def get_tax_advice(prompt: Union[str, Dict[str, Any]]):
+def get_tax_advice(prompt: str | dict[str, Any]):
     """Call the Perplexity API.
 
     The helper is flexible: it accepts either a **single string** (which will be sent as a
@@ -27,7 +29,7 @@ def get_tax_advice(prompt: Union[str, Dict[str, Any]]):
     """
     url = _ENDPOINT
     headers = _get_headers()
-    
+
     # Build the messages array depending on the prompt type
     if isinstance(prompt, dict):
         system_prompt = prompt.get("system_prompt", "You are an AI assistant.")

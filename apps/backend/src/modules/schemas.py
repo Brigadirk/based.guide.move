@@ -8,14 +8,13 @@ is accepted as arbitrary extra keys so the schema is forward-compatible with
 future additions coming from the Next.js frontend.
 """
 
-from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field, PositiveFloat, field_validator
 
 
 class CurrentResidency(BaseModel):
     country: str
-    status: Optional[str] = None
+    status: str | None = None
 
     class Config:
         extra = "allow"
@@ -23,9 +22,9 @@ class CurrentResidency(BaseModel):
 
 class PersonalInformation(BaseModel):
     currentResidency: CurrentResidency
-    maritalStatus: Optional[str] = None
-    relocationPartner: Optional[bool] = None
-    numRelocationDependents: Optional[int] = 0
+    maritalStatus: str | None = None
+    relocationPartner: bool | None = None
+    numRelocationDependents: int | None = 0
 
     class Config:
         extra = "allow"
@@ -47,7 +46,7 @@ class ResidencyIntentions(BaseModel):
 
 class IncomeSource(BaseModel):
     category: str
-    country: Optional[str] = None
+    country: str | None = None
     amount: PositiveFloat
     currency: str = Field(pattern=r"^[A-Z]{3}$", description="ISO-4217 currency code")
 
@@ -56,8 +55,8 @@ class IncomeSource(BaseModel):
 
 
 class Finance(BaseModel):
-    income_situation: Optional[str] = Field(None, pattern="^(continuing_income|current_and_new_income|seeking_income|gainfully_unemployed|dependent/supported)$")
-    incomeSources: List[IncomeSource] = Field(..., min_items=1)
+    income_situation: str | None = Field(None, pattern="^(continuing_income|current_and_new_income|seeking_income|gainfully_unemployed|dependent/supported)$")
+    incomeSources: list[IncomeSource] = Field(..., min_items=1)
 
     class Config:
         extra = "allow"
@@ -72,7 +71,7 @@ class TaxProfile(BaseModel):
         extra = "allow"
 
     @field_validator("personalInformation", "residencyIntentions", "finance")
-    def not_null(cls, v):  # noqa: D401
+    def not_null(self, v):  # noqa: D401
         if v is None:
             raise ValueError("Field must not be null")
         return v
@@ -81,87 +80,87 @@ class TaxProfile(BaseModel):
 # Section-specific schemas for individual story generation
 class SectionRequest(BaseModel):
     """Base schema for individual section story generation requests."""
-    section_data: Dict
-    destination_country: Optional[str] = None  # For currency calculations
-    
+    section_data: dict
+    destination_country: str | None = None  # For currency calculations
+
     class Config:
         extra = "allow"
 
 
 class PersonalInformationRequest(BaseModel):
     """Schema for personal information section story generation."""
-    personal_information: Dict
-    
+    personal_information: dict
+
     class Config:
         extra = "allow"
 
 
 class EducationRequest(BaseModel):
     """Schema for education section story generation."""
-    education: Dict
-    
+    education: dict
+
     class Config:
         extra = "allow"
 
 
 class ResidencyIntentionsRequest(BaseModel):
     """Schema for residency intentions section story generation."""
-    residency_intentions: Dict
-    
+    residency_intentions: dict
+
     class Config:
         extra = "allow"
 
 
 class FinanceRequest(BaseModel):
     """Schema for finance section story generation."""
-    finance: Dict
-    destination_country: Optional[str] = None
-    
+    finance: dict
+    destination_country: str | None = None
+
     class Config:
         extra = "allow"
 
 
 class SocialSecurityRequest(BaseModel):
     """Schema for social security and pensions section story generation."""
-    social_security_and_pensions: Dict
-    destination_country: Optional[str] = None
-    skip_finance_details: Optional[bool] = False
-    
+    social_security_and_pensions: dict
+    destination_country: str | None = None
+    skip_finance_details: bool | None = False
+
     class Config:
         extra = "allow"
 
 
 class TaxDeductionsRequest(BaseModel):
     """Schema for tax deductions and credits section story generation."""
-    tax_deductions_and_credits: Dict
-    destination_country: Optional[str] = None
-    skip_finance_details: Optional[bool] = False
-    
+    tax_deductions_and_credits: dict
+    destination_country: str | None = None
+    skip_finance_details: bool | None = False
+
     class Config:
         extra = "allow"
 
 
 class FutureFinancialPlansRequest(BaseModel):
     """Schema for future financial plans section story generation."""
-    future_financial_plans: Dict
-    destination_country: Optional[str] = None
-    skip_finance_details: Optional[bool] = False
-    
+    future_financial_plans: dict
+    destination_country: str | None = None
+    skip_finance_details: bool | None = False
+
     class Config:
         extra = "allow"
 
 
 class AdditionalInformationRequest(BaseModel):
     """Schema for additional information section story generation."""
-    additional_information: Dict
-    
+    additional_information: dict
+
     class Config:
         extra = "allow"
 
 
 class SummaryRequest(BaseModel):
     """Schema for complete summary story generation."""
-    profile: Dict
-    
+    profile: dict
+
     class Config:
-        extra = "allow" 
+        extra = "allow"

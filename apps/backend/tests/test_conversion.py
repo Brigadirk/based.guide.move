@@ -15,4 +15,4 @@ def test_eur_to_usd_and_back():
     usd = convert(amount_eur, 'EUR', 'USD')
     # Now convert back (may incur float error)
     eur_back = convert(usd, 'USD', 'EUR')
-    assert abs(eur_back - amount_eur) < 0.5  # allow small tolerance 
+    assert abs(eur_back - amount_eur) < 0.5  # allow small tolerance

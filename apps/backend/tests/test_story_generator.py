@@ -23,4 +23,4 @@ def test_story_contains_all_sections():
         "Tax Deductions & Credits:",
         "Additional Information:",
     ]:
-        assert header in story 
+        assert header in story

@@ -35,4 +35,4 @@ def test_fallback_on_unknown_model():
     # Ensure both models attempted
     assert calls[0].endswith("labs")
     assert calls[1].endswith("deep-research")
-    assert result["status"] == "success" 
+    assert result["status"] == "success"

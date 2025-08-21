@@ -1,8 +1,10 @@
-from services.exchange_rate_service import convert, _latest_snapshot_file
+from datetime import datetime
+from typing import Any
+
 from modules.story_generator import make_story
 from modules.translator import json_to_markdown
-from typing import Dict, Any
-from datetime import datetime
+from services.exchange_rate_service import _latest_snapshot_file, convert
+
 
 def generate_tax_prompt(data, *, include_appendix: bool = True):
     """
@@ -13,13 +15,13 @@ def generate_tax_prompt(data, *, include_appendix: bool = True):
     personal_info = data.get('personalInformation', {})
     residency_intentions = data.get('residencyIntentions', {})
     finance_data = data.get('finance', {})
-    
+
     # Get destination country
-    destination_country = residency_intentions.get('destinationCountry', {}).get('country', 'Unknown')
-    
+    residency_intentions.get('destinationCountry', {}).get('country', 'Unknown')
+
     # Get current residency
-    current_residency = personal_info.get('currentResidency', {}).get('country', 'Unknown')
-    
+    personal_info.get('currentResidency', {}).get('country', 'Unknown')
+
     # -------------------------------------------------------------------
     # Income handling – aggregate all incomeSources amounts
     # -------------------------------------------------------------------
@@ -33,14 +35,14 @@ def generate_tax_prompt(data, *, include_appendix: bool = True):
         income = finance_data.get('income', {})
         annual_amount = income.get('annualAmount', 0)
         currency = income.get('currency', 'USD').upper()
-    
+
     # Convert income to USD to provide additional clarity for the LLM
     try:
-        annual_amount_usd = convert(float(annual_amount), currency, 'USD')
+        convert(float(annual_amount), currency, 'USD')
     except Exception:
         # If conversion fails, fall back to original amount
-        annual_amount_usd = None
-    
+        pass
+
     # Meta header
     snapshot_ts = "unknown"
     latest_snapshot = _latest_snapshot_file()
@@ -84,10 +86,10 @@ def generate_tax_prompt(data, *, include_appendix: bool = True):
         prompt = story + appendix
     else:
         prompt = story
-    
+
     return prompt
 
-def build_summary(data: Dict[str, Any]) -> str:
+def build_summary(data: dict[str, Any]) -> str:
     """Return bullet list of headline risks/opportunities."""
     bullets = []
 

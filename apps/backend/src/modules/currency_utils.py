@@ -1,6 +1,6 @@
 import json
-from pathlib import Path
 from functools import lru_cache
+from pathlib import Path
 
 # Single source of truth: Next.js data directory
 COUNTRY_INFO_PATH = Path(__file__).resolve().parents[2] / "frontend" / "data" / "country_info.json"
@@ -23,4 +23,4 @@ def _load_mapping() -> dict[str, str]:
 def country_to_currency(country_name: str) -> str:
     """Return ISO currency code for *country_name* or 'USD' as fallback."""
     mapping = _load_mapping()
-    return mapping.get(country_name, "USD") 
+    return mapping.get(country_name, "USD")

@@ -14,4 +14,4 @@ def test_prompt_with_appendix():
 
 def test_prompt_without_appendix():
     prompt = generate_tax_prompt(load_sample(), include_appendix=False)
-    assert "RAW PROFILE DUMP" not in prompt 
+    assert "RAW PROFILE DUMP" not in prompt

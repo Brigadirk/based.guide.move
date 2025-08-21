@@ -16,4 +16,4 @@ def test_every_key_present():
     # ensure that a few representative keys appear
     assert "personalInformation" in md
     assert "incomeSources" in md
-    assert "destinationCountry" in md 
+    assert "destinationCountry" in md
