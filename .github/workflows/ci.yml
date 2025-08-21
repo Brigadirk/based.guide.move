@@ -107,6 +107,11 @@ jobs:
         run: pnpm run typecheck || echo "TypeScript errors found but continuing build"
         continue-on-error: true
 
+      - name: Clear Jest cache
+        run: |
+          cd apps/frontend
+          npx jest --clearCache
+
       - name: Run tests
         run: pnpm run test
 
