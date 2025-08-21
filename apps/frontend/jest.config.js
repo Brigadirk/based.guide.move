@@ -1,6 +1,3 @@
-const { pathsToModuleNameMapper } = require('ts-jest')
-const { compilerOptions } = require('./tsconfig.json')
-
 /** @type {import('jest').Config} */
 const config = {
   testEnvironment: 'jsdom',
@@ -17,31 +14,18 @@ const config = {
     }],
   },
   
-  // 🔑 KEY: Use ts-jest to automatically map TypeScript paths
-  modulePaths: [compilerOptions.baseUrl || '.'],
+  // Simple module name mapping - only for static assets, no path aliases
   moduleNameMapper: {
-    // Static assets first
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
-    
-    // 🎯 SOLUTION: Auto-generate from tsconfig.json paths
-    ...pathsToModuleNameMapper(compilerOptions.paths || {}, { prefix: '<rootDir>/' }),
   },
   
   // Module file extensions
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   
-  // Module paths
-  roots: ['<rootDir>'],
-  
-  // Transform ignore patterns
-  transformIgnorePatterns: [
-    'node_modules/(?!(.*\\.mjs$))',
-  ],
-  
   // Test patterns
   testMatch: [
-    '<rootDir>/**/__tests__/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/**/__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}',
     '<rootDir>/**/*.(test|spec).{js,jsx,ts,tsx}',
   ],
   
@@ -58,11 +42,6 @@ const config = {
     '!**/*.d.ts',
     '!**/node_modules/**',
   ],
-  
-  // Environment setup
-  testEnvironmentOptions: {
-    customExportConditions: [],
-  },
 }
 
 module.exports = config

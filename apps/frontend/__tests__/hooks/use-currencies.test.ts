@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react'
-import { useCurrencies, getCurrencySymbol, formatCurrency } from '@/lib/hooks/use-currencies'
+import { useCurrencies, getCurrencySymbol, formatCurrency } from '../helpers/use-currencies'
 
 describe('useCurrencies', () => {
   it('should return currency codes from country data', () => {
