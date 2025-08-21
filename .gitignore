@@ -234,7 +234,8 @@ data/
 
 # Docker
 .dockerignore
-Dockerfile*
+# Allow service Dockerfiles for Railway deployment
+!apps/*/Dockerfile
 
 # Backup files
 *.bak
