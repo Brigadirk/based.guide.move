@@ -11,10 +11,19 @@ const config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  // Explicitly define module name mapping for CI compatibility
   moduleNameMapper: {
-    // Handle module aliases (this will be automatically configured for you based on your tsconfig.json paths)
     '^@/(.*)$': '<rootDir>/$1',
+    '^@/lib/(.*)$': '<rootDir>/lib/$1',
+    '^@/components/(.*)$': '<rootDir>/components/$1',
+    '^@/app/(.*)$': '<rootDir>/app/$1',
+    '^@/types/(.*)$': '<rootDir>/types/$1',
+    '^@/data/(.*)$': '<rootDir>/data/$1',
   },
+  // Ensure proper module resolution
+  roots: ['<rootDir>'],
+  modulePaths: ['<rootDir>'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   collectCoverageFrom: [
     'components/**/*.{js,jsx,ts,tsx}',
     'lib/**/*.{js,jsx,ts,tsx}',
