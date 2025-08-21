@@ -1,4 +1,4 @@
-from exchange_rate_fetcher.exchange_rate_service import convert, fetch_and_save_latest_rates
+from services.exchange_rate_service import convert, fetch_and_save_latest_rates
 
 
 def setup_module(module):

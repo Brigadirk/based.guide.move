@@ -1,7 +1,7 @@
 import json
 import time
 
-from exchange_rate_fetcher import exchange_rate_service as ers
+from services import exchange_rate_service as ers
 
 
 def test_backlog_trim(tmp_path, monkeypatch):

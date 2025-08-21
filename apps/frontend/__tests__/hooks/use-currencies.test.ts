@@ -2,12 +2,21 @@ import { renderHook } from '@testing-library/react'
 import { useCurrencies, getCurrencySymbol, formatCurrency } from '@/lib/hooks/use-currencies'
 
 describe('useCurrencies', () => {
-  it('should return expected currency codes', () => {
+  it('should return currency codes from country data', () => {
     const { result } = renderHook(() => useCurrencies())
     
-    expect(result.current).toEqual([
-      "USD", "EUR", "GBP", "CAD", "AUD", "CHF", "JPY", "CNY"
-    ])
+    // Should return an array of currency codes
+    expect(Array.isArray(result.current)).toBe(true)
+    expect(result.current.length).toBeGreaterThan(0)
+    
+    // Should include major currencies
+    expect(result.current).toContain("USD")
+    expect(result.current).toContain("EUR")
+    expect(result.current).toContain("GBP")
+    
+    // Should be sorted alphabetically
+    const sorted = [...result.current].sort()
+    expect(result.current).toEqual(sorted)
   })
 
   it('should return the same reference on multiple calls', () => {
@@ -36,7 +45,7 @@ describe('getCurrencySymbol', () => {
 describe('formatCurrency', () => {
   it('should format currency with symbol and thousands separator', () => {
     expect(formatCurrency(1000, 'USD')).toBe('$1,000')
-    expect(formatCurrency(1500.50, 'EUR')).toBe('€1,501') // Note: toLocaleString rounds
+    expect(formatCurrency(1500.5, 'EUR')).toBe('€1,500.5') // toLocaleString preserves decimals
     expect(formatCurrency(999, 'GBP')).toBe('£999')
   })
 

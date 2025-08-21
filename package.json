@@ -21,7 +21,7 @@
     "start:backend": "cd apps/backend/src && uvicorn app:app --host 0.0.0.0 --port 5001",
     "test": "pnpm run test:frontend && pnpm run test:backend",
     "test:frontend": "pnpm --filter frontend test",
-    "test:backend": "cd apps/backend && python -m pytest",
+    "test:backend": "cd apps/backend && PYTHONPATH=src python3.11 -m pytest",
     "lint": "pnpm run lint:frontend && pnpm run lint:backend",
     "lint:frontend": "pnpm --filter frontend lint",
     "lint:backend": "cd apps/backend && ruff check src tests",
