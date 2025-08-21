@@ -98,7 +98,6 @@ interface DestinationProps {
 }
 
 // Full country dataset copied from the Streamlit project
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import countryInfo from "@/data/country_info.json"
 
 type CountryEntry = {

@@ -6,13 +6,14 @@ import { useFormStore } from "@/lib/stores"
 import { Button } from "@/components/ui/button"
 
 export function DevStateViewer() {
+  // Always call hooks first
+  const { formData } = useFormStore()
+  const [open, setOpen] = useState(false)
+
   // Only show in non-production builds
   if (process.env.NODE_ENV === "production") {
     return null
   }
-
-  const { formData } = useFormStore()
-  const [open, setOpen] = useState(false)
 
   return (
     <>
