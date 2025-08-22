@@ -23,7 +23,8 @@ dependencies = [
     "pydantic[email]>=2.4.0",
     "requests>=2.31.0",
     "postmarker>=1.0",
-    "shared-eu @ file://../../packages/python",
+    "jsonschema>=4.17.0",
+    "apscheduler>=3.10.0",
 ]
 
 [project.optional-dependencies]
