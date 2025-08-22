@@ -4,7 +4,8 @@
 
 import { transformFinanceForBackend, transformFormDataForBackend } from './utils/field-transformer'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api/v1';
+// Use internal proxy instead of direct backend calls
+const API_BASE_URL = '/api/backend';
 
 export interface SectionStoryResponse {
   status: string;

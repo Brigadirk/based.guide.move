@@ -140,7 +140,7 @@ export function useSectionInfo() {
 4. **Try "Check My Information" again** - it should now work!
 
 ### Technical Details:
-- **Expected backend URL**: \`http://localhost:5001/api/v1\`
+- **Backend communication**: Via secure internal proxy
 - **Error**: ${error.message}
 - **Status**: Backend server not responding
 
