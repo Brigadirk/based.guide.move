@@ -80,15 +80,15 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
           }
         case "personal":
           const personalInfo = formData.personalInformation || {}
-          response = await apiClient.getPersonalInformationStory(personalInfo, destCountry)
+          response = await apiClient.getPersonalInformationStory(personalInfo)
           break
         case "education":
           const education = formData.education || {}
-          response = await apiClient.getEducationStory(education, destCountry)
+          response = await apiClient.getEducationStory(education)
           break
         case "residency":
           const residency = formData.residencyIntentions || {}
-          response = await apiClient.getResidencyIntentionsStory(residency, destCountry)
+          response = await apiClient.getResidencyIntentionsStory(residency)
           break
         case "finance":
           const finance = formData.finance || {}
