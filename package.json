@@ -13,6 +13,7 @@
     "dev:docker": "./dev-docker.sh",
     "dev:frontend": "pnpm --filter frontend dev",
     "dev:backend": "cd apps/backend && ./start-backend.sh",
+    "dev:tester": "pnpm --filter backend-tester dev",
     "build": "pnpm run build:frontend",
     "build:frontend": "pnpm --filter frontend build",
     "build:backend": "cd apps/backend && python -m build",
