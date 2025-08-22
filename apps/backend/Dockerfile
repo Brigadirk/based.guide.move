@@ -31,4 +31,8 @@ EXPOSE ${PORT:-3000}
 # Run the application
 WORKDIR /app/src
 ENV PYTHONPATH=.
-CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT:-3000}"]
+# Create a startup script to handle PORT env var
+RUN echo '#!/bin/sh\nexec uvicorn app:app --host 0.0.0.0 --port ${PORT:-3000}' > /start.sh && \
+    chmod +x /start.sh
+
+CMD ["/start.sh"]
