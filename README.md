@@ -1,4 +1,4 @@
-np# BasedGuide Tax Migration Platform
+# BasedGuide Tax Migration Platform
 
 > A comprehensive platform for analyzing tax migration strategies and visa eligibility for digital nomads and international relocators.
 
