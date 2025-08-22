@@ -28,7 +28,7 @@ importers:
     dependencies:
       next:
         specifier: 14.2.21
-        version: 14.2.21(react-dom@18.3.1)(react@18.3.1)
+        version: 14.2.21(@babel/core@7.28.3)(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -36,6 +36,24 @@ importers:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
     devDependencies:
+      '@babel/preset-env':
+        specifier: ^7.26.0
+        version: 7.28.3(@babel/core@7.28.3)
+      '@babel/preset-react':
+        specifier: ^7.26.3
+        version: 7.27.1(@babel/core@7.28.3)
+      '@babel/preset-typescript':
+        specifier: ^7.26.0
+        version: 7.27.1(@babel/core@7.28.3)
+      '@testing-library/jest-dom':
+        specifier: ^6.6.3
+        version: 6.7.0
+      '@testing-library/react':
+        specifier: ^14.3.1
+        version: 14.3.1(@types/react@19.1.10)(react-dom@18.3.1)(react@18.3.1)
+      '@types/jest':
+        specifier: ^29.5.14
+        version: 29.5.14
       '@types/node':
         specifier: 20.19.11
         version: 20.19.11
@@ -45,12 +63,24 @@ importers:
       '@types/react-dom':
         specifier: 19.1.7
         version: 19.1.7(@types/react@19.1.10)
+      babel-jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@babel/core@7.28.3)
       eslint:
         specifier: 9.33.0
         version: 9.33.0
       eslint-config-next:
         specifier: 15.1.7
         version: 15.1.7(eslint@9.33.0)(typescript@5.9.2)
+      identity-obj-proxy:
+        specifier: ^3.0.0
+        version: 3.0.0
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@20.19.11)
+      jest-environment-jsdom:
+        specifier: ^29.7.0
+        version: 29.7.0
       typescript:
         specifier: 5.9.2
         version: 5.9.2
@@ -8292,7 +8322,7 @@ packages:
       react-dom: 18.3.1(react@18.3.1)
     dev: false
 
-  /next@14.2.21(react-dom@18.3.1)(react@18.3.1):
+  /next@14.2.21(@babel/core@7.28.3)(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-rZmLwucLHr3/zfDMYbJXbw0ZeoBpirxkXuvsJbk7UPorvPYZhP7vq7aHbKnU7dQNCYIimRrbB2pp3xmf+wsYUg==}
     engines: {node: '>=18.17.0'}
     hasBin: true
@@ -8318,7 +8348,7 @@ packages:
       postcss: 8.4.31
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      styled-jsx: 5.1.1(react@18.3.1)
+      styled-jsx: 5.1.1(@babel/core@7.28.3)(react@18.3.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 14.2.21
       '@next/swc-darwin-x64': 14.2.21
@@ -9586,7 +9616,7 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /styled-jsx@5.1.1(react@18.3.1):
+  /styled-jsx@5.1.1(@babel/core@7.28.3)(react@18.3.1):
     resolution: {integrity: sha512-pW7uC1l4mBZ8ugbiZrcIsiIvVx1UmTfw7UkC3Um2tmfUq9Bhk8IiyEIPl6F8agHgjzku6j0xQEZbfA5uSgSaCw==}
     engines: {node: '>= 12.0.0'}
     peerDependencies:
@@ -9599,6 +9629,7 @@ packages:
       babel-plugin-macros:
         optional: true
     dependencies:
+      '@babel/core': 7.28.3
       client-only: 0.0.1
       react: 18.3.1
     dev: false
