@@ -282,3 +282,54 @@ def perplexity_analysis(payload: dict):
         )
         print(f"ERROR: {error_details}")
         raise HTTPException(status_code=500, detail=f"Error in Perplexity analysis: {str(e)}")
+
+
+@router.get("/exchange-rates")
+def get_exchange_rates():
+    """Get the latest exchange rates (USD base)."""
+    from services.exchange_rate_service import get_latest_rates, _latest_snapshot_file
+    from datetime import datetime
+    import os
+    
+    try:
+        rates = get_latest_rates()
+        latest_file = _latest_snapshot_file()
+        
+        # Get metadata about the snapshot
+        snapshot_info = {
+            "last_updated": None,
+            "file_age_hours": None,
+            "total_currencies": len(rates)
+        }
+        
+        if latest_file and latest_file.exists():
+            # Get file creation time
+            file_time = os.path.getctime(latest_file)
+            snapshot_info["last_updated"] = datetime.fromtimestamp(file_time).isoformat()
+            
+            # Calculate age in hours
+            current_time = datetime.now().timestamp()
+            age_seconds = current_time - file_time
+            snapshot_info["file_age_hours"] = round(age_seconds / 3600, 2)
+        
+        return {
+            "status": "success",
+            "base_currency": "USD",
+            "rates": rates,
+            "metadata": snapshot_info
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve exchange rates: {str(e)}")
+
+
+@router.post("/exchange-rates/refresh")
+def refresh_exchange_rates():
+    """Force refresh exchange rates from API."""
+    from services.exchange_rate_service import fetch_and_save_latest_rates
+    
+    try:
+        fetch_and_save_latest_rates(force=True)
+        return {"status": "success", "message": "Exchange rates refreshed successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to refresh exchange rates: {str(e)}")

@@ -121,7 +121,9 @@ const mockData = {
     full_story: "A 33-year-old US citizen looking to move to Portugal with $80k income and $50k in savings.",
     prompt: "Analyze tax implications and visa requirements",
     model: "sonar-deep-research"
-  }
+  },
+  exchangeRates: null,
+  exchangeRatesRefresh: null
 }
 
 interface ApiResponse {
@@ -135,6 +137,9 @@ export default function BackendTester() {
   const [responses, setResponses] = useState<Record<string, ApiResponse>>({})
   const [loading, setLoading] = useState<Record<string, boolean>>({})
   const [editableData, setEditableData] = useState(mockData)
+  const [converterAmount, setConverterAmount] = useState('100')
+  const [converterFrom, setConverterFrom] = useState('USD')
+  const [converterTo, setConverterTo] = useState('EUR')
 
   // Backend URL - uses Railway internal for deployed version
   const BACKEND_URL = process.env.NODE_ENV === 'production' 
@@ -194,6 +199,49 @@ export default function BackendTester() {
     }
   }
 
+  const ExchangeRateDisplay = ({ rates }: { rates: any }) => {
+    if (!rates || !rates.rates) return null
+    
+    // Show first 10 rates and total count
+    const rateEntries = Object.entries(rates.rates).slice(0, 10)
+    const totalRates = Object.keys(rates.rates).length
+    
+    return (
+      <div style={{ marginTop: '12px' }}>
+        <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#333' }}>
+          Exchange Rates (USD Base) - Showing {rateEntries.length} of {totalRates} currencies
+        </div>
+        <div style={{ marginBottom: '8px', fontSize: '12px', color: '#666' }}>
+          Last Updated: {rates.metadata?.last_updated || 'Unknown'} 
+          ({rates.metadata?.file_age_hours ? `${rates.metadata.file_age_hours}h ago` : 'Unknown age'})
+        </div>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', 
+          gap: '8px',
+          marginBottom: '12px'
+        }}>
+          {rateEntries.map(([currency, rate]) => (
+            <div key={currency} style={{ 
+              padding: '4px 8px', 
+              backgroundColor: '#f8f9fa', 
+              borderRadius: '4px',
+              fontSize: '11px',
+              border: '1px solid #e9ecef'
+            }}>
+              <strong>{currency}</strong>: {typeof rate === 'number' ? rate.toFixed(4) : rate}
+            </div>
+          ))}
+        </div>
+        {totalRates > 10 && (
+          <div style={{ fontSize: '11px', color: '#666', fontStyle: 'italic' }}>
+            ...and {totalRates - 10} more currencies (see full response below)
+          </div>
+        )}
+      </div>
+    )
+  }
+
   const TestButton = ({ 
     endpoint, 
     method = 'POST', 
@@ -209,6 +257,7 @@ export default function BackendTester() {
     const isLoading = loading[key]
     const response = responses[key]
     const data = dataKey ? editableData[dataKey as keyof typeof editableData] : undefined
+    const isExchangeRate = endpoint.includes('exchange-rates') && !endpoint.includes('refresh')
 
     return (
       <div style={{ 
@@ -270,18 +319,132 @@ export default function BackendTester() {
               Status: {response.success ? 'SUCCESS' : 'ERROR'} 
               {response.status && ` (${response.status})`}
             </div>
-            <pre style={{
-              backgroundColor: '#f8f9fa',
-              padding: '12px',
-              borderRadius: '4px',
-              overflow: 'auto',
-              fontSize: '11px',
-              maxHeight: '300px'
-            }}>
-              {response.error || JSON.stringify(response.data, null, 2)}
-            </pre>
+            
+            {/* Special display for exchange rates */}
+            {isExchangeRate && response.success && response.data && (
+              <ExchangeRateDisplay rates={response.data} />
+            )}
+            
+            <details>
+              <summary style={{ 
+                cursor: 'pointer', 
+                fontWeight: 'bold', 
+                marginBottom: '8px',
+                color: '#666'
+              }}>
+                {isExchangeRate ? 'Full JSON Response' : 'Response Details'}
+              </summary>
+              <pre style={{
+                backgroundColor: '#f8f9fa',
+                padding: '12px',
+                borderRadius: '4px',
+                overflow: 'auto',
+                fontSize: '11px',
+                maxHeight: '300px',
+                marginTop: '8px'
+              }}>
+                {response.error || JSON.stringify(response.data, null, 2)}
+              </pre>
+            </details>
           </div>
         )}
+      </div>
+    )
+  }
+
+  const CurrencyConverter = () => {
+    const exchangeRateResponse = responses['api_v1_exchange-rates']
+    if (!exchangeRateResponse?.success || !exchangeRateResponse.data?.rates) {
+      return (
+        <div style={{ 
+          padding: '16px', 
+          backgroundColor: '#fff3cd', 
+          border: '1px solid #ffeaa7', 
+          borderRadius: '8px',
+          marginBottom: '16px'
+        }}>
+          <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>Currency Converter</div>
+          <div style={{ fontSize: '14px', color: '#856404' }}>
+            Please fetch exchange rates first to use the converter
+          </div>
+        </div>
+      )
+    }
+
+    const rates = exchangeRateResponse.data.rates
+    const currencies = Object.keys(rates).sort()
+    
+    // Add USD to the list since it's the base currency
+    if (!currencies.includes('USD')) {
+      currencies.unshift('USD')
+    }
+    
+    const convertCurrency = () => {
+      const amount = parseFloat(converterAmount) || 0
+      if (converterFrom === converterTo) return amount
+      
+      let result = amount
+      
+      // Convert from source to USD if needed
+      if (converterFrom !== 'USD') {
+        const fromRate = rates[converterFrom]
+        if (!fromRate) return 'Invalid currency'
+        result = amount / fromRate
+      }
+      
+      // Convert from USD to target if needed
+      if (converterTo !== 'USD') {
+        const toRate = rates[converterTo]
+        if (!toRate) return 'Invalid currency'
+        result = result * toRate
+      }
+      
+      return result.toFixed(4)
+    }
+
+    return (
+      <div style={{ 
+        padding: '16px', 
+        backgroundColor: '#d1ecf1', 
+        border: '1px solid #bee5eb', 
+        borderRadius: '8px',
+        marginBottom: '16px'
+      }}>
+        <div style={{ fontWeight: 'bold', marginBottom: '12px' }}>Currency Converter</div>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <input
+            type="number"
+            value={converterAmount}
+            onChange={(e) => setConverterAmount(e.target.value)}
+            style={{ padding: '6px', width: '100px', borderRadius: '4px', border: '1px solid #ccc' }}
+            placeholder="Amount"
+          />
+          <select
+            value={converterFrom}
+            onChange={(e) => setConverterFrom(e.target.value)}
+            style={{ padding: '6px', borderRadius: '4px', border: '1px solid #ccc' }}
+          >
+            {currencies.map(currency => (
+              <option key={currency} value={currency}>{currency}</option>
+            ))}
+          </select>
+          <span style={{ fontWeight: 'bold' }}>→</span>
+          <select
+            value={converterTo}
+            onChange={(e) => setConverterTo(e.target.value)}
+            style={{ padding: '6px', borderRadius: '4px', border: '1px solid #ccc' }}
+          >
+            {currencies.map(currency => (
+              <option key={currency} value={currency}>{currency}</option>
+            ))}
+          </select>
+          <span style={{ fontWeight: 'bold', color: '#0c5460' }}>
+            = {convertCurrency()} {converterTo}
+          </span>
+        </div>
+        <div style={{ fontSize: '11px', color: '#0c5460', marginTop: '8px' }}>
+          Using exchange rates from: {exchangeRateResponse.data.metadata?.last_updated || 'Unknown'}
+        </div>
       </div>
     )
   }
@@ -376,6 +539,19 @@ export default function BackendTester() {
         endpoint="/api/v1/perplexity-analysis" 
         dataKey="perplexityAnalysis"
         label="Perplexity Analysis" 
+      />
+
+      <h2>Exchange Rate Endpoints</h2>
+      <CurrencyConverter />
+      <TestButton 
+        endpoint="/api/v1/exchange-rates" 
+        method="GET"
+        label="Get Exchange Rates" 
+      />
+      <TestButton 
+        endpoint="/api/v1/exchange-rates/refresh" 
+        dataKey="exchangeRatesRefresh"
+        label="Refresh Exchange Rates" 
       />
     </div>
   )
