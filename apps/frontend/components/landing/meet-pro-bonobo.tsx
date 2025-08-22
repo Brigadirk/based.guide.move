@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Carousel } from "@/components/ui/carousel"
 import { SlideIn } from "@/components/ui/slide-in"
@@ -10,45 +9,42 @@ export function MeetProBonobo() {
     {
       title: "Immediate Turnaround",
       description: "Get your relocation analysis instantly, 24/7. No waiting, no delays.",
-      image: "/images/landing/meet_pro_bonobo/immediate_turnaround.png"
+      icon: "⚡"
     },
     {
       title: "The Right Questions",
       description: "We ask only what matters. No fluff, just the essential questions to find your perfect new home.",
-      image: "/images/landing/meet_pro_bonobo/right_questions.png"
+      icon: "❓"
     },
     {
       title: "Comprehensive Reports",
       description: "Clear, downloadable reports ready to share with your immigration and tax experts.",
-      image: "/images/landing/meet_pro_bonobo/comprehensive_reports.png"
+      icon: "📊"
     },
     {
       title: "Visa Options",
       description: "Discover all available visa paths and their requirements at a glance.",
-      image: "/images/landing/meet_pro_bonobo/visa_options.png"
+      icon: "🛂"
     },
     {
       title: "Tax Implications",
       description: "Quick estimates of your potential tax savings in any new jurisdiction.",
-      image: "/images/landing/meet_pro_bonobo/tax_implications.png"
+      icon: "💰"
     },
     {
       title: "Reuse your data",
       description: "Enter your details once, explore multiple countries. No repetitive forms.",
-      image: "/images/landing/meet_pro_bonobo/reuse_data.png"
+      icon: "🔄"
     }
   ]
 
   const CapabilityCard = ({ capability }: { capability: typeof capabilities[0] }) => (
     <Card className="bg-background/90 backdrop-blur-sm border border-border shadow-lg hover:shadow-xl transition-shadow duration-300 w-[300px]">
       <CardContent className="p-6">
-        <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden">
-          <Image
-            src={capability.image}
-            alt={capability.title}
-            fill
-            className="object-cover"
-          />
+        <div className="relative h-48 w-full mb-4 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+          <div className="text-6xl">
+            {capability.icon}
+          </div>
         </div>
         <h3 className="text-xl font-semibold text-foreground mb-3">
           {capability.title}
@@ -73,15 +69,13 @@ export function MeetProBonobo() {
       {/* Main container with relative positioning */}
       <div className="relative w-full">
         {/* Background image container with aspect ratio */}
-        <div className="relative w-full aspect-[3/4]">
-          <Image
-            src="/images/landing/meet_pro_bonobo/bonobo_face.png"
-            alt="Mr. Pro Bonobo's face"
-            fill
-            className="object-cover object-top"
-            priority
-            sizes="100vw"
-          />
+        <div className="relative w-full aspect-[3/4] bg-gradient-to-b from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
+          {/* Fallback content when image is not available */}
+          <div className="text-center text-blue-600">
+            <div className="text-6xl mb-4">🐵</div>
+            <h3 className="text-xl font-bold">Mr. Pro Bonobo</h3>
+            <p className="text-sm opacity-75">Your AI Migration Assistant</p>
+          </div>
         </div>
 
         {/* Cards container positioned absolutely */}

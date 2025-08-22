@@ -107,7 +107,8 @@ dist
 
 # Gatsby files
 .cache/
-public
+# Note: Gatsby's public directory (if using Gatsby)
+# public
 
 # Storybook build outputs
 .out
