@@ -41,10 +41,11 @@ basedguide2/
 │   │   ├── Dockerfile              # Container definition
 │   │   └── .env.example            # Environment variables
 │   │
-│   └── worker-exchange-rates/      # Background worker
-│       ├── src/                    # Worker source code
-│       ├── pyproject.toml          # Worker dependencies
-│       └── Procfile                # Railway deployment
+│   └── backend-tester/             # API testing tool
+│       ├── app/                    # Next.js testing app
+│       ├── __tests__/              # Test suites
+│       ├── package.json            # Testing dependencies
+│       └── Dockerfile              # Container definition
 │
 ├── packages/                       # Shared packages
 │   ├── python/                     # Shared Python utilities
@@ -237,7 +238,7 @@ Pre-commit hooks are configured via Husky to:
    # Create projects for each service
    railway create basedguide-backend
    railway create basedguide-frontend
-   railway create basedguide-worker
+   railway create basedguide-backend-tester  # Optional: for API testing
    ```
 
 2. **Configure environment variables**
@@ -256,8 +257,8 @@ Pre-commit hooks are configured via Husky to:
    cd apps/frontend
    railway up
    
-   # Worker
-   cd apps/worker-exchange-rates
+   # Backend Tester (Optional)
+   cd apps/backend-tester
    railway up
    ```
 
@@ -291,6 +292,8 @@ The FastAPI backend provides:
 - `POST /api/v1/tax-advice` - Generate tax advice
 - `POST /api/v1/section/*` - Section-specific story generation
 - `POST /api/v1/perplexity-analysis` - AI-powered analysis
+- `GET /api/v1/exchange-rates` - Get latest exchange rates
+- `POST /api/v1/exchange-rates/refresh` - Force refresh exchange rates
 
 ## 🛠️ Development Workflow
 
