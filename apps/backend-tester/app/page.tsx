@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // Mock data for testing each endpoint
 const mockData = {
@@ -140,18 +140,59 @@ export default function BackendTester() {
   const [converterAmount, setConverterAmount] = useState('100')
   const [converterFrom, setConverterFrom] = useState('USD')
   const [converterTo, setConverterTo] = useState('EUR')
+  
+  // Backend URL management
+  const [backendUrl, setBackendUrl] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('backend-tester-url') || getDefaultBackendUrl()
+    }
+    return getDefaultBackendUrl()
+  })
+  const [connectionStatus, setConnectionStatus] = useState<'unknown' | 'connected' | 'error'>('unknown')
+  
+  // Test connection on initial load
+  useEffect(() => {
+    testConnection().then(isConnected => setConnectionStatus(isConnected ? 'connected' : 'error'))
+  }, [backendUrl])
+  
+  function getDefaultBackendUrl() {
+    return process.env.NODE_ENV === 'production' 
+      ? 'http://bonobo-backend.railway.internal'
+      : 'http://localhost:5001'
+  }
 
-  // Backend URL - uses Railway internal for deployed version
-  const BACKEND_URL = process.env.NODE_ENV === 'production' 
-    ? 'http://bonobo-backend.railway.internal'
-    : 'http://localhost:5001'
+  // Test backend connection
+  const testConnection = async (url: string = backendUrl) => {
+    try {
+      const response = await fetch(`${url}/health`, { 
+        method: 'GET',
+        signal: AbortSignal.timeout(5000) // 5 second timeout
+      })
+      return response.ok
+    } catch (error) {
+      return false
+    }
+  }
+
+  // Save backend URL to localStorage when it changes
+  const updateBackendUrl = async (newUrl: string) => {
+    setBackendUrl(newUrl)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('backend-tester-url', newUrl)
+    }
+    
+    // Test connection to new URL
+    setConnectionStatus('unknown')
+    const isConnected = await testConnection(newUrl)
+    setConnectionStatus(isConnected ? 'connected' : 'error')
+  }
 
   const callApi = async (endpoint: string, method: 'GET' | 'POST' = 'POST', data?: any) => {
     const key = endpoint.replace('/', '_')
     setLoading(prev => ({ ...prev, [key]: true }))
     
     try {
-      console.log(`Calling ${method} ${BACKEND_URL}${endpoint}`)
+      console.log(`Calling ${method} ${backendUrl}${endpoint}`)
       console.log('Data:', data)
       
       const options: RequestInit = {
@@ -165,7 +206,7 @@ export default function BackendTester() {
         options.body = JSON.stringify(data)
       }
       
-      const response = await fetch(`${BACKEND_URL}${endpoint}`, options)
+      const response = await fetch(`${backendUrl}${endpoint}`, options)
       const result = await response.json()
       
       setResponses(prev => ({
@@ -449,11 +490,176 @@ export default function BackendTester() {
     )
   }
 
+  const BackendUrlSwitcher = () => {
+    const [customUrl, setCustomUrl] = useState('')
+    const [showCustomInput, setShowCustomInput] = useState(false)
+    
+    const presetUrls = [
+      { 
+        label: 'Railway Internal', 
+        url: 'http://bonobo-backend.railway.internal',
+        description: 'Internal Railway network (secure)'
+      },
+      { 
+        label: 'Railway Public', 
+        url: 'https://backend-staging-71d3.up.railway.app',
+        description: 'Public Railway URL (if available)'
+      },
+      { 
+        label: 'Local Development', 
+        url: 'http://localhost:5001',
+        description: 'Local backend server'
+      }
+    ]
+    
+    const handlePresetSelect = async (url: string) => {
+      await updateBackendUrl(url)
+      setShowCustomInput(false)
+    }
+    
+    const handleCustomSubmit = async () => {
+      if (customUrl.trim()) {
+        await updateBackendUrl(customUrl.trim())
+        setShowCustomInput(false)
+        setCustomUrl('')
+      }
+    }
+    
+    return (
+      <div style={{ 
+        backgroundColor: '#f0f9ff', 
+        border: '1px solid #0ea5e9', 
+        borderRadius: '8px',
+        padding: '16px',
+        marginBottom: '24px'
+      }}>
+        <div style={{ fontWeight: 'bold', marginBottom: '12px', color: '#0c4a6e' }}>
+          🔗 Backend URL Configuration
+        </div>
+        
+        <div style={{ marginBottom: '12px' }}>
+          <div style={{ fontSize: '12px', color: '#0c4a6e', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span>Current: <strong>{backendUrl}</strong></span>
+            <span style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '4px',
+              padding: '2px 6px',
+              borderRadius: '12px',
+              fontSize: '10px',
+              fontWeight: 'bold',
+              backgroundColor: connectionStatus === 'connected' ? '#dcfce7' : connectionStatus === 'error' ? '#fecaca' : '#f3f4f6',
+              color: connectionStatus === 'connected' ? '#166534' : connectionStatus === 'error' ? '#dc2626' : '#6b7280'
+            }}>
+              <span style={{ 
+                width: '6px', 
+                height: '6px', 
+                borderRadius: '50%',
+                backgroundColor: connectionStatus === 'connected' ? '#16a34a' : connectionStatus === 'error' ? '#dc2626' : '#9ca3af'
+              }}></span>
+              {connectionStatus === 'connected' ? 'Connected' : connectionStatus === 'error' ? 'Error' : 'Unknown'}
+            </span>
+            <button
+              onClick={() => testConnection().then(isConnected => setConnectionStatus(isConnected ? 'connected' : 'error'))}
+              style={{
+                padding: '2px 6px',
+                backgroundColor: '#0ea5e9',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '10px'
+              }}
+            >
+              Test
+            </button>
+          </div>
+          
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+            {presetUrls.map((preset) => (
+              <button
+                key={preset.url}
+                onClick={() => handlePresetSelect(preset.url)}
+                style={{
+                  padding: '6px 12px',
+                  backgroundColor: backendUrl === preset.url ? '#0ea5e9' : 'white',
+                  color: backendUrl === preset.url ? 'white' : '#0c4a6e',
+                  border: '1px solid #0ea5e9',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  fontWeight: backendUrl === preset.url ? 'bold' : 'normal'
+                }}
+                title={preset.description}
+              >
+                {preset.label}
+              </button>
+            ))}
+            
+            <button
+              onClick={() => setShowCustomInput(!showCustomInput)}
+              style={{
+                padding: '6px 12px',
+                backgroundColor: 'white',
+                color: '#0c4a6e',
+                border: '1px solid #0ea5e9',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              Custom URL
+            </button>
+          </div>
+          
+          {showCustomInput && (
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                type="text"
+                value={customUrl}
+                onChange={(e) => setCustomUrl(e.target.value)}
+                placeholder="https://your-backend-url.com"
+                style={{
+                  flex: 1,
+                  padding: '6px 8px',
+                  border: '1px solid #0ea5e9',
+                  borderRadius: '4px',
+                  fontSize: '12px'
+                }}
+                onKeyPress={(e) => e.key === 'Enter' && handleCustomSubmit()}
+              />
+              <button
+                onClick={handleCustomSubmit}
+                style={{
+                  padding: '6px 12px',
+                  backgroundColor: '#0ea5e9',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '12px'
+                }}
+              >
+                Set
+              </button>
+            </div>
+          )}
+        </div>
+        
+        <div style={{ fontSize: '11px', color: '#0c4a6e', opacity: 0.8 }}>
+          💡 Switch between internal Railway network (secure) and public URLs for testing
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ color: '#333', marginBottom: '24px' }}>
         🧪 Backend API Tester - BasedGuide
       </h1>
+      
+      <BackendUrlSwitcher />
       
       <div style={{ 
         backgroundColor: '#e3f2fd', 
@@ -463,8 +669,9 @@ export default function BackendTester() {
       }}>
         <h3 style={{ margin: '0 0 8px 0' }}>Environment Info:</h3>
         <p style={{ margin: 0, fontFamily: 'monospace' }}>
-          Backend URL: <strong>{BACKEND_URL}</strong><br/>
-          Environment: <strong>{process.env.NODE_ENV || 'development'}</strong>
+          Active Backend: <strong>{backendUrl}</strong><br/>
+          Environment: <strong>{process.env.NODE_ENV || 'development'}</strong><br/>
+          Default URL: <strong>{getDefaultBackendUrl()}</strong>
         </p>
       </div>
 

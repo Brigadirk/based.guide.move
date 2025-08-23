@@ -6,6 +6,8 @@ A simple Next.js application designed to test all backend API endpoints for debu
 
 This tool helps debug backend API communication issues by providing:
 - ✅ Direct testing of all backend endpoints
+- ✅ **Dynamic URL switching** between internal and public backends
+- ✅ **Real-time connection status** with health check testing
 - ✅ Editable mock data for each request
 - ✅ Real-time response display
 - ✅ Railway internal network testing
@@ -82,6 +84,28 @@ The `railway.json` file provides optimal settings:
 
 ### Mock Data
 Each endpoint includes realistic mock data that can be edited in real-time through the web interface.
+
+## 🔗 Backend URL Switching
+
+### Dynamic URL Configuration
+The backend tester allows you to switch between different backend URLs in real-time:
+
+#### **Preset URLs:**
+- **Railway Internal**: `http://bonobo-backend.railway.internal` (secure internal network)
+- **Railway Public**: `https://backend-staging-71d3.up.railway.app` (public access)
+- **Local Development**: `http://localhost:5001` (local backend server)
+- **Custom URL**: Enter any custom backend URL
+
+#### **Connection Status:**
+- 🟢 **Connected**: Backend is reachable and responding
+- 🔴 **Error**: Backend is unreachable or not responding
+- ⚪ **Unknown**: Connection status not yet tested
+
+#### **Features:**
+- **Persistent Storage**: Selected URL is saved in localStorage
+- **Auto-Testing**: Connection is tested when URL changes
+- **Manual Testing**: Click "Test" button to check connection
+- **Real-time Switching**: Change URLs without page reload
 
 ## 🐛 Debugging Features
 
