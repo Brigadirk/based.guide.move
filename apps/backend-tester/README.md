@@ -5,7 +5,8 @@ A simple Next.js application designed to test all backend API endpoints for debu
 ## 🎯 Purpose
 
 This tool helps debug backend API communication issues by providing:
-- ✅ Direct testing of all backend endpoints
+- ✅ **Three realistic test personas** with complete profile data
+- ✅ **Only real endpoints** that the frontend actually uses
 - ✅ **Dynamic URL switching** between internal and public backends
 - ✅ **Real-time connection status** with health check testing
 - ✅ Editable mock data for each request
@@ -48,13 +49,37 @@ The `railway.json` file provides optimal settings:
 - **Auto-restart** on failure with 3 retry attempts
 - **Watch patterns** for automatic rebuilds on code changes
 
+## 👤 Test Personas
+
+The backend tester includes three comprehensive personas with realistic data:
+
+### 🚀 **Young Tech Professional**
+- **Profile**: 28-year-old software engineer from US
+- **Destination**: Portugal (D7 visa, NHR tax regime)
+- **Assets**: $250k total wealth, $120k remote income
+- **Scenario**: Digital nomad seeking work-life balance and tax optimization
+
+### 👨‍👩‍👧‍👦 **Family Retirees**
+- **Profile**: Retired UK couple with 2 teenage children
+- **Destination**: Spain (family relocation)
+- **Assets**: £850k total wealth, £3.2k monthly pension
+- **Scenario**: Healthcare, education, and lifestyle-focused move
+
+### 💼 **Serial Entrepreneur**
+- **Profile**: 45-year-old German business owner
+- **Destination**: Singapore (business expansion)
+- **Assets**: €2.4M total wealth, €180k business income
+- **Scenario**: International business expansion and tax strategy
+
+Each persona includes complete data for all sections: personal info, education, residency intentions, finance, social security, tax deductions, future plans, and additional information.
+
 ## 📋 Tested Endpoints
 
 ### Health & System
 - `GET /health` - Backend health check
 - `GET /api/v1/ping` - API ping test
 
-### Section Stories
+### Section Stories (Real Frontend Endpoints)
 - `POST /api/v1/section/personal-information`
 - `POST /api/v1/section/education`
 - `POST /api/v1/section/residency-intentions`
@@ -65,9 +90,7 @@ The `railway.json` file provides optimal settings:
 - `POST /api/v1/section/additional-information`
 - `POST /api/v1/section/summary`
 
-### Advanced Features
-- `POST /api/v1/tax-advice`
-- `POST /api/v1/custom-prompt`
+### Advanced Analysis
 - `POST /api/v1/generate-full-story`
 - `POST /api/v1/perplexity-analysis`
 

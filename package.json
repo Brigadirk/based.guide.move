@@ -10,10 +10,12 @@
   "packageManager": "pnpm@8.15.0",
   "scripts": {
     "dev": "./dev-start.sh",
+    "dev:all": "./dev-start-all.sh",
     "dev:docker": "./dev-docker.sh",
     "dev:frontend": "pnpm --filter frontend dev",
     "dev:backend": "cd apps/backend && ./start-backend.sh",
     "dev:tester": "pnpm --filter backend-tester dev",
+    "dev:backend-tester": "concurrently \"pnpm run dev:backend\" \"pnpm run dev:tester\" --names \"backend,tester\" --prefix-colors \"blue,green\"",
     "build": "pnpm run build:frontend",
     "build:frontend": "pnpm --filter frontend build",
     "build:backend": "cd apps/backend && python -m build",
@@ -45,6 +47,7 @@
   ],
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "concurrently": "^8.2.2",
     "husky": "^8.0.3",
     "lint-staged": "^15.0.0",
     "prettier": "^3.0.0",
