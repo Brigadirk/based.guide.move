@@ -21,10 +21,30 @@ pnpm dev:tester
 ```
 
 ### Railway Deployment
-1. Create new Railway service
-2. Connect to your repository
-3. Set Root Directory: `apps/backend-tester`
-4. Deploy automatically
+
+#### Quick Setup:
+1. **Create Railway Service:**
+   ```bash
+   railway create basedguide-backend-tester
+   ```
+
+2. **Configure Service:**
+   - **Repository**: Connect to your GitHub repository
+   - **Root Directory**: `apps/backend-tester`
+   - **Environment Variables**: `NODE_ENV=production` (automatically set)
+
+3. **Deploy:**
+   ```bash
+   cd apps/backend-tester
+   railway up
+   ```
+
+#### Railway Configuration:
+The `railway.json` file provides optimal settings:
+- **Docker builder** with monorepo dockerfile path
+- **Health checks** on `/` endpoint
+- **Auto-restart** on failure with 3 retry attempts
+- **Watch patterns** for automatic rebuilds on code changes
 
 ## 📋 Tested Endpoints
 

@@ -8,15 +8,23 @@
       "**/*.tsx",
       "**/*.js",
       "**/*.jsx",
+      "**/*.json",
       "package.json",
-      "package-lock.json"
+      "package-lock.json",
+      "next.config.js",
+      "tsconfig.json",
+      "jest.config.js",
+      "jest.setup.js",
+      "__tests__/**/*"
     ]
   },
   "deploy": {
     "numReplicas": 1,
     "sleepApplication": false,
     "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 3,
     "healthcheckPath": "/",
-    "healthcheckTimeout": 300
+    "healthcheckTimeout": 300,
+    "healthcheckInterval": 30
   }
 }
