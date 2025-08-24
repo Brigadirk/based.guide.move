@@ -127,17 +127,22 @@ const personas = {
           incomeSources: [
             {
               category: "Remote Employment",
-              fields: ["Software Development", "Full-time"],
+              fields: {
+                "job_title": "Software Development",
+                "employment_type": "Full-time"
+              },
               country: "United States",
               amount: 120000,
               currency: "USD",
-              continueInDestination: true
+              continue_in_destination: true
             }
           ],
           liabilities: [
             {
               category: "Student Loan",
-              fields: ["Federal Student Loan"],
+              fields: {
+                "loan_type": "Federal Student Loan"
+              },
               country: "United States", 
               amount: 35000,
               currency: "USD",
@@ -413,25 +418,33 @@ const personas = {
           incomeSources: [
             {
               category: "Pension",
-              fields: ["Private Pension", "Monthly"],
+              fields: {
+                "pension_type": "Private Pension",
+                "frequency": "Monthly"
+              },
               country: "United Kingdom",
               amount: 3200,
               currency: "GBP",
-              continueInDestination: true
+              continue_in_destination: true
             },
             {
               category: "Investment Income",
-              fields: ["Dividend Income", "Quarterly"],
+              fields: {
+                "investment_type": "Dividend Income",
+                "frequency": "Quarterly"
+              },
               country: "United Kingdom", 
               amount: 8000,
               currency: "GBP",
-              continueInDestination: true
+              continue_in_destination: true
             }
           ],
           liabilities: [
             {
               category: "Mortgage",
-              fields: ["Buy-to-Let Property"],
+              fields: {
+                "property_type": "Buy-to-Let Property"
+              },
               country: "United Kingdom",
               amount: 180000,
               currency: "GBP",
@@ -690,25 +703,33 @@ const personas = {
           incomeSources: [
             {
               category: "Business Income",
-              fields: ["Company Dividends", "Annual"],
+              fields: {
+                "business_type": "Company Dividends",
+                "frequency": "Annual"
+              },
               country: "Germany",
               amount: 180000,
               currency: "EUR",
-              continueInDestination: true
+              continue_in_destination: true
             },
             {
               category: "Expected Employment",
-              fields: ["Regional Director", "This is an expected income source after moving (for tax planning)"],
+              fields: {
+                "job_title": "Regional Director",
+                "employment_type": "This is an expected income source after moving (for tax planning)"
+              },
               country: "Singapore",
               amount: 250000,
               currency: "SGD",
-              continueInDestination: true
+              continue_in_destination: true
             }
           ],
           liabilities: [
             {
               category: "Business Loan",
-              fields: ["Expansion Capital"],
+              fields: {
+                "loan_purpose": "Expansion Capital"
+              },
               country: "Germany",
               amount: 450000,
               currency: "EUR",
@@ -717,7 +738,9 @@ const personas = {
             },
             {
               category: "Mortgage",
-              fields: ["Primary Residence"],
+              fields: {
+                "property_type": "Primary Residence"
+              },
               country: "Germany",
               amount: 320000,
               currency: "EUR",
