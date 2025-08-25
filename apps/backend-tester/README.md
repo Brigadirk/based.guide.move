@@ -49,6 +49,17 @@ The `railway.json` file provides optimal settings:
 - **Auto-restart** on failure with 3 retry attempts
 - **Watch patterns** for automatic rebuilds on code changes
 
+#### Environment Variables for Railway:
+For the backend-tester to work on Railway, you **must** set these environment variables in your Railway service:
+
+```bash
+NEXT_PUBLIC_RAILWAY_INTERNAL_URL=http://your-backend.railway.internal
+NEXT_PUBLIC_RAILWAY_PUBLIC_URL=https://your-backend-xyz123.up.railway.app
+NEXT_PUBLIC_LOCAL_URL=http://localhost:5001
+```
+
+**Important**: Railway automatically passes these as build arguments during Docker build, and the Dockerfile is configured to use them.
+
 ## 👤 Test Personas
 
 The backend tester includes three comprehensive personas with realistic data:
@@ -132,9 +143,13 @@ Set these environment variables in your Railway backend-tester service:
 
 ```bash
 # Configure the URLs for your specific Railway project
+# NOTE: Internal URL MUST include http:// protocol
 NEXT_PUBLIC_RAILWAY_INTERNAL_URL=http://your-actual-backend.railway.internal
 NEXT_PUBLIC_RAILWAY_PUBLIC_URL=https://your-actual-backend-xyz123.up.railway.app
+NEXT_PUBLIC_LOCAL_URL=http://localhost:5001
 ```
+
+**⚠️ Common Issue**: Make sure the internal URL includes `http://` - Railway internal URLs don't use HTTPS.
 
 **Result**: All three preset buttons are visible, showing their configuration status:
 - **Railway Internal** → Shows your internal URL or "(not set)" if `NEXT_PUBLIC_RAILWAY_INTERNAL_URL` is empty

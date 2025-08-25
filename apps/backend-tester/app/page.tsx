@@ -957,7 +957,7 @@ export default function BackendTester() {
   // Handle persona change
   const handlePersonaChange = (personaKey: string) => {
     setSelectedPersona(personaKey)
-    setEditableData(personas[personaKey as keyof typeof personas].data)
+    setEditableData(personas[personaKey as keyof typeof personas].data as any)
     // Clear previous responses when switching personas
     setResponses({})
   }
@@ -1145,7 +1145,7 @@ export default function BackendTester() {
               fontSize: '11px',
               border: '1px solid #e9ecef'
             }}>
-              <strong>{currency}</strong>: {typeof rate === 'number' ? rate.toFixed(4) : rate}
+              <strong>{currency}</strong>: {typeof rate === 'number' ? rate.toFixed(4) : String(rate)}
             </div>
           ))}
         </div>

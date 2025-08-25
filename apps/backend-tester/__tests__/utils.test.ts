@@ -10,10 +10,18 @@ describe('Backend Tester Utils', () => {
     }
 
     afterEach(() => {
-      process.env.NODE_ENV = originalEnv.NODE_ENV
-      process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL = originalEnv.NEXT_PUBLIC_RAILWAY_INTERNAL_URL
-      process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL = originalEnv.NEXT_PUBLIC_RAILWAY_PUBLIC_URL
-      process.env.NEXT_PUBLIC_LOCAL_URL = originalEnv.NEXT_PUBLIC_LOCAL_URL
+      if (originalEnv.NODE_ENV) {
+        (process.env as any).NODE_ENV = originalEnv.NODE_ENV
+      }
+      if (originalEnv.NEXT_PUBLIC_RAILWAY_INTERNAL_URL) {
+        process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL = originalEnv.NEXT_PUBLIC_RAILWAY_INTERNAL_URL
+      }
+      if (originalEnv.NEXT_PUBLIC_RAILWAY_PUBLIC_URL) {
+        process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL = originalEnv.NEXT_PUBLIC_RAILWAY_PUBLIC_URL
+      }
+      if (originalEnv.NEXT_PUBLIC_LOCAL_URL) {
+        process.env.NEXT_PUBLIC_LOCAL_URL = originalEnv.NEXT_PUBLIC_LOCAL_URL
+      }
     })
 
     const getDefaultBackendUrl = () => {
@@ -33,28 +41,28 @@ describe('Backend Tester Utils', () => {
     }
 
     it('uses development URL by default', () => {
-      process.env.NODE_ENV = 'development'
+      (process.env as any).NODE_ENV = 'development'
       process.env.NEXT_PUBLIC_LOCAL_URL = 'http://localhost:5001'
       
       expect(getDefaultBackendUrl()).toBe('http://localhost:5001')
     })
 
     it('uses production internal URL by default', () => {
-      process.env.NODE_ENV = 'production'
+      (process.env as any).NODE_ENV = 'production'
       process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL = 'http://bonobo-backend.railway.internal'
       
       expect(getDefaultBackendUrl()).toBe('http://bonobo-backend.railway.internal')
     })
 
     it('uses custom local URL when set', () => {
-      process.env.NODE_ENV = 'development'
+      (process.env as any).NODE_ENV = 'development'
       process.env.NEXT_PUBLIC_LOCAL_URL = 'http://localhost:8080'
       
       expect(getDefaultBackendUrl()).toBe('http://localhost:8080')
     })
 
     it('uses custom railway internal URL when set', () => {
-      process.env.NODE_ENV = 'production'
+      (process.env as any).NODE_ENV = 'production'
       process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL = 'http://custom-internal.railway.internal'
       
       expect(getDefaultBackendUrl()).toBe('http://custom-internal.railway.internal')
@@ -65,11 +73,17 @@ describe('Backend Tester Utils', () => {
       delete process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL
       delete process.env.NEXT_PUBLIC_LOCAL_URL
       
-      process.env.NODE_ENV = 'development'
+      // Mock NODE_ENV for development
+      const originalNodeEnv = process.env.NODE_ENV
+      ;(process.env as any).NODE_ENV = 'development'
       expect(getDefaultBackendUrl()).toBe('http://localhost:5001')
       
-      process.env.NODE_ENV = 'production'  
+      // Mock NODE_ENV for production
+      ;(process.env as any).NODE_ENV = 'production'  
       expect(getDefaultBackendUrl()).toBe('http://localhost:3000')
+      
+      // Restore original NODE_ENV
+      ;(process.env as any).NODE_ENV = originalNodeEnv
     })
 
     it('always shows all preset buttons with configuration status', () => {
