@@ -1,6 +1,6 @@
-from datetime import datetime
 import json
 import os
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -31,11 +31,13 @@ from modules.story_generator import (
     make_tax_deductions_story,
 )
 from modules.validator import validate_tax_data
-from services.exchange_rate_service import EXCHANGE_RATES_FOLDER
-from services.exchange_rate_service import _get_exchange_rates_folder
-from services.exchange_rate_service import _latest_snapshot_file
-from services.exchange_rate_service import fetch_and_save_latest_rates
-from services.exchange_rate_service import get_latest_rates
+from services.exchange_rate_service import (
+    EXCHANGE_RATES_FOLDER,
+    _get_exchange_rates_folder,
+    _latest_snapshot_file,
+    fetch_and_save_latest_rates,
+    get_latest_rates,
+)
 
 # Instantiate the router (replaces Flask Blueprint)
 router = APIRouter()
@@ -442,4 +444,6 @@ def get_latest_exchange_rate_file(api_key: str = Depends(verify_api_key)):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to read latest exchange rate file: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to read latest exchange rate file: {str(e)}"
+        )
