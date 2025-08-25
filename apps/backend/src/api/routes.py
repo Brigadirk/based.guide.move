@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
+from datetime import datetime
+import os
 
 from api.auth import verify_api_key
 from api.perplexity import get_tax_advice
@@ -27,6 +29,12 @@ from modules.story_generator import (
     make_tax_deductions_story,
 )
 from modules.validator import validate_tax_data
+from services.exchange_rate_service import (
+    _get_exchange_rates_folder,
+    _latest_snapshot_file,
+    fetch_and_save_latest_rates,
+    get_latest_rates,
+)
 
 # Instantiate the router (replaces Flask Blueprint)
 router = APIRouter()
@@ -76,10 +84,6 @@ def ping(api_key: str = Depends(verify_api_key)):
 def api_health(api_key: str = Depends(verify_api_key)):
     """API health check endpoint accessible through API proxy."""
     try:
-        import os
-        from datetime import datetime
-        from services.exchange_rate_service import _latest_snapshot_file, _get_exchange_rates_folder
-
         rates_dir = str(_get_exchange_rates_folder())
         rates_accessible = os.path.exists(rates_dir) and os.access(rates_dir, os.W_OK)
         latest_file = _latest_snapshot_file()
@@ -327,15 +331,6 @@ def perplexity_analysis(payload: dict, api_key: str = Depends(verify_api_key)):
 @router.get("/exchange-rates")
 def get_exchange_rates(api_key: str = Depends(verify_api_key)):
     """Get the latest exchange rates (USD base)."""
-    import os
-    from datetime import datetime
-
-    from services.exchange_rate_service import (
-        _latest_snapshot_file,
-        fetch_and_save_latest_rates,
-        get_latest_rates,
-    )
-
     try:
         # First, try to ensure we have rates available
         try:
