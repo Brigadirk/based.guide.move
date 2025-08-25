@@ -1,3 +1,54 @@
+name: Security Scan
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  trufflehog:
+    name: TruffleHog Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Push events: scan between previous and current commit
+      - name: TruffleHog (push)
+        if: ${{ github.event_name == 'push' && github.event.before != github.sha }}
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.before }}
+          head: ${{ github.sha }}
+          extra_args: --debug --only-verified
+          version: latest
+
+      # Pull Request events: scan between base and head of the PR
+      - name: TruffleHog (PR)
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha != github.event.pull_request.head.sha }}
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}
+          extra_args: --debug --only-verified
+          version: latest
+
+      # Fallback: auto-detect (avoids BASE==HEAD failure when no delta)
+      - name: TruffleHog (auto)
+        if: ${{ (github.event_name != 'push' && github.event_name != 'pull_request') || (github.event_name == 'push' && github.event.before == github.sha) }}
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          extra_args: --debug --only-verified
+          version: latest
+
 name: Security Scanning
 
 on:
