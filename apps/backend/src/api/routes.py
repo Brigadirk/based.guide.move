@@ -31,13 +31,11 @@ from modules.story_generator import (
     make_tax_deductions_story,
 )
 from modules.validator import validate_tax_data
-from services.exchange_rate_service import (
-    _get_exchange_rates_folder,
-    _latest_snapshot_file,
-    EXCHANGE_RATES_FOLDER,
-    fetch_and_save_latest_rates,
-    get_latest_rates,
-)
+from services.exchange_rate_service import EXCHANGE_RATES_FOLDER
+from services.exchange_rate_service import _get_exchange_rates_folder
+from services.exchange_rate_service import _latest_snapshot_file
+from services.exchange_rate_service import fetch_and_save_latest_rates
+from services.exchange_rate_service import get_latest_rates
 
 # Instantiate the router (replaces Flask Blueprint)
 router = APIRouter()
