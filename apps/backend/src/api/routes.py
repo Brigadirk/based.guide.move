@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
+from api.auth import verify_api_key, optional_api_key
 from api.perplexity import get_tax_advice
 from modules.currency_utils import country_to_currency
 from modules.prompt_generator import generate_tax_prompt
@@ -229,7 +230,7 @@ def get_summary_story(request: SummaryRequest):
 
 
 @router.post("/generate-full-story")
-def generate_full_story(request: SummaryRequest):
+def generate_full_story(request: SummaryRequest, api_key: str = Depends(optional_api_key)):
     """Generate the complete profile story for Perplexity AI analysis."""
     try:
         story = make_story(request.profile)
@@ -285,7 +286,7 @@ def perplexity_analysis(payload: dict):
 
 
 @router.get("/exchange-rates")
-def get_exchange_rates():
+def get_exchange_rates(api_key: str = Depends(optional_api_key)):
     """Get the latest exchange rates (USD base)."""
     import os
     from datetime import datetime
@@ -340,7 +341,7 @@ def get_exchange_rates():
 
 
 @router.post("/exchange-rates/refresh")
-def refresh_exchange_rates():
+def refresh_exchange_rates(api_key: str = Depends(verify_api_key)):
     """Force refresh exchange rates from API."""
     from services.exchange_rate_service import fetch_and_save_latest_rates
 

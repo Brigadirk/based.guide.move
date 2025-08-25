@@ -7,11 +7,11 @@ A simple Next.js application designed to test all backend API endpoints for debu
 This tool helps debug backend API communication issues by providing:
 - ✅ **Three realistic test personas** with complete profile data
 - ✅ **Only real endpoints** that the frontend actually uses
-- ✅ **Dynamic URL switching** between internal and public backends
+- ✅ **Dynamic URL switching** between public and local backends
 - ✅ **Real-time connection status** with health check testing
+- ✅ **API key authentication** for secure testing
 - ✅ Editable mock data for each request
 - ✅ Real-time response display
-- ✅ Railway internal network testing
 
 ## 🚀 Quick Start
 

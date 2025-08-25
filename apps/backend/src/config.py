@@ -20,6 +20,7 @@ class Config:
     # API Keys
     PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY", "").strip()
     OPEN_EXCHANGE_API_KEY = os.getenv("OPEN_EXCHANGE_API_KEY")
+    TESTING_API_KEY = os.getenv("TESTING_API_KEY")
 
     # Perplexity Configuration
     PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions"

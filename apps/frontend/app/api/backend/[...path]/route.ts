@@ -36,16 +36,25 @@ function validateInput(body: any): boolean {
   return true;
 }
 
-async function makeBackendRequest(path: string, method: string, body?: any) {
+async function makeBackendRequest(path: string, method: string, body?: any, clientHeaders?: Headers) {
   const backendUrl = `http://bonobo-backend.railway.internal/api/v1/${path}`;
   
   console.log(`[API Proxy] ${method} ${path}`);
   
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  
+  // Forward X-API-Key header if present in client request
+  const apiKey = clientHeaders?.get('x-api-key');
+  if (apiKey) {
+    headers['X-API-Key'] = apiKey;
+    console.log(`[API Proxy] Forwarding API key for ${method} ${path}`);
+  }
+  
   const options: RequestInit = {
     method,
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
   };
 
   if (body && method !== 'GET') {
@@ -95,7 +104,7 @@ export async function POST(
     }
 
     // Proxy to backend
-    const result = await makeBackendRequest(path, 'POST', body);
+    const result = await makeBackendRequest(path, 'POST', body, request.headers);
     
     return NextResponse.json(result);
     
@@ -134,7 +143,7 @@ export async function GET(
     const path = params.path.join('/');
     
     // Proxy to backend
-    const result = await makeBackendRequest(path, 'GET');
+    const result = await makeBackendRequest(path, 'GET', undefined, request.headers);
     
     return NextResponse.json(result);
     

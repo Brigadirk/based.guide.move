@@ -915,17 +915,32 @@ export default function BackendTester() {
   function getDefaultBackendUrl() {
     // Priority order: try to use environment variables, fallback to reasonable defaults
     if (process.env.NODE_ENV === 'production') {
-      // In production, prefer Railway Internal, then Railway Public, then fallback
-      return process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL || 
-             process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL || 
+      // In production, prefer Railway Public, then fallback
+      return process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL || 
              'http://localhost:3000' // Last resort fallback for production
     } else {
-      // In development, prefer Local, then Railway options, then fallback  
+      // In development, prefer Local, then Railway Public, then fallback  
       return process.env.NEXT_PUBLIC_LOCAL_URL ||
-             process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL ||
              process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL ||
              'http://localhost:5001' // Last resort fallback for development
     }
+  }
+
+  // Get API key from environment
+  const getApiKey = () => process.env.NEXT_PUBLIC_TESTING_API_KEY
+
+  // Get headers with optional API key
+  const getHeaders = () => {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+    
+    const apiKey = getApiKey()
+    if (apiKey) {
+      headers['X-API-Key'] = apiKey
+    }
+    
+    return headers
   }
 
   // Test backend connection
@@ -933,6 +948,7 @@ export default function BackendTester() {
     try {
       const response = await fetch(`${url}/health`, { 
         method: 'GET',
+        headers: getHeaders(),
         signal: AbortSignal.timeout(5000) // 5 second timeout
       })
       return response.ok
@@ -972,9 +988,7 @@ export default function BackendTester() {
       
       const options: RequestInit = {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getHeaders(),
       }
       
       if (data && method === 'POST') {
@@ -1162,26 +1176,20 @@ export default function BackendTester() {
     const [customUrl, setCustomUrl] = useState('')
     const [showCustomInput, setShowCustomInput] = useState(false)
     
-    const presetUrls = [
-      { 
-        label: 'Railway Internal', 
-        url: process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL,
-        description: 'Internal Railway network (secure)',
-        envVar: 'NEXT_PUBLIC_RAILWAY_INTERNAL_URL'
-      },
-      { 
-        label: 'Railway Public', 
-        url: process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL,
-        description: 'Public Railway URL (accessible from internet)',
-        envVar: 'NEXT_PUBLIC_RAILWAY_PUBLIC_URL'
-      },
-      { 
-        label: 'Local Development', 
-        url: process.env.NEXT_PUBLIC_LOCAL_URL,
-        description: 'Local backend server',
-        envVar: 'NEXT_PUBLIC_LOCAL_URL'
-      }
-    ]
+      const presetUrls = [
+    { 
+      label: 'Railway Public', 
+      url: process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL,
+      description: 'Public Railway URL (accessible from internet)',
+      envVar: 'NEXT_PUBLIC_RAILWAY_PUBLIC_URL'
+    },
+    { 
+      label: 'Local Development', 
+      url: process.env.NEXT_PUBLIC_LOCAL_URL,
+      description: 'Local backend server',
+      envVar: 'NEXT_PUBLIC_LOCAL_URL'
+    }
+  ]
     
     const handlePresetSelect = async (preset: any) => {
       if (preset.url) {
@@ -1215,9 +1223,9 @@ export default function BackendTester() {
         
         {/* Debug: Show environment variables */}
         <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '8px', fontFamily: 'monospace', backgroundColor: '#f9fafb', padding: '4px 8px', borderRadius: '4px' }}>
-          Debug: Internal={process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL || 'undefined'} | 
-          Public={process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL || 'undefined'} | 
-          Local={process.env.NEXT_PUBLIC_LOCAL_URL || 'undefined'}
+          Debug: Public={process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL || 'undefined'} | 
+          Local={process.env.NEXT_PUBLIC_LOCAL_URL || 'undefined'} | 
+          API Key={getApiKey() ? '✅ Set' : '❌ Not Set'}
         </div>
         
         <div style={{ marginBottom: '12px' }}>
