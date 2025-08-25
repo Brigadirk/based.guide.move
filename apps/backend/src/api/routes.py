@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
-from api.auth import verify_api_key, optional_api_key
+from api.auth import optional_api_key, verify_api_key
 from api.perplexity import get_tax_advice
 from modules.currency_utils import country_to_currency
 from modules.prompt_generator import generate_tax_prompt
