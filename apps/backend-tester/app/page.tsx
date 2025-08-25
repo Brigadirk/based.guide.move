@@ -1568,6 +1568,8 @@ export default function BackendTester() {
       <h2>Health & System Endpoints</h2>
       <TestButton endpoint="/health" method="GET" label="Health Check" />
       <TestButton endpoint="/api/v1/ping" method="GET" label="API Ping" />
+      <TestButton endpoint="/api/v1/exchange-rates/files" method="GET" label="List Exchange Rate Files" />
+      <TestButton endpoint="/api/v1/exchange-rates/file/latest" method="GET" label="Read Latest Exchange Rate File" />
 
       <h2>Section Story Endpoints</h2>
       <TestButton 

@@ -33,6 +33,7 @@ from modules.validator import validate_tax_data
 from services.exchange_rate_service import (
     _get_exchange_rates_folder,
     _latest_snapshot_file,
+    EXCHANGE_RATES_FOLDER,
     fetch_and_save_latest_rates,
     get_latest_rates,
 )
@@ -385,3 +386,61 @@ def refresh_exchange_rates(api_key: str = Depends(verify_api_key)):
         return {"status": "success", "message": "Exchange rates refreshed successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to refresh exchange rates: {str(e)}")
+
+
+@router.get("/exchange-rates/files")
+def list_exchange_rate_files(api_key: str = Depends(verify_api_key)):
+    """List exchange rate snapshot files in the configured folder.
+
+    Returns filenames, sizes (bytes), and created timestamps. Useful for debugging volumes in production.
+    """
+    try:
+        folder_path = str(EXCHANGE_RATES_FOLDER)
+        files = []
+        for p in EXCHANGE_RATES_FOLDER.glob("*.json"):
+            try:
+                files.append(
+                    {
+                        "name": p.name,
+                        "size_bytes": os.path.getsize(p),
+                        "created": datetime.fromtimestamp(os.path.getctime(p)).isoformat(),
+                    }
+                )
+            except Exception:
+                # Skip unreadable files
+                continue
+
+        files.sort(key=lambda f: f["created"], reverse=True)
+
+        return {
+            "status": "success",
+            "folder": folder_path,
+            "writable": os.access(folder_path, os.W_OK),
+            "count": len(files),
+            "files": files,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to list exchange rate files: {str(e)}")
+
+
+@router.get("/exchange-rates/file/latest")
+def get_latest_exchange_rate_file(api_key: str = Depends(verify_api_key)):
+    """Return the contents of the latest exchange rate snapshot JSON."""
+    try:
+        latest = _latest_snapshot_file()
+        if not latest or not latest.exists():
+            raise HTTPException(status_code=404, detail="No snapshot file found")
+
+        with open(latest, encoding="utf-8") as f:
+            data = json.load(f)  # type: ignore[name-defined]
+
+        return {
+            "status": "success",
+            "file": latest.name,
+            "path": str(latest),
+            "data": data,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to read latest exchange rate file: {str(e)}")
