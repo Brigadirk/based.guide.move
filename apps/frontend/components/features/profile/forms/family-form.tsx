@@ -54,15 +54,26 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
   const [partnerInfo] = useState<PartnerInfo>({
     personalInformation: {
       dateOfBirth: "",
-      nationalities: [{ country: "" }],
+      nationalities: [{ country: "", willingToRenounce: false }],
       maritalStatus: "Single",
       currentResidency: {
         country: "",
-        status: "Citizen"
+        status: "Citizen",
+        duration: ""
       }
     },
     financialInformation: {
+      incomeSituation: "current_income",
       incomeSources: [],
+      expectedEmployment: [],
+      totalWealth: {
+        currency: "USD",
+        total: 0,
+        primaryResidence: 0
+      },
+      capitalGains: {
+        futureSales: []
+      },
       assets: [],
       liabilities: []
     }
@@ -81,12 +92,17 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
       dependents: newDependents,
       personalInformation: {
         dateOfBirth: data.personalInformation?.dateOfBirth || "",
-        nationalities: data.personalInformation?.nationalities || [{ country: "" }],
+        nationalities: data.personalInformation?.nationalities || [{ country: "", willingToRenounce: false }],
         maritalStatus,
         currentResidency: data.personalInformation?.currentResidency || {
           country: "",
-          status: "Citizen"
-        }
+          status: "Citizen",
+          duration: ""
+        },
+        firstName: "",
+        lastName: "",
+        hasPartner: false,
+        dependents: []
       }
     })
   }

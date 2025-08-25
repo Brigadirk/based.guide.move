@@ -44,7 +44,17 @@ const LIABILITY_TYPES = [
 export function FinancialInfoForm({ data, onUpdate }: FinancialInfoFormProps) {
   const [info, setInfo] = useState<FinancialInformation>(
     data.financialInformation || {
+      incomeSituation: "current_income",
       incomeSources: [],
+      expectedEmployment: [],
+      totalWealth: {
+        currency: "USD",
+        total: 0,
+        primaryResidence: 0
+      },
+      capitalGains: {
+        futureSales: []
+      },
       assets: [],
       liabilities: []
     }
