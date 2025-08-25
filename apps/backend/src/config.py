@@ -53,6 +53,8 @@ class Config:
 
     # Railway Volume Path for persistent storage
     RAILWAY_VOLUME_MOUNT_PATH = os.getenv("RAILWAY_VOLUME_MOUNT_PATH", "/app/data")
+    # Optional dedicated exchange rates mount; overrides generic volume when set
+    EXCHANGE_RATES_VOLUME_PATH = os.getenv("EXCHANGE_RATES_VOLUME_PATH", "")
 
     # Database Configuration (for future use)
     DATABASE_URL = os.getenv("DATABASE_URL", "")

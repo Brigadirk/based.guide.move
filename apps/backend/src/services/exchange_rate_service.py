@@ -32,14 +32,17 @@ from config import Config
 # Store snapshots - Railway volume support
 def _get_exchange_rates_folder() -> Path:
     """Get exchange rates folder with Railway volume support."""
-    # Check if Railway volume mount is available
-    volume_path = Config.RAILWAY_VOLUME_MOUNT_PATH
-    if volume_path and volume_path != "/app/data":
-        # Use Railway volume for persistent storage
-        folder = Path(volume_path) / "exchange_rates"
-    elif Config.is_railway():
-        # Use default Railway volume path
-        folder = Path("/app/data") / "exchange_rates"
+    # Prefer a dedicated exchange rates volume if configured
+    if getattr(Config, "EXCHANGE_RATES_VOLUME_PATH", ""):
+        folder = Path(Config.EXCHANGE_RATES_VOLUME_PATH)
+    else:
+        # Check if a generic Railway volume mount is available
+        volume_path = Config.RAILWAY_VOLUME_MOUNT_PATH
+        if volume_path and volume_path != "/app/data":
+            folder = Path(volume_path) / "exchange_rates"
+        elif Config.is_railway():
+            # Default Railway volume path
+            folder = Path("/app/data") / "exchange_rates"
     else:
         # Fallback to local folder for development
         folder = Path(__file__).resolve().parent / "exchange_rates"
