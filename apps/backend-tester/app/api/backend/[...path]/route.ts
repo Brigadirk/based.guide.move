@@ -36,14 +36,26 @@ function validateInput(body: any): boolean {
   return true;
 }
 
-async function makeBackendRequest(path: string, method: string, body?: any) {
-  // Use internal URL in production, public URL in development
-  const isProduction = process.env.NODE_ENV === 'production';
-  const backendUrl = isProduction
-    ? `${process.env.NEXT_INTERNAL_API_URL || 'http://bonobo-backend.railway.internal'}/api/v1/${path}`
-    : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/v1/${path}`;
+function normalizeBaseUrl(base: string): string {
+  if (!base) return base
+  return base.endsWith('/') ? base.slice(0, -1) : base
+}
 
-  console.log(`[Backend-Tester API Proxy] ${method} ${path} using ${isProduction ? 'internal' : 'public'} URL`);
+async function makeBackendRequest(request: NextRequest, path: string, method: string, body?: any) {
+  // Use internal URL in production, public URL in development
+  // Remove the /api/v1/ prefix from path if it exists, since we add it below
+  const cleanPath = path.replace(/^api\/v1\//, '');
+  // Use only public URL; allow UI override header
+  const overrideBase = request.headers.get('x-backend-base-url') || ''
+  const resolvedBase = overrideBase && /^https?:\/\//.test(overrideBase)
+    ? overrideBase
+    : (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001')
+
+  const base = normalizeBaseUrl(resolvedBase)
+  const search = request.nextUrl?.search || ''
+  const backendUrl = `${base}/api/v1/${cleanPath}${search}`
+
+  console.log(`[Backend-Tester API Proxy] ${method} ${path} → ${backendUrl}`);
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -67,12 +79,23 @@ async function makeBackendRequest(path: string, method: string, body?: any) {
 
   try {
     const response = await fetch(backendUrl, options);
-    
+
     if (!response.ok) {
       throw new Error(`Backend responded with ${response.status}: ${response.statusText}`);
     }
-    
-    return await response.json();
+
+    // Parse JSON response directly
+    try {
+      return await response.json();
+    } catch (jsonError) {
+      console.error(`[Backend-Tester API Proxy] JSON parse error:`, jsonError);
+      const parseMessage = jsonError instanceof Error ? jsonError.message : String(jsonError);
+      return {
+        error: 'Invalid JSON response from backend',
+        parseError: parseMessage,
+        backendUrl: backendUrl
+      };
+    }
   } catch (error) {
     console.error(`[Backend-Tester API Proxy] Error calling backend:`, error);
     throw error;
@@ -96,8 +119,16 @@ export async function POST(
     // Get the API path
     const path = params.path.join('/');
     
-    // Parse request body
-    const body = await request.json();
+    // Parse request body; accept empty body for endpoints like exchange-rates/refresh
+    let body: any = {};
+    try {
+      const raw = await request.text();
+      if (raw && raw.trim().length > 0) {
+        body = JSON.parse(raw);
+      }
+    } catch (_err) {
+      body = {};
+    }
     
     // Validate input
     if (!validateInput(body)) {
@@ -108,7 +139,7 @@ export async function POST(
     }
 
     // Proxy to backend
-    const result = await makeBackendRequest(path, 'POST', body);
+    const result = await makeBackendRequest(request, path, 'POST', body);
     
     return NextResponse.json(result);
     
@@ -147,7 +178,7 @@ export async function GET(
     const path = params.path.join('/');
     
     // Proxy to backend
-    const result = await makeBackendRequest(path, 'GET');
+    const result = await makeBackendRequest(request, path, 'GET');
     
     return NextResponse.json(result);
     

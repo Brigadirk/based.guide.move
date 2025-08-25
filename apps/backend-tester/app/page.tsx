@@ -901,7 +901,14 @@ export default function BackendTester() {
   // Backend URL management
   const [backendUrl, setBackendUrl] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('backend-tester-url') || getDefaultBackendUrl()
+      const storedUrl = localStorage.getItem('backend-tester-url')
+      // Clean up any old localhost URLs and replace with IPv4
+      if (storedUrl && storedUrl.includes('localhost')) {
+        const cleanedUrl = storedUrl.replace('http://localhost:', 'http://127.0.0.1:')
+        localStorage.setItem('backend-tester-url', cleanedUrl)
+        return cleanedUrl
+      }
+      return storedUrl || getDefaultBackendUrl()
     }
     return getDefaultBackendUrl()
   })
@@ -913,29 +920,30 @@ export default function BackendTester() {
   }, [backendUrl])
   
   function getDefaultBackendUrl() {
+    const normalize = (u?: string) => (u ? u.replace('://localhost', '://127.0.0.1') : u)
     // Priority order: try to use environment variables, fallback to reasonable defaults
     if (process.env.NODE_ENV === 'production') {
-      // In production, prefer Railway Public, then fallback
-      return process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL || 
-             'http://localhost:3000' // Last resort fallback for production
+      // In production, use public URL
+      return normalize(process.env.NEXT_PUBLIC_API_URL) || 'https://example.invalid'
     } else {
-      // In development, prefer Local, then Railway Public, then fallback  
-      return process.env.NEXT_PUBLIC_LOCAL_URL ||
-             process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL ||
-             'http://localhost:5001' // Last resort fallback for development
+      // In development, prefer local, then public URL
+      return normalize(process.env.NEXT_PUBLIC_LOCAL_URL) ||
+             normalize(process.env.NEXT_PUBLIC_API_URL) ||
+             'http://127.0.0.1:5001' // Last resort fallback for development
     }
   }
 
   // Get backend URL for display purposes
   const getBackendUrl = () => {
+    const normalize = (u?: string) => (u ? u.replace('://localhost', '://127.0.0.1') : u)
     if (process.env.NODE_ENV === 'production') {
-      // In production, use internal URL for better security and performance
-      return process.env.NEXT_INTERNAL_API_URL ||
-             'http://bonobo-backend.railway.internal'
+      // In production, use public URL
+      return normalize(process.env.NEXT_PUBLIC_API_URL) || 'https://example.invalid'
     } else {
-      // In development, use public URL
-      return process.env.NEXT_PUBLIC_API_URL ||
-             'http://localhost:5001'
+      // In development, prefer local then public URL
+      return normalize(process.env.NEXT_PUBLIC_LOCAL_URL) ||
+             normalize(process.env.NEXT_PUBLIC_API_URL) ||
+             'http://127.0.0.1:5001'
     }
   }
 
@@ -943,9 +951,8 @@ export default function BackendTester() {
   const testConnection = async (url: string = backendUrl) => {
     try {
       // Test the health endpoint directly (not through API proxy)
-      const healthUrl = process.env.NODE_ENV === 'production'
-        ? `${process.env.NEXT_INTERNAL_API_URL || 'http://bonobo-backend.railway.internal'}/health`
-        : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/health`
+      // Use the provided URL parameter, not environment variables
+      const healthUrl = url ? `${url}/health` : 'http://127.0.0.1:5001/health'
 
       const response = await fetch(healthUrl, {
         method: 'GET',
@@ -962,14 +969,16 @@ export default function BackendTester() {
 
   // Save backend URL to localStorage when it changes
   const updateBackendUrl = async (newUrl: string) => {
-    setBackendUrl(newUrl)
+    // Ensure we always use IPv4 address for localhost
+    const cleanUrl = newUrl.replace('http://localhost:', 'http://127.0.0.1:')
+    setBackendUrl(cleanUrl)
     if (typeof window !== 'undefined') {
-      localStorage.setItem('backend-tester-url', newUrl)
+      localStorage.setItem('backend-tester-url', cleanUrl)
     }
-    
+
     // Test connection to new URL
     setConnectionStatus('unknown')
-    const isConnected = await testConnection(newUrl)
+    const isConnected = await testConnection(cleanUrl)
     setConnectionStatus(isConnected ? 'connected' : 'error')
   }
 
@@ -984,26 +993,52 @@ export default function BackendTester() {
   const callApi = async (endpoint: string, method: 'GET' | 'POST' = 'POST', data?: any) => {
     const key = endpoint.replace(/\//g, '_')
     setLoading(prev => ({ ...prev, [key]: true }))
-    
+
     try {
-      console.log(`Calling ${method} /api/backend${endpoint}`)
+      console.log(`Calling ${method} ${endpoint}`)
       console.log('Data:', data)
-      
+
       const options: RequestInit = {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
       }
-      
+
       if (data && method === 'POST') {
         options.body = JSON.stringify(data)
       }
-      
-      // Use internal API proxy instead of direct backend calls
-      const response = await fetch(`/api/backend${endpoint}`, options)
-      const result = await response.json()
-      
+
+      // Always use API proxy so headers (API key, base URL) are applied uniformly
+      // Pass selected backend base URL via header so proxy can target the right origin
+      const proxyOptions: RequestInit = {
+        ...options,
+        headers: {
+          ...(options.headers as Record<string, string>),
+          'x-backend-base-url': backendUrl,
+        },
+      }
+
+      const response = await fetch(`/api/backend${endpoint}`, proxyOptions)
+
+      let result
+      try {
+        console.log(`[callApi] Response status: ${response.status}`)
+        console.log(`[callApi] Response headers:`, Object.fromEntries(response.headers.entries()))
+        result = await response.json()
+        console.log(`[callApi] Successfully parsed JSON:`, result)
+      } catch (parseError) {
+        console.error('[callApi] JSON parse error:', parseError)
+        console.error('[callApi] Response status:', response.status)
+        console.error('[callApi] Response statusText:', response.statusText)
+        result = {
+          error: 'Invalid JSON response',
+          parseError: parseError instanceof Error ? parseError.message : 'Unknown parse error',
+          status: response.status,
+          statusText: response.statusText
+        }
+      }
+
       setResponses(prev => ({
         ...prev,
         [key]: {
@@ -1181,30 +1216,32 @@ export default function BackendTester() {
   const BackendUrlSwitcher = () => {
     const [customUrl, setCustomUrl] = useState('')
     const [showCustomInput, setShowCustomInput] = useState(false)
+    const [activePreset, setActivePreset] = useState<string | null>(null)
     
       const presetUrls = [
-    { 
-      label: 'Railway Public', 
-      url: process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL,
+    {
+      label: 'Railway Public',
+      url: process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001',
       description: 'Public Railway URL (accessible from internet)',
-      envVar: 'NEXT_PUBLIC_RAILWAY_PUBLIC_URL'
+      envVar: 'NEXT_PUBLIC_API_URL'
     },
-    { 
-      label: 'Local Development', 
-      url: process.env.NEXT_PUBLIC_LOCAL_URL,
+    {
+      label: 'Local Development',
+      url: process.env.NEXT_PUBLIC_LOCAL_URL || 'http://127.0.0.1:5001',
       description: 'Local backend server',
       envVar: 'NEXT_PUBLIC_LOCAL_URL'
     }
   ]
     
     const handlePresetSelect = async (preset: any) => {
-      if (preset.url) {
-        await updateBackendUrl(preset.url)
-        setShowCustomInput(false)
-      } else {
-        // Show user that this environment variable is not configured
-        alert(`${preset.envVar} is not configured.\n\nTo use this preset, set the environment variable:\n${preset.envVar}=your-backend-url`)
-      }
+      // Always attempt to update; when not set, we still pass a safe default
+      const targetUrl = preset.url && typeof preset.url === 'string' && preset.url.trim().length > 0
+        ? preset.url
+        : (preset.envVar === 'NEXT_PUBLIC_INTERNAL_API_URL' ? 'http://bonobo-backend.railway.internal' : 'http://127.0.0.1:5001')
+
+      await updateBackendUrl(targetUrl)
+      setShowCustomInput(false)
+      setActivePreset(preset.label)
     }
     
     const handleCustomSubmit = async () => {
@@ -1212,6 +1249,7 @@ export default function BackendTester() {
         await updateBackendUrl(customUrl.trim())
         setShowCustomInput(false)
         setCustomUrl('')
+        setActivePreset(null) // Clear active preset when using custom URL
       }
     }
     
@@ -1230,13 +1268,14 @@ export default function BackendTester() {
         {/* Debug: Show environment variables */}
         <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '8px', fontFamily: 'monospace', backgroundColor: '#f9fafb', padding: '4px 8px', borderRadius: '4px' }}>
           Debug: Public={process.env.NEXT_PUBLIC_API_URL || 'undefined'} |
-          Internal={process.env.NEXT_INTERNAL_API_URL || 'undefined'} |
+          Internal={process.env.NEXT_PUBLIC_INTERNAL_API_URL || 'undefined'} |
+          Local={process.env.NEXT_PUBLIC_LOCAL_URL || 'undefined'} |
           API Key={process.env.API_KEY ? '✅ Set' : '❌ Not Set'} |
           Env={process.env.NODE_ENV || 'development'} |
           Active URL={getBackendUrl()}
         </div>
         
-        <div style={{ marginBottom: '12px' }}>
+        <div style={{ marginBottom: '12px' }} suppressHydrationWarning>
           <div style={{ fontSize: '12px', color: '#0c4a6e', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span>Current: <strong>{backendUrl}</strong></span>
             <span style={{ 
@@ -1281,13 +1320,13 @@ export default function BackendTester() {
                 onClick={() => handlePresetSelect(preset)}
                 style={{
                   padding: '6px 12px',
-                  backgroundColor: backendUrl === preset.url ? '#0ea5e9' : preset.url ? 'white' : '#f3f4f6',
-                  color: backendUrl === preset.url ? 'white' : preset.url ? '#0c4a6e' : '#6b7280',
+                  backgroundColor: activePreset === preset.label ? '#0ea5e9' : preset.url ? 'white' : '#f3f4f6',
+                  color: activePreset === preset.label ? 'white' : preset.url ? '#0c4a6e' : '#6b7280',
                   border: `1px solid ${preset.url ? '#0ea5e9' : '#d1d5db'}`,
                   borderRadius: '4px',
                   cursor: 'pointer',
                   fontSize: '12px',
-                  fontWeight: backendUrl === preset.url ? 'bold' : 'normal',
+                  fontWeight: activePreset === preset.label ? 'bold' : 'normal',
                   opacity: preset.url ? 1 : 0.7
                 }}
                 title={preset.url ? `${preset.description}\nURL: ${preset.url}` : `${preset.description}\nNot configured - set ${preset.envVar}`}

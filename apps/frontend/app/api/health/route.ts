@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   try {
     // Check backend health via internal network
-    const response = await fetch('http://bonobo-backend.railway.internal/health', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/health`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

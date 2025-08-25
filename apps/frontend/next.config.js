@@ -90,7 +90,6 @@ const nextConfig = {
   // Environment variables for server-side API routes
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-    NEXT_INTERNAL_API_URL: process.env.NEXT_INTERNAL_API_URL,
     API_KEY: process.env.API_KEY,
   },
 
