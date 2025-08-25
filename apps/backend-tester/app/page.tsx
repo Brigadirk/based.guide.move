@@ -1227,7 +1227,8 @@ export default function BackendTester() {
           Debug: Public={process.env.NEXT_PUBLIC_API_URL || 'undefined'} |
           Internal={process.env.NEXT_INTERNAL_API_URL || 'undefined'} |
           API Key={process.env.API_KEY ? '✅ Set' : '❌ Not Set'} |
-          Env={process.env.NODE_ENV || 'development'}
+          Env={process.env.NODE_ENV || 'development'} |
+          Active URL={getBackendUrl()}
         </div>
         
         <div style={{ marginBottom: '12px' }}>
