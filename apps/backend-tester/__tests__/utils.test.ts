@@ -2,34 +2,113 @@
 
 describe('Backend Tester Utils', () => {
   describe('Environment Detection', () => {
-    const originalEnv = process.env.NODE_ENV
+    const originalEnv = {
+      NODE_ENV: process.env.NODE_ENV,
+      NEXT_PUBLIC_RAILWAY_INTERNAL_URL: process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL,
+      NEXT_PUBLIC_RAILWAY_PUBLIC_URL: process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL,
+      NEXT_PUBLIC_LOCAL_URL: process.env.NEXT_PUBLIC_LOCAL_URL,
+    }
 
     afterEach(() => {
-      process.env.NODE_ENV = originalEnv
+      process.env.NODE_ENV = originalEnv.NODE_ENV
+      process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL = originalEnv.NEXT_PUBLIC_RAILWAY_INTERNAL_URL
+      process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL = originalEnv.NEXT_PUBLIC_RAILWAY_PUBLIC_URL
+      process.env.NEXT_PUBLIC_LOCAL_URL = originalEnv.NEXT_PUBLIC_LOCAL_URL
     })
 
-    it('detects development environment', () => {
+    const getDefaultBackendUrl = () => {
+      // Priority order: try to use environment variables, fallback to reasonable defaults
+      if (process.env.NODE_ENV === 'production') {
+        // In production, prefer Railway Internal, then Railway Public, then fallback
+        return process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL || 
+               process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL || 
+               'http://localhost:3000' // Last resort fallback for production
+      } else {
+        // In development, prefer Local, then Railway options, then fallback  
+        return process.env.NEXT_PUBLIC_LOCAL_URL ||
+               process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL ||
+               process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL ||
+               'http://localhost:5001' // Last resort fallback for development
+      }
+    }
+
+    it('uses development URL by default', () => {
       process.env.NODE_ENV = 'development'
+      process.env.NEXT_PUBLIC_LOCAL_URL = 'http://localhost:5001'
       
-      const getBackendUrl = () => {
-        return process.env.NODE_ENV === 'production' 
-          ? 'http://bonobo-backend.railway.internal'
-          : 'http://localhost:5001'
-      }
-
-      expect(getBackendUrl()).toBe('http://localhost:5001')
+      expect(getDefaultBackendUrl()).toBe('http://localhost:5001')
     })
 
-    it('detects production environment', () => {
+    it('uses production internal URL by default', () => {
       process.env.NODE_ENV = 'production'
+      process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL = 'http://bonobo-backend.railway.internal'
       
-      const getBackendUrl = () => {
-        return process.env.NODE_ENV === 'production' 
-          ? 'http://bonobo-backend.railway.internal'
-          : 'http://localhost:5001'
-      }
+      expect(getDefaultBackendUrl()).toBe('http://bonobo-backend.railway.internal')
+    })
 
-      expect(getBackendUrl()).toBe('http://bonobo-backend.railway.internal')
+    it('uses custom local URL when set', () => {
+      process.env.NODE_ENV = 'development'
+      process.env.NEXT_PUBLIC_LOCAL_URL = 'http://localhost:8080'
+      
+      expect(getDefaultBackendUrl()).toBe('http://localhost:8080')
+    })
+
+    it('uses custom railway internal URL when set', () => {
+      process.env.NODE_ENV = 'production'
+      process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL = 'http://custom-internal.railway.internal'
+      
+      expect(getDefaultBackendUrl()).toBe('http://custom-internal.railway.internal')
+    })
+
+    it('falls back to last resort defaults when no env vars set', () => {
+      delete process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL
+      delete process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL
+      delete process.env.NEXT_PUBLIC_LOCAL_URL
+      
+      process.env.NODE_ENV = 'development'
+      expect(getDefaultBackendUrl()).toBe('http://localhost:5001')
+      
+      process.env.NODE_ENV = 'production'  
+      expect(getDefaultBackendUrl()).toBe('http://localhost:3000')
+    })
+
+    it('only shows presets for configured environment variables', () => {
+      // Test that presets only appear when environment variables are set
+      delete process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL
+      delete process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL
+      delete process.env.NEXT_PUBLIC_LOCAL_URL
+      
+      // Mock preset URL creation logic
+      const createPresets = () => [
+        process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL && { 
+          label: 'Railway Internal', 
+          url: process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL,
+          description: 'Internal Railway network (secure)'
+        },
+        process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL && { 
+          label: 'Railway Public', 
+          url: process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL,
+          description: 'Public Railway URL (accessible from internet)'
+        },
+        process.env.NEXT_PUBLIC_LOCAL_URL && { 
+          label: 'Local Development', 
+          url: process.env.NEXT_PUBLIC_LOCAL_URL,
+          description: 'Local backend server'
+        }
+      ].filter(Boolean)
+      
+      // With no environment variables, no presets should appear
+      expect(createPresets()).toHaveLength(0)
+      
+      // Set one environment variable
+      process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL = 'http://test-backend.railway.internal'
+      expect(createPresets()).toHaveLength(1)
+      expect(createPresets()[0].url).toBe('http://test-backend.railway.internal')
+      
+      // Set another environment variable
+      process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL = 'https://test-backend-xyz.up.railway.app'
+      expect(createPresets()).toHaveLength(2)
+      expect(createPresets()[1].url).toBe('https://test-backend-xyz.up.railway.app')
     })
   })
 

@@ -101,9 +101,46 @@ Each persona includes complete data for all sections: personal info, education, 
 
 ## 🔧 Configuration
 
-### Environment Detection
-- **Development**: Connects to `http://localhost:5001`
-- **Production**: Uses Railway internal URL `http://bonobo-backend.railway.internal`
+### Environment Variables
+
+The backend tester supports configurable URLs for each preset button. Create a `.env.local` file (copy from `env.example`) to customize URLs:
+
+#### **Available Environment Variables**
+
+```bash
+# Railway Internal URL (secure private network)
+NEXT_PUBLIC_RAILWAY_INTERNAL_URL=http://your-backend.railway.internal
+
+# Railway Public URL (accessible from internet)  
+NEXT_PUBLIC_RAILWAY_PUBLIC_URL=https://your-backend-abc123.up.railway.app
+
+# Local Development URL
+NEXT_PUBLIC_LOCAL_URL=http://localhost:5001
+```
+
+#### **How It Works**
+
+- **No Hardcoded URLs**: All URLs come from environment variables only
+- **Dynamic Presets**: Only URLs with values appear as preset buttons
+- **Flexible Configuration**: Set only the URLs you need for your environment
+- **Default Priority**: Falls back through available URLs if default isn't set
+
+#### **Railway Deployment Example**
+
+Set these environment variables in your Railway backend-tester service:
+
+```bash
+# Configure the URLs for your specific Railway project
+NEXT_PUBLIC_RAILWAY_INTERNAL_URL=http://your-actual-backend.railway.internal
+NEXT_PUBLIC_RAILWAY_PUBLIC_URL=https://your-actual-backend-xyz123.up.railway.app
+```
+
+**Result**: Only the URLs you configure will appear as preset buttons:
+- **Railway Internal** preset (if `NEXT_PUBLIC_RAILWAY_INTERNAL_URL` is set)
+- **Railway Public** preset (if `NEXT_PUBLIC_RAILWAY_PUBLIC_URL` is set)  
+- **Local Development** preset (if `NEXT_PUBLIC_LOCAL_URL` is set)
+
+If you only set the internal URL, only that preset will appear. If you set both, you get both options to switch between.
 
 ### Mock Data
 Each endpoint includes realistic mock data that can be edited in real-time through the web interface.
@@ -114,10 +151,11 @@ Each endpoint includes realistic mock data that can be edited in real-time throu
 The backend tester allows you to switch between different backend URLs in real-time:
 
 #### **Preset URLs:**
-- **Railway Internal**: `http://bonobo-backend.railway.internal` (secure internal network)
-- **Railway Public**: `https://backend-staging-71d3.up.railway.app` (public access)
-- **Local Development**: `http://localhost:5001` (local backend server)
-- **Custom URL**: Enter any custom backend URL
+The preset URLs are now configurable via environment variables:
+- **Railway Internal**: Configurable via `NEXT_PUBLIC_BACKEND_INTERNAL_URL` (secure internal network)
+- **Railway Public**: Configurable via `NEXT_PUBLIC_BACKEND_PUBLIC_URL` (public access)
+- **Local Development**: Configurable via `NEXT_PUBLIC_BACKEND_LOCAL_URL` (local backend server)
+- **Custom URL**: Enter any custom backend URL or set `NEXT_PUBLIC_BACKEND_URL` for default
 
 #### **Connection Status:**
 - 🟢 **Connected**: Backend is reachable and responding

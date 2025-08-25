@@ -913,9 +913,19 @@ export default function BackendTester() {
   }, [backendUrl])
   
   function getDefaultBackendUrl() {
-    return process.env.NODE_ENV === 'production' 
-      ? 'http://bonobo-backend.railway.internal'
-      : 'http://localhost:5001'
+    // Priority order: try to use environment variables, fallback to reasonable defaults
+    if (process.env.NODE_ENV === 'production') {
+      // In production, prefer Railway Internal, then Railway Public, then fallback
+      return process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL || 
+             process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL || 
+             'http://localhost:3000' // Last resort fallback for production
+    } else {
+      // In development, prefer Local, then Railway options, then fallback  
+      return process.env.NEXT_PUBLIC_LOCAL_URL ||
+             process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL ||
+             process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL ||
+             'http://localhost:5001' // Last resort fallback for development
+    }
   }
 
   // Test backend connection
@@ -1153,22 +1163,22 @@ export default function BackendTester() {
     const [showCustomInput, setShowCustomInput] = useState(false)
     
     const presetUrls = [
-      { 
+      process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL && { 
         label: 'Railway Internal', 
-        url: 'http://bonobo-backend.railway.internal',
+        url: process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL,
         description: 'Internal Railway network (secure)'
       },
-      { 
+      process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL && { 
         label: 'Railway Public', 
-        url: 'https://backend-staging-71d3.up.railway.app',
-        description: 'Public Railway URL (if available)'
+        url: process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL,
+        description: 'Public Railway URL (accessible from internet)'
       },
-      { 
+      process.env.NEXT_PUBLIC_LOCAL_URL && { 
         label: 'Local Development', 
-        url: 'http://localhost:5001',
+        url: process.env.NEXT_PUBLIC_LOCAL_URL,
         description: 'Local backend server'
       }
-    ]
+    ].filter(Boolean) // Filter out undefined presets
     
     const handlePresetSelect = async (url: string) => {
       await updateBackendUrl(url)
