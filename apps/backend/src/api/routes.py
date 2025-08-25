@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from api.auth import optional_api_key, verify_api_key
+from api.auth import verify_api_key
 from api.perplexity import get_tax_advice
 from modules.currency_utils import country_to_currency
 from modules.prompt_generator import generate_tax_prompt
@@ -33,7 +33,7 @@ router = APIRouter()
 
 
 @router.post("/tax-advice")
-def tax_advice(data: dict):
+def tax_advice(data: dict, api_key: str = Depends(verify_api_key)):
     """Generate tax advice by transforming the incoming JSON and forwarding a prompt to the Perplexity API."""
 
     if not data:
@@ -50,7 +50,7 @@ def tax_advice(data: dict):
 
 
 @router.post("/custom-prompt")
-def custom_prompt(payload: dict):
+def custom_prompt(payload: dict, api_key: str = Depends(verify_api_key)):
     """Send an arbitrary prompt directly to the Perplexity API."""
 
     if not payload:
@@ -67,14 +67,16 @@ def custom_prompt(payload: dict):
 
 
 @router.get("/ping")
-def ping():
+def ping(api_key: str = Depends(verify_api_key)):
     """Health-check endpoint."""
     return {"status": "success", "message": "API is running"}
 
 
 # Section-specific story generation endpoints
 @router.post("/section/personal-information")
-def get_personal_information_story(request: PersonalInformationRequest):
+def get_personal_information_story(
+    request: PersonalInformationRequest, api_key: str = Depends(verify_api_key)
+):
     """Generate a story for the personal information section."""
     try:
         story = make_personal_story(request.personal_information)
@@ -86,7 +88,7 @@ def get_personal_information_story(request: PersonalInformationRequest):
 
 
 @router.post("/section/education")
-def get_education_story(request: EducationRequest):
+def get_education_story(request: EducationRequest, api_key: str = Depends(verify_api_key)):
     """Generate a story for the education section."""
     try:
         story = make_education_story(request.education)
@@ -96,7 +98,9 @@ def get_education_story(request: EducationRequest):
 
 
 @router.post("/section/residency-intentions")
-def get_residency_intentions_story(request: ResidencyIntentionsRequest):
+def get_residency_intentions_story(
+    request: ResidencyIntentionsRequest, api_key: str = Depends(verify_api_key)
+):
     """Generate a story for the residency intentions section."""
     try:
         story = make_residency_intentions_story(request.residency_intentions)
@@ -108,7 +112,7 @@ def get_residency_intentions_story(request: ResidencyIntentionsRequest):
 
 
 @router.post("/section/finance")
-def get_finance_story(request: FinanceRequest):
+def get_finance_story(request: FinanceRequest, api_key: str = Depends(verify_api_key)):
     """Generate a story for the finance section."""
     try:
         dest_currency = "USD"
@@ -154,7 +158,9 @@ def get_finance_story(request: FinanceRequest):
 
 
 @router.post("/section/social-security-pensions")
-def get_social_security_story(request: SocialSecurityRequest):
+def get_social_security_story(
+    request: SocialSecurityRequest, api_key: str = Depends(verify_api_key)
+):
     """Generate a story for the social security and pensions section."""
     try:
         dest_currency = "USD"
@@ -172,7 +178,7 @@ def get_social_security_story(request: SocialSecurityRequest):
 
 
 @router.post("/section/tax-deductions-credits")
-def get_tax_deductions_story(request: TaxDeductionsRequest):
+def get_tax_deductions_story(request: TaxDeductionsRequest, api_key: str = Depends(verify_api_key)):
     """Generate a story for the tax deductions and credits section."""
     try:
         dest_currency = "USD"
@@ -190,7 +196,9 @@ def get_tax_deductions_story(request: TaxDeductionsRequest):
 
 
 @router.post("/section/future-financial-plans")
-def get_future_financial_plans_story(request: FutureFinancialPlansRequest):
+def get_future_financial_plans_story(
+    request: FutureFinancialPlansRequest, api_key: str = Depends(verify_api_key)
+):
     """Generate a story for the future financial plans section."""
     try:
         dest_currency = "USD"
@@ -208,7 +216,9 @@ def get_future_financial_plans_story(request: FutureFinancialPlansRequest):
 
 
 @router.post("/section/additional-information")
-def get_additional_information_story(request: AdditionalInformationRequest):
+def get_additional_information_story(
+    request: AdditionalInformationRequest, api_key: str = Depends(verify_api_key)
+):
     """Generate a story for the additional information section."""
     try:
         story = make_additional_information_story(request.additional_information)
@@ -220,7 +230,7 @@ def get_additional_information_story(request: AdditionalInformationRequest):
 
 
 @router.post("/section/summary")
-def get_summary_story(request: SummaryRequest):
+def get_summary_story(request: SummaryRequest, api_key: str = Depends(verify_api_key)):
     """Generate a complete summary story from the entire profile."""
     try:
         story = make_story(request.profile)
@@ -230,7 +240,7 @@ def get_summary_story(request: SummaryRequest):
 
 
 @router.post("/generate-full-story")
-def generate_full_story(request: SummaryRequest, api_key: str = Depends(optional_api_key)):
+def generate_full_story(request: SummaryRequest, api_key: str = Depends(verify_api_key)):
     """Generate the complete profile story for Perplexity AI analysis."""
     try:
         story = make_story(request.profile)
@@ -240,7 +250,7 @@ def generate_full_story(request: SummaryRequest, api_key: str = Depends(optional
 
 
 @router.post("/perplexity-analysis")
-def perplexity_analysis(payload: dict):
+def perplexity_analysis(payload: dict, api_key: str = Depends(verify_api_key)):
     """Send a prompt to Perplexity AI for comprehensive analysis."""
     try:
         if not payload:
@@ -286,7 +296,7 @@ def perplexity_analysis(payload: dict):
 
 
 @router.get("/exchange-rates")
-def get_exchange_rates(api_key: str = Depends(optional_api_key)):
+def get_exchange_rates(api_key: str = Depends(verify_api_key)):
     """Get the latest exchange rates (USD base)."""
     import os
     from datetime import datetime

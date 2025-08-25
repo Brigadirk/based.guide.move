@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from api.middleware import api_key_middleware
 from api.perplexity import get_tax_advice
 from api.routes import router as api_router
 from config import Config
@@ -76,6 +77,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add API key authentication middleware
+app.middleware("http")(api_key_middleware)
 
 
 # Health check endpoint for Railway
