@@ -54,6 +54,15 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     return `${year}-${month}-${day}`
   }
 
+  // Get a reasonable default birth date (30 years ago) for better UX
+  const getDefaultBirthDate = () => {
+    const today = new Date()
+    const defaultYear = today.getFullYear() - 30
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    return `${defaultYear}-${month}-${day}`
+  }
+
   // Helper function to calculate age from date of birth (in decimal years)
   const calculateAge = (dateOfBirth: string): number => {
     if (!dateOfBirth) return 0
@@ -488,6 +497,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                 type="date"
                 value={dob}
                 onChange={handleDobChange}
+                onFocus={(e) => {
+                  // If the field is empty, set it to a reasonable default when focused
+                  if (!dob) {
+                    handleDobChange({ target: { value: getDefaultBirthDate() } } as React.ChangeEvent<HTMLInputElement>)
+                  }
+                }}
                 max={getTodayDate()}
                 className="max-w-xs"
                 required
@@ -921,6 +936,13 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     type="date"
                     value={getFormData("personalInformation.relocationPartnerInfo.dateOfBirth") ?? ""}
                     onChange={(e) => updateFormData("personalInformation.relocationPartnerInfo.dateOfBirth", e.target.value)}
+                    onFocus={(e) => {
+                      // If the field is empty, set it to a reasonable default when focused
+                      const currentValue = getFormData("personalInformation.relocationPartnerInfo.dateOfBirth") ?? ""
+                      if (!currentValue) {
+                        updateFormData("personalInformation.relocationPartnerInfo.dateOfBirth", getDefaultBirthDate())
+                      }
+                    }}
                     max={getTodayDate()}
                     className="max-w-xs"
                     required
@@ -1739,6 +1761,14 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                         const updated = [...depList]
                         updated[idx] = { ...updated[idx], dateOfBirth: e.target.value }
                         updateDepList(updated)
+                      }}
+                      onFocus={(e) => {
+                        // If the field is empty, set it to a reasonable default when focused
+                        if (!dep.dateOfBirth) {
+                          const updated = [...depList]
+                          updated[idx] = { ...updated[idx], dateOfBirth: getDefaultBirthDate() }
+                          updateDepList(updated)
+                        }
                       }}
                     />
                   </div>

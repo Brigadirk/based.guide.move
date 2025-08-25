@@ -41,6 +41,7 @@ async function makeBackendRequest(path: string, method: string, body?: any, clie
   // Remove the /api/v1/ prefix from path if it exists, since we add it below
   const cleanPath = path.replace(/^api\/v1\//, '');
   const backendUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/v1/${cleanPath}`;
+  const isProduction = process.env.NODE_ENV === 'production';
 
   console.log(`[API Proxy] ${method} ${path} using ${isProduction ? 'internal' : 'public'} URL`);
 

@@ -41,6 +41,15 @@ type PartnerInfo = {
 export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
   const countries = getCountries()
   
+  // Get a reasonable default birth date (30 years ago) for better UX
+  const getDefaultBirthDate = () => {
+    const today = new Date()
+    const defaultYear = today.getFullYear() - 30
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    return `${defaultYear}-${month}-${day}`
+  }
+  
   const [hasPartner, setHasPartner] = useState(Boolean(data.partner))
   const [partnerInfo] = useState<PartnerInfo>({
     personalInformation: {
@@ -154,6 +163,18 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                             dateOfBirth: e.target.value
                           }
                         }, dependents)
+                      }}
+                      onFocus={(e) => {
+                        // If the field is empty, set it to a reasonable default when focused
+                        if (!partnerInfo.personalInformation.dateOfBirth) {
+                          handleUpdate({
+                            ...partnerInfo,
+                            personalInformation: {
+                              ...partnerInfo.personalInformation,
+                              dateOfBirth: getDefaultBirthDate()
+                            }
+                          }, dependents)
+                        }
                       }}
                     />
                   </div>

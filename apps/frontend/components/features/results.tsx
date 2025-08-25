@@ -11,6 +11,7 @@ import { apiClient } from "@/lib/api-client"
 import { Sparkles, Settings, Loader2, FileText, Zap, ChevronUp, ChevronDown, MessageCirclePlus } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { PerplexityLoading } from "@/components/ui/perplexity-loading"
 
 const PERPLEXITY_MODELS = [
   { id: "sonar-deep-research", name: "Sonar Deep Research", description: "Best for comprehensive analysis" },
@@ -278,6 +279,12 @@ Please provide a detailed answer to the follow-up question, referencing the prev
         </CardContent>
       </Card>
 
+      {/* Loading Animation */}
+      <PerplexityLoading 
+        isLoading={isGeneratingResult} 
+        loadingText="Generating Analysis..."
+      />
+
       {/* Results Card - Collapsible */}
       {result && (
         <Collapsible open={!isResultCollapsed} onOpenChange={(open) => setIsResultCollapsed(!open)}>
@@ -399,6 +406,12 @@ Please provide a detailed answer to the follow-up question, referencing the prev
           </CardContent>
         </Card>
       )}
+
+      {/* Follow-up Loading Animation */}
+      <PerplexityLoading 
+        isLoading={isGeneratingFollowUp} 
+        loadingText="Generating Follow-up Answer..."
+      />
 
       {/* Follow-up Result Card */}
       {followUpResult && (

@@ -99,6 +99,16 @@ def personal_section(pi: dict[str, Any]) -> str:
         else:
             lines.append(f"They are relocating with their {rel_type.lower()}.")
 
+        # Partner age
+        partner_dob = partner_info.get("dateOfBirth")
+        if partner_dob:
+            try:
+                partner_age = int((date.today() - datetime.strptime(partner_dob, "%Y-%m-%d").date()).days / 365.25)
+                lines.append(f"Their {rel_type.lower()} was born on {_fmt_date(partner_dob)} (age {partner_age}).")
+            except Exception:
+                # If date parsing fails, just mention the birth date without age
+                lines.append(f"Their {rel_type.lower()} was born on {_fmt_date(partner_dob)}.")
+
         # Partner nationalities
         p_nats = partner_info.get("partnerNationalities", [])
         if p_nats:
