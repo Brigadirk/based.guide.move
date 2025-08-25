@@ -50,11 +50,12 @@ def _get_exchange_rates_folder() -> Path:
         print(f"Warning: Could not create exchange rates folder {folder}: {e}")
         # Fallback to temp directory for Railway deployments with read-only filesystem
         import tempfile
+
         temp_folder = Path(tempfile.gettempdir()) / "exchange_rates"
         temp_folder.mkdir(exist_ok=True, parents=True)
         print(f"Using temporary folder: {temp_folder}")
         return temp_folder
-    
+
     return folder
 
 
@@ -81,7 +82,7 @@ def _latest_snapshot_file() -> Path | None:
 
     # Ensure the exchange rates folder exists
     EXCHANGE_RATES_FOLDER.mkdir(parents=True, exist_ok=True)
-    
+
     try:
         candidates = [p for p in EXCHANGE_RATES_FOLDER.glob("*.json") if ts_pattern.match(p.name)]
         # include legacy flat files for migration
@@ -90,7 +91,7 @@ def _latest_snapshot_file() -> Path | None:
     except Exception as e:
         print(f"Warning: Could not access exchange rates folder: {e}")
         return None
-        
+
     if not candidates:
         return None
 
@@ -98,7 +99,7 @@ def _latest_snapshot_file() -> Path | None:
         try:
             stem = file.stem  # 'YYYY-MM-DD_HH-MM-SS' or 'YYYY-MM-DD_HH-MM-SS_fallback'
             # Remove _fallback suffix if present
-            if stem.endswith('_fallback'):
+            if stem.endswith("_fallback"):
                 stem = stem[:-9]  # Remove '_fallback'
             return datetime.strptime(stem, "%Y-%m-%d_%H-%M-%S")
         except ValueError:
@@ -199,7 +200,7 @@ def get_latest_rates() -> dict[str, float]:
     For Railway deployments with ephemeral storage, this ensures rates are always available.
     """
     latest_file = _latest_snapshot_file()
-    
+
     # Check if file exists and is recent enough
     file_is_fresh = False
     if latest_file and latest_file.exists():
@@ -210,7 +211,7 @@ def get_latest_rates() -> dict[str, float]:
                 print(f"Exchange rates file is {hours_old:.1f} hours old, needs refresh")
         except Exception as e:
             print(f"Could not check file age: {e}")
-    
+
     # If no file or file is stale, try to fetch fresh rates
     if latest_file is None or not file_is_fresh:
         print("Attempting to fetch fresh exchange rates...")

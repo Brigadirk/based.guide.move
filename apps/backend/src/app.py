@@ -36,8 +36,8 @@ async def lifespan(app: FastAPI):  # noqa: D401
     except Exception as e:
         print(f"⚠️ Warning: Could not initialize exchange rates: {e}")
         print("   Exchange rates will be fetched on-demand")
-    
-    # Start scheduler for periodic updates (Railway containers are ephemeral, 
+
+    # Start scheduler for periodic updates (Railway containers are ephemeral,
     # so we refresh more frequently to handle container restarts)
     scheduler.add_job(
         fetch_and_save_latest_rates,
@@ -88,18 +88,21 @@ async def health_check():
 
         # Check if exchange rates directory is accessible
         from services.exchange_rate_service import EXCHANGE_RATES_FOLDER
+
         rates_dir = str(EXCHANGE_RATES_FOLDER)
         rates_accessible = os.path.exists(rates_dir) and os.access(rates_dir, os.W_OK)
 
         # Check if we have recent exchange rates
         latest_file = _latest_snapshot_file()
         rates_fresh = latest_file and latest_file.exists()
-        
+
         # Additional exchange rate debug info
         exchange_debug = {
             "folder_path": rates_dir,
             "folder_exists": os.path.exists(rates_dir),
-            "folder_writable": os.access(rates_dir, os.W_OK) if os.path.exists(rates_dir) else False,
+            "folder_writable": (
+                os.access(rates_dir, os.W_OK) if os.path.exists(rates_dir) else False
+            ),
             "latest_file": str(latest_file) if latest_file else None,
             "api_key_configured": bool(Config.OPEN_EXCHANGE_API_KEY),
         }

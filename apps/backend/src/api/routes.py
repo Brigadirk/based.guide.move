@@ -290,7 +290,11 @@ def get_exchange_rates():
     import os
     from datetime import datetime
 
-    from services.exchange_rate_service import _latest_snapshot_file, get_latest_rates, fetch_and_save_latest_rates
+    from services.exchange_rate_service import (
+        _latest_snapshot_file,
+        fetch_and_save_latest_rates,
+        get_latest_rates,
+    )
 
     try:
         # First, try to ensure we have rates available
@@ -304,7 +308,7 @@ def get_exchange_rates():
                 rates = get_latest_rates()
             else:
                 raise e
-        
+
         latest_file = _latest_snapshot_file()
 
         # Get metadata about the snapshot
