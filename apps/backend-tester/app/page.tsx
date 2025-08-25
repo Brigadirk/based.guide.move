@@ -939,6 +939,22 @@ export default function BackendTester() {
     }
   }
 
+  // Get backend URL - prefer internal for production
+  const getBackendUrl = () => {
+    if (process.env.NODE_ENV === 'production') {
+      // In production, use internal URL for better security and performance
+      return process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL || 
+             process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL || 
+             'http://localhost:3000'
+    } else {
+      // In development, prefer local, then internal, then public
+      return process.env.NEXT_PUBLIC_LOCAL_URL ||
+             process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL ||
+             process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL ||
+             'http://localhost:5001'
+    }
+  }
+
   // Get headers with optional API key
   const getHeaders = () => {
     const headers: Record<string, string> = {
@@ -956,9 +972,11 @@ export default function BackendTester() {
   // Test backend connection
   const testConnection = async (url: string = backendUrl) => {
     try {
-      const response = await fetch(`${url}/health`, { 
+      const response = await fetch(`/api/backend/health`, { 
         method: 'GET',
-        headers: getHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        },
         signal: AbortSignal.timeout(5000) // 5 second timeout
       })
       return response.ok
@@ -993,19 +1011,22 @@ export default function BackendTester() {
     setLoading(prev => ({ ...prev, [key]: true }))
     
     try {
-      console.log(`Calling ${method} ${backendUrl}${endpoint}`)
+      console.log(`Calling ${method} /api/backend${endpoint}`)
       console.log('Data:', data)
       
       const options: RequestInit = {
         method,
-        headers: getHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       }
       
       if (data && method === 'POST') {
         options.body = JSON.stringify(data)
       }
       
-      const response = await fetch(`${backendUrl}${endpoint}`, options)
+      // Use internal API proxy instead of direct backend calls
+      const response = await fetch(`/api/backend${endpoint}`, options)
       const result = await response.json()
       
       setResponses(prev => ({
