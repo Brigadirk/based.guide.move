@@ -28,8 +28,17 @@ scheduler = AsyncIOScheduler()
 @asynccontextmanager
 async def lifespan(app: FastAPI):  # noqa: D401
     """Start background FX scheduler on app startup and shut it down gracefully."""
-    # Startup actions
-    fetch_and_save_latest_rates()
+    # Startup actions - ensure exchange rates are available
+    print("🚀 Initializing exchange rates service...")
+    try:
+        fetch_and_save_latest_rates(force=True)
+        print("✅ Exchange rates initialized successfully")
+    except Exception as e:
+        print(f"⚠️ Warning: Could not initialize exchange rates: {e}")
+        print("   Exchange rates will be fetched on-demand")
+    
+    # Start scheduler for periodic updates (Railway containers are ephemeral, 
+    # so we refresh more frequently to handle container restarts)
     scheduler.add_job(
         fetch_and_save_latest_rates,
         "interval",
@@ -38,10 +47,12 @@ async def lifespan(app: FastAPI):  # noqa: D401
         replace_existing=True,
     )
     scheduler.start()
+    print(f"📅 Scheduled exchange rate updates every {Config.EXCHANGE_UPDATE_INTERVAL_HOURS} hours")
 
     yield  # Application runs here
 
     # Shutdown actions
+    print("🛑 Shutting down exchange rates scheduler...")
     scheduler.shutdown()
 
 
@@ -76,12 +87,22 @@ async def health_check():
         from datetime import datetime
 
         # Check if exchange rates directory is accessible
-        rates_dir = "services/exchange_rates"
+        from services.exchange_rate_service import EXCHANGE_RATES_FOLDER
+        rates_dir = str(EXCHANGE_RATES_FOLDER)
         rates_accessible = os.path.exists(rates_dir) and os.access(rates_dir, os.W_OK)
 
         # Check if we have recent exchange rates
         latest_file = _latest_snapshot_file()
         rates_fresh = latest_file and latest_file.exists()
+        
+        # Additional exchange rate debug info
+        exchange_debug = {
+            "folder_path": rates_dir,
+            "folder_exists": os.path.exists(rates_dir),
+            "folder_writable": os.access(rates_dir, os.W_OK) if os.path.exists(rates_dir) else False,
+            "latest_file": str(latest_file) if latest_file else None,
+            "api_key_configured": bool(Config.OPEN_EXCHANGE_API_KEY),
+        }
 
         # Check volume path (for Railway persistent storage)
         volume_path = Config.RAILWAY_VOLUME_MOUNT_PATH
@@ -110,6 +131,7 @@ async def health_check():
                 "volume_accessible": volume_accessible,
                 "volume_path": volume_path,
             },
+            "exchange_rates_debug": exchange_debug,
         }
 
         return status

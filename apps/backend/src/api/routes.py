@@ -290,10 +290,21 @@ def get_exchange_rates():
     import os
     from datetime import datetime
 
-    from services.exchange_rate_service import _latest_snapshot_file, get_latest_rates
+    from services.exchange_rate_service import _latest_snapshot_file, get_latest_rates, fetch_and_save_latest_rates
 
     try:
-        rates = get_latest_rates()
+        # First, try to ensure we have rates available
+        try:
+            rates = get_latest_rates()
+        except RuntimeError as e:
+            if "no snapshot available" in str(e):
+                # Try to create rates on demand
+                print("No exchange rates found, attempting to create...")
+                fetch_and_save_latest_rates(force=True)
+                rates = get_latest_rates()
+            else:
+                raise e
+        
         latest_file = _latest_snapshot_file()
 
         # Get metadata about the snapshot

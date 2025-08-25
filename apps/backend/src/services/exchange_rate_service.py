@@ -44,7 +44,17 @@ def _get_exchange_rates_folder() -> Path:
         # Fallback to local folder for development
         folder = Path(__file__).resolve().parent / "exchange_rates"
 
-    folder.mkdir(exist_ok=True, parents=True)
+    try:
+        folder.mkdir(exist_ok=True, parents=True)
+    except (OSError, PermissionError) as e:
+        print(f"Warning: Could not create exchange rates folder {folder}: {e}")
+        # Fallback to temp directory for Railway deployments with read-only filesystem
+        import tempfile
+        temp_folder = Path(tempfile.gettempdir()) / "exchange_rates"
+        temp_folder.mkdir(exist_ok=True, parents=True)
+        print(f"Using temporary folder: {temp_folder}")
+        return temp_folder
+    
     return folder
 
 
@@ -67,17 +77,29 @@ LAST_SNAPSHOT_PATH: Path | None = None
 
 def _latest_snapshot_file() -> Path | None:
     """Return the most-recently created snapshot file (including legacy dir)."""
-    ts_pattern = re.compile(r"\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.json$")
+    ts_pattern = re.compile(r"\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}(_fallback)?\.json$")
 
-    candidates = [p for p in EXCHANGE_RATES_FOLDER.glob("*.json") if ts_pattern.match(p.name)]
-    # include legacy flat files for migration
-    candidates.extend([p for p in LEGACY_FOLDER.glob("*.json") if ts_pattern.match(p.name)])
+    # Ensure the exchange rates folder exists
+    EXCHANGE_RATES_FOLDER.mkdir(parents=True, exist_ok=True)
+    
+    try:
+        candidates = [p for p in EXCHANGE_RATES_FOLDER.glob("*.json") if ts_pattern.match(p.name)]
+        # include legacy flat files for migration
+        if LEGACY_FOLDER.exists():
+            candidates.extend([p for p in LEGACY_FOLDER.glob("*.json") if ts_pattern.match(p.name)])
+    except Exception as e:
+        print(f"Warning: Could not access exchange rates folder: {e}")
+        return None
+        
     if not candidates:
         return None
 
     def _ts(file: Path):
         try:
-            stem = file.stem  # 'YYYY-MM-DD_HH-MM-SS'
+            stem = file.stem  # 'YYYY-MM-DD_HH-MM-SS' or 'YYYY-MM-DD_HH-MM-SS_fallback'
+            # Remove _fallback suffix if present
+            if stem.endswith('_fallback'):
+                stem = stem[:-9]  # Remove '_fallback'
             return datetime.strptime(stem, "%Y-%m-%d_%H-%M-%S")
         except ValueError:
             # fallback to ctime if name not parsable
@@ -116,11 +138,14 @@ def fetch_and_save_latest_rates(force: bool = False) -> None:
     """
     # Check if API key is available
     if not Config.OPEN_EXCHANGE_API_KEY:
-        print("Warning: OPEN_EXCHANGE_API_KEY not configured, skipping exchange rate fetch")
+        print("Warning: OPEN_EXCHANGE_API_KEY not configured, creating fallback exchange rates")
         latest = _latest_snapshot_file()
         if latest is None:
             # Create a minimal fallback exchange rates file for basic functionality
             _create_fallback_exchange_rates()
+            print(f"Created fallback exchange rates file in {EXCHANGE_RATES_FOLDER}")
+        else:
+            print(f"Using existing exchange rates snapshot: {latest}")
         return
 
     latest_file = _latest_snapshot_file()
@@ -171,15 +196,34 @@ def get_latest_rates() -> dict[str, float]:
     """Load rates from the newest snapshot on disk.
 
     If no snapshot exists, it will attempt to fetch one synchronously.
+    For Railway deployments with ephemeral storage, this ensures rates are always available.
     """
     latest_file = _latest_snapshot_file()
-    if latest_file is None:
-        # Try to fetch; if fails we will error later
+    
+    # Check if file exists and is recent enough
+    file_is_fresh = False
+    if latest_file and latest_file.exists():
+        try:
+            hours_old = _hours_since(latest_file)
+            file_is_fresh = hours_old < Config.EXCHANGE_UPDATE_INTERVAL_HOURS
+            if not file_is_fresh:
+                print(f"Exchange rates file is {hours_old:.1f} hours old, needs refresh")
+        except Exception as e:
+            print(f"Could not check file age: {e}")
+    
+    # If no file or file is stale, try to fetch fresh rates
+    if latest_file is None or not file_is_fresh:
+        print("Attempting to fetch fresh exchange rates...")
         try:
             fetch_and_save_latest_rates(force=True)
-        except Exception:
-            pass
-        latest_file = _latest_snapshot_file()
+            latest_file = _latest_snapshot_file()
+        except Exception as e:
+            print(f"Failed to fetch fresh rates: {e}")
+            # If we have an old file, use it rather than failing completely
+            if latest_file and latest_file.exists():
+                print("Using stale exchange rates file as fallback")
+            else:
+                latest_file = None
 
     if latest_file is None:
         raise RuntimeError("Unable to fetch exchange rates — no snapshot available.")
