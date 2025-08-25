@@ -926,8 +926,18 @@ export default function BackendTester() {
     }
   }
 
-  // Get API key from environment
-  const getApiKey = () => process.env.NEXT_PUBLIC_TESTING_API_KEY
+  // Get API key from environment with fallback
+  const getApiKey = () => {
+    // Priority: PRODUCTION_API_KEY > STAGING_API_KEY > TESTING_API_KEY > API_KEY
+    if (process.env.NODE_ENV === 'production') {
+      return process.env.NEXT_PUBLIC_PRODUCTION_API_KEY || 
+             process.env.NEXT_PUBLIC_API_KEY
+    } else {
+      return process.env.NEXT_PUBLIC_TESTING_API_KEY || 
+             process.env.NEXT_PUBLIC_STAGING_API_KEY || 
+             process.env.NEXT_PUBLIC_API_KEY
+    }
+  }
 
   // Get headers with optional API key
   const getHeaders = () => {

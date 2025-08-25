@@ -22,18 +22,21 @@ async def verify_api_key(x_api_key: str | None = Header(None)) -> str | None:
     Raises:
         HTTPException: If API key authentication fails
     """
-    # If no testing API key is configured, allow all requests
-    if not Config.TESTING_API_KEY:
+    # Get the appropriate API key for this environment
+    expected_api_key = Config.get_api_key()
+
+    # If no API key is configured, allow all requests
+    if not expected_api_key:
         return None
 
-    # If testing API key is configured, require it in header
+    # If API key is configured, require it in header
     if not x_api_key:
         raise HTTPException(
             status_code=401,
-            detail="API key required. Include X-API-Key header for testing endpoints.",
+            detail="API key required. Include X-API-Key header for authenticated endpoints.",
         )
 
-    if x_api_key != Config.TESTING_API_KEY:
+    if x_api_key != expected_api_key:
         raise HTTPException(status_code=401, detail="Invalid API key. Check your X-API-Key header.")
 
     return x_api_key
@@ -55,8 +58,11 @@ async def optional_api_key(x_api_key: str | None = Header(None)) -> str | None:
     Raises:
         HTTPException: If API key is provided but invalid
     """
-    # If no testing API key is configured, ignore any provided key
-    if not Config.TESTING_API_KEY:
+    # Get the appropriate API key for this environment
+    expected_api_key = Config.get_api_key()
+
+    # If no API key is configured, ignore any provided key
+    if not expected_api_key:
         return None
 
     # If no key provided, that's OK for optional endpoints
@@ -64,7 +70,7 @@ async def optional_api_key(x_api_key: str | None = Header(None)) -> str | None:
         return None
 
     # If key provided, it must be valid
-    if x_api_key != Config.TESTING_API_KEY:
+    if x_api_key != expected_api_key:
         raise HTTPException(status_code=401, detail="Invalid API key. Check your X-API-Key header.")
 
     return x_api_key

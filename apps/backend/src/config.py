@@ -20,7 +20,23 @@ class Config:
     # API Keys
     PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY", "").strip()
     OPEN_EXCHANGE_API_KEY = os.getenv("OPEN_EXCHANGE_API_KEY")
+
+    # API Authentication Keys
+    # Priority: PRODUCTION_API_KEY > STAGING_API_KEY > TESTING_API_KEY > API_KEY
+    PRODUCTION_API_KEY = os.getenv("PRODUCTION_API_KEY")
+    STAGING_API_KEY = os.getenv("STAGING_API_KEY")
     TESTING_API_KEY = os.getenv("TESTING_API_KEY")
+    API_KEY = os.getenv("API_KEY")  # Fallback for simple setups
+
+    @classmethod
+    def get_api_key(cls) -> str | None:
+        """Get the appropriate API key based on environment."""
+        if cls.is_production():
+            return cls.PRODUCTION_API_KEY or cls.API_KEY
+        elif cls.ENVIRONMENT == "staging":
+            return cls.STAGING_API_KEY or cls.API_KEY
+        else:
+            return cls.TESTING_API_KEY or cls.API_KEY
 
     # Perplexity Configuration
     PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions"
