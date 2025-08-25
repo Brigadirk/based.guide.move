@@ -100,7 +100,7 @@ def api_health(api_key: str = Depends(verify_api_key)):
             "exchange_rates": {
                 "accessible": rates_accessible,
                 "fresh": rates_fresh,
-            }
+            },
         }
     except Exception as e:
         return {"status": "unhealthy", "error": str(e), "timestamp": datetime.now().isoformat()}
