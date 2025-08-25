@@ -2061,7 +2061,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           <SelectValue placeholder="Select country" />
                         </SelectTrigger>
                         <SelectContent>
-                          {COUNTRY_LIST.map((c) => (
+                          {countries.map((c) => (
                             <SelectItem key={c} value={c}>
                               {c}
                             </SelectItem>

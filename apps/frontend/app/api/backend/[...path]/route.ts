@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
 function rateLimit(request: NextRequest): boolean {
-  const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
   const now = Date.now();
   const windowMs = 15 * 60 * 1000; // 15 minutes
   const maxRequests = 100; // Max 100 requests per 15 minutes

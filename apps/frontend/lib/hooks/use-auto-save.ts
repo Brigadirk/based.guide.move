@@ -26,8 +26,8 @@ export function useAutoSave(
   } = options
 
   const { updateFormData } = useFormStore()
-  const timeoutRef = useRef<NodeJS.Timeout>()
-  const lastDataRef = useRef<string>()
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const lastDataRef = useRef<string>('')
   
   const save = useCallback(async () => {
     try {
