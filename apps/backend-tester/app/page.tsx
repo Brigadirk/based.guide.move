@@ -1213,6 +1213,13 @@ export default function BackendTester() {
           🔗 Backend URL Configuration
         </div>
         
+        {/* Debug: Show environment variables */}
+        <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '8px', fontFamily: 'monospace', backgroundColor: '#f9fafb', padding: '4px 8px', borderRadius: '4px' }}>
+          Debug: Internal={process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL || 'undefined'} | 
+          Public={process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL || 'undefined'} | 
+          Local={process.env.NEXT_PUBLIC_LOCAL_URL || 'undefined'}
+        </div>
+        
         <div style={{ marginBottom: '12px' }}>
           <div style={{ fontSize: '12px', color: '#0c4a6e', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span>Current: <strong>{backendUrl}</strong></span>
