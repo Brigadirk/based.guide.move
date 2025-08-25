@@ -72,43 +72,52 @@ describe('Backend Tester Utils', () => {
       expect(getDefaultBackendUrl()).toBe('http://localhost:3000')
     })
 
-    it('only shows presets for configured environment variables', () => {
-      // Test that presets only appear when environment variables are set
+    it('always shows all preset buttons with configuration status', () => {
+      // Test that all preset buttons always appear, showing their configuration status
       delete process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL
       delete process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL
       delete process.env.NEXT_PUBLIC_LOCAL_URL
       
-      // Mock preset URL creation logic
+      // Mock preset creation logic (always returns all presets)
       const createPresets = () => [
-        process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL && { 
+        { 
           label: 'Railway Internal', 
           url: process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL,
-          description: 'Internal Railway network (secure)'
+          description: 'Internal Railway network (secure)',
+          envVar: 'NEXT_PUBLIC_RAILWAY_INTERNAL_URL'
         },
-        process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL && { 
+        { 
           label: 'Railway Public', 
           url: process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL,
-          description: 'Public Railway URL (accessible from internet)'
+          description: 'Public Railway URL (accessible from internet)',
+          envVar: 'NEXT_PUBLIC_RAILWAY_PUBLIC_URL'
         },
-        process.env.NEXT_PUBLIC_LOCAL_URL && { 
+        { 
           label: 'Local Development', 
           url: process.env.NEXT_PUBLIC_LOCAL_URL,
-          description: 'Local backend server'
+          description: 'Local backend server',
+          envVar: 'NEXT_PUBLIC_LOCAL_URL'
         }
-      ].filter(Boolean)
+      ]
       
-      // With no environment variables, no presets should appear
-      expect(createPresets()).toHaveLength(0)
+      // All three presets should always appear
+      expect(createPresets()).toHaveLength(3)
       
-      // Set one environment variable
+      // With no environment variables, URLs should be undefined
+      const presetsNoEnv = createPresets()
+      expect(presetsNoEnv[0].url).toBeUndefined()
+      expect(presetsNoEnv[1].url).toBeUndefined()
+      expect(presetsNoEnv[2].url).toBeUndefined()
+      
+      // Set environment variables
       process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL = 'http://test-backend.railway.internal'
-      expect(createPresets()).toHaveLength(1)
-      expect(createPresets()[0].url).toBe('http://test-backend.railway.internal')
-      
-      // Set another environment variable
       process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL = 'https://test-backend-xyz.up.railway.app'
-      expect(createPresets()).toHaveLength(2)
-      expect(createPresets()[1].url).toBe('https://test-backend-xyz.up.railway.app')
+      
+      const presetsWithEnv = createPresets()
+      expect(presetsWithEnv).toHaveLength(3) // Still 3 presets
+      expect(presetsWithEnv[0].url).toBe('http://test-backend.railway.internal')
+      expect(presetsWithEnv[1].url).toBe('https://test-backend-xyz.up.railway.app')
+      expect(presetsWithEnv[2].url).toBeUndefined() // Local still not set
     })
   })
 

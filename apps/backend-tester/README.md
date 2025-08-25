@@ -120,10 +120,11 @@ NEXT_PUBLIC_LOCAL_URL=http://localhost:5001
 
 #### **How It Works**
 
-- **No Hardcoded URLs**: All URLs come from environment variables only
-- **Dynamic Presets**: Only URLs with values appear as preset buttons
-- **Flexible Configuration**: Set only the URLs you need for your environment
-- **Default Priority**: Falls back through available URLs if default isn't set
+- **Always Visible Buttons**: All three preset buttons (Railway Internal, Railway Public, Local Development) are always visible
+- **Environment Variable URLs**: Clicking a button uses the URL from the corresponding environment variable
+- **Visual Indicators**: Buttons show "(not set)" if the environment variable is not configured
+- **Helpful Tooltips**: Hover over buttons to see the actual URL or configuration instructions
+- **Smart Alerts**: Clicking an unconfigured button shows instructions for setting the environment variable
 
 #### **Railway Deployment Example**
 
@@ -135,12 +136,12 @@ NEXT_PUBLIC_RAILWAY_INTERNAL_URL=http://your-actual-backend.railway.internal
 NEXT_PUBLIC_RAILWAY_PUBLIC_URL=https://your-actual-backend-xyz123.up.railway.app
 ```
 
-**Result**: Only the URLs you configure will appear as preset buttons:
-- **Railway Internal** preset (if `NEXT_PUBLIC_RAILWAY_INTERNAL_URL` is set)
-- **Railway Public** preset (if `NEXT_PUBLIC_RAILWAY_PUBLIC_URL` is set)  
-- **Local Development** preset (if `NEXT_PUBLIC_LOCAL_URL` is set)
+**Result**: All three preset buttons are visible, showing their configuration status:
+- **Railway Internal** → Shows your internal URL or "(not set)" if `NEXT_PUBLIC_RAILWAY_INTERNAL_URL` is empty
+- **Railway Public** → Shows your public URL or "(not set)" if `NEXT_PUBLIC_RAILWAY_PUBLIC_URL` is empty  
+- **Local Development** → Shows your local URL or "(not set)" if `NEXT_PUBLIC_LOCAL_URL` is empty
 
-If you only set the internal URL, only that preset will appear. If you set both, you get both options to switch between.
+Hover over any button to see the actual URL it will use, or get instructions for setting unconfigured variables.
 
 ### Mock Data
 Each endpoint includes realistic mock data that can be edited in real-time through the web interface.

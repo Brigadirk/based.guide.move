@@ -1163,26 +1163,34 @@ export default function BackendTester() {
     const [showCustomInput, setShowCustomInput] = useState(false)
     
     const presetUrls = [
-      process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL && { 
+      { 
         label: 'Railway Internal', 
         url: process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL,
-        description: 'Internal Railway network (secure)'
+        description: 'Internal Railway network (secure)',
+        envVar: 'NEXT_PUBLIC_RAILWAY_INTERNAL_URL'
       },
-      process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL && { 
+      { 
         label: 'Railway Public', 
         url: process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL,
-        description: 'Public Railway URL (accessible from internet)'
+        description: 'Public Railway URL (accessible from internet)',
+        envVar: 'NEXT_PUBLIC_RAILWAY_PUBLIC_URL'
       },
-      process.env.NEXT_PUBLIC_LOCAL_URL && { 
+      { 
         label: 'Local Development', 
         url: process.env.NEXT_PUBLIC_LOCAL_URL,
-        description: 'Local backend server'
+        description: 'Local backend server',
+        envVar: 'NEXT_PUBLIC_LOCAL_URL'
       }
-    ].filter(Boolean) // Filter out undefined presets
+    ]
     
-    const handlePresetSelect = async (url: string) => {
-      await updateBackendUrl(url)
-      setShowCustomInput(false)
+    const handlePresetSelect = async (preset: any) => {
+      if (preset.url) {
+        await updateBackendUrl(preset.url)
+        setShowCustomInput(false)
+      } else {
+        // Show user that this environment variable is not configured
+        alert(`${preset.envVar} is not configured.\n\nTo use this preset, set the environment variable:\n${preset.envVar}=your-backend-url`)
+      }
     }
     
     const handleCustomSubmit = async () => {
@@ -1246,21 +1254,22 @@ export default function BackendTester() {
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
             {presetUrls.map((preset) => (
               <button
-                key={preset.url}
-                onClick={() => handlePresetSelect(preset.url)}
+                key={preset.label}
+                onClick={() => handlePresetSelect(preset)}
                 style={{
                   padding: '6px 12px',
-                  backgroundColor: backendUrl === preset.url ? '#0ea5e9' : 'white',
-                  color: backendUrl === preset.url ? 'white' : '#0c4a6e',
-                  border: '1px solid #0ea5e9',
+                  backgroundColor: backendUrl === preset.url ? '#0ea5e9' : preset.url ? 'white' : '#f3f4f6',
+                  color: backendUrl === preset.url ? 'white' : preset.url ? '#0c4a6e' : '#6b7280',
+                  border: `1px solid ${preset.url ? '#0ea5e9' : '#d1d5db'}`,
                   borderRadius: '4px',
                   cursor: 'pointer',
                   fontSize: '12px',
-                  fontWeight: backendUrl === preset.url ? 'bold' : 'normal'
+                  fontWeight: backendUrl === preset.url ? 'bold' : 'normal',
+                  opacity: preset.url ? 1 : 0.7
                 }}
-                title={preset.description}
+                title={preset.url ? `${preset.description}\nURL: ${preset.url}` : `${preset.description}\nNot configured - set ${preset.envVar}`}
               >
-                {preset.label}
+                {preset.label} {!preset.url && '(not set)'}
               </button>
             ))}
             
