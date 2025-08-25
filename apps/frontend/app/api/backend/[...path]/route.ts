@@ -45,11 +45,18 @@ async function makeBackendRequest(path: string, method: string, body?: any, clie
     'Content-Type': 'application/json',
   };
   
-  // Forward X-API-Key header if present in client request
-  const apiKey = clientHeaders?.get('x-api-key');
+  // Always include API key for backend requests
+  const apiKey = process.env.API_KEY;
   if (apiKey) {
     headers['X-API-Key'] = apiKey;
-    console.log(`[API Proxy] Forwarding API key for ${method} ${path}`);
+    console.log(`[API Proxy] Using API key for ${method} ${path}`);
+  }
+  
+  // Forward client API key if present (for external clients)
+  const clientApiKey = clientHeaders?.get('x-api-key');
+  if (clientApiKey) {
+    headers['X-API-Key'] = clientApiKey;
+    console.log(`[API Proxy] Forwarding client API key for ${method} ${path}`);
   }
   
   const options: RequestInit = {
