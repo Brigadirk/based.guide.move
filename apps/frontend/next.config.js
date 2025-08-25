@@ -86,7 +86,14 @@ const nextConfig = {
     
     return config
   },
-  
+
+  // Environment variables for server-side API routes
+  env: {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_INTERNAL_API_URL: process.env.NEXT_INTERNAL_API_URL,
+    API_KEY: process.env.API_KEY,
+  },
+
   // Disable any built-in caching
   onDemandEntries: {
     // period (in ms) where the server will keep pages in the buffer

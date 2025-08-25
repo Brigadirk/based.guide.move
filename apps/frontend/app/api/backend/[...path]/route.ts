@@ -37,21 +37,25 @@ function validateInput(body: any): boolean {
 }
 
 async function makeBackendRequest(path: string, method: string, body?: any, clientHeaders?: Headers) {
-  const backendUrl = `http://bonobo-backend.railway.internal/api/v1/${path}`;
-  
-  console.log(`[API Proxy] ${method} ${path}`);
-  
+  // Use internal URL in production, public URL in development
+  const isProduction = process.env.NODE_ENV === 'production';
+  const backendUrl = isProduction
+    ? `${process.env.NEXT_INTERNAL_API_URL || 'http://bonobo-backend.railway.internal'}/api/v1/${path}`
+    : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/v1/${path}`;
+
+  console.log(`[API Proxy] ${method} ${path} using ${isProduction ? 'internal' : 'public'} URL`);
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
-  
+
   // Always include API key for backend requests
   const apiKey = process.env.API_KEY;
   if (apiKey) {
     headers['X-API-Key'] = apiKey;
     console.log(`[API Proxy] Using API key for ${method} ${path}`);
   }
-  
+
   // Forward client API key if present (for external clients)
   const clientApiKey = clientHeaders?.get('x-api-key');
   if (clientApiKey) {

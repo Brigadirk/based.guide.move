@@ -926,47 +926,17 @@ export default function BackendTester() {
     }
   }
 
-  // Get API key from environment with fallback
-  const getApiKey = () => {
-    // Priority: PRODUCTION_API_KEY > STAGING_API_KEY > TESTING_API_KEY > API_KEY
-    if (process.env.NODE_ENV === 'production') {
-      return process.env.NEXT_PUBLIC_PRODUCTION_API_KEY || 
-             process.env.NEXT_PUBLIC_API_KEY
-    } else {
-      return process.env.NEXT_PUBLIC_TESTING_API_KEY || 
-             process.env.NEXT_PUBLIC_STAGING_API_KEY || 
-             process.env.NEXT_PUBLIC_API_KEY
-    }
-  }
-
-  // Get backend URL - prefer internal for production
+  // Get backend URL for display purposes
   const getBackendUrl = () => {
     if (process.env.NODE_ENV === 'production') {
       // In production, use internal URL for better security and performance
-      return process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL || 
-             process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL || 
-             'http://localhost:3000'
+      return process.env.NEXT_INTERNAL_API_URL ||
+             'http://bonobo-backend.railway.internal'
     } else {
-      // In development, prefer local, then internal, then public
-      return process.env.NEXT_PUBLIC_LOCAL_URL ||
-             process.env.NEXT_PUBLIC_RAILWAY_INTERNAL_URL ||
-             process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL ||
+      // In development, use public URL
+      return process.env.NEXT_PUBLIC_API_URL ||
              'http://localhost:5001'
     }
-  }
-
-  // Get headers with optional API key
-  const getHeaders = () => {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    }
-    
-    const apiKey = getApiKey()
-    if (apiKey) {
-      headers['X-API-Key'] = apiKey
-    }
-    
-    return headers
   }
 
   // Test backend connection
@@ -1254,9 +1224,10 @@ export default function BackendTester() {
         
         {/* Debug: Show environment variables */}
         <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '8px', fontFamily: 'monospace', backgroundColor: '#f9fafb', padding: '4px 8px', borderRadius: '4px' }}>
-          Debug: Public={process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL || 'undefined'} | 
-          Local={process.env.NEXT_PUBLIC_LOCAL_URL || 'undefined'} | 
-          API Key={getApiKey() ? '✅ Set' : '❌ Not Set'}
+          Debug: Public={process.env.NEXT_PUBLIC_API_URL || 'undefined'} |
+          Internal={process.env.NEXT_INTERNAL_API_URL || 'undefined'} |
+          API Key={process.env.API_KEY ? '✅ Set' : '❌ Not Set'} |
+          Env={process.env.NODE_ENV || 'development'}
         </div>
         
         <div style={{ marginBottom: '12px' }}>
