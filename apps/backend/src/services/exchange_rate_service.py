@@ -43,9 +43,9 @@ def _get_exchange_rates_folder() -> Path:
         elif Config.is_railway():
             # Default Railway volume path
             folder = Path("/app/data") / "exchange_rates"
-    else:
-        # Fallback to local folder for development
-        folder = Path(__file__).resolve().parent / "exchange_rates"
+        else:
+            # Fallback to local folder for development
+            folder = Path(__file__).resolve().parent / "exchange_rates"
 
     try:
         folder.mkdir(exist_ok=True, parents=True)
