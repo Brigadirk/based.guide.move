@@ -72,6 +72,35 @@ def ping(api_key: str = Depends(verify_api_key)):
     return {"status": "success", "message": "API is running"}
 
 
+@router.get("/health")
+def api_health(api_key: str = Depends(verify_api_key)):
+    """API health check endpoint accessible through API proxy."""
+    try:
+        import os
+        from datetime import datetime
+        from services.exchange_rate_service import _latest_snapshot_file, _get_exchange_rates_folder
+
+        rates_dir = str(_get_exchange_rates_folder())
+        rates_accessible = os.path.exists(rates_dir) and os.access(rates_dir, os.W_OK)
+        latest_file = _latest_snapshot_file()
+        rates_fresh = latest_file and latest_file.exists()
+
+        return {
+            "status": "healthy",
+            "timestamp": datetime.now().isoformat(),
+            "api": {
+                "accessible": True,
+                "authentication": "required",
+            },
+            "exchange_rates": {
+                "accessible": rates_accessible,
+                "fresh": rates_fresh,
+            }
+        }
+    except Exception as e:
+        return {"status": "unhealthy", "error": str(e), "timestamp": datetime.now().isoformat()}
+
+
 # Section-specific story generation endpoints
 @router.post("/section/personal-information")
 def get_personal_information_story(

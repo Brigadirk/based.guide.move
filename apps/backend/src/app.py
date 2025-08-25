@@ -8,6 +8,9 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+# Load environment variables BEFORE importing other modules
+load_dotenv()  # Load from backend/.env
+
 from api.middleware import api_key_middleware
 from api.perplexity import get_tax_advice
 from api.routes import router as api_router
@@ -15,9 +18,6 @@ from config import Config
 from modules.prompt_generator import generate_tax_prompt
 from modules.validator import validate_tax_data
 from services.exchange_rate_service import _latest_snapshot_file, fetch_and_save_latest_rates
-
-# Load environment variables from backend directory only
-load_dotenv()  # Load from backend/.env
 
 # ---------------------------------------------------------------------------
 # Lifespan context to manage scheduler (replaces deprecated on_event)
@@ -100,6 +100,18 @@ async def health_check():
         latest_file = _latest_snapshot_file()
         rates_fresh = latest_file and latest_file.exists()
 
+        # Debug API key configuration
+        api_key_debug = {
+            "api_key_from_config": Config.get_api_key(),
+            "production_api_key": Config.PRODUCTION_API_KEY,
+            "staging_api_key": Config.STAGING_API_KEY,
+            "testing_api_key": Config.TESTING_API_KEY,
+            "api_key_fallback": Config.API_KEY,
+            "is_production": Config.is_production(),
+            "railway_environment": Config.RAILWAY_ENVIRONMENT_NAME,
+            "environment": Config.ENVIRONMENT,
+        }
+
         # Additional exchange rate debug info
         exchange_debug = {
             "folder_path": rates_dir,
@@ -108,7 +120,7 @@ async def health_check():
                 os.access(rates_dir, os.W_OK) if os.path.exists(rates_dir) else False
             ),
             "latest_file": str(latest_file) if latest_file else None,
-            "api_key_configured": bool(Config.OPEN_EXCHANGE_API_KEY),
+            "api_key_configured": bool(Config.get_api_key()),
         }
 
         # Check volume path (for Railway persistent storage)
@@ -139,6 +151,7 @@ async def health_check():
                 "volume_path": volume_path,
             },
             "exchange_rates_debug": exchange_debug,
+            "api_key_debug": api_key_debug,
         }
 
         return status

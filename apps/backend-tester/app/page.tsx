@@ -942,7 +942,12 @@ export default function BackendTester() {
   // Test backend connection
   const testConnection = async (url: string = backendUrl) => {
     try {
-      const response = await fetch(`/api/backend/health`, { 
+      // Test the health endpoint directly (not through API proxy)
+      const healthUrl = process.env.NODE_ENV === 'production'
+        ? `${process.env.NEXT_INTERNAL_API_URL || 'http://bonobo-backend.railway.internal'}/health`
+        : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/health`
+
+      const response = await fetch(healthUrl, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
