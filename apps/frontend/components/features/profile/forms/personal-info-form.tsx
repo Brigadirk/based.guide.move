@@ -66,7 +66,7 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
   }
 
   const addNationality = () => {
-    const updated = [...info.nationalities, { country: "" }]
+    const updated = [...info.nationalities, { country: "", willingToRenounce: false }]
     handleChange("nationalities", updated)
   }
 

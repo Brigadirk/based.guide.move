@@ -70,7 +70,16 @@ export function FinancialInfoForm({ data, onUpdate }: FinancialInfoFormProps) {
       ...info,
       incomeSources: [
         ...info.incomeSources,
-        { type: INCOME_TYPES[0], amount: 0, currency: "USD", frequency: "yearly" as const }
+        { 
+          category: "Employment",
+          fields: {},
+          country: "",
+          amount: 0,
+          currency: "USD",
+          continueInDestination: false,
+          type: INCOME_TYPES[0], 
+          frequency: "yearly" as const 
+        }
       ]
     }
     handleUpdate(updatedInfo)
@@ -108,7 +117,16 @@ export function FinancialInfoForm({ data, onUpdate }: FinancialInfoFormProps) {
       ...info,
       liabilities: [
         ...info.liabilities,
-        { type: LIABILITY_TYPES[0], amount: 0, currency: "USD" }
+        { 
+          category: "Debt",
+          fields: {},
+          country: "",
+          amount: 0,
+          currency: "USD",
+          paybackYears: 0,
+          interestRate: 0,
+          type: LIABILITY_TYPES[0]
+        }
       ]
     }
     handleUpdate(updatedInfo)

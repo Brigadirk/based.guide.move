@@ -225,11 +225,11 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                     <Select
                       value={partnerInfo.personalInformation.nationalities[0].country}
                       onValueChange={(value) => {
-                        handleUpdate({
+                        updatePartnerInfo({
                           ...partnerInfo,
                           personalInformation: {
                             ...partnerInfo.personalInformation,
-                            nationalities: [{ country: value }]
+                            nationalities: [{ country: value, willingToRenounce: false }]
                           }
                         })
                       }}
@@ -254,7 +254,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                     <Select
                       value={partnerInfo.personalInformation.currentResidency.country}
                       onValueChange={(value) => {
-                        handleUpdate({
+                        updatePartnerInfo({
                           ...partnerInfo,
                           personalInformation: {
                             ...partnerInfo.personalInformation,
@@ -284,7 +284,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                     <Select
                       value={partnerInfo.personalInformation.currentResidency.status}
                       onValueChange={(value: ResidencyStatus) => {
-                        handleUpdate({
+                        updatePartnerInfo({
                           ...partnerInfo,
                           personalInformation: {
                             ...partnerInfo.personalInformation,
@@ -320,12 +320,16 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                       size="sm"
                       onClick={() => {
                         const newIncomeSource: IncomeSource = {
-                          type: "",
+                          category: "Employment",
+                          fields: {},
+                          country: "",
                           amount: 0,
                           currency: "USD",
+                          continueInDestination: false,
+                          type: "",
                           frequency: "yearly"
                         }
-                        handleUpdate({
+                        updatePartnerInfo({
                           ...partnerInfo,
                           financialInformation: {
                             ...partnerInfo.financialInformation,
@@ -353,7 +357,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                               ...source, 
                               type: value
                             }
-                            handleUpdate({
+                            updatePartnerInfo({
                               ...partnerInfo,
                               financialInformation: {
                                 ...partnerInfo.financialInformation,
@@ -384,7 +388,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                               ...source, 
                               amount: Number(e.target.value)
                             }
-                            handleUpdate({
+                            updatePartnerInfo({
                               ...partnerInfo,
                               financialInformation: {
                                 ...partnerInfo.financialInformation,
@@ -404,7 +408,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                               ...source, 
                               currency: value
                             }
-                            handleUpdate({
+                            updatePartnerInfo({
                               ...partnerInfo,
                               financialInformation: {
                                 ...partnerInfo.financialInformation,

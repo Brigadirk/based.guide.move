@@ -33,7 +33,7 @@ export function CountryCombobox({
   const [open, setOpen] = useState(false)
   const [searchValue, setSearchValue] = useState("")
 
-  const [countries, setCountries] = useState<Country[]>([])
+  const [countries, setCountries] = useState<Partial<Country>[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isError, setIsError] = useState(false)
   const [error, setError] = useState<Error | null>(null)
@@ -129,7 +129,7 @@ export function CountryCombobox({
               medical: "",
               fire: ""
             },
-            visa_requirements: "",
+            visa_requirements: {},
             time_to_citizenship: "",
             dual_citizenship: false,
             scores: {
@@ -204,7 +204,7 @@ export function CountryCombobox({
                 key={country.id}
                 value={country.name}
                 onSelect={() => {
-                  onSelect(country)
+                  onSelect(country as Country)
                   setOpen(false)
                   setSearchValue("")
                 }}

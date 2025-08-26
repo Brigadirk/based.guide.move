@@ -47,7 +47,7 @@ export function CountrySearchCombobox({ onSelect, className, placeholder = "Sear
   const [searchTerm, setSearchTerm] = useState("")
   const [countries, setCountries] = useState<Partial<EnhancedCountry>[]>([])
   const [searchResults, setSearchResults] = useState<Partial<EnhancedCountry>[]>([])
-  const [selectedCountry, setSelectedCountry] = useState<EnhancedCountry | null>(null)
+  const [selectedCountry, setSelectedCountry] = useState<Partial<EnhancedCountry> | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -126,7 +126,7 @@ export function CountrySearchCombobox({ onSelect, className, placeholder = "Sear
                 value={country.name}
                 onSelect={() => {
                   setSelectedCountry(country)
-                  onSelect(country)
+                  onSelect(country as Country)
                   setOpen(false)
                 }}
               >
