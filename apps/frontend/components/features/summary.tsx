@@ -63,15 +63,17 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
     
     try {
       let response
-      const destCountry = formData.residencyIntentions?.destinationCountry?.country
-      const skipFinanceDetails = formData.finance?.skipDetails ?? false
+      const residencyInfo: any = formData.residencyIntentions as any
+      const destData = residencyInfo?.destinationCountry
+      const destCountry = typeof destData === 'object' ? destData?.country : residencyInfo?.intendedCountry
+      const destRegion = typeof destData === 'object' ? destData?.region : undefined
+      const skipFinanceDetails = (formData.finance as any)?.skipDetails ?? false
       
       switch (sectionId) {
         case "destination":
           // Handle destination locally without backend call
-          const destData = formData.residencyIntentions?.destinationCountry
-          if (destData) {
-            const story = `Destination Country: ${destData.country}${destData.region && destData.region !== "I don't know yet / open to any" ? `\nRegion: ${destData.region}` : ''}${destData.moveType ? `\nMove Type: ${destData.moveType}` : ''}`
+          if (destCountry) {
+            const story = `Destination Country: ${destCountry}${destRegion && destRegion !== "I don't know yet / open to any" ? `\nRegion: ${destRegion}` : ''}${residencyInfo?.moveType ? `\nMove Type: ${residencyInfo.moveType}` : ''}`
             setSectionStories(prev => ({ ...prev, [sectionId]: story }))
             setLoadingSections(prev => ({ ...prev, [sectionId]: false }))
             return
@@ -87,8 +89,8 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
           response = await apiClient.getEducationStory(education)
           break
         case "residency":
-          const residency = formData.residencyIntentions || {}
-          response = await apiClient.getResidencyIntentionsStory(residency)
+          const residencyData = formData.residencyIntentions || {}
+          response = await apiClient.getResidencyIntentionsStory(residencyData)
           break
         case "finance":
           const finance = formData.finance || {}
@@ -108,7 +110,7 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
           break
         case "additional":
           const additionalInfo = formData.additionalInformation || {}
-          response = await apiClient.getAdditionalInformationStory(additionalInfo, destCountry)
+          response = await apiClient.getAdditionalInformationStory(additionalInfo)
           break
         case "fullSummary":
           // Handle full summary by triggering the complete profile generation
