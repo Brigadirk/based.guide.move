@@ -89,7 +89,7 @@ export function CountryCombobox({
         ]
         
         const countryNames = getCountries()
-        const localCountries: Country[] = countryNames.map((name) => {
+        const localCountries: Partial<Country>[] = countryNames.map((name) => {
           const info = (countryInfo as any)[name] || {}
           return {
             id: name.toLowerCase().replace(/\s+/g, '-'),

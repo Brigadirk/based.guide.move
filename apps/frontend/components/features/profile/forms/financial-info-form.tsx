@@ -44,7 +44,7 @@ const LIABILITY_TYPES = [
 export function FinancialInfoForm({ data, onUpdate }: FinancialInfoFormProps) {
   const [info, setInfo] = useState<FinancialInformation>(
     data.financialInformation || {
-      incomeSituation: "current_income",
+      incomeSituation: "continuing_income",
       incomeSources: [],
       expectedEmployment: [],
       totalWealth: {

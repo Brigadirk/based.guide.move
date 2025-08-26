@@ -53,6 +53,8 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
   const [hasPartner, setHasPartner] = useState(Boolean(data.partner))
   const [partnerInfo] = useState<PartnerInfo>({
     personalInformation: {
+      firstName: "",
+      lastName: "",
       dateOfBirth: "",
       nationalities: [{ country: "", willingToRenounce: false }],
       maritalStatus: "Single",
@@ -60,10 +62,12 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
         country: "",
         status: "Citizen",
         duration: ""
-      }
+      },
+      hasPartner: false,
+      dependents: []
     },
     financialInformation: {
-      incomeSituation: "current_income",
+      incomeSituation: "continuing_income",
       incomeSources: [],
       expectedEmployment: [],
       totalWealth: {
@@ -85,10 +89,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
 
   const handleUpdate = (partner: Profile['partner'] | undefined, newDependents: Dependent[]) => {
     onUpdate({
-      partner: hasPartner ? {
-        personalInformation: partnerInfo.personalInformation,
-        financialInformation: partnerInfo.financialInformation
-      } : undefined,
+      partner: hasPartner ? partnerInfo.personalInformation : undefined,
       dependents: newDependents,
       personalInformation: {
         dateOfBirth: data.personalInformation?.dateOfBirth || "",
@@ -107,6 +108,12 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
     })
   }
 
+  const updatePartnerInfo = (updatedPartnerInfo: PartnerInfo) => {
+    // Update the partner info state and call the main update
+    Object.assign(partnerInfo, updatedPartnerInfo)
+    handleUpdate(hasPartner ? partnerInfo.personalInformation : undefined, dependents)
+  }
+
   const togglePartner = (enabled: boolean) => {
     setHasPartner(enabled)
     if (!enabled) {
@@ -115,7 +122,25 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
   }
 
   const handleAddDependent = () => {
-    const newDependents = [...dependents, { name: "", relationship: "", age: 0 }]
+    const newDependent: Dependent = {
+      relationship: "",
+      relationshipDetails: {
+        biologicalRelationTo: "user",
+        legalRelationTo: "user",
+        custodialRelationTo: "user"
+      },
+      dateOfBirth: "",
+      student: false,
+      nationalities: [{ country: "", willingToRenounce: false }],
+      currentResidency: {
+        country: "",
+        status: "Citizen",
+        duration: ""
+      },
+      name: "",
+      age: 0
+    }
+    const newDependents = [...dependents, newDependent]
     setDependents(newDependents)
     handleUpdate(data.partner, newDependents)
   }
@@ -172,24 +197,24 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                       value={partnerInfo.personalInformation.dateOfBirth}
                       max={new Date().toISOString().split('T')[0]}
                       onChange={(e) => {
-                        handleUpdate({
+                        updatePartnerInfo({
                           ...partnerInfo,
                           personalInformation: {
                             ...partnerInfo.personalInformation,
                             dateOfBirth: e.target.value
                           }
-                        }, dependents)
+                        })
                       }}
                       onFocus={(e) => {
                         // If the field is empty, set it to a reasonable default when focused
                         if (!partnerInfo.personalInformation.dateOfBirth) {
-                          handleUpdate({
+                          updatePartnerInfo({
                             ...partnerInfo,
                             personalInformation: {
                               ...partnerInfo.personalInformation,
                               dateOfBirth: getDefaultBirthDate()
                             }
-                          }, dependents)
+                          })
                         }
                       }}
                     />
@@ -206,7 +231,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                             ...partnerInfo.personalInformation,
                             nationalities: [{ country: value }]
                           }
-                        }, dependents)
+                        })
                       }}
                     >
                       <SelectTrigger>
@@ -238,7 +263,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                               country: value
                             }
                           }
-                        }, dependents)
+                        })
                       }}
                     >
                       <SelectTrigger>
@@ -268,7 +293,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                               status: value
                             }
                           }
-                        }, dependents)
+                        })
                       }}
                     >
                       <SelectTrigger>
@@ -309,7 +334,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                               newIncomeSource
                             ]
                           }
-                        }, dependents)
+                        })
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
@@ -334,7 +359,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                                 ...partnerInfo.financialInformation,
                                 incomeSources: updated
                               }
-                            }, dependents)
+                            })
                           }}
                         >
                           <SelectTrigger>
@@ -365,7 +390,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                                 ...partnerInfo.financialInformation,
                                 incomeSources: updated
                               }
-                            }, dependents)
+                            })
                           }}
                           placeholder="Amount"
                         />
@@ -385,7 +410,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                                 ...partnerInfo.financialInformation,
                                 incomeSources: updated
                               }
-                            }, dependents)
+                            })
                           }}
                         >
                           <SelectTrigger>

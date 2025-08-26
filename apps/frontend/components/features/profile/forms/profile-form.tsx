@@ -47,7 +47,7 @@ export function ProfileForm({ profile = {}, onSubmit, submitLabel = "Save Profil
       dependents: []
     },
     financialInformation: profile.financialInformation || {
-      incomeSituation: "current_income",
+      incomeSituation: "continuing_income",
       incomeSources: [],
       expectedEmployment: [],
       totalWealth: {
