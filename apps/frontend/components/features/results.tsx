@@ -174,7 +174,7 @@ Please provide a detailed answer to the follow-up question, referencing the prev
         <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
             <FileText className="w-6 h-6 text-blue-600" />
-            Analysis Prompt
+            Analysis Prompt (Play around with it, and check the variety of the responses.)
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             Review and edit the prompt that will be sent to the AI for analysis
@@ -220,10 +220,10 @@ Please provide a detailed answer to the follow-up question, referencing the prev
         <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
             <Settings className="w-6 h-6 text-purple-600" />
-            AI Model Configuration
+            AI Model Configuration (Only useful for testing: Sonar Deep Research is the best model for this use case in my experience.)
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Select the AI model and generate your analysis
+            Select the AI model and generate your analysis (We will default this to Sonar Deep Research)
           </p>
         </CardHeader>
         <CardContent className="pt-6">

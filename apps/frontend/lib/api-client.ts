@@ -54,9 +54,10 @@ class ApiClient {
   /**
    * Get education story
    */
-  async getEducationStory(education: any): Promise<SectionStoryResponse> {
+  async getEducationStory(education: any, residencyIntentions?: any): Promise<SectionStoryResponse> {
     return this.makeRequest<SectionStoryResponse>('/section/education', {
       education,
+      residency_intentions: residencyIntentions,
     });
   }
 

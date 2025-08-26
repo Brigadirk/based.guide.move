@@ -1029,8 +1029,39 @@ export function Education({ onComplete }: { onComplete: () => void }) {
         canContinue={canContinue}
         onContinue={onComplete}
         nextSectionName="Income and Assets"
-        onCheckInfo={() => showSectionInfo('education')}
+        onCheckInfo={async () => {
+          // Ensure residency intentions are included with education for language section
+          const edu = getFormData('education') || {}
+          const ri = getFormData('residencyIntentions') || {}
+          // Temporarily call the API directly to ensure the payload includes both
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const { apiClient } = require('@/lib/api-client')
+            const res = await apiClient.getEducationStory(edu, ri)
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const { useSectionInfo } = require('@/lib/hooks/use-section-info')
+            // Fallback: show via modal
+            showSectionInfo('education')
+          } catch {
+            showSectionInfo('education')
+          }
+        }}
         isCheckingInfo={isCheckingInfo}
+      />
+      
+      {/* Section Info Modal */}
+      <SectionInfoModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        story={currentStory}
+        isLoading={isCheckingInfo}
+        onExpandFullInfo={expandFullInformation}
+        onBackToSection={backToSection}
+        currentSection={currentSection}
+        isFullView={isFullView}
+        onGoToSection={goToSection}
+        onNavigateToSection={navigateToSection}
       />
     </div>
   )

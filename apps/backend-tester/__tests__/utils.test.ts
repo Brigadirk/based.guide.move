@@ -6,7 +6,6 @@ describe('Backend Tester Utils', () => {
       NODE_ENV: process.env.NODE_ENV,
       NEXT_PUBLIC_RAILWAY_PUBLIC_URL: process.env.NEXT_PUBLIC_RAILWAY_PUBLIC_URL,
       NEXT_PUBLIC_LOCAL_URL: process.env.NEXT_PUBLIC_LOCAL_URL,
-      NEXT_PUBLIC_TESTING_API_KEY: process.env.NEXT_PUBLIC_TESTING_API_KEY,
     }
 
     afterEach(() => {
@@ -19,9 +18,7 @@ describe('Backend Tester Utils', () => {
       if (originalEnv.NEXT_PUBLIC_LOCAL_URL) {
         process.env.NEXT_PUBLIC_LOCAL_URL = originalEnv.NEXT_PUBLIC_LOCAL_URL
       }
-      if (originalEnv.NEXT_PUBLIC_TESTING_API_KEY) {
-        process.env.NEXT_PUBLIC_TESTING_API_KEY = originalEnv.NEXT_PUBLIC_TESTING_API_KEY
-      }
+      // no-op for deprecated testing key
     })
 
     const getDefaultBackendUrl = () => {

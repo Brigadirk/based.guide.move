@@ -127,7 +127,8 @@ def get_personal_information_story(
 def get_education_story(request: EducationRequest, api_key: str = Depends(verify_api_key)):
     """Generate a story for the education section."""
     try:
-        story = make_education_story(request.education)
+        # Pass residency intentions to include language proficiency context in education story
+        story = make_education_story(request.education, request.residency_intentions)
         return {"status": "success", "section": "education", "story": story}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating education story: {str(e)}")

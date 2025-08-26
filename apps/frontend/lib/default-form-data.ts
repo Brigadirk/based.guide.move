@@ -44,6 +44,12 @@ export const defaultFormData: FormData = {
       maxMonthsWillingToReside: 6,
       openToVisiting: false,
     },
+    familyVisaPlanning: {
+      applicationTimeline: undefined,
+      relocationPriority: undefined,
+      concerns: [],
+      specialCircumstances: "",
+    },
     citizenshipPlans: {
       interestedInCitizenship: false,
       willingToRenounceCurrent: false,

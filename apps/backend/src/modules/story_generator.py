@@ -358,10 +358,76 @@ def residency_section(
             sent = sent.rstrip(".") + f" for approximately {duration} months."
     sentences.append(sent)
 
-    # Add region information if specified
+    # Add region information if specified (may be omitted in citizen/EU minimal mode below)
     region = dest.get("region", "").strip()
     if region:
         sentences.append(f"They are specifically interested in the {region} region.")
+
+    # If this function is called without personal_info (e.g., section-only story),
+    # fall back to residencyIntentions.destinationCountry.citizenshipStatus and produce minimal output.
+    if not personal_info:
+        try:
+            if dest.get("citizenshipStatus") is True and country != "an unspecified country":
+                # Minimal output: move type + visa negation + center of life + family planning details
+                minimal = [sent]
+                minimal.append(
+                    f"As a citizen of {country}, they do not require any visa or residency permit."
+                )
+                # Centre of life
+                col = ri.get("centerOfLife", {})
+                ties_text = col.get("tiesDescription")
+                if col.get("maintainsSignificantTies"):
+                    minimal.append(
+                        "They maintain significant ties to their current country ("
+                        + (f'\"{ties_text}\"' if ties_text else "details not specified")
+                        + ")."
+                    )
+                elif ties_text:
+                    minimal.append('Regarding centre-of-life ties, they note: "' + ties_text + '".')
+                # Family visa planning details (timeline, priority, concerns, special circumstances)
+                family_planning = ri.get("familyVisaPlanning", {})
+                if family_planning:
+                    timeline = family_planning.get("applicationTimeline")
+                    if timeline == "together":
+                        minimal.append("They prefer to coordinate all family visa applications together.")
+                    elif timeline == "sequential":
+                        minimal.append("They plan to apply for their own visa first, then family members.")
+                    elif timeline == "flexible":
+                        minimal.append("They have a flexible approach to the application timeline, adapting to processing requirements.")
+
+                    priority = family_planning.get("relocationPriority")
+                    if priority == "moveTogetherEssential":
+                        minimal.append("Moving together as a family unit is essential to their plans.")
+                    elif priority == "primaryFirstAcceptable":
+                        minimal.append("They are willing to relocate first and have family join later.")
+                    elif priority == "flexibleTiming":
+                        minimal.append("They prefer to optimize for the fastest overall process with flexible timing.")
+
+                    concerns = family_planning.get("concerns", [])
+                    if concerns:
+                        concern_map = {
+                            "documentPreparation": "document preparation and legalization",
+                            "applicationCosts": "visa application costs for multiple family members",
+                            "processingTiming": "processing times and coordination",
+                            "childSchooling": "school enrollment timing for children",
+                            "spouseWork": "spouse work authorization",
+                        }
+                        concern_text = [concern_map.get(c, c) for c in concerns]
+                        if len(concern_text) == 1:
+                            minimal.append(f"Their main family visa concern is {concern_text[0]}.")
+                        else:
+                            minimal.append(
+                                f"Their main family visa concerns include {', '.join(concern_text[:-1])}, and {concern_text[-1]}."
+                            )
+
+                    special_circumstances = family_planning.get("specialCircumstances", "").strip()
+                    if special_circumstances:
+                        minimal.append(f'Special family circumstances: "{special_circumstances}"')
+
+                return " ".join(minimal)
+        except Exception:
+            # Be defensive; if the structure isn't as expected, just continue
+            pass
 
     # Move motivation
     motivation = ri.get("moveMotivation", "").strip()
@@ -405,40 +471,120 @@ def residency_section(
                 f"{dependent_visa_count} dependent{'s' if dependent_visa_count > 1 else ''}"
             )
 
-        # Add family visa context to story
-        if family_visa_needed:
-            if user_has_visa_free:
-                if user_has_eu_freedom and not user_is_citizen:
-                    sentences.append(
-                        f"As an EU citizen, they have freedom of movement to {country}."
-                    )
-                elif user_is_citizen:
-                    sentences.append(f"They are already a citizen of {country}.")
-
-                family_desc = " and ".join(family_visa_needed)
-                sentences.append(
-                    f"However, their {family_desc} will require family reunion/dependent visas."
+        # Handle visa requirements based on citizenship status
+        if user_has_visa_free:
+            # Minimal output for citizen/EU freedom cases: only move, visa negation, optional family note, and center of life.
+            minimal = [sent]
+            if user_is_citizen:
+                minimal.append(
+                    f"As a citizen of {country}, they do not require any visa or residency permit."
+                )
+            else:
+                minimal.append(
+                    f"As an EU citizen, they have freedom of movement to {country} and do not require a visa."
                 )
 
-                if is_eu_country(country) and has_eu_citizenship(user_nationalities):
-                    sentences.append(
+            # Mention family visa requirements only for those not visa-free
+            family_parts: list[str] = []
+            if partner_info.get("partnerNationalities"):
+                partner_nats = partner_info["partnerNationalities"]
+                partner_is_citizen = any(nat.get("country") == country for nat in partner_nats)
+                partner_has_eu = can_move_within_eu(partner_nats, country)
+                if not (partner_is_citizen or partner_has_eu):
+                    # Build origin country text for partner
+                    origin_list = [n.get("country") for n in partner_nats if n.get("country")]
+                    origin_list = [o for o in origin_list if o]
+                    if origin_list:
+                        if len(origin_list) == 1:
+                            minimal.append(
+                                f"They are bringing their partner from {origin_list[0]}, who will require a family reunion/dependent visa."
+                            )
+                        else:
+                            # Join with commas and 'and' for readability
+                            origin_text = ", ".join(origin_list[:-1]) + f" and {origin_list[-1]}"
+                            minimal.append(
+                                f"They are bringing their partner from {origin_text}, who will require a family reunion/dependent visa."
+                            )
+                    else:
+                        family_parts.append("spouse/partner")
+
+            # dependent_visa_count computed above
+            if dependent_visa_count > 0:
+                family_parts.append(
+                    f"{dependent_visa_count} dependent{'s' if dependent_visa_count > 1 else ''}"
+                )
+
+            if family_parts:
+                minimal.append(
+                    f"Their {' and '.join(family_parts)} will require family reunion/dependent visas."
+                )
+                if user_has_eu_freedom and is_eu_country(country) and has_eu_citizenship(user_nationalities):
+                    minimal.append(
                         "EU family reunion directives may provide beneficial pathways for family members."
                     )
-            else:
+
+            # Centre of life (ensure inclusion in minimal mode)
+            col = ri.get("centerOfLife", {})
+            ties_text = col.get("tiesDescription")
+            if col.get("maintainsSignificantTies"):
+                minimal.append(
+                    "They maintain significant ties to their current country ("
+                    + (f'\"{ties_text}\"' if ties_text else "details not specified")
+                    + ")."
+                )
+            elif ties_text:
+                minimal.append('Regarding centre-of-life ties, they note: "' + ties_text + '".')
+
+            # Family visa planning details (timeline, priority, concerns, special circumstances)
+            family_planning = ri.get("familyVisaPlanning", {})
+            if family_planning:
+                timeline = family_planning.get("applicationTimeline")
+                if timeline == "together":
+                    minimal.append("They prefer to coordinate all family visa applications together.")
+                elif timeline == "sequential":
+                    minimal.append("They plan to apply for their own visa first, then family members.")
+                elif timeline == "flexible":
+                    minimal.append("They have a flexible approach to the application timeline, adapting to processing requirements.")
+
+                priority = family_planning.get("relocationPriority")
+                if priority == "moveTogetherEssential":
+                    minimal.append("Moving together as a family unit is essential to their plans.")
+                elif priority == "primaryFirstAcceptable":
+                    minimal.append("They are willing to relocate first and have family join later.")
+                elif priority == "flexibleTiming":
+                    minimal.append("They prefer to optimize for the fastest overall process with flexible timing.")
+
+                concerns = family_planning.get("concerns", [])
+                if concerns:
+                    concern_map = {
+                        "documentPreparation": "document preparation and legalization",
+                        "applicationCosts": "visa application costs for multiple family members",
+                        "processingTiming": "processing times and coordination",
+                        "childSchooling": "school enrollment timing for children",
+                        "spouseWork": "spouse work authorization",
+                    }
+                    concern_text = [concern_map.get(c, c) for c in concerns]
+                    if len(concern_text) == 1:
+                        minimal.append(f"Their main family visa concern is {concern_text[0]}.")
+                    else:
+                        minimal.append(
+                            f"Their main family visa concerns include {', '.join(concern_text[:-1])}, and {concern_text[-1]}."
+                        )
+
+                special_circumstances = family_planning.get("specialCircumstances", "").strip()
+                if special_circumstances:
+                    minimal.append(f'Special family circumstances: "{special_circumstances}"')
+
+            return " ".join(minimal)
+        else:
+            # User needs a visa
+            if family_visa_needed:
                 total_family = len(family_visa_needed) + 1  # +1 for primary applicant
                 sentences.append(
                     f"This will involve {total_family} separate visa applications for the complete family unit."
                 )
-        elif partner_info or dependents_info:
-            # Family exists but no visas needed
-            if user_has_eu_freedom or any(
-                can_move_within_eu(partner_info.get("partnerNationalities", []), country)
-                if partner_info
-                else False
-            ):
-                sentences.append("The entire family benefits from EU freedom of movement rights.")
             else:
-                sentences.append("All family members have visa-free access to the destination.")
+                sentences.append("They will need to apply for the appropriate visa or residency permit.")
 
         # Add family visa planning preferences if specified
         family_planning = ri.get("familyVisaPlanning", {})
@@ -566,9 +712,18 @@ def residency_section(
                 f"They also have family connections in {country} (closest relation: {ties.get('closestRelation','unspecified')})."
             )
 
-    # Centre of life ties
+    # Centre of life ties - always include for citizens and EU citizens
     col = ri.get("centerOfLife", {})
     ties_text = col.get("tiesDescription")
+    
+    # Check if user is citizen or EU citizen for the destination country
+    user_is_citizen_or_eu = False
+    if personal_info and country != "an unspecified country":
+        user_nationalities = personal_info.get("nationalities", [])
+        user_is_citizen = any(nat.get("country") == country for nat in user_nationalities)
+        user_has_eu_freedom = can_move_within_eu(user_nationalities, country)
+        user_is_citizen_or_eu = user_is_citizen or user_has_eu_freedom
+    
     if col.get("maintainsSignificantTies"):
         sentences.append(
             "They maintain significant ties to their current country ("
@@ -577,6 +732,11 @@ def residency_section(
         )
     elif ties_text:
         sentences.append('Regarding centre-of-life ties, they note: "' + ties_text + '".')
+    elif user_is_citizen_or_eu and col:
+        # For citizens/EU citizens, always mention center of life even if no specific ties
+        sentences.append(
+            "As a citizen/EU citizen, center-of-life considerations are particularly important for tax residency determination."
+        )
 
     # Tax compliance - explicit mention for both compliant and non-compliant
     tax_compliant = ri.get("taxCompliantEverywhere")

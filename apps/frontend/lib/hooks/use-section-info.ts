@@ -42,7 +42,8 @@ export function useSectionInfo() {
           
         case "education":
           const education = getFormData("education") || {}
-          response = await apiClient.getEducationStory(education)
+          const residencyIntentionsForEdu = getFormData("residencyIntentions") || {}
+          response = await apiClient.getEducationStory(education, residencyIntentionsForEdu)
           sectionTitle = "Education Summary"
           break
           
@@ -189,7 +190,7 @@ Please try again in a moment.`)
       // Get section data and check if they have content
       const sections = [
         { key: "personalInformation", name: "Personal Information", apiCall: () => apiClient.getPersonalInformationStory(getSectionData("personalInformation").data) },
-        { key: "education", name: "Education & Skills", apiCall: () => apiClient.getEducationStory(getSectionData("education").data) },
+        { key: "education", name: "Education & Skills", apiCall: () => apiClient.getEducationStory(getSectionData("education").data, getSectionData("residencyIntentions").data) },
         { key: "residencyIntentions", name: "Residency Intentions", apiCall: () => apiClient.getResidencyIntentionsStory(getSectionData("residencyIntentions").data) },
         { key: "finance", name: "Financial Information", apiCall: () => apiClient.getFinanceStory(getSectionData("finance").data, destinationCountry) },
         { key: "socialSecurityAndPensions", name: "Social Security & Pensions", apiCall: () => apiClient.getSocialSecurityStory(getSectionData("socialSecurityAndPensions").data, destinationCountry) },

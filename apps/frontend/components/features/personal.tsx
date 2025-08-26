@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
-import { CalendarDays, UserPlus, Plus, Trash2, Users, Lightbulb, Home, Globe, Heart, Baby, Pencil, Check, User, Calendar, Clock, MapPin, Flag, CheckCircle, GraduationCap, School, BookOpen, Network } from "lucide-react"
+import { CalendarDays, UserPlus, Plus, Trash2, Users, Lightbulb, Home, Globe, Heart, Baby, Pencil, Check, User, Calendar, Clock, MapPin, Flag, CheckCircle, GraduationCap, School, BookOpen, Network, Copy, HelpCircle } from "lucide-react"
 
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
@@ -54,10 +55,19 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     return `${year}-${month}-${day}`
   }
 
-  // Get a reasonable default birth date (30 years ago) for better UX
+  // Get a reasonable default birth date (30 years ago) for better UX (user & partner)
   const getDefaultBirthDate = () => {
     const today = new Date()
     const defaultYear = today.getFullYear() - 30
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    return `${defaultYear}-${month}-${day}`
+  }
+
+  // Default birth date for dependents (10 years ago)
+  const getDependentDefaultBirthDate = () => {
+    const today = new Date()
+    const defaultYear = today.getFullYear() - 10
     const month = String(today.getMonth() + 1).padStart(2, '0')
     const day = String(today.getDate()).padStart(2, '0')
     return `${defaultYear}-${month}-${day}`
@@ -154,8 +164,33 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     }
   }
   const depList: Dependent[] = getFormData("personalInformation.dependents") ?? []
-  const updateDepList = (next: Dependent[]) =>
+  const updateDepList = (next: Dependent[]) => {
     updateFormData("personalInformation.dependents", next)
+    // Debug logging to track dependent changes
+    console.log("📝 Dependents updated:", next.length, "dependents")
+  }
+  
+  // Function to clear all dependents
+  const clearAllDependents = () => {
+    updateDepList([])
+    setVisibleDependents([])
+    setEditingDependents([])
+    setSavedDependents([])
+    setAttemptedDependentSaves([])
+    console.log("🗑️ All dependents cleared")
+  }
+  
+  // Check for data consistency on component mount
+  useEffect(() => {
+    const storedDeps = getFormData("personalInformation.dependents") ?? []
+    if (storedDeps.length > 0) {
+      console.log("📊 Found", storedDeps.length, "dependents in storage:", storedDeps)
+      // Initialize visible dependents if there are stored dependents
+      if (visibleDependents.length === 0) {
+        setVisibleDependents(storedDeps.map((_, idx) => idx))
+      }
+    }
+  }, [])
   const [visibleDependents, setVisibleDependents] = useState<number[]>([])
   const [editingDependents, setEditingDependents] = useState<number[]>([])
   const [savedDependents, setSavedDependents] = useState<number[]>([])
@@ -1706,113 +1741,159 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               
               // Show full form if editing
               return (
-                <div key={idx} className="p-6 border-2 border-blue-200 dark:border-blue-800/40 rounded-xl bg-gradient-to-br from-blue-50/20 via-white to-indigo-50/10 dark:from-blue-950/5 dark:via-background dark:to-indigo-950/5 space-y-6 shadow-lg hover:shadow-xl transition-all duration-300">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/10 border-2 border-blue-200 dark:border-blue-800">
-                        <Baby className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <div key={idx} className="relative overflow-hidden rounded-2xl border border-blue-200/60 dark:border-blue-800/40 bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20 dark:from-blue-950/10 dark:via-background dark:to-indigo-950/10 shadow-xl">
+                  {/* Header */}
+                  <div className="relative bg-gradient-to-r from-blue-500/5 to-indigo-500/5 dark:from-blue-500/10 dark:to-indigo-500/10 px-6 py-4 border-b border-blue-100 dark:border-blue-800/50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg">
+                          <Baby className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <h5 className="text-xl font-semibold text-blue-900 dark:text-blue-100">Dependent {dependentNumber}</h5>
+                          <Badge variant="secondary" className="text-xs mt-1">
+                            {(() => {
+                              const details = dep.relationshipDetails
+                              if (!details) return "relationship not specified"
+                              
+                              const bio = details.biologicalRelationTo
+                              const legal = details.legalRelationTo  
+                              const custodial = details.custodialRelationTo
+                              
+                              // Simplified display logic for badges
+                              if (bio === "both" || legal === "both" || custodial === "both") return "to both"
+                              if (bio === "partner" || legal === "partner" || custodial === "partner") return "to partner"
+                              if (bio === "user" || legal === "user" || custodial === "user") return "to me"
+                              return "no direct relation"
+                            })()}
+                          </Badge>
+                        </div>
                       </div>
-                      <h5 className="font-medium text-lg text-blue-900 dark:text-blue-100">Dependent {dependentNumber}</h5>
-                      <Badge variant="secondary" className="text-xs">
-                        {(() => {
-                          const details = dep.relationshipDetails
-                          if (!details) return "relationship not specified"
-                          
-                          const bio = details.biologicalRelationTo
-                          const legal = details.legalRelationTo  
-                          const custodial = details.custodialRelationTo
-                          
-                          // Simplified display logic for badges
-                          if (bio === "both" || legal === "both" || custodial === "both") return "to both"
-                          if (bio === "partner" || legal === "partner" || custodial === "partner") return "to partner"
-                          if (bio === "user" || legal === "user" || custodial === "user") return "to me"
-                          return "no direct relation"
-                        })()}
-                      </Badge>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        // Remove from all state
-                        setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
-                        setEditingDependents(editingDependents.filter((i: number) => i !== idx))
-                        // Remove from data list  
-                        const updated = depList.filter((_, i) => i !== idx)
-                        updateDepList(updated)
-                        // Adjust indices for remaining dependents
-                        setVisibleDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
-                        setEditingDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                
-                <div className="grid md:grid-cols-2 gap-4">
-                  {/* Date of birth */}
-                  <div className="space-y-2">
-                    <Label className="text-base font-medium text-blue-800 dark:text-blue-200">Date of birth *</Label>
-                    <Input
-                      type="date"
-                      value={dep.dateOfBirth}
-                      max={getTodayDate()}
-                      onChange={(e) => {
-                        const updated = [...depList]
-                        updated[idx] = { ...updated[idx], dateOfBirth: e.target.value }
-                        updateDepList(updated)
-                      }}
-                      onFocus={(e) => {
-                        // If the field is empty, set it to a reasonable default when focused
-                        if (!dep.dateOfBirth) {
-                          const updated = [...depList]
-                          updated[idx] = { ...updated[idx], dateOfBirth: getDefaultBirthDate() }
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/20"
+                        onClick={() => {
+                          // Remove from all state
+                          setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
+                          setEditingDependents(editingDependents.filter((i: number) => i !== idx))
+                          // Remove from data list  
+                          const updated = depList.filter((_, i) => i !== idx)
                           updateDepList(updated)
-                        }
-                      }}
-                    />
-                  </div>
-
-                  {/* Relationship */}
-                  <div className="space-y-2">
-                    <Label className="text-base font-medium text-blue-800 dark:text-blue-200">Relationship type *</Label>
-                    <Select
-                      value={dep.relationship}
-                      onValueChange={(v) => {
-                        const updated = [...depList]
-                        updated[idx] = { ...updated[idx], relationship: v }
-                        updateDepList(updated)
-                      }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Child">Child</SelectItem>
-                        <SelectItem value="Parent">Parent</SelectItem>
-                        <SelectItem value="Sibling">Sibling</SelectItem>
-                        <SelectItem value="Legal Ward">Legal Ward</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Detailed Relationship Information */}
-                <div className="border border-blue-200/60 dark:border-blue-800/30 rounded-lg p-4 bg-blue-50/30 dark:bg-blue-950/10 space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500/10 border border-blue-200 dark:border-blue-800">
-                      <Network className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                          // Adjust indices for remaining dependents
+                          setVisibleDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
+                          setEditingDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <Label className="text-base font-medium text-blue-900 dark:text-blue-100">Relationship Details</Label>
                   </div>
-                  
-                  <div className="grid md:grid-cols-3 gap-4">
+
+                  {/* Form Content */}
+                  <div className="p-6 space-y-8">
+                    {/* Basic Information */}
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-3 pb-2 border-b border-blue-100 dark:border-blue-800/50">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 shadow-sm">
+                          <User className="w-4 h-4 text-white" />
+                        </div>
+                        <h6 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Basic Information</h6>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        {/* Date of birth */}
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                            <Label className="font-medium text-blue-900 dark:text-blue-100">Date of birth *</Label>
+                          </div>
+                          <Input
+                            type="date"
+                            value={dep.dateOfBirth}
+                            max={getTodayDate()}
+                            onChange={(e) => {
+                              const updated = [...depList]
+                              updated[idx] = { ...updated[idx], dateOfBirth: e.target.value }
+                              updateDepList(updated)
+                            }}
+                            onFocus={(e) => {
+                              // If the field is empty, set it to a reasonable default when focused
+                              if (!dep.dateOfBirth) {
+                                const updated = [...depList]
+                                updated[idx] = { ...updated[idx], dateOfBirth: getDependentDefaultBirthDate() }
+                                updateDepList(updated)
+                              }
+                            }}
+                            className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600"
+                          />
+                        </div>
+
+                        {/* Relationship */}
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                            <Label className="font-medium text-blue-900 dark:text-blue-100">Relationship type *</Label>
+                          </div>
+                          <Select
+                            value={dep.relationship}
+                            onValueChange={(v) => {
+                              const updated = [...depList]
+                              updated[idx] = { ...updated[idx], relationship: v }
+                              updateDepList(updated)
+                            }}
+                          >
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Child">Child</SelectItem>
+                              <SelectItem value="Parent">Parent</SelectItem>
+                              <SelectItem value="Sibling">Sibling</SelectItem>
+                              <SelectItem value="Legal Ward">Legal Ward</SelectItem>
+                              <SelectItem value="Other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      {/* Student status */}
+                      <div className="flex items-center gap-3 p-4 rounded-lg bg-stone-50/80 dark:bg-stone-900/30 border border-blue-100 dark:border-blue-800/50">
+                        <Checkbox
+                          id={`student_${idx}`}
+                          checked={dep.student}
+                          onCheckedChange={(v) => {
+                            const updated = [...depList]
+                            updated[idx] = { ...updated[idx], student: !!v }
+                            updateDepList(updated)
+                          }}
+                        />
+                        <Label htmlFor={`student_${idx}`} className="font-medium text-blue-900 dark:text-blue-100 flex items-center gap-2">
+                          <GraduationCap className="w-4 h-4" />
+                          Is currently a student
+                        </Label>
+                      </div>
+                    </div>
+
+                {/* Relationship Details Section */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3 pb-2 border-b border-blue-100 dark:border-blue-800/50">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 shadow-sm">
+                      <Network className="w-4 h-4 text-white" />
+                    </div>
+                    <h6 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Relationship Details</h6>
+                  </div>
+
+                  {/* Core Relationship Grid */}
+                  <div className="grid md:grid-cols-2 gap-6">
                     {/* Biological Relationship */}
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-blue-800 dark:text-blue-200">Biological relationship</Label>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                        <Label className="font-medium text-blue-900 dark:text-blue-100">Biological relationship</Label>
+                      </div>
                       <Select
-                        value={dep.relationshipDetails?.biologicalRelationTo ?? "neither"}
+                        value={dep.relationshipDetails?.biologicalRelationTo ?? (hasPartner ? "both" : "user")}
                         onValueChange={(v: "user" | "partner" | "both" | "neither") => {
                           const updated = [...depList]
                           if (!updated[idx].relationshipDetails) {
@@ -1823,40 +1904,18 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             }
                           }
                           updated[idx].relationshipDetails.biologicalRelationTo = v
-                          updateDepList(updated)
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="user">Me</SelectItem>
-                          {hasPartner && <SelectItem value="partner">My partner</SelectItem>}
-                          {hasPartner && <SelectItem value="both">Both of us</SelectItem>}
-                          <SelectItem value="neither">Neither (no biological relation)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Legal Relationship */}
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-blue-800 dark:text-blue-200">Legal relationship</Label>
-                      <Select
-                        value={dep.relationshipDetails?.legalRelationTo ?? "neither"}
-                        onValueChange={(v: "user" | "partner" | "both" | "neither") => {
-                          const updated = [...depList]
-                          if (!updated[idx].relationshipDetails) {
-                            updated[idx].relationshipDetails = {
-                              biologicalRelationTo: "neither",
-                              legalRelationTo: "neither", 
-                              custodialRelationTo: "neither"
-                            }
+                          // If there is any biological relationship, "Adopted" cannot apply
+                          if (v !== "neither") {
+                            updated[idx].relationshipDetails.isAdopted = false
                           }
-                          updated[idx].relationshipDetails.legalRelationTo = v
+                          // Step-relationship only makes sense when exactly one party is biological (user or partner)
+                          if (v === "both" || v === "neither") {
+                            updated[idx].relationshipDetails.isStepRelation = false
+                          }
                           updateDepList(updated)
                         }}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -1868,11 +1927,14 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       </Select>
                     </div>
 
-                    {/* Custodial Relationship */}
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-blue-800 dark:text-blue-200">Custody/Care responsibility</Label>
+                    {/* Legal Care Responsibility */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                        <Label className="font-medium text-blue-900 dark:text-blue-100">Legal care responsibility</Label>
+                      </div>
                       <Select
-                        value={dep.relationshipDetails?.custodialRelationTo ?? "neither"}
+                        value={dep.relationshipDetails?.custodialRelationTo ?? "both"}
                         onValueChange={(v: "user" | "partner" | "both" | "neither") => {
                           const updated = [...depList]
                           if (!updated[idx].relationshipDetails) {
@@ -1886,7 +1948,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           updateDepList(updated)
                         }}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -1899,55 +1961,85 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     </div>
                   </div>
 
-                  {/* Divider */}
-                  <div className="border-t border-blue-100 dark:border-blue-800/50"></div>
-
-                  {/* Additional relationship flags */}
-                  <div className="grid md:grid-cols-2 gap-4">
+                  {/* Relationship Type & Guardianship */}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Relationship Subtype */}
                     <div className="space-y-3">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`step_${idx}`}
-                          checked={dep.relationshipDetails?.isStepRelation ?? false}
-                          onCheckedChange={(checked) => {
-                            const updated = [...depList]
-                            if (!updated[idx].relationshipDetails) {
-                              updated[idx].relationshipDetails = {
-                                biologicalRelationTo: "neither",
-                                legalRelationTo: "neither", 
-                                custodialRelationTo: "neither"
-                              }
-                            }
-                            updated[idx].relationshipDetails.isStepRelation = checked as boolean
-                            updateDepList(updated)
-                          }}
-                        />
-                        <Label htmlFor={`step_${idx}`} className="text-sm text-blue-700 dark:text-blue-300">Step-relationship</Label>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                        <Label className="font-medium text-blue-900 dark:text-blue-100">Relationship type</Label>
                       </div>
-
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`adopted_${idx}`}
-                          checked={dep.relationshipDetails?.isAdopted ?? false}
-                          onCheckedChange={(checked) => {
-                            const updated = [...depList]
-                            if (!updated[idx].relationshipDetails) {
-                              updated[idx].relationshipDetails = {
-                                biologicalRelationTo: "neither",
-                                legalRelationTo: "neither", 
-                                custodialRelationTo: "neither"
-                              }
+                      <Select
+                        value={(() => {
+                          const details = dep.relationshipDetails
+                          if (details?.isAdopted) return "adopted"
+                          if (details?.isLegalWard) return "ward"
+                          if (details?.isStepRelation) return "step"
+                          return "biological"
+                        })()}
+                        onValueChange={(v: "biological" | "step" | "adopted" | "ward" | "other") => {
+                          const updated = [...depList]
+                          if (!updated[idx].relationshipDetails) {
+                            updated[idx].relationshipDetails = {
+                              biologicalRelationTo: hasPartner ? "both" : "user",
+                              legalRelationTo: "both", 
+                              custodialRelationTo: "both"
                             }
-                            updated[idx].relationshipDetails.isAdopted = checked as boolean
-                            updateDepList(updated)
-                          }}
-                        />
-                        <Label htmlFor={`adopted_${idx}`} className="text-sm text-blue-700 dark:text-blue-300">Adopted</Label>
-                      </div>
+                          }
+                          updated[idx].relationshipDetails.isStepRelation = v === "step"
+                          updated[idx].relationshipDetails.isAdopted = v === "adopted"
+                          updated[idx].relationshipDetails.isLegalWard = v === "ward"
+                          updateDepList(updated)
+                        }}
+                      >
+                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="biological">Biological</SelectItem>
+                          {(() => {
+                            const bio = dep.relationshipDetails?.biologicalRelationTo ?? (hasPartner ? "both" : "user")
+                            const allowStep = bio === "user" || bio === "partner"
+                            const allowAdopted = bio === "neither"
+                            const allowWard = bio === "neither"
+                            return (
+                              <>
+                                {allowStep && <SelectItem value="step">Step‑relationship</SelectItem>}
+                                {allowAdopted && <SelectItem value="adopted">Adopted</SelectItem>}
+                                {allowWard && <SelectItem value="ward">Legal ward</SelectItem>}
+                              </>
+                            )
+                          })()}
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        How government forms typically categorize this relationship
+                      </p>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-blue-800 dark:text-blue-200">Guardianship type</Label>
+                    {/* Guardianship Type */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+                        <Label className="font-medium text-blue-900 dark:text-blue-100">Guardianship type</Label>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <HelpCircle className="w-4 h-4 text-blue-500 hover:text-blue-600 cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs">
+                              <p className="text-sm">
+                                The legal form of guardianship as documented by authorities. 
+                                <strong>Full:</strong> Complete legal authority. 
+                                <strong>Partial:</strong> Shared or limited authority. 
+                                <strong>Temporary:</strong> Time-limited guardianship. 
+                                Select what matches your official documentation.
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                       <Select
                         value={dep.relationshipDetails?.guardianshipType ?? "none"}
                         onValueChange={(v: "full" | "partial" | "temporary" | "none") => {
@@ -1963,24 +2055,30 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           updateDepList(updated)
                         }}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="none">No guardianship</SelectItem>
+                          <SelectItem value="none">No formal guardianship</SelectItem>
                           <SelectItem value="full">Full legal guardian</SelectItem>
                           <SelectItem value="partial">Partial guardian</SelectItem>
                           <SelectItem value="temporary">Temporary guardian</SelectItem>
                         </SelectContent>
                       </Select>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Legal form of guardianship as documented by authorities
+                      </p>
                     </div>
                   </div>
 
-                  {/* Additional notes */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-blue-800 dark:text-blue-200">Additional relationship notes (optional)</Label>
+                  {/* Additional Notes */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-gray-400"></div>
+                      <Label className="font-medium text-blue-900 dark:text-blue-100">Additional notes (optional)</Label>
+                    </div>
                     <Textarea
-                      placeholder="E.g., 'My partner's biological child from previous marriage, I have been step-parent for 5 years and have legal guardianship in our home country'"
+                      placeholder="Any additional context about this relationship that might be relevant for immigration purposes..."
                       value={dep.relationshipDetails?.additionalNotes ?? ""}
                       onChange={(e) => {
                         const updated = [...depList]
@@ -1994,255 +2092,267 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                         updated[idx].relationshipDetails.additionalNotes = e.target.value
                         updateDepList(updated)
                       }}
-                      rows={2}
-                      className="border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600"
+                      rows={3}
+                      className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600 resize-none"
                     />
                   </div>
                 </div>
 
-                {/* Student status */}
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id={`student_${idx}`}
-                    checked={dep.student}
-                    onCheckedChange={(v) => {
-                      const updated = [...depList]
-                      updated[idx] = { ...updated[idx], student: !!v }
-                      updateDepList(updated)
-                    }}
-                  />
-                  <Label htmlFor={`student_${idx}`} className="text-base text-blue-800 dark:text-blue-200">
-                    Is a student
-                  </Label>
-                </div>
-
-                {/* Current Residency */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h6 className="font-medium text-blue-900 dark:text-blue-100">Current Residency *</h6>
-                                          <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30"
-                        onClick={() => {
-                          // Copy main user's residency info to dependent
-                          const updated = [...depList]
-                          updated[idx] = { 
-                            ...updated[idx], 
-                            currentResidency: {
-                              country: curCountry,
-                              status: curStatus,
-                              duration: tempDuration
+                    {/* Current Residency */}
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between pb-2 border-b border-blue-100 dark:border-blue-800/50">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-500 shadow-sm">
+                            <MapPin className="w-4 h-4 text-white" />
+                          </div>
+                          <h6 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Current Residency</h6>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30"
+                          onClick={() => {
+                            // Copy main user's residency info to dependent
+                            const updated = [...depList]
+                            updated[idx] = { 
+                              ...updated[idx], 
+                              currentResidency: {
+                                country: curCountry,
+                                status: curStatus,
+                                duration: tempDuration
+                              }
                             }
-                          }
-                          updateDepList(updated)
-                        }}
-                      >
-                        Same as mine
-                      </Button>
-                  </div>
+                            updateDepList(updated)
+                          }}
+                        >
+                          <Copy className="w-4 h-4 mr-2" />
+                          Same as mine
+                        </Button>
+                      </div>
                   
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <div className="space-y-2">
-                      <Label className="text-base font-medium text-blue-800 dark:text-blue-200">Country *</Label>
-                      <Select
-                        value={dep.currentResidency?.country ?? ""}
-                        onValueChange={(val) => {
-                          const updated = [...depList]
-                          updated[idx] = { 
-                            ...updated[idx], 
-                            currentResidency: { ...updated[idx].currentResidency, country: val }
-                          }
-                          updateDepList(updated)
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select country" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {countries.map((c) => (
-                            <SelectItem key={c} value={c}>
-                              {c}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-base font-medium text-blue-800 dark:text-blue-200">Residency status *</Label>
-                      <Select
-                        value={dep.currentResidency?.status ?? ""}
-                        onValueChange={(val) => {
-                          const updated = [...depList]
-                          updated[idx] = { 
-                            ...updated[idx], 
-                            currentResidency: { ...updated[idx].currentResidency, status: val }
-                          }
-                          updateDepList(updated)
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Citizen">Citizen</SelectItem>
-                          <SelectItem value="Permanent Resident">Permanent Resident</SelectItem>
-                          <SelectItem value="Temporary Resident">Temporary Resident</SelectItem>
-                          <SelectItem value="Work Visa">Work Visa</SelectItem>
-                          <SelectItem value="Student Visa">Student Visa</SelectItem>
-
-                          <SelectItem value="Refugee">Refugee</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {(() => {
-                      const dependentStatus = dep.currentResidency?.status ?? ""
-                      const dependentAge = calculateAge(dep.dateOfBirth)
-                      const dependentDuration = parseFloat(dep.currentResidency?.duration || "0") || 0
-                      const durationExceedsAge = dep.dateOfBirth && dependentDuration > dependentAge
-                      
-                      return (
-                        <div className={`space-y-2 ${dependentStatus === "Citizen" ? "opacity-50" : ""}`}>
-                          <Label className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                            Duration (years) {dependentStatus !== "Citizen" ? "*" : ""}
-                          </Label>
-                          <Input
-                            type="number"
-                            step="0.5"
-                            min={0}
-                            max={dep.dateOfBirth ? Math.ceil(dependentAge * 2) / 2 : 100} // Round up to nearest 0.5
-                            placeholder="2.5"
-                            className={`placeholder:!text-muted-foreground/60 ${durationExceedsAge ? 'border-red-500 focus:ring-red-500' : ''}`}
-                            value={dependentStatus === "Citizen" ? "" : dep.currentResidency?.duration ?? ""}
-                            onChange={(e) => {
+                      <div className="grid gap-6 md:grid-cols-3">
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                            <Label className="font-medium text-blue-900 dark:text-blue-100">Country *</Label>
+                          </div>
+                          <Select
+                            value={dep.currentResidency?.country ?? ""}
+                            onValueChange={(val) => {
                               const updated = [...depList]
                               updated[idx] = { 
                                 ...updated[idx], 
-                                currentResidency: { ...updated[idx].currentResidency, duration: e.target.value }
+                                currentResidency: { ...updated[idx].currentResidency, country: val }
                               }
                               updateDepList(updated)
                             }}
-                            disabled={dependentStatus === "Citizen"}
-                          />
-                          {durationExceedsAge && (
-                            <p className="text-sm text-red-600 dark:text-red-400">
-                              Duration cannot exceed their age ({formatAge(dependentAge)})
-                            </p>
-                          )}
-                          {dep.dateOfBirth && dependentAge > 0 && dependentStatus !== "Citizen" && !durationExceedsAge && (
-                            <p className="text-xs text-muted-foreground">
-                              Maximum: {Math.ceil(dependentAge * 2) / 2} years (their age: {formatAge(dependentAge)})
-                            </p>
-                          )}
+                          >
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                              <SelectValue placeholder="Select country" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {countries.map((c) => (
+                                <SelectItem key={c} value={c}>
+                                  {c}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
-                      )
-                    })()}
-                  </div>
-                </div>
 
-                {/* Citizenships */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-base font-medium text-blue-900 dark:text-blue-100">Citizenships *</Label>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30"
-                      onClick={() => {
-                        // Copy main user's citizenships to dependent
-                        const updated = [...depList]
-                        updated[idx] = { 
-                          ...updated[idx], 
-                          nationalities: [...natList]
-                        }
-                        updateDepList(updated)
-                      }}
-                    >
-                      Same as mine
-                    </Button>
-                  </div>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                            <Label className="font-medium text-blue-900 dark:text-blue-100">Residency status *</Label>
+                          </div>
+                          <Select
+                            value={dep.currentResidency?.status ?? ""}
+                            onValueChange={(val) => {
+                              const updated = [...depList]
+                              updated[idx] = { 
+                                ...updated[idx], 
+                                currentResidency: { ...updated[idx].currentResidency, status: val }
+                              }
+                              updateDepList(updated)
+                            }}
+                          >
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                              <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Citizen">Citizen</SelectItem>
+                              <SelectItem value="Permanent Resident">Permanent Resident</SelectItem>
+                              <SelectItem value="Temporary Resident">Temporary Resident</SelectItem>
+                              <SelectItem value="Work Visa">Work Visa</SelectItem>
+                              <SelectItem value="Student Visa">Student Visa</SelectItem>
+                              <SelectItem value="Refugee">Refugee</SelectItem>
+                              <SelectItem value="Other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                  
-                  {/* Existing citizenships */}
-                  {dep.nationalities && dep.nationalities.length > 0 && (
-                    <div className="space-y-2">
-                      {dep.nationalities.map((nat: any, natIdx: number) => (
-                        <div key={natIdx} className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="flex items-center gap-3">
-                            <span className="font-medium">{nat.country}</span>
-                            <div className="flex items-center gap-2">
-                              <Checkbox
-                                id={`dep_${idx}_renounce_${natIdx}`}
-                                checked={nat.willingToRenounce ?? false}
-                                onCheckedChange={(v) => {
+                        {(() => {
+                          const dependentStatus = dep.currentResidency?.status ?? ""
+                          const dependentAge = calculateAge(dep.dateOfBirth)
+                          const dependentDuration = parseFloat(dep.currentResidency?.duration || "0") || 0
+                          const durationExceedsAge = dep.dateOfBirth && dependentDuration > dependentAge
+                          
+                          return (
+                            <div className={`space-y-3 ${dependentStatus === "Citizen" ? "opacity-50" : ""}`}>
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-pink-500"></div>
+                                <Label className="font-medium text-blue-900 dark:text-blue-100">
+                                  Duration (years) {dependentStatus !== "Citizen" ? "*" : ""}
+                                </Label>
+                              </div>
+                              <Input
+                                type="number"
+                                step="0.5"
+                                min={0}
+                                max={dep.dateOfBirth ? Math.ceil(dependentAge * 2) / 2 : 100} // Round up to nearest 0.5
+                                placeholder="2.5"
+                                className={`bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600 placeholder:!text-muted-foreground/60 ${durationExceedsAge ? 'border-red-500 focus:ring-red-500' : ''}`}
+                                value={dependentStatus === "Citizen" ? "" : dep.currentResidency?.duration ?? ""}
+                                onChange={(e) => {
                                   const updated = [...depList]
-                                  const updatedNats = [...(updated[idx].nationalities || [])]
-                                  updatedNats[natIdx] = { ...updatedNats[natIdx], willingToRenounce: !!v }
+                                  updated[idx] = { 
+                                    ...updated[idx], 
+                                    currentResidency: { ...updated[idx].currentResidency, duration: e.target.value }
+                                  }
+                                  updateDepList(updated)
+                                }}
+                                disabled={dependentStatus === "Citizen"}
+                              />
+                              {durationExceedsAge && (
+                                <p className="text-sm text-red-600 dark:text-red-400">
+                                  Duration cannot exceed their age ({formatAge(dependentAge)})
+                                </p>
+                              )}
+                              {dep.dateOfBirth && dependentAge > 0 && dependentStatus !== "Citizen" && !durationExceedsAge && (
+                                <p className="text-xs text-muted-foreground">
+                                  Maximum: {Math.ceil(dependentAge * 2) / 2} years (their age: {formatAge(dependentAge)})
+                                </p>
+                              )}
+                            </div>
+                          )
+                        })()}
+                      </div>
+                    </div>
+
+                    {/* Citizenships */}
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between pb-2 border-b border-blue-100 dark:border-blue-800/50">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 shadow-sm">
+                            <Flag className="w-4 h-4 text-white" />
+                          </div>
+                          <h6 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Citizenships</h6>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30"
+                          onClick={() => {
+                            // Copy main user's citizenships to dependent
+                            const updated = [...depList]
+                            updated[idx] = { 
+                              ...updated[idx], 
+                              nationalities: [...natList]
+                            }
+                            updateDepList(updated)
+                          }}
+                        >
+                          <Copy className="w-4 h-4 mr-2" />
+                          Same as mine
+                        </Button>
+                      </div>
+
+                      {/* Existing citizenships */}
+                      {dep.nationalities && dep.nationalities.length > 0 && (
+                        <div className="space-y-3">
+                          {dep.nationalities.map((nat: any, natIdx: number) => (
+                            <div key={natIdx} className="flex items-center justify-between p-4 rounded-lg bg-stone-50/80 dark:bg-stone-900/30 border border-blue-100 dark:border-blue-800/50">
+                              <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2">
+                                  <Flag className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                  <span className="font-medium text-blue-900 dark:text-blue-100">{nat.country}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Checkbox
+                                    id={`dep_${idx}_renounce_${natIdx}`}
+                                    checked={nat.willingToRenounce ?? false}
+                                    onCheckedChange={(v) => {
+                                      const updated = [...depList]
+                                      const updatedNats = [...(updated[idx].nationalities || [])]
+                                      updatedNats[natIdx] = { ...updatedNats[natIdx], willingToRenounce: !!v }
+                                      updated[idx] = { ...updated[idx], nationalities: updatedNats }
+                                      updateDepList(updated)
+                                    }}
+                                  />
+                                  <Label htmlFor={`dep_${idx}_renounce_${natIdx}`} className="text-sm text-blue-700 dark:text-blue-300">
+                                    Willing to give up?
+                                  </Label>
+                                </div>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/20"
+                                onClick={() => {
+                                  const updated = [...depList]
+                                  const updatedNats = (updated[idx].nationalities || []).filter((_: any, i: number) => i !== natIdx)
                                   updated[idx] = { ...updated[idx], nationalities: updatedNats }
                                   updateDepList(updated)
                                 }}
-                              />
-                              <Label htmlFor={`dep_${idx}_renounce_${natIdx}`} className="text-sm text-blue-700 dark:text-blue-300">
-                                Willing to give up?
-                              </Label>
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
                             </div>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                              onClick={() => {
-                                const updated = [...depList]
-                                const updatedNats = (updated[idx].nationalities || []).filter((_: any, i: number) => i !== natIdx)
-                                updated[idx] = { ...updated[idx], nationalities: updatedNats }
-                                updateDepList(updated)
-                              }}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  )}
+                      )}
 
-                  {/* Add citizenship */}
-                  <div className="flex gap-2">
-                    <Select
-                      value=""
-                      onValueChange={(country) => {
-                        if (country) {
-                          const updated = [...depList]
-                          const currentNats = updated[idx].nationalities || []
-                          if (!currentNats.some((n: any) => n.country === country)) {
-                            updated[idx] = {
-                              ...updated[idx],
-                              nationalities: [...currentNats, { country, willingToRenounce: false }]
+                      {/* Add citizenship */}
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                          <Label className="font-medium text-blue-900 dark:text-blue-100">Add citizenship</Label>
+                        </div>
+                        <Select
+                          value=""
+                          onValueChange={(country) => {
+                            if (country) {
+                              const updated = [...depList]
+                              const currentNats = updated[idx].nationalities || []
+                              if (!currentNats.some((n: any) => n.country === country)) {
+                                updated[idx] = {
+                                  ...updated[idx],
+                                  nationalities: [...currentNats, { country, willingToRenounce: false }]
+                                }
+                                updateDepList(updated)
+                              }
                             }
-                            updateDepList(updated)
-                          }
-                        }
-                      }}
-                    >
-                      <SelectTrigger className="flex-1">
-                        <SelectValue placeholder="Add citizenship" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {countries.filter(c => {
-                          const currentNats = dep.nationalities || []
-                          return !currentNats.some((n: any) => n.country === c)
-                        }).map((c) => (
-                          <SelectItem key={c} value={c}>
-                            {c}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                          }}
+                        >
+                          <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                            <SelectValue placeholder="Select a country to add" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {countries.filter(c => {
+                              const currentNats = dep.nationalities || []
+                              return !currentNats.some((n: any) => n.country === c)
+                            }).map((c) => (
+                              <SelectItem key={c} value={c}>
+                                {c}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
-                                  </div>
                   
                   {/* Save/Cancel buttons for editing form */}
                   {(() => {
@@ -2311,7 +2421,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                 setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
                                 // Remove from data list  
                                 const updated = depList.filter((_, i) => i !== idx)
-                                updateFormData("personalInformation.dependents", updated)
+                                updateDepList(updated)
                                 // Clean up state arrays by adjusting indices
                                 const adjustIndices = (arr: number[]) => 
                                   arr.map(i => i > idx ? i - 1 : i).filter(i => i !== idx)
@@ -2329,7 +2439,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     )
                   })()}
                 </div>
-               )
+              )
              })}
 
             {/* Add Dependent Button - positioned after existing dependent cards */}
@@ -2344,13 +2454,13 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     const newDependent = {
                       relationship: "Child",
                       relationshipDetails: {
-                        biologicalRelationTo: "user" as const,
-                        legalRelationTo: "user" as const,
-                        custodialRelationTo: "user" as const,
+                        biologicalRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
+                        legalRelationTo: "both" as "user" | "partner" | "both" | "neither",
+                        custodialRelationTo: "both" as "user" | "partner" | "both" | "neither",
                         isStepRelation: false,
                         isAdopted: false,
                         isLegalWard: false,
-                        guardianshipType: "none" as const,
+                        guardianshipType: "none" as "full" | "partial" | "temporary" | "none",
                         additionalNotes: ""
                       },
                       dateOfBirth: "",
@@ -2381,6 +2491,23 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
             <p className="text-xs text-muted-foreground">
               Include children, elderly parents, or other family members who depend on your financial support and will move with you.
             </p>
+            
+            {/* Debug section - remove in production */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                <p className="text-xs font-medium text-yellow-800 dark:text-yellow-200 mb-2">
+                  Debug: {depList.length} dependents in store
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearAllDependents}
+                  className="text-xs"
+                >
+                  Clear All Dependents (Debug)
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

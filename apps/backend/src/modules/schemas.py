@@ -105,6 +105,7 @@ class EducationRequest(BaseModel):
     """Schema for education section story generation."""
 
     education: dict
+    residency_intentions: dict | None = None
 
     class Config:
         extra = "allow"

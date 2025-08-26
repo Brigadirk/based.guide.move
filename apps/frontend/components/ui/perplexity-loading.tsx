@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { Brain, Sparkles, Zap, Search, BookOpen, Target } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 
 interface PerplexityLoadingProps {
   isLoading: boolean
@@ -25,25 +24,22 @@ export function PerplexityLoading({
   className = "" 
 }: PerplexityLoadingProps) {
   const [currentStep, setCurrentStep] = useState(0)
-  const [progress, setProgress] = useState(0)
   const [stepProgress, setStepProgress] = useState(0)
 
   useEffect(() => {
     if (!isLoading) {
       setCurrentStep(0)
-      setProgress(0)
       setStepProgress(0)
       return
     }
 
     let stepTimer: NodeJS.Timeout
-    let progressTimer: NodeJS.Timeout
     let stepProgressTimer: NodeJS.Timeout
 
     const startStep = (stepIndex: number) => {
       if (stepIndex >= loadingSteps.length) {
-        // Keep the last step active and progress at 95% until loading completes
-        setProgress(95)
+        // Keep animating on the last step until loading completes
+        setCurrentStep(loadingSteps.length - 1)
         return
       }
 
@@ -52,7 +48,6 @@ export function PerplexityLoading({
       
       const step = loadingSteps[stepIndex]
       const stepDuration = step.duration
-      const progressIncrement = (100 / loadingSteps.length) / (stepDuration / 50)
       const stepProgressIncrement = 100 / (stepDuration / 50)
 
       // Animate step progress
@@ -63,18 +58,8 @@ export function PerplexityLoading({
         })
       }, 50)
 
-      // Animate overall progress
-      progressTimer = setInterval(() => {
-        setProgress(prev => {
-          const newProgress = prev + progressIncrement
-          const maxForStep = ((stepIndex + 1) / loadingSteps.length) * 90 // Cap at 90% until complete
-          return newProgress >= maxForStep ? maxForStep : newProgress
-        })
-      }, 50)
-
       // Move to next step
       stepTimer = setTimeout(() => {
-        clearInterval(progressTimer)
         clearInterval(stepProgressTimer)
         startStep(stepIndex + 1)
       }, stepDuration)
@@ -84,7 +69,6 @@ export function PerplexityLoading({
 
     return () => {
       clearTimeout(stepTimer)
-      clearInterval(progressTimer)
       clearInterval(stepProgressTimer)
     }
   }, [isLoading])
@@ -128,17 +112,8 @@ export function PerplexityLoading({
             </p>
           </div>
 
-          {/* Progress bar */}
-          <div className="space-y-2">
-            <Progress 
-              value={progress} 
-              className="h-3 bg-purple-100 dark:bg-purple-900"
-            />
-            <div className="flex justify-between text-xs text-purple-600 dark:text-purple-400">
-              <span>Processing...</span>
-              <span>{Math.round(progress)}%</span>
-            </div>
-          </div>
+          {/* Subtext to indicate ongoing work without specific percentage */}
+          <div className="text-center text-xs text-purple-600 dark:text-purple-400">Working on your analysis…</div>
 
           {/* Current step indicator */}
           <div className="flex items-center justify-center space-x-3 p-4 bg-white/50 dark:bg-black/20 rounded-lg border border-purple-200 dark:border-purple-700">

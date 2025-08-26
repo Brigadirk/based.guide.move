@@ -36,6 +36,14 @@ function validateInput(body: any): boolean {
   return true;
 }
 
+function getApiKeyFromEnv(): string | undefined {
+  return (
+    process.env.PRODUCTION_API_KEY ||
+    process.env.STAGING_API_KEY ||
+    process.env.LOCAL_API_KEY
+  );
+}
+
 async function makeBackendRequest(path: string, method: string, body?: any, clientHeaders?: Headers) {
   // Use internal URL in production, public URL in development
   // Remove the /api/v1/ prefix from path if it exists, since we add it below
@@ -50,7 +58,7 @@ async function makeBackendRequest(path: string, method: string, body?: any, clie
   };
 
   // Always include API key for backend requests
-  const apiKey = process.env.API_KEY;
+  const apiKey = getApiKeyFromEnv() || clientHeaders?.get('x-api-key') || clientHeaders?.get('X-API-Key') || undefined;
   if (apiKey) {
     headers['X-API-Key'] = apiKey;
     console.log(`[API Proxy] Using API key for ${method} ${path}`);
@@ -69,7 +77,23 @@ async function makeBackendRequest(path: string, method: string, body?: any, clie
     const response = await fetch(backendUrl, options);
     
     if (!response.ok) {
-      throw new Error(`Backend responded with ${response.status}: ${response.statusText}`);
+      // Try to read error body
+      let detail: string | undefined = undefined;
+      try {
+        const errJson = await response.json();
+        detail = (errJson && (errJson.detail || errJson.error)) as string | undefined;
+      } catch (_) {
+        // ignore parse error
+      }
+
+      const isUnauthorized = response.status === 401;
+      const message = isUnauthorized
+        ? (detail || 'Backend rejected request: missing or invalid API key. Configure LOCAL_API_KEY/STAGING_API_KEY/PRODUCTION_API_KEY on both frontend and backend and restart.')
+        : (detail || `Backend responded with ${response.status}: ${response.statusText}`);
+
+      const err: any = new Error(message);
+      err.status = response.status;
+      throw err;
     }
     
     return await response.json();
@@ -82,7 +106,7 @@ async function makeBackendRequest(path: string, method: string, body?: any, clie
 // Handle POST requests
 export async function POST(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  context: { params: Promise<{ path: string[] }> }
 ) {
   try {
     // Rate limiting
@@ -93,8 +117,9 @@ export async function POST(
       );
     }
 
-    // Get the API path
-    const path = params.path.join('/');
+    // Get the API path (await params per Next.js dynamic API contract)
+    const { path: pathParts } = await context.params;
+    const path = pathParts.join('/');
     
     // Parse request body
     const body = await request.json();
@@ -115,24 +140,26 @@ export async function POST(
   } catch (error) {
     console.error('[API Proxy] POST error:', error);
     
-    if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      );
-    }
-    
+    const anyErr: any = error;
+    const status = typeof anyErr?.status === 'number' ? anyErr.status : 500;
+    const message = anyErr?.message || 'Internal server error';
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      {
+        error: status === 401 ? 'authentication_required' : 'proxy_error',
+        detail: status === 401
+          ? 'Backend requires an API key. Set LOCAL_API_KEY/STAGING_API_KEY/PRODUCTION_API_KEY consistently in frontend and backend, then restart.'
+          : message,
+      },
+      { status }
     );
+    
   }
 }
 
 // Handle GET requests
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  context: { params: Promise<{ path: string[] }> }
 ) {
   try {
     // Rate limiting
@@ -143,8 +170,9 @@ export async function GET(
       );
     }
 
-    // Get the API path
-    const path = params.path.join('/');
+    // Get the API path (await params per Next.js dynamic API contract)
+    const { path: pathParts } = await context.params;
+    const path = pathParts.join('/');
     
     // Proxy to backend
     const result = await makeBackendRequest(path, 'GET', undefined, request.headers);
@@ -154,16 +182,17 @@ export async function GET(
   } catch (error) {
     console.error('[API Proxy] GET error:', error);
     
-    if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      );
-    }
-    
+    const anyErr: any = error;
+    const status = typeof anyErr?.status === 'number' ? anyErr.status : 500;
+    const message = anyErr?.message || 'Internal server error';
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      {
+        error: status === 401 ? 'authentication_required' : 'proxy_error',
+        detail: status === 401
+          ? 'Backend requires an API key. Set LOCAL_API_KEY/STAGING_API_KEY/PRODUCTION_API_KEY consistently in frontend and backend, then restart.'
+          : message,
+      },
+      { status }
     );
   }
 }

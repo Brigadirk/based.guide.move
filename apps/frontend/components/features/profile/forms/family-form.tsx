@@ -41,10 +41,19 @@ type PartnerInfo = {
 export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
   const countries = getCountries()
   
-  // Get a reasonable default birth date (30 years ago) for better UX
+  // Get a reasonable default birth date (30 years ago) for better UX (user & partner)
   const getDefaultBirthDate = () => {
     const today = new Date()
     const defaultYear = today.getFullYear() - 30
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    return `${defaultYear}-${month}-${day}`
+  }
+
+  // Default birth date for dependents (10 years ago)
+  const getDependentDefaultBirthDate = () => {
+    const today = new Date()
+    const defaultYear = today.getFullYear() - 10
     const month = String(today.getMonth() + 1).padStart(2, '0')
     const day = String(today.getDate()).padStart(2, '0')
     return `${defaultYear}-${month}-${day}`

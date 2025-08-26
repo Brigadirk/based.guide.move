@@ -9,9 +9,9 @@ async def verify_api_key(x_api_key: str | None = Header(None)) -> str | None:
     """
     Verify API key for testing endpoints.
 
-    This is an optional authentication mechanism for testing endpoints.
-    If no TESTING_API_KEY is configured, all requests are allowed.
-    If TESTING_API_KEY is configured, requests must include a matching X-API-Key header.
+    This is an optional authentication mechanism for endpoints.
+    If no LOCAL_API_KEY/STAGING_API_KEY/PRODUCTION_API_KEY is configured, all requests are allowed.
+    If an environment-specific API key is configured, requests must include a matching X-API-Key header.
 
     Args:
         x_api_key: API key from X-API-Key header

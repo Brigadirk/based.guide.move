@@ -188,7 +188,7 @@ export function Destination({ onComplete }: DestinationProps) {
       </div>
 
       <SectionHint title="About this section">
-        Choosing a destination country and region allows the questionnaire to tailor subsequent tax, residency, and language questions to local rules—many inputs later on depend on this choice.
+        Multi‑destination comparison is coming soon.
       </SectionHint>
 
       {/* Country Selection Card */}

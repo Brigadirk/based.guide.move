@@ -38,11 +38,29 @@ export interface FormData {
     }
     dependents: Array<{
       relationship: string
-      age: number
+      relationshipDetails?: {
+        biologicalRelationTo?: "user" | "partner" | "both" | "neither"
+        legalRelationTo?: "user" | "partner" | "both" | "neither"  
+        custodialRelationTo?: "user" | "partner" | "both" | "neither"
+        isStepRelation?: boolean
+        isAdopted?: boolean
+        isLegalWard?: boolean
+        guardianshipType?: "full" | "partial" | "temporary" | "none"
+        additionalNotes?: string
+      }
+      dateOfBirth?: string
+      student?: boolean
       nationalities: Array<{
         country: string
         willingToRenounce: boolean
       }>
+      currentResidency?: {
+        country?: string
+        status?: string
+        duration?: string
+      }
+      name?: string
+      age?: number
     }>
   }
   education?: {
@@ -77,6 +95,12 @@ export interface FormData {
       applyForResidency: boolean
       maxMonthsWillingToReside: number
       openToVisiting: boolean
+    }
+    familyVisaPlanning?: {
+      applicationTimeline?: "together" | "sequential" | "flexible"
+      relocationPriority?: "moveTogetherEssential" | "primaryFirstAcceptable" | "flexibleTiming"
+      concerns?: string[]
+      specialCircumstances?: string
     }
     citizenshipPlans: {
       interestedInCitizenship: boolean
@@ -331,8 +355,59 @@ export const useFormStore = create<FormStoreState>()(
     }),
     {
       name: 'base-recommender-form-data',
-      version: 1,
+      version: 3,
       skipHydration: true, // Skip automatic hydration to avoid SSR conflicts
+      migrate: (persistedState: any, version: number) => {
+        if (version < 2) {
+          // Migrate old dependent structure to new structure
+          if (persistedState?.formData?.personalInformation?.dependents) {
+            persistedState.formData.personalInformation.dependents = 
+              persistedState.formData.personalInformation.dependents.map((dep: any) => {
+                // If it's already the new structure, keep it
+                if (dep.relationshipDetails || dep.dateOfBirth !== undefined) {
+                  return dep
+                }
+                // Convert old structure to new structure
+                return {
+                  relationship: dep.relationship || "Child",
+                  relationshipDetails: {
+                    biologicalRelationTo: "user",
+                    legalRelationTo: "user",
+                    custodialRelationTo: "user",
+                    isStepRelation: false,
+                    isAdopted: false,
+                    isLegalWard: false,
+                    guardianshipType: "none",
+                    additionalNotes: ""
+                  },
+                  dateOfBirth: "", // Will need to be filled by user
+                  student: false,
+                  nationalities: dep.nationalities || [],
+                  currentResidency: {
+                    country: "",
+                    status: "",
+                    duration: ""
+                  },
+                  name: "",
+                  age: dep.age || 0
+                }
+              })
+          }
+        }
+        if (version < 3) {
+          // Ensure familyVisaPlanning exists
+          const ri = persistedState?.formData?.residencyIntentions
+          if (ri && !ri.familyVisaPlanning) {
+            ri.familyVisaPlanning = {
+              applicationTimeline: undefined,
+              relocationPriority: undefined,
+              concerns: [],
+              specialCircumstances: ""
+            }
+          }
+        }
+        return persistedState
+      },
       partialize: (state) => ({
         // Only persist the data we need, not functions
         formData: state.formData,

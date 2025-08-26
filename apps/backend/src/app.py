@@ -103,10 +103,9 @@ async def health_check():
         # Debug API key configuration
         api_key_debug = {
             "api_key_from_config": Config.get_api_key(),
-            "production_api_key": Config.PRODUCTION_API_KEY,
-            "staging_api_key": Config.STAGING_API_KEY,
-            "testing_api_key": Config.TESTING_API_KEY,
-            "api_key_fallback": Config.API_KEY,
+            "production_api_key": bool(Config.PRODUCTION_API_KEY),
+            "staging_api_key": bool(Config.STAGING_API_KEY),
+            "local_api_key": bool(Config.LOCAL_API_KEY),
             "is_production": Config.is_production(),
             "railway_environment": Config.RAILWAY_ENVIRONMENT_NAME,
             "environment": Config.ENVIRONMENT,

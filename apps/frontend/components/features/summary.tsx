@@ -123,7 +123,14 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
       setSectionStories(prev => ({ ...prev, [sectionId]: response.story }))
     } catch (error) {
       console.error(`Error fetching story for ${sectionId}:`, error)
-      setSectionStories(prev => ({ ...prev, [sectionId]: "Error loading section information." }))
+      const err: any = error
+      const authMsg = err?.message?.toLowerCase().includes('api key') || err?.message?.toLowerCase().includes('authentication')
+      setSectionStories(prev => ({
+        ...prev,
+        [sectionId]: authMsg
+          ? "Authentication required: set LOCAL_API_KEY/STAGING_API_KEY/PRODUCTION_API_KEY in both frontend and backend, then restart."
+          : "Error loading section information."
+      }))
     } finally {
       setLoadingSections(prev => ({ ...prev, [sectionId]: false }))
     }
