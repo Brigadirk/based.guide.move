@@ -42,6 +42,7 @@ def _get_exchange_rate_date() -> str:
 
 def _format_money(amount: float, currency: str, dest_currency: str) -> str:
     """Format money amounts following structure: X <target currency> (calculated <date>) (X <input currency> (reported currency))"""
+
     def fmt(val: float) -> str:
         return f"{val:,.2f}" if abs(val) < 10000 else f"{val:,.0f}"
 
@@ -62,8 +63,11 @@ def _format_money(amount: float, currency: str, dest_currency: str) -> str:
         return f"{amount:,.2f} {currency}"
 
 
-def _format_money_with_country(amount: float, currency: str, dest_currency: str, country: str) -> str:
+def _format_money_with_country(
+    amount: float, currency: str, dest_currency: str, country: str
+) -> str:
     """Format money amounts with country integrated: X <target currency> (calculated <date>) (X <input currency> from <country> (reported currency and country))"""
+
     def fmt(val: float) -> str:
         return f"{val:,.2f}" if abs(val) < 10000 else f"{val:,.0f}"
 
@@ -418,7 +422,7 @@ def residency_section(
                 if col.get("maintainsSignificantTies"):
                     minimal.append(
                         "They maintain significant ties to their current country ("
-                        + (f'\"{ties_text}\"' if ties_text else "details not specified")
+                        + (f'"{ties_text}"' if ties_text else "details not specified")
                         + ")."
                     )
                 elif ties_text:
@@ -428,19 +432,31 @@ def residency_section(
                 if family_planning:
                     timeline = family_planning.get("applicationTimeline")
                     if timeline == "together":
-                        minimal.append("They prefer to coordinate all family visa applications together.")
+                        minimal.append(
+                            "They prefer to coordinate all family visa applications together."
+                        )
                     elif timeline == "sequential":
-                        minimal.append("They plan to apply for their own visa first, then family members.")
+                        minimal.append(
+                            "They plan to apply for their own visa first, then family members."
+                        )
                     elif timeline == "flexible":
-                        minimal.append("They have a flexible approach to the application timeline, adapting to processing requirements.")
+                        minimal.append(
+                            "They have a flexible approach to the application timeline, adapting to processing requirements."
+                        )
 
                     priority = family_planning.get("relocationPriority")
                     if priority == "moveTogetherEssential":
-                        minimal.append("Moving together as a family unit is essential to their plans.")
+                        minimal.append(
+                            "Moving together as a family unit is essential to their plans."
+                        )
                     elif priority == "primaryFirstAcceptable":
-                        minimal.append("They are willing to relocate first and have family join later.")
+                        minimal.append(
+                            "They are willing to relocate first and have family join later."
+                        )
                     elif priority == "flexibleTiming":
-                        minimal.append("They prefer to optimize for the fastest overall process with flexible timing.")
+                        minimal.append(
+                            "They prefer to optimize for the fastest overall process with flexible timing."
+                        )
 
                     concerns = family_planning.get("concerns", [])
                     if concerns:
@@ -557,7 +573,11 @@ def residency_section(
                 minimal.append(
                     f"Their {' and '.join(family_parts)} will require family reunion/dependent visas."
                 )
-                if user_has_eu_freedom and is_eu_country(country) and has_eu_citizenship(user_nationalities):
+                if (
+                    user_has_eu_freedom
+                    and is_eu_country(country)
+                    and has_eu_citizenship(user_nationalities)
+                ):
                     minimal.append(
                         "EU family reunion directives may provide beneficial pathways for family members."
                     )
@@ -568,7 +588,7 @@ def residency_section(
             if col.get("maintainsSignificantTies"):
                 minimal.append(
                     "They maintain significant ties to their current country ("
-                    + (f'\"{ties_text}\"' if ties_text else "details not specified")
+                    + (f'"{ties_text}"' if ties_text else "details not specified")
                     + ")."
                 )
             elif ties_text:
@@ -579,11 +599,17 @@ def residency_section(
             if family_planning:
                 timeline = family_planning.get("applicationTimeline")
                 if timeline == "together":
-                    minimal.append("They prefer to coordinate all family visa applications together.")
+                    minimal.append(
+                        "They prefer to coordinate all family visa applications together."
+                    )
                 elif timeline == "sequential":
-                    minimal.append("They plan to apply for their own visa first, then family members.")
+                    minimal.append(
+                        "They plan to apply for their own visa first, then family members."
+                    )
                 elif timeline == "flexible":
-                    minimal.append("They have a flexible approach to the application timeline, adapting to processing requirements.")
+                    minimal.append(
+                        "They have a flexible approach to the application timeline, adapting to processing requirements."
+                    )
 
                 priority = family_planning.get("relocationPriority")
                 if priority == "moveTogetherEssential":
@@ -591,7 +617,9 @@ def residency_section(
                 elif priority == "primaryFirstAcceptable":
                     minimal.append("They are willing to relocate first and have family join later.")
                 elif priority == "flexibleTiming":
-                    minimal.append("They prefer to optimize for the fastest overall process with flexible timing.")
+                    minimal.append(
+                        "They prefer to optimize for the fastest overall process with flexible timing."
+                    )
 
                 concerns = family_planning.get("concerns", [])
                 if concerns:
@@ -623,7 +651,9 @@ def residency_section(
                     f"This will involve {total_family} separate visa applications for the complete family unit."
                 )
             else:
-                sentences.append("They will need to apply for the appropriate visa or residency permit.")
+                sentences.append(
+                    "They will need to apply for the appropriate visa or residency permit."
+                )
 
         # Add family visa planning preferences if specified
         family_planning = ri.get("familyVisaPlanning", {})
@@ -852,7 +882,9 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
                 job_desc = f"{cat} income"
 
             # Format with country integrated into the currency format
-            amt_with_country = _format_money_with_country(src.get("amount", 0), src.get("currency", "USD"), dest_currency, country)
+            amt_with_country = _format_money_with_country(
+                src.get("amount", 0), src.get("currency", "USD"), dest_currency, country
+            )
             lines.append(
                 f"They have 1 current income source: {job_desc}, totalling {amt_with_country}, which will continue after moving."
             )
@@ -878,13 +910,13 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
                     elif role:
                         lines.append(f"• {role} position: {amt} from {country or 'various'}.")
                     elif employer:
-                        lines.append(f"• Employment at {employer}: {amt} from {country or 'various'}.")
+                        lines.append(
+                            f"• Employment at {employer}: {amt} from {country or 'various'}."
+                        )
                     else:
                         lines.append(f"• {cat} income: {amt} from {country or 'various'}.")
                 else:
                     lines.append(f"• {cat} income: {amt} from {country or 'various'}.")
-
-
 
     # Process expected sources with enhanced information
     if expected_sources:
@@ -1023,12 +1055,18 @@ def _mixed_total(
 
 def _get_capital_gain_value(sale: dict[str, Any]) -> float:
     """Get surplus value, handling multiple field name variations"""
-    return sale.get("surplus_value", sale.get("surplusValue", sale.get("expectedGain", sale.get("expected_gain", 0))))
+    return sale.get(
+        "surplus_value",
+        sale.get("surplusValue", sale.get("expectedGain", sale.get("expected_gain", 0))),
+    )
 
 
 def _get_holding_time(sale: dict[str, Any]) -> str:
     """Get holding time, handling multiple field name variations"""
-    return sale.get("holding_time", sale.get("holdingTime", sale.get("holdingPeriod", sale.get("holding_period", "N/A"))))
+    return sale.get(
+        "holding_time",
+        sale.get("holdingTime", sale.get("holdingPeriod", sale.get("holding_period", "N/A"))),
+    )
 
 
 def _summarise_liabilities(liabs: list[dict[str, Any]], dest_currency: str) -> str:
@@ -1243,9 +1281,6 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
     return " ".join(parts) if parts else "User has not submitted any information on this section."
 
 
-
-
-
 def ssp_section(ssp: dict[str, Any], dest_currency: str) -> str:
     if not ssp:
         return "User has not submitted any information on this section."
@@ -1445,10 +1480,10 @@ def additional_section(add: dict[str, Any]) -> str:
                 theme = sec.get("theme", "")
                 content = sec.get("content", "")
                 if theme and content:
-                    content_preview = content[:200] + ('…' if len(content) > 200 else '')
+                    content_preview = content[:200] + ("…" if len(content) > 200 else "")
                     segs.append(f"User note on {theme}: {content_preview}")
                 elif content:
-                    content_preview = content[:200] + ('…' if len(content) > 200 else '')
+                    content_preview = content[:200] + ("…" if len(content) > 200 else "")
                     segs.append(f"User note: {content_preview}")
             elif isinstance(sec, str):
                 # Legacy string format
@@ -1539,10 +1574,14 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
     work_exp = edu.get("workExperience", [])
     if work_exp:
         exp_count = len(work_exp)
-        sentences.append(f"They have {exp_count} work experience entr{'ies' if exp_count != 1 else 'y'}:")
+        sentences.append(
+            f"They have {exp_count} work experience entr{'ies' if exp_count != 1 else 'y'}:"
+        )
         for exp in work_exp[:3]:  # Show first 3 experiences
             company = exp.get("company", "Unspecified company")
-            position = exp.get("jobTitle", exp.get("position", "Unspecified position"))  # Try jobTitle first, then position
+            position = exp.get(
+                "jobTitle", exp.get("position", "Unspecified position")
+            )  # Try jobTitle first, then position
             start_date = exp.get("startDate", "")
             end_date = exp.get("endDate", "")
             current = exp.get("current", False)
@@ -1566,7 +1605,9 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
     licenses = edu.get("professionalLicenses", [])
     if licenses:
         license_count = len(licenses)
-        sentences.append(f"They hold {license_count} professional license{'s' if license_count != 1 else ''}:")
+        sentences.append(
+            f"They hold {license_count} professional license{'s' if license_count != 1 else ''}:"
+        )
         for license_item in licenses[:3]:  # Show first 3 licenses
             license_name = license_item.get("licenseName", "Unspecified license")
             issuing_body = license_item.get("issuingBody", "")
@@ -1588,18 +1629,24 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
 
     # Study interests
     if edu.get("interestedInStudying") is True:
-        sentences.append("They are interested in pursuing further studies in the destination country.")
+        sentences.append(
+            "They are interested in pursuing further studies in the destination country."
+        )
         study_details = edu.get("schoolInterestDetails", "")
         if study_details:
             sentences.append(f"Study interest details: {study_details}")
     elif edu.get("interestedInStudying") is False:
-        sentences.append("They are not interested in pursuing further studies in the destination country.")
+        sentences.append(
+            "They are not interested in pursuing further studies in the destination country."
+        )
 
     # Learning interests
     learning_interests = edu.get("learningInterests", [])
     if learning_interests:
         interest_count = len(learning_interests)
-        sentences.append(f"They have {interest_count} learning interest{'s' if interest_count != 1 else ''}:")
+        sentences.append(
+            f"They have {interest_count} learning interest{'s' if interest_count != 1 else ''}:"
+        )
         for interest in learning_interests[:3]:  # Show first 3 interests
             skill = interest.get("skill", "Unspecified skill")
             status = interest.get("status", "planned")
@@ -1626,7 +1673,9 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
     school_offers = edu.get("schoolOffers", [])
     if school_offers:
         offer_count = len(school_offers)
-        sentences.append(f"They have received {offer_count} school offer{'s' if offer_count != 1 else ''}:")
+        sentences.append(
+            f"They have received {offer_count} school offer{'s' if offer_count != 1 else ''}:"
+        )
         for offer in school_offers[:3]:  # Show first 3 offers
             school = offer.get("school", "Unspecified school")
             program = offer.get("program", "Unspecified program")
@@ -1806,7 +1855,9 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                 partner_willing = lp.get("partner_willing_to_learn", [])
                 if partner_willing:
                     sentences.append(
-                        "Languages the partner is willing to learn: " + ", ".join(partner_willing) + "."
+                        "Languages the partner is willing to learn: "
+                        + ", ".join(partner_willing)
+                        + "."
                     )
 
                 # Additional languages
@@ -1849,7 +1900,9 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                             other_summaries.append(f"{lang} (teaching capability: {lang_data})")
 
                     if other_summaries:
-                        sentences.append("Additional languages: " + "; ".join(other_summaries) + ".")
+                        sentences.append(
+                            "Additional languages: " + "; ".join(other_summaries) + "."
+                        )
         elif dest_country:
             # If destination country is set but no language proficiency data provided
             sentences.append(f"Language proficiency for {dest_country} has not been assessed yet.")
@@ -1944,7 +1997,9 @@ def make_residency_intentions_story(residency_info: dict[str, Any]) -> str:
     return f"Residency Plans:\n{residency_section(residency_info)}"
 
 
-def make_finance_story(finance_info: dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False) -> str:
+def make_finance_story(
+    finance_info: dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False
+) -> str:
     """Generate a story for just the finance section."""
     if skip_finance_details:
         return "Finance:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
