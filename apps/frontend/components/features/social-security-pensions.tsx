@@ -38,10 +38,13 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
   // Check if finance details are being skipped
   const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
 
-  // 1. Current Social Security Contributions (Streamlit style)
+  // 1. Current Social Security Contributions (Multiple countries support)
   const isContributing = getFormData("socialSecurityAndPensions.currentCountryContributions.isContributing") ?? false
-  const contributionCountry = getFormData("socialSecurityAndPensions.currentCountryContributions.country") ?? ""
-  const yearsOfContribution = getFormData("socialSecurityAndPensions.currentCountryContributions.yearsOfContribution") ?? 0
+  const contributions = getFormData("socialSecurityAndPensions.currentCountryContributions.details") ?? []
+  const [newContribution, setNewContribution] = useState({
+    country: "",
+    yearsOfContribution: 0
+  })
 
   // 2. Voluntary Pension Arrangements (Streamlit style)
   const isPlanning = getFormData("socialSecurityAndPensions.futurePensionContributions.isPlanning") ?? false
@@ -154,44 +157,96 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                 </div>
 
                 {isContributing && (
-                  <div className="grid md:grid-cols-2 gap-4 p-4 border rounded-lg bg-card">
-                    <div className="space-y-2">
-                      <Label>Country of contribution</Label>
-                      <Select
-                        value={contributionCountry}
-                        onValueChange={(value) => updateFormData("socialSecurityAndPensions.currentCountryContributions.country", value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select country" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {/* Use current residence as default if available */}
-                          {currentResidence && (
-                            <SelectItem value={currentResidence}>{currentResidence} (Current)</SelectItem>
-                          )}
-                          {countries.map((country) => (
-                            <SelectItem key={country} value={country}>
-                              {country}
-                            </SelectItem>
+                  <>
+                    {/* Add new contribution form */}
+                    <div className="grid md:grid-cols-2 gap-4 p-4 border rounded-lg bg-card">
+                      <div className="space-y-2">
+                        <Label>Country of contribution</Label>
+                        <Select
+                          value={newContribution.country}
+                          onValueChange={(value) => setNewContribution({...newContribution, country: value})}
+                        >
+                          <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {/* Use current residence as default if available */}
+                            {currentResidence && (
+                              <SelectItem value={currentResidence}>{currentResidence} (Current)</SelectItem>
+                            )}
+                            {countries.map((country) => (
+                              <SelectItem key={country} value={country}>
+                                {country}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground">Select country where you're contributing</p>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Total contribution years (including partial years)</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          max="50"
+                          step="0.5"
+                          value={newContribution.yearsOfContribution}
+                          onChange={(e) => setNewContribution({...newContribution, yearsOfContribution: parseFloat(e.target.value) || 0})}
+                          onFocus={(e) => e.target.select()}
+                          placeholder="0.0"
+                          className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600"
+                        />
+                        <p className="text-xs text-muted-foreground">Counts contributions to any national system, even if not continuous</p>
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={() => {
+                        if (newContribution.country && newContribution.yearsOfContribution > 0) {
+                          const contribution = {
+                            country: newContribution.country,
+                            yearsOfContribution: newContribution.yearsOfContribution
+                          }
+                          updateFormData("socialSecurityAndPensions.currentCountryContributions.details", [...contributions, contribution])
+                          setNewContribution({ country: "", yearsOfContribution: 0 })
+                        }
+                      }}
+                      disabled={!newContribution.country || newContribution.yearsOfContribution <= 0}
+                      className="w-full"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Social Security Contribution
+                    </Button>
+
+                    {/* Display existing contributions list */}
+                    {contributions.length > 0 && (
+                      <div className="space-y-4">
+                        <h4 className="font-medium">📊 Registered Social Security Contributions</h4>
+                        <div className="space-y-3">
+                          {contributions.map((contribution, index) => (
+                            <div key={index} className="flex items-center justify-between p-4 border rounded-lg bg-gray-800 dark:bg-gray-900">
+                              <div className="flex-1">
+                                <div className="font-medium">{contribution.country}</div>
+                                <div className="text-sm text-muted-foreground">
+                                  {contribution.yearsOfContribution} years of contributions
+                                </div>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  const updated = contributions.filter((_, i) => i !== index)
+                                  updateFormData("socialSecurityAndPensions.currentCountryContributions.details", updated)
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           ))}
-                        </SelectContent>
-                      </Select>
-                      <p className="text-xs text-muted-foreground">Select country where you're currently contributing</p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Total contribution years (including partial years)</Label>
-                      <Input
-                        type="number"
-                        min="0"
-                        max="50"
-                        step="0.5"
-                        value={yearsOfContribution}
-                        onChange={(e) => updateFormData("socialSecurityAndPensions.currentCountryContributions.yearsOfContribution", parseFloat(e.target.value) || 0)}
-                        placeholder="0.0"
-                      />
-                      <p className="text-xs text-muted-foreground">Counts contributions to any national system, even if not continuous</p>
-                    </div>
-                  </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </CardContent>
@@ -236,7 +291,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                             value={newPensionScheme.pensionType}
                             onValueChange={(value) => setNewPensionScheme({...newPensionScheme, pensionType: value})}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
                               <SelectValue placeholder="Select scheme type" />
                             </SelectTrigger>
                             <SelectContent>
@@ -257,6 +312,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                               value={newPensionScheme.otherPensionType}
                               onChange={(e) => setNewPensionScheme({...newPensionScheme, otherPensionType: e.target.value})}
                               placeholder="Enter scheme name"
+                              className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600"
                             />
                           </div>
                         )}
@@ -268,7 +324,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                               value={newPensionScheme.currency}
                               onValueChange={(value) => setNewPensionScheme({...newPensionScheme, currency: value})}
                             >
-                              <SelectTrigger>
+                              <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
                                 <SelectValue placeholder="Select currency" />
                               </SelectTrigger>
                               <SelectContent>
@@ -288,7 +344,9 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                               step="0.5"
                               value={newPensionScheme.contributionAmount}
                               onChange={(e) => setNewPensionScheme({...newPensionScheme, contributionAmount: parseFloat(e.target.value) || 0})}
+                              onFocus={(e) => e.target.select()}
                               placeholder="0.00"
+                              className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600"
                             />
                             <p className="text-xs text-muted-foreground">In local currency - include employer matches if applicable</p>
                           </div>
@@ -300,7 +358,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                             value={newPensionScheme.country}
                             onValueChange={(value) => setNewPensionScheme({...newPensionScheme, country: value})}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
                               <SelectValue placeholder="Select country" />
                             </SelectTrigger>
                             <SelectContent>
@@ -351,7 +409,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                         <h4 className="font-medium">📊 Registered Pension Schemes</h4>
                         <div className="space-y-3">
                           {pensionSchemes.map((scheme: any, idx: number) => (
-                            <div key={idx} className="p-4 border rounded-lg bg-card">
+                            <div key={idx} className="p-4 border rounded-lg bg-gray-800 dark:bg-gray-900">
                               <div className="flex justify-between items-start">
                                 <div className="flex-1">
                                   <h5 className="font-medium">Scheme {idx + 1}: {scheme.pensionType}</h5>
@@ -425,7 +483,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                             value={newExistingPlan.planType}
                             onValueChange={(value) => setNewExistingPlan({...newExistingPlan, planType: value})}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
                               <SelectValue placeholder="Select plan type" />
                             </SelectTrigger>
                             <SelectContent>
@@ -453,7 +511,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                               value={newExistingPlan.currency}
                               onValueChange={(value) => setNewExistingPlan({...newExistingPlan, currency: value})}
                             >
-                              <SelectTrigger>
+                              <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
                                 <SelectValue placeholder="Select currency" />
                               </SelectTrigger>
                               <SelectContent>
@@ -474,7 +532,9 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                               step="0.5"
                               value={newExistingPlan.currentValue}
                               onChange={(e) => setNewExistingPlan({...newExistingPlan, currentValue: parseFloat(e.target.value) || 0})}
+                              onFocus={(e) => e.target.select()}
                               placeholder="0.00"
+                              className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600"
                             />
                             <p className="text-xs text-muted-foreground">For DB plans, estimate transfer value</p>
                           </div>
@@ -486,7 +546,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                             value={newExistingPlan.country}
                             onValueChange={(value) => setNewExistingPlan({...newExistingPlan, country: value})}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
                               <SelectValue placeholder="Select country" />
                             </SelectTrigger>
                             <SelectContent>
@@ -528,7 +588,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
                         <h4 className="font-medium">📊 Registered Retirement Assets</h4>
                         <div className="space-y-3">
                           {existingPlans.map((plan: any, idx: number) => (
-                            <div key={idx} className="p-4 border rounded-lg bg-card">
+                            <div key={idx} className="p-4 border rounded-lg bg-gray-800 dark:bg-gray-900">
                               <div className="flex justify-between items-start">
                                 <div className="flex-1">
                                   <h5 className="font-medium">Asset {idx + 1}: {plan.planType}</h5>

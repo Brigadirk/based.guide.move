@@ -31,7 +31,26 @@ export const defaultFormData: FormData = {
   education: {
     previousDegrees: [],
     visaSkills: [],
-    learningInterests: []
+    workExperience: [],
+    professionalLicenses: [],
+    interestedInStudying: undefined,
+    schoolInterestDetails: "",
+    learningInterests: [],
+    schoolOffers: [],
+    militaryService: {
+      hasService: undefined,
+      country: "",
+      branch: "",
+      startDate: "",
+      endDate: "",
+      currentlyServing: false,
+      rank: "",
+      occupation: "",
+      securityClearance: "",
+      languages: "",
+      certifications: "",
+      leadership: ""
+    }
   },
   residencyIntentions: {
     destinationCountry: {

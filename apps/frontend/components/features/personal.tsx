@@ -622,6 +622,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       onChange={(e) =>
                         updateFormData("personalInformation.currentResidency.duration", e.target.value)
                       }
+                      onFocus={(e) => e.target.select()}
                       disabled={curStatus === "Citizen"}
                     />
                     {durationExceedsAge && (
@@ -1112,6 +1113,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       className="placeholder:!text-muted-foreground/60"
                       value={getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration") ?? ""}
                       onChange={(e) => updateFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration", e.target.value === "" ? "" : parseFloat(e.target.value))}
+                      onFocus={(e) => e.target.select()}
                     />
                   </div>
                   <div className="space-y-2">
@@ -1140,6 +1142,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             className={`placeholder:!text-muted-foreground/60 ${isInvalid ? 'border-red-500 focus:ring-red-500' : ''}`}
                             value={getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration") ?? ""}
                             onChange={(e) => updateFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration", e.target.value === "" ? "" : parseFloat(e.target.value))}
+                            onFocus={(e) => e.target.select()}
                           />
                           {isInvalid && (
                             <p className="text-sm text-red-600 dark:text-red-400">
@@ -1377,6 +1380,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                 onChange={(e) =>
                                   updateFormData("personalInformation.relocationPartnerInfo.currentResidency.duration", e.target.value)
                                 }
+                                onFocus={(e) => e.target.select()}
                                 disabled={partnerStatus === "Citizen"}
                               />
                           </div>
@@ -2222,6 +2226,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                   }
                                   updateDepList(updated)
                                 }}
+                                onFocus={(e) => e.target.select()}
                                 disabled={dependentStatus === "Citizen"}
                               />
                               {durationExceedsAge && (

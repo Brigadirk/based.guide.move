@@ -20,11 +20,13 @@ import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { useCurrencies } from "@/lib/hooks/use-currencies"
+import { getCountries } from "@/lib/utils/country-utils"
 
 export function FutureFinancialPlans({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
   const currencies = useCurrencies()
+  const countries = getCountries()
 
   // Check if finance details are being skipped
   const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
@@ -373,11 +375,21 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
                       </div>
                       <div className="space-y-2">
                         <Label>Country of Property</Label>
-                        <Input
+                        <Select
                           value={newPropertyTransaction.country}
-                          onChange={(e) => setNewPropertyTransaction({...newPropertyTransaction, country: e.target.value})}
-                          placeholder="Enter country"
-                        />
+                          onValueChange={(value) => setNewPropertyTransaction({...newPropertyTransaction, country: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {countries.map((country) => (
+                              <SelectItem key={country} value={country}>
+                                {country}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                     

@@ -93,13 +93,21 @@ export function transformFinanceForBackend(financeData: any): any {
   if (transformed.capitalGains?.futureSales) {
     transformed.capitalGains.futureSales = transformed.capitalGains.futureSales.map((sale: any) => {
       const fixed = { ...sale }
+      // Handle both surplusValue and expectedGain field names
       if (fixed.surplusValue !== undefined) {
         fixed.surplus_value = fixed.surplusValue
         delete fixed.surplusValue
+      } else if (fixed.expectedGain !== undefined) {
+        fixed.surplus_value = fixed.expectedGain
+        delete fixed.expectedGain
       }
+      // Handle holding time variations
       if (fixed.holdingTime !== undefined) {
         fixed.holding_time = fixed.holdingTime
         delete fixed.holdingTime
+      } else if (fixed.holdingPeriod !== undefined) {
+        fixed.holding_time = fixed.holdingPeriod
+        delete fixed.holdingPeriod
       }
       return fixed
     })

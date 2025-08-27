@@ -965,6 +965,7 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                         placeholder="12"
                         value={interestDraft.months}
                         onChange={(e) => setInterestDraft({...interestDraft, months: parseInt(e.target.value) || 0})}
+                        onFocus={(e) => e.target.select()}
                     />
                   </div>
                 </div>
@@ -978,6 +979,7 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                         placeholder="10"
                         value={interestDraft.hoursPerWeek}
                         onChange={(e) => setInterestDraft({...interestDraft, hoursPerWeek: parseInt(e.target.value) || 0})}
+                        onFocus={(e) => e.target.select()}
                     />
                   </div>
                   <div className="space-y-2">

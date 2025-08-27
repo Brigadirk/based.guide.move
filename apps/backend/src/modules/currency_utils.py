@@ -3,7 +3,7 @@ from functools import lru_cache
 from pathlib import Path
 
 # Single source of truth: Next.js data directory
-COUNTRY_INFO_PATH = Path(__file__).resolve().parents[2] / "frontend" / "data" / "country_info.json"
+COUNTRY_INFO_PATH = Path(__file__).resolve().parents[3] / "frontend" / "data" / "country_info.json"
 
 
 @lru_cache(maxsize=1)

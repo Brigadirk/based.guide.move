@@ -14,6 +14,7 @@ import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useCurrencies } from "@/lib/hooks/use-currencies"
+import { getCountries } from "@/lib/utils/country-utils"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Trash2, Plus, DollarSign, TrendingUp, Wallet, CreditCard, Target, Info } from "lucide-react"
 import { validateFinanceData } from "@/lib/utils/finance-validation"
@@ -169,10 +170,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
   )
 
   // Helper functions for form management
-  const getCountryOptions = () => [
-    "United States", "United Kingdom", "Canada", "Germany", "France", "Spain", 
-    "Italy", "Netherlands", "Australia", "New Zealand", "Japan", "Singapore", "Other"
-  ]
+  const getCountryOptions = () => getCountries()
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
@@ -601,6 +599,7 @@ function IncomeSourcesSection({ incomeSources, newIncomeSource, setNewIncomeSour
                     step="0.01"
                     value={newIncomeSource.amount}
                     onChange={(e) => setNewIncomeSource({...newIncomeSource, amount: parseFloat(e.target.value) || 0})}
+                    onFocus={(e) => e.target.select()}
                     placeholder="0.00"
                   />
                 </div>
@@ -988,6 +987,7 @@ function TotalWealthSection({ totalWealth, updateFormData, currencies, incomeSit
                     step="0.01"
                     value={tempWealth.total}
                     onChange={(e) => setTempWealth({...tempWealth, total: parseFloat(e.target.value) || 0})}
+                    onFocus={(e) => e.target.select()}
                     placeholder="0.00"
                   />
                 </div>
@@ -999,6 +999,7 @@ function TotalWealthSection({ totalWealth, updateFormData, currencies, incomeSit
                     step="0.01"
                     value={tempWealth.primaryResidence}
                     onChange={(e) => setTempWealth({...tempWealth, primaryResidence: parseFloat(e.target.value) || 0})}
+                    onFocus={(e) => e.target.select()}
                     placeholder="0.00"
                   />
                 </div>
@@ -1134,6 +1135,7 @@ function CapitalGainsSection({ capitalGains, newCapitalGain, setNewCapitalGain, 
                     step="0.01"
                     value={newCapitalGain.surplusValue}
                     onChange={(e) => setNewCapitalGain({...newCapitalGain, surplusValue: parseFloat(e.target.value) || 0})}
+                    onFocus={(e) => e.target.select()}
                     placeholder="0.00"
                   />
                 </div>
@@ -1316,6 +1318,7 @@ function LiabilitiesSection({ liabilities, newLiability, setNewLiability, update
                     step="0.01"
                     value={newLiability.amount}
                     onChange={(e) => setNewLiability({...newLiability, amount: parseFloat(e.target.value) || 0})}
+                    onFocus={(e) => e.target.select()}
                     placeholder="0.00"
                   />
                 </div>
@@ -1349,6 +1352,7 @@ function LiabilitiesSection({ liabilities, newLiability, setNewLiability, update
                     step="0.5"
                     value={newLiability.paybackYears}
                     onChange={(e) => setNewLiability({...newLiability, paybackYears: parseFloat(e.target.value) || 0})}
+                    onFocus={(e) => e.target.select()}
                     placeholder="0.0"
                   />
                   <p className="text-xs text-muted-foreground">How many years until this debt is fully paid off</p>
@@ -1362,6 +1366,7 @@ function LiabilitiesSection({ liabilities, newLiability, setNewLiability, update
                     step="0.1"
                     value={newLiability.interestRate}
                     onChange={(e) => setNewLiability({...newLiability, interestRate: parseFloat(e.target.value) || 0})}
+                    onFocus={(e) => e.target.select()}
                     placeholder="0.0"
                   />
                   <p className="text-xs text-muted-foreground">Annual interest rate on this debt</p>

@@ -210,6 +210,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                       step="1"
                   value={tempDuration}
                       onChange={(e) => updateFormData("residencyIntentions.destinationCountry.intendedTemporaryDurationOfStay", parseInt(e.target.value) || 0)}
+                      onFocus={(e) => e.target.select()}
                       placeholder="12"
                 />
                 <p className="text-sm text-muted-foreground">
@@ -772,6 +773,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                                     max="10"
                                     value={maxServiceYears}
                                     onChange={(e) => updateFormData("residencyIntentions.citizenshipPlans.militaryService.maxServiceYears", parseInt(e.target.value) || 2)}
+                                    onFocus={(e) => e.target.select()}
                                     placeholder="2"
                                   />
                                 </div>
@@ -809,6 +811,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                                       min="0"
                                       value={investmentAmount}
                                       onChange={(e) => updateFormData("residencyIntentions.citizenshipPlans.investment.amount", parseInt(e.target.value) || 0)}
+                                      onFocus={(e) => e.target.select()}
                                       placeholder="0"
                                     />
                                   </div>
@@ -865,6 +868,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                                       min="0"
                                       value={donationAmount}
                                       onChange={(e) => updateFormData("residencyIntentions.citizenshipPlans.donation.amount", parseInt(e.target.value) || 0)}
+                                      onFocus={(e) => e.target.select()}
                                       placeholder="0"
                                     />
                                   </div>
