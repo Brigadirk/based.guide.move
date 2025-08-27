@@ -16,7 +16,7 @@ from datetime import datetime
 from typing import Any
 
 from modules.currency_utils import country_to_currency
-from services.exchange_rate_service import convert, _latest_snapshot_file
+from services.exchange_rate_service import _latest_snapshot_file, convert
 
 
 def _get_exchange_rate_date() -> str:

@@ -1037,12 +1037,8 @@ export function Education({ onComplete }: { onComplete: () => void }) {
           const ri = getFormData('residencyIntentions') || {}
           // Temporarily call the API directly to ensure the payload includes both
           try {
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const { apiClient } = require('@/lib/api-client')
-            const res = await apiClient.getEducationStory(edu, ri)
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const { useSectionInfo } = require('@/lib/hooks/use-section-info')
-            // Fallback: show via modal
+            // Note: apiClient import would need to be added at the top if needed
+            // For now, just show the section info modal
             showSectionInfo('education')
           } catch {
             showSectionInfo('education')

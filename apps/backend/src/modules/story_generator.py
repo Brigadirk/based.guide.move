@@ -12,7 +12,7 @@ from typing import Any
 
 from modules.currency_utils import country_to_currency
 from modules.eu_utils import can_move_within_eu, has_eu_citizenship, is_eu_country
-from services.exchange_rate_service import convert, _latest_snapshot_file
+from services.exchange_rate_service import _latest_snapshot_file, convert
 
 LINE_BREAK = "\n\n"
 
@@ -48,7 +48,7 @@ def _format_money(amount: float, currency: str, dest_currency: str) -> str:
     try:
         dest_up = dest_currency.upper()
         cur_up = currency.upper()
-        
+
         # Always convert to destination currency and show both with calculation date
         if dest_up != cur_up:
             conv_dest = convert(amount, currency, dest_currency)
@@ -71,7 +71,7 @@ def _format_money_with_country(amount: float, currency: str, dest_currency: str,
         dest_up = dest_currency.upper()
         cur_up = currency.upper()
         country_text = country or "various"
-        
+
         # Always convert to destination currency and show both with calculation date and country
         if dest_up != cur_up:
             conv_dest = convert(amount, currency, dest_currency)
@@ -754,7 +754,7 @@ def residency_section(
     # Centre of life ties - always include for citizens and EU citizens
     col = ri.get("centerOfLife", {})
     ties_text = col.get("tiesDescription")
-    
+
     # Check if user is citizen or EU citizen for the destination country
     user_is_citizen_or_eu = False
     if personal_info and country != "an unspecified country":
@@ -762,7 +762,7 @@ def residency_section(
         user_is_citizen = any(nat.get("country") == country for nat in user_nationalities)
         user_has_eu_freedom = can_move_within_eu(user_nationalities, country)
         user_is_citizen_or_eu = user_is_citizen or user_has_eu_freedom
-    
+
     if col.get("maintainsSignificantTies"):
         sentences.append(
             "They maintain significant ties to their current country ("
@@ -828,13 +828,13 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
 
         # Always show summary for current sources
         total_dest = convert(total_usd, "USD", dest_currency)
-        
+
         # Build the summary line with detailed breakdown
         if len(current_sources) == 1:
             src = current_sources[0]
             cat = src.get("category", "Unknown")
             country = src.get("country", "")
-            
+
             # Get job title and employer for employment
             if cat == "Employment" and src.get("fields"):
                 fields = src.get("fields", {})
@@ -850,10 +850,7 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
                     job_desc = f"{cat} income"
             else:
                 job_desc = f"{cat} income"
-            
-            # Format the amount with the new currency format
-            amt_formatted = _format_money(src.get("amount", 0), src.get("currency", "USD"), dest_currency)
-            
+
             # Format with country integrated into the currency format
             amt_with_country = _format_money_with_country(src.get("amount", 0), src.get("currency", "USD"), dest_currency, country)
             lines.append(
@@ -864,7 +861,7 @@ def _summarise_income_sources(sources: list[dict[str, Any]], dest_currency: str)
                 f"They have {len(current_sources)} current income sources totalling "
                 f"{total_dest:,.0f} {dest_currency.upper()} per year, which will continue after moving."
             )
-            
+
             # Add individual breakdowns for multiple sources
             for src in current_sources:
                 cat = src.get("category", "Unknown")
@@ -1193,7 +1190,7 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
         total = tw.get("total", 0)
         # Handle both camelCase (legacy) and snake_case (transformed) field names
         primary_residence = tw.get("primary_residence", tw.get("primaryResidence", 0))
-        
+
         if total > 0:
             parts.append(
                 f"User has {_format_money(total, tw.get('currency', 'USD'), dest_currency)} net worth; "
@@ -1549,7 +1546,7 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
             start_date = exp.get("startDate", "")
             end_date = exp.get("endDate", "")
             current = exp.get("current", False)
-            
+
             date_range = ""
             if start_date:
                 start_year = start_date[:4] if len(start_date) >= 4 else start_date
@@ -1560,7 +1557,7 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                     date_range = f" ({start_year} - {end_year})"
                 else:
                     date_range = f" (started {start_year})"
-            
+
             sentences.append(f"• {position} at {company}{date_range}")
         if exp_count > 3:
             sentences.append(f"...and {exp_count - 3} additional work experiences.")
@@ -1575,7 +1572,7 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
             issuing_body = license_item.get("issuingBody", "")
             license_number = license_item.get("licenseNumber", "")
             expiry_date = license_item.get("expiryDate", "")
-            
+
             license_desc = license_name
             if issuing_body:
                 license_desc += f" from {issuing_body}"
@@ -1584,7 +1581,7 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
             if expiry_date:
                 expiry_year = expiry_date[:4] if len(expiry_date) >= 4 else expiry_date
                 license_desc += f" - expires {expiry_year}"
-            
+
             sentences.append(f"• {license_desc}")
         if license_count > 3:
             sentences.append(f"...and {license_count - 3} additional licenses.")
@@ -1610,7 +1607,7 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
             months = interest.get("months", 0)
             hours_per_week = interest.get("hoursPerWeek", 0)
             funding = interest.get("fundingStatus", "")
-            
+
             interest_desc = f"{skill} ({status})"
             if institute:
                 interest_desc += f" at {institute}"
@@ -1620,7 +1617,7 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                 interest_desc += f", {hours_per_week} hours/week"
             if funding:
                 interest_desc += f" ({funding})"
-            
+
             sentences.append(f"• {interest_desc}")
         if interest_count > 3:
             sentences.append(f"...and {interest_count - 3} additional learning interests.")
@@ -1635,14 +1632,14 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
             program = offer.get("program", "Unspecified program")
             start_date = offer.get("startDate", "")
             funding = offer.get("fundingStatus", "")
-            
+
             offer_desc = f"{program} at {school}"
             if start_date:
                 start_year = start_date[:4] if len(start_date) >= 4 else start_date
                 offer_desc += f" (starting {start_year})"
             if funding:
                 offer_desc += f" - {funding}"
-            
+
             sentences.append(f"• {offer_desc}")
         if offer_count > 3:
             sentences.append(f"...and {offer_count - 3} additional offers.")
@@ -1661,9 +1658,9 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
         languages = military.get("languages", "")
         certifications = military.get("certifications", "")
         leadership = military.get("leadership", "")
-        
+
         military_desc = f"They have military service experience with the {branch} in {country}"
-        
+
         # Add dates
         if start_date:
             start_year = start_date[:4] if len(start_date) >= 4 else start_date
@@ -1674,10 +1671,10 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                 military_desc += f" ({start_year} - {end_year})"
             else:
                 military_desc += f" (started {start_year})"
-        
+
         military_desc += "."
         sentences.append(military_desc)
-        
+
         # Add additional military details
         if rank:
             sentences.append(f"Military rank: {rank}.")
