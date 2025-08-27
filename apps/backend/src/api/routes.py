@@ -182,7 +182,7 @@ def get_finance_story(request: FinanceRequest, api_key: str = Depends(verify_api
                 cg = request.finance["capitalGains"]
                 print(f"DEBUG: capitalGains type: {type(cg)}, value: {cg}")
 
-        story = make_finance_story(request.finance, dest_currency)
+        story = make_finance_story(request.finance, dest_currency, request.skip_finance_details)
         return {"status": "success", "section": "finance", "story": story}
     except Exception as e:
         import traceback

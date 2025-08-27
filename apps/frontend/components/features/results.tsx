@@ -60,7 +60,7 @@ export function Results() {
         .trim()
       
       // Create the comprehensive prompt
-      const prompt = `As an expert immigration lawyer and tax advisor, please analyze the following individual's profile and provide comprehensive VISA and TAX guidance for their relocation plans.
+      const prompt = `As an expert immigration lawyer and tax advisor, please analyze the following individual's profile and provide comprehensive VISA and TAX guidance for their relocation plans. Include exactly how much tax they would pay in their first year of living there, with some guesstimates of how this could go in later years. Additionally suggest what visas they may want to apply for and why. 
 
 INDIVIDUAL PROFILE:
 ${cleanStory}

@@ -125,6 +125,7 @@ class FinanceRequest(BaseModel):
 
     finance: dict
     destination_country: str | None = None
+    skip_finance_details: bool | None = False
 
     class Config:
         extra = "allow"

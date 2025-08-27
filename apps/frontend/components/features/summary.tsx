@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -54,6 +54,26 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
   // State for individual section stories
   const [sectionStories, setSectionStories] = useState<{[key: string]: string}>({})
   const [loadingSections, setLoadingSections] = useState<{[key: string]: boolean}>({})
+  
+  // Track skip finance details state to clear cache when it changes
+  const skipFinanceDetails = (formData.finance as any)?.skipDetails ?? false
+  const [prevSkipFinanceDetails, setPrevSkipFinanceDetails] = useState(skipFinanceDetails)
+  
+  // Clear financial section stories when skip state changes
+  useEffect(() => {
+    if (skipFinanceDetails !== prevSkipFinanceDetails) {
+      setSectionStories(prev => {
+        const updated = { ...prev }
+        // Clear all financial section stories
+        delete updated.finance
+        delete updated.socialSecurity
+        delete updated.taxDeductions
+        delete updated.futurePlans
+        return updated
+      })
+      setPrevSkipFinanceDetails(skipFinanceDetails)
+    }
+  }, [skipFinanceDetails, prevSkipFinanceDetails])
 
   // Function to fetch individual section story
   const fetchSectionStory = async (sectionId: string) => {
@@ -67,7 +87,6 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
       const destData = residencyInfo?.destinationCountry
       const destCountry = typeof destData === 'object' ? destData?.country : residencyInfo?.intendedCountry
       const destRegion = typeof destData === 'object' ? destData?.region : undefined
-      const skipFinanceDetails = (formData.finance as any)?.skipDetails ?? false
       
       switch (sectionId) {
         case "destination":
@@ -94,7 +113,7 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
           break
         case "finance":
           const finance = formData.finance || {}
-          response = await apiClient.getFinanceStory(finance, destCountry)
+          response = await apiClient.getFinanceStory(finance, destCountry, skipFinanceDetails)
           break
         case "socialSecurity":
           const socialSecurity = formData.socialSecurityAndPensions || {}

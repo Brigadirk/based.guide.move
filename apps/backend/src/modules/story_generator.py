@@ -1443,7 +1443,19 @@ def additional_section(add: dict[str, Any]) -> str:
         segs.append(f"General notes: {notes}.")
     if special:
         for sec in special[:2]:
-            segs.append(f"User note: {sec[:200]}{'…' if len(sec)>200 else ''}")
+            # Handle both string format (legacy) and object format (current)
+            if isinstance(sec, dict):
+                theme = sec.get("theme", "")
+                content = sec.get("content", "")
+                if theme and content:
+                    content_preview = content[:200] + ('…' if len(content) > 200 else '')
+                    segs.append(f"User note on {theme}: {content_preview}")
+                elif content:
+                    content_preview = content[:200] + ('…' if len(content) > 200 else '')
+                    segs.append(f"User note: {content_preview}")
+            elif isinstance(sec, str):
+                # Legacy string format
+                segs.append(f"User note: {sec[:200]}{'…' if len(sec)>200 else ''}")
         if len(special) > 2:
             segs.append(f"…and {len(special)-2} more note sections.")
     return " ".join(segs) if segs else "User has not submitted any information on this section."
@@ -1935,8 +1947,10 @@ def make_residency_intentions_story(residency_info: dict[str, Any]) -> str:
     return f"Residency Plans:\n{residency_section(residency_info)}"
 
 
-def make_finance_story(finance_info: dict[str, Any], dest_currency: str = "USD") -> str:
+def make_finance_story(finance_info: dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False) -> str:
     """Generate a story for just the finance section."""
+    if skip_finance_details:
+        return "Finance:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
     return f"Finance:\n{finance_section(finance_info, dest_currency)}"
 
 

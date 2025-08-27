@@ -55,7 +55,7 @@ export function useSectionInfo() {
           
         case "finance":
           const finance = getFormData("finance") || {}
-          response = await apiClient.getFinanceStory(finance, destinationCountry)
+          response = await apiClient.getFinanceStory(finance, destinationCountry, skipFinanceDetails)
           sectionTitle = "Financial Information Summary"
           break
           
@@ -175,6 +175,7 @@ Please try again in a moment.`)
     
     try {
       const destinationCountry = getFormData("residencyIntentions.destinationCountry.country")
+      const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
       
       // Helper function to check if section has data
       const getSectionData = (section: string) => {
@@ -192,10 +193,10 @@ Please try again in a moment.`)
         { key: "personalInformation", name: "Personal Information", apiCall: () => apiClient.getPersonalInformationStory(getSectionData("personalInformation").data) },
         { key: "education", name: "Education & Skills", apiCall: () => apiClient.getEducationStory(getSectionData("education").data, getSectionData("residencyIntentions").data) },
         { key: "residencyIntentions", name: "Residency Intentions", apiCall: () => apiClient.getResidencyIntentionsStory(getSectionData("residencyIntentions").data) },
-        { key: "finance", name: "Financial Information", apiCall: () => apiClient.getFinanceStory(getSectionData("finance").data, destinationCountry) },
-        { key: "socialSecurityAndPensions", name: "Social Security & Pensions", apiCall: () => apiClient.getSocialSecurityStory(getSectionData("socialSecurityAndPensions").data, destinationCountry) },
-        { key: "taxDeductionsAndCredits", name: "Tax Deductions & Credits", apiCall: () => apiClient.getTaxDeductionsStory(getSectionData("taxDeductionsAndCredits").data, destinationCountry) },
-        { key: "futureFinancialPlans", name: "Future Financial Plans", apiCall: () => apiClient.getFutureFinancialPlansStory(getSectionData("futureFinancialPlans").data, destinationCountry) },
+        { key: "finance", name: "Financial Information", apiCall: () => apiClient.getFinanceStory(getSectionData("finance").data, destinationCountry, skipFinanceDetails) },
+        { key: "socialSecurityAndPensions", name: "Social Security & Pensions", apiCall: () => apiClient.getSocialSecurityStory(getSectionData("socialSecurityAndPensions").data, destinationCountry, skipFinanceDetails) },
+        { key: "taxDeductionsAndCredits", name: "Tax Deductions & Credits", apiCall: () => apiClient.getTaxDeductionsStory(getSectionData("taxDeductionsAndCredits").data, destinationCountry, skipFinanceDetails) },
+        { key: "futureFinancialPlans", name: "Future Financial Plans", apiCall: () => apiClient.getFutureFinancialPlansStory(getSectionData("futureFinancialPlans").data, destinationCountry, skipFinanceDetails) },
         { key: "additionalInformation", name: "Additional Information", apiCall: () => apiClient.getAdditionalInformationStory(getSectionData("additionalInformation").data) }
       ]
       
