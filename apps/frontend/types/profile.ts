@@ -62,6 +62,8 @@ export interface Dependent {
     status?: string
     duration?: string
   }
+  name?: string
+  age?: number
 }
 
 export interface EducationInformation {
@@ -99,6 +101,7 @@ export interface FinancialInformation {
   capitalGains: {
     futureSales: CapitalGain[]
   }
+  assets?: any[]
   liabilities: Liability[]
   skipDetails?: boolean
 }
@@ -110,6 +113,8 @@ export interface IncomeSource {
   amount: number
   currency: string
   continueInDestination: boolean
+  type?: string
+  frequency?: string
 }
 
 export interface ExpectedEmployment {
@@ -140,13 +145,16 @@ export interface Liability {
   currency: string
   paybackYears: number
   interestRate: number
+  type?: string
 }
 
 export interface Profile {
+  id?: string
   nickname?: string
   avatar?: string
   personalInformation?: PersonalInformation
   financialInformation?: FinancialInformation
+  partner?: PersonalInformation
   dependents?: Dependent[]
   assets?: any[]
   liabilities?: Liability[]

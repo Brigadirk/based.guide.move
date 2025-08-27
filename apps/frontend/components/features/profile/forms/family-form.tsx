@@ -41,19 +41,52 @@ type PartnerInfo = {
 export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
   const countries = getCountries()
   
+  // Get a reasonable default birth date (30 years ago) for better UX (user & partner)
+  const getDefaultBirthDate = () => {
+    const today = new Date()
+    const defaultYear = today.getFullYear() - 30
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    return `${defaultYear}-${month}-${day}`
+  }
+
+  // Default birth date for dependents (10 years ago)
+  const getDependentDefaultBirthDate = () => {
+    const today = new Date()
+    const defaultYear = today.getFullYear() - 10
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    return `${defaultYear}-${month}-${day}`
+  }
+  
   const [hasPartner, setHasPartner] = useState(Boolean(data.partner))
   const [partnerInfo] = useState<PartnerInfo>({
     personalInformation: {
+      firstName: "",
+      lastName: "",
       dateOfBirth: "",
-      nationalities: [{ country: "" }],
+      nationalities: [{ country: "", willingToRenounce: false }],
       maritalStatus: "Single",
       currentResidency: {
         country: "",
-        status: "Citizen"
-      }
+        status: "Citizen",
+        duration: ""
+      },
+      hasPartner: false,
+      dependents: []
     },
     financialInformation: {
+      incomeSituation: "continuing_income",
       incomeSources: [],
+      expectedEmployment: [],
+      totalWealth: {
+        currency: "USD",
+        total: 0,
+        primaryResidence: 0
+      },
+      capitalGains: {
+        futureSales: []
+      },
       assets: [],
       liabilities: []
     }
@@ -65,21 +98,29 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
 
   const handleUpdate = (partner: Profile['partner'] | undefined, newDependents: Dependent[]) => {
     onUpdate({
-      partner: hasPartner ? {
-        personalInformation: partnerInfo.personalInformation,
-        financialInformation: partnerInfo.financialInformation
-      } : undefined,
+      partner: hasPartner ? partnerInfo.personalInformation : undefined,
       dependents: newDependents,
       personalInformation: {
         dateOfBirth: data.personalInformation?.dateOfBirth || "",
-        nationalities: data.personalInformation?.nationalities || [{ country: "" }],
+        nationalities: data.personalInformation?.nationalities || [{ country: "", willingToRenounce: false }],
         maritalStatus,
         currentResidency: data.personalInformation?.currentResidency || {
           country: "",
-          status: "Citizen"
-        }
+          status: "Citizen",
+          duration: ""
+        },
+        firstName: "",
+        lastName: "",
+        hasPartner: false,
+        dependents: []
       }
     })
+  }
+
+  const updatePartnerInfo = (updatedPartnerInfo: PartnerInfo) => {
+    // Update the partner info state and call the main update
+    Object.assign(partnerInfo, updatedPartnerInfo)
+    handleUpdate(hasPartner ? partnerInfo.personalInformation : undefined, dependents)
   }
 
   const togglePartner = (enabled: boolean) => {
@@ -90,7 +131,25 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
   }
 
   const handleAddDependent = () => {
-    const newDependents = [...dependents, { name: "", relationship: "", age: 0 }]
+    const newDependent: Dependent = {
+      relationship: "",
+      relationshipDetails: {
+        biologicalRelationTo: "user",
+        legalRelationTo: "user",
+        custodialRelationTo: "user"
+      },
+      dateOfBirth: "",
+      student: false,
+      nationalities: [{ country: "", willingToRenounce: false }],
+      currentResidency: {
+        country: "",
+        status: "Citizen",
+        duration: ""
+      },
+      name: "",
+      age: 0
+    }
+    const newDependents = [...dependents, newDependent]
     setDependents(newDependents)
     handleUpdate(data.partner, newDependents)
   }
@@ -147,13 +206,25 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                       value={partnerInfo.personalInformation.dateOfBirth}
                       max={new Date().toISOString().split('T')[0]}
                       onChange={(e) => {
-                        handleUpdate({
+                        updatePartnerInfo({
                           ...partnerInfo,
                           personalInformation: {
                             ...partnerInfo.personalInformation,
                             dateOfBirth: e.target.value
                           }
-                        }, dependents)
+                        })
+                      }}
+                      onFocus={(e) => {
+                        // If the field is empty, set it to a reasonable default when focused
+                        if (!partnerInfo.personalInformation.dateOfBirth) {
+                          updatePartnerInfo({
+                            ...partnerInfo,
+                            personalInformation: {
+                              ...partnerInfo.personalInformation,
+                              dateOfBirth: getDefaultBirthDate()
+                            }
+                          })
+                        }
                       }}
                     />
                   </div>
@@ -163,13 +234,13 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                     <Select
                       value={partnerInfo.personalInformation.nationalities[0].country}
                       onValueChange={(value) => {
-                        handleUpdate({
+                        updatePartnerInfo({
                           ...partnerInfo,
                           personalInformation: {
                             ...partnerInfo.personalInformation,
-                            nationalities: [{ country: value }]
+                            nationalities: [{ country: value, willingToRenounce: false }]
                           }
-                        }, dependents)
+                        })
                       }}
                     >
                       <SelectTrigger>
@@ -192,7 +263,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                     <Select
                       value={partnerInfo.personalInformation.currentResidency.country}
                       onValueChange={(value) => {
-                        handleUpdate({
+                        updatePartnerInfo({
                           ...partnerInfo,
                           personalInformation: {
                             ...partnerInfo.personalInformation,
@@ -201,7 +272,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                               country: value
                             }
                           }
-                        }, dependents)
+                        })
                       }}
                     >
                       <SelectTrigger>
@@ -222,7 +293,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                     <Select
                       value={partnerInfo.personalInformation.currentResidency.status}
                       onValueChange={(value: ResidencyStatus) => {
-                        handleUpdate({
+                        updatePartnerInfo({
                           ...partnerInfo,
                           personalInformation: {
                             ...partnerInfo.personalInformation,
@@ -231,7 +302,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                               status: value
                             }
                           }
-                        }, dependents)
+                        })
                       }}
                     >
                       <SelectTrigger>
@@ -258,12 +329,16 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                       size="sm"
                       onClick={() => {
                         const newIncomeSource: IncomeSource = {
-                          type: "",
+                          category: "Employment",
+                          fields: {},
+                          country: "",
                           amount: 0,
                           currency: "USD",
+                          continueInDestination: false,
+                          type: "",
                           frequency: "yearly"
                         }
-                        handleUpdate({
+                        updatePartnerInfo({
                           ...partnerInfo,
                           financialInformation: {
                             ...partnerInfo.financialInformation,
@@ -272,7 +347,7 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                               newIncomeSource
                             ]
                           }
-                        }, dependents)
+                        })
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
@@ -291,13 +366,13 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                               ...source, 
                               type: value
                             }
-                            handleUpdate({
+                            updatePartnerInfo({
                               ...partnerInfo,
                               financialInformation: {
                                 ...partnerInfo.financialInformation,
                                 incomeSources: updated
                               }
-                            }, dependents)
+                            })
                           }}
                         >
                           <SelectTrigger>
@@ -322,13 +397,13 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                               ...source, 
                               amount: Number(e.target.value)
                             }
-                            handleUpdate({
+                            updatePartnerInfo({
                               ...partnerInfo,
                               financialInformation: {
                                 ...partnerInfo.financialInformation,
                                 incomeSources: updated
                               }
-                            }, dependents)
+                            })
                           }}
                           placeholder="Amount"
                         />
@@ -342,13 +417,13 @@ export function FamilyForm({ data, onUpdate }: FamilyFormProps) {
                               ...source, 
                               currency: value
                             }
-                            handleUpdate({
+                            updatePartnerInfo({
                               ...partnerInfo,
                               financialInformation: {
                                 ...partnerInfo.financialInformation,
                                 incomeSources: updated
                               }
-                            }, dependents)
+                            })
                           }}
                         >
                           <SelectTrigger>

@@ -62,7 +62,12 @@ async function makeBackendRequest(request: NextRequest, path: string, method: st
   };
 
   // Always include API key for backend requests
-  const apiKey = process.env.API_KEY;
+  // Priority: explicit header override, then env: PRODUCTION > STAGING > LOCAL
+  const headerKey = request.headers.get('x-backend-api-key') || request.headers.get('X-Backend-Api-Key')
+  const apiKey = headerKey ||
+    process.env.PRODUCTION_API_KEY ||
+    process.env.STAGING_API_KEY ||
+    process.env.LOCAL_API_KEY;
   if (apiKey) {
     headers['X-API-Key'] = apiKey;
     console.log(`[Backend-Tester API Proxy] Using API key for ${method} ${path}`);

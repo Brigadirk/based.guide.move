@@ -34,15 +34,30 @@ export function ProfileForm({ profile = {}, onSubmit, submitLabel = "Save Profil
     avatar: profile.avatar || "",
     personalInformation: profile.personalInformation || {
       dateOfBirth: "",
-      nationalities: [{ country: "" }],
+      nationalities: [{ country: "", willingToRenounce: false }],
       maritalStatus: "Single",
       currentResidency: {
         country: "",
-        status: "Citizen"
-      }
+        status: "Citizen",
+        duration: ""
+      },
+      firstName: "",
+      lastName: "",
+      hasPartner: false,
+      dependents: []
     },
     financialInformation: profile.financialInformation || {
+      incomeSituation: "continuing_income",
       incomeSources: [],
+      expectedEmployment: [],
+      totalWealth: {
+        currency: "USD",
+        total: 0,
+        primaryResidence: 0
+      },
+      capitalGains: {
+        futureSales: []
+      },
       assets: [],
       liabilities: []
     },
@@ -73,8 +88,8 @@ export function ProfileForm({ profile = {}, onSubmit, submitLabel = "Save Profil
 
   const getCurrentStepValidation = () => {
     const validation = validateProfile(formData)
-    const stepId = STEPS[currentStep].id as keyof ValidationStatus['sections']
-    return validation.sections[stepId]
+    const stepId = STEPS[currentStep].id
+    return validation.sections?.[stepId] || { isValid: true, errors: [], warnings: [] }
   }
 
   const CurrentStepComponent = STEPS[currentStep].component

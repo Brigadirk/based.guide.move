@@ -40,7 +40,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
     alimonyType: "Paid",
     country: "",
     agreementDate: "",
-    amount: 0,
+    amount: "",
     currency: "USD"
   })
 
@@ -48,7 +48,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
   const [newDeduction, setNewDeduction] = useState({
     type: "Charitable Donations",
     customType: "",
-    amount: 0,
+    amount: "",
     currency: "USD",
     country: ""
   })
@@ -225,7 +225,8 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                           min="0"
                           step="500.0"
                           value={newAlimony.amount}
-                          onChange={(e) => setNewAlimony({...newAlimony, amount: parseFloat(e.target.value) || 0})}
+                          onChange={(e) => setNewAlimony({...newAlimony, amount: e.target.value})}
+                          onFocus={(e) => e.target.select()}
                           placeholder="0.00"
                         />
                         <p className="text-xs text-muted-foreground">Yearly spousal support amount</p>
@@ -252,10 +253,11 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
 
                     <Button 
                       onClick={() => {
-                        if (newAlimony.amount > 0 && newAlimony.country && newAlimony.agreementDate) {
+                        const amount = parseFloat(newAlimony.amount) || 0
+                        if (amount > 0 && newAlimony.country && newAlimony.agreementDate) {
                           const entry = {
                             type: `Alimony ${newAlimony.alimonyType}`,
-                            amount: newAlimony.amount,
+                            amount: amount,
                             currency: newAlimony.currency,
                             country: newAlimony.country,
                             date: newAlimony.agreementDate,
@@ -267,18 +269,60 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                             alimonyType: "Paid",
                             country: "",
                             agreementDate: "",
-                            amount: 0,
+                            amount: "",
                             currency: "USD"
                           })
                         }
                       }}
-                      disabled={!newAlimony.amount || !newAlimony.country || !newAlimony.agreementDate}
+                      disabled={!newAlimony.amount || parseFloat(newAlimony.amount) <= 0 || !newAlimony.country || !newAlimony.agreementDate}
                       className="w-full"
                     >
                       💾 Add Alimony Entry
                     </Button>
                   </div>
                 </div>
+
+                {/* Display alimony entries */}
+                {deductions.filter(d => d.type.includes('Alimony')).length > 0 && (
+                  <div className="space-y-4">
+                    <h4 className="font-medium">📊 Registered Alimony/Spousal Support</h4>
+                    <div className="space-y-3">
+                      {deductions.filter(d => d.type.includes('Alimony')).map((alimony: any, idx: number) => (
+                        <div key={idx} className="p-4 border rounded-lg bg-gray-800 dark:bg-gray-900">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <h5 className="font-medium">{alimony.type}</h5>
+                              <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
+                                <div>
+                                  <p><strong>Amount:</strong> {alimony.currency} {alimony.amount?.toLocaleString()}</p>
+                                </div>
+                                <div>
+                                  <p><strong>Country:</strong> {alimony.country}</p>
+                                </div>
+                                <div>
+                                  <p><strong>Agreement Date:</strong> {alimony.date}</p>
+                                </div>
+                                <div>
+                                  <p><strong>Notes:</strong> {alimony.notes}</p>
+                                </div>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const updated = deductions.filter((_, i) => i !== deductions.findIndex(d => d === alimony))
+                                updateFormData("taxDeductionsAndCredits.potentialDeductions", updated)
+                              }}
+                            >
+                              🗑️
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -343,7 +387,8 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                           min="0"
                           step="0.5"
                           value={newDeduction.amount}
-                          onChange={(e) => setNewDeduction({...newDeduction, amount: parseFloat(e.target.value) || 0})}
+                          onChange={(e) => setNewDeduction({...newDeduction, amount: e.target.value})}
+                          onFocus={(e) => e.target.select()}
                           placeholder="0.00"
                         />
                       </div>
@@ -390,10 +435,11 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
 
                     <Button 
                       onClick={() => {
-                        if (newDeduction.amount > 0 && newDeduction.country) {
+                        const amount = parseFloat(newDeduction.amount) || 0
+                        if (amount > 0 && newDeduction.country) {
                           const entry = {
                             type: newDeduction.type !== "Other" ? newDeduction.type : newDeduction.customType,
-                            amount: newDeduction.amount,
+                            amount: amount,
                             currency: newDeduction.currency,
                             country: newDeduction.country
                           }
@@ -402,13 +448,13 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                           setNewDeduction({
                             type: "Charitable Donations",
                             customType: "",
-                            amount: 0,
+                            amount: "",
                             currency: "USD",
                             country: ""
                           })
                         }
                       }}
-                      disabled={!newDeduction.amount || !newDeduction.country || 
+                      disabled={!newDeduction.amount || parseFloat(newDeduction.amount) <= 0 || !newDeduction.country || 
                                (newDeduction.type === "Other" && !newDeduction.customType)}
                       className="w-full"
                     >
@@ -417,13 +463,13 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                   </div>
                 </div>
 
-                {/* Display existing deductions */}
-                {deductions.length > 0 && (
+                {/* Display existing deductions (excluding alimony) */}
+                {deductions.filter(d => !d.type.includes('Alimony')).length > 0 && (
                   <div className="space-y-4">
                     <h4 className="font-medium">📊 Registered Deductions & Credits</h4>
                     <div className="space-y-3">
-                      {deductions.map((deduction: any, idx: number) => (
-                        <div key={idx} className="p-4 border rounded-lg bg-card">
+                      {deductions.filter(d => !d.type.includes('Alimony')).map((deduction: any, idx: number) => (
+                        <div key={idx} className="p-4 border rounded-lg bg-gray-800 dark:bg-gray-900">
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
                               <h5 className="font-medium">Item {idx + 1}: {deduction.type}</h5>

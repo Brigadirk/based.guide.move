@@ -27,12 +27,17 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
   const [info, setInfo] = useState<PersonalInformation>(
     data.personalInformation || {
       dateOfBirth: "",
-      nationalities: [{ country: "" }],
+      nationalities: [{ country: "", willingToRenounce: false }],
       maritalStatus: "Single",
       currentResidency: {
         country: "",
-        status: "Citizen"
-      }
+        status: "Citizen",
+        duration: ""
+      },
+      firstName: "",
+      lastName: "",
+      hasPartner: false,
+      dependents: []
     }
   )
 
@@ -61,7 +66,7 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
   }
 
   const addNationality = () => {
-    const updated = [...info.nationalities, { country: "" }]
+    const updated = [...info.nationalities, { country: "", willingToRenounce: false }]
     handleChange("nationalities", updated)
   }
 
@@ -72,7 +77,7 @@ export function PersonalInfoForm({ data, onUpdate }: PersonalInfoFormProps) {
 
   const handleNationalitySelect = (index: number, country: Country) => {
     const updated = [...info.nationalities]
-    updated[index] = { country: country.id }
+    updated[index] = { country: country.id, willingToRenounce: false }
     handleChange("nationalities", updated)
   }
 

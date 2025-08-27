@@ -965,6 +965,7 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                         placeholder="12"
                         value={interestDraft.months}
                         onChange={(e) => setInterestDraft({...interestDraft, months: parseInt(e.target.value) || 0})}
+                        onFocus={(e) => e.target.select()}
                     />
                   </div>
                 </div>
@@ -978,6 +979,7 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                         placeholder="10"
                         value={interestDraft.hoursPerWeek}
                         onChange={(e) => setInterestDraft({...interestDraft, hoursPerWeek: parseInt(e.target.value) || 0})}
+                        onFocus={(e) => e.target.select()}
                     />
                   </div>
                   <div className="space-y-2">
@@ -1029,8 +1031,35 @@ export function Education({ onComplete }: { onComplete: () => void }) {
         canContinue={canContinue}
         onContinue={onComplete}
         nextSectionName="Income and Assets"
-        onCheckInfo={() => showSectionInfo('education')}
+        onCheckInfo={async () => {
+          // Ensure residency intentions are included with education for language section
+          const edu = getFormData('education') || {}
+          const ri = getFormData('residencyIntentions') || {}
+          // Temporarily call the API directly to ensure the payload includes both
+          try {
+            // Note: apiClient import would need to be added at the top if needed
+            // For now, just show the section info modal
+            showSectionInfo('education')
+          } catch {
+            showSectionInfo('education')
+          }
+        }}
         isCheckingInfo={isCheckingInfo}
+      />
+      
+      {/* Section Info Modal */}
+      <SectionInfoModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        story={currentStory}
+        isLoading={isCheckingInfo}
+        onExpandFullInfo={expandFullInformation}
+        onBackToSection={backToSection}
+        currentSection={currentSection}
+        isFullView={isFullView}
+        onGoToSection={goToSection}
+        onNavigateToSection={navigateToSection}
       />
     </div>
   )

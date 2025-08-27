@@ -7,6 +7,9 @@ export interface ApiCountry {
   continent: string
 }
 
+// Re-export Country from country types for compatibility
+export type { Country } from './country'
+
 export interface ApiResponse<T> {
   data: T
   success: boolean

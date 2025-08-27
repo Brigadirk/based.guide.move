@@ -54,9 +54,10 @@ class ApiClient {
   /**
    * Get education story
    */
-  async getEducationStory(education: any): Promise<SectionStoryResponse> {
+  async getEducationStory(education: any, residencyIntentions?: any): Promise<SectionStoryResponse> {
     return this.makeRequest<SectionStoryResponse>('/section/education', {
       education,
+      residency_intentions: residencyIntentions,
     });
   }
 
@@ -72,11 +73,12 @@ class ApiClient {
   /**
    * Get finance story
    */
-  async getFinanceStory(finance: any, destinationCountry?: string): Promise<SectionStoryResponse> {
+  async getFinanceStory(finance: any, destinationCountry?: string, skipFinanceDetails?: boolean): Promise<SectionStoryResponse> {
     const transformedFinance = transformFinanceForBackend(finance);
     return this.makeRequest<SectionStoryResponse>('/section/finance', {
       finance: transformedFinance,
       destination_country: destinationCountry,
+      skip_finance_details: skipFinanceDetails,
     });
   }
 

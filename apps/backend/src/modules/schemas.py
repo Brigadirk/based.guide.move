@@ -105,6 +105,7 @@ class EducationRequest(BaseModel):
     """Schema for education section story generation."""
 
     education: dict
+    residency_intentions: dict | None = None
 
     class Config:
         extra = "allow"
@@ -124,6 +125,7 @@ class FinanceRequest(BaseModel):
 
     finance: dict
     destination_country: str | None = None
+    skip_finance_details: bool | None = False
 
     class Config:
         extra = "allow"

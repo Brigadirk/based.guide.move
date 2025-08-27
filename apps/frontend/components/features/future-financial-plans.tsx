@@ -20,11 +20,13 @@ import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { useCurrencies } from "@/lib/hooks/use-currencies"
+import { getCountries } from "@/lib/utils/country-utils"
 
 export function FutureFinancialPlans({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
   const currencies = useCurrencies()
+  const countries = getCountries()
 
   // Check if finance details are being skipped
   const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
@@ -258,11 +260,21 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
                       )}
                       <div className="space-y-2">
                         <Label>Country of Investment</Label>
-                        <Input
+                        <Select
                           value={newInvestment.country}
-                          onChange={(e) => setNewInvestment({...newInvestment, country: e.target.value})}
-                          placeholder="Enter country"
-                        />
+                          onValueChange={(value) => setNewInvestment({...newInvestment, country: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {countries.map((country) => (
+                              <SelectItem key={country} value={country}>
+                                {country}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                     
@@ -275,6 +287,7 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
                           step="1000"
                           value={newInvestment.estimatedValue}
                           onChange={(e) => setNewInvestment({...newInvestment, estimatedValue: parseFloat(e.target.value) || 0})}
+                          onFocus={(e) => e.target.select()}
                           placeholder="0.00"
                         />
                       </div>
@@ -373,11 +386,21 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
                       </div>
                       <div className="space-y-2">
                         <Label>Country of Property</Label>
-                        <Input
+                        <Select
                           value={newPropertyTransaction.country}
-                          onChange={(e) => setNewPropertyTransaction({...newPropertyTransaction, country: e.target.value})}
-                          placeholder="Enter country"
-                        />
+                          onValueChange={(value) => setNewPropertyTransaction({...newPropertyTransaction, country: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {countries.map((country) => (
+                              <SelectItem key={country} value={country}>
+                                {country}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                     
@@ -392,6 +415,7 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
                           step="10000"
                           value={newPropertyTransaction.estimatedValue}
                           onChange={(e) => setNewPropertyTransaction({...newPropertyTransaction, estimatedValue: parseFloat(e.target.value) || 0})}
+                          onFocus={(e) => e.target.select()}
                           placeholder="0.00"
                         />
                       </div>
@@ -499,11 +523,21 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
                       )}
                       <div className="space-y-2">
                         <Label>Country of Account</Label>
-                        <Input
+                        <Select
                           value={newRetirementContribution.country}
-                          onChange={(e) => setNewRetirementContribution({...newRetirementContribution, country: e.target.value})}
-                          placeholder="Enter country"
-                        />
+                          onValueChange={(value) => setNewRetirementContribution({...newRetirementContribution, country: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {countries.map((country) => (
+                              <SelectItem key={country} value={country}>
+                                {country}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                     
@@ -516,6 +550,7 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
                           step="500"
                           value={newRetirementContribution.contributionAmount}
                           onChange={(e) => setNewRetirementContribution({...newRetirementContribution, contributionAmount: parseFloat(e.target.value) || 0})}
+                          onFocus={(e) => e.target.select()}
                           placeholder="0.00"
                         />
                       </div>
@@ -614,11 +649,21 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
                       </div>
                       <div className="space-y-2">
                         <Label>Country of Business Activity</Label>
-                        <Input
+                        <Select
                           value={newBusinessChange.country}
-                          onChange={(e) => setNewBusinessChange({...newBusinessChange, country: e.target.value})}
-                          placeholder="Enter country"
-                        />
+                          onValueChange={(value) => setNewBusinessChange({...newBusinessChange, country: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {countries.map((country) => (
+                              <SelectItem key={country} value={country}>
+                                {country}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                     
@@ -633,6 +678,7 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
                           step="5000"
                           value={newBusinessChange.estimatedValueImpact}
                           onChange={(e) => setNewBusinessChange({...newBusinessChange, estimatedValueImpact: parseFloat(e.target.value) || 0})}
+                          onFocus={(e) => e.target.select()}
                           placeholder="0.00"
                         />
                       </div>

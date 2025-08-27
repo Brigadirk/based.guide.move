@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -54,6 +54,26 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
   // State for individual section stories
   const [sectionStories, setSectionStories] = useState<{[key: string]: string}>({})
   const [loadingSections, setLoadingSections] = useState<{[key: string]: boolean}>({})
+  
+  // Track skip finance details state to clear cache when it changes
+  const skipFinanceDetails = (formData.finance as any)?.skipDetails ?? false
+  const [prevSkipFinanceDetails, setPrevSkipFinanceDetails] = useState(skipFinanceDetails)
+  
+  // Clear financial section stories when skip state changes
+  useEffect(() => {
+    if (skipFinanceDetails !== prevSkipFinanceDetails) {
+      setSectionStories(prev => {
+        const updated = { ...prev }
+        // Clear all financial section stories
+        delete updated.finance
+        delete updated.socialSecurity
+        delete updated.taxDeductions
+        delete updated.futurePlans
+        return updated
+      })
+      setPrevSkipFinanceDetails(skipFinanceDetails)
+    }
+  }, [skipFinanceDetails, prevSkipFinanceDetails])
 
   // Function to fetch individual section story
   const fetchSectionStory = async (sectionId: string) => {
@@ -63,15 +83,16 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
     
     try {
       let response
-      const destCountry = formData.residencyIntentions?.destinationCountry?.country
-      const skipFinanceDetails = formData.finance?.skipDetails ?? false
+      const residencyInfo: any = formData.residencyIntentions as any
+      const destData = residencyInfo?.destinationCountry
+      const destCountry = typeof destData === 'object' ? destData?.country : residencyInfo?.intendedCountry
+      const destRegion = typeof destData === 'object' ? destData?.region : undefined
       
       switch (sectionId) {
         case "destination":
           // Handle destination locally without backend call
-          const destData = formData.residencyIntentions?.destinationCountry
-          if (destData) {
-            const story = `Destination Country: ${destData.country}${destData.region && destData.region !== "I don't know yet / open to any" ? `\nRegion: ${destData.region}` : ''}${destData.moveType ? `\nMove Type: ${destData.moveType}` : ''}`
+          if (destCountry) {
+            const story = `Destination Country: ${destCountry}${destRegion && destRegion !== "I don't know yet / open to any" ? `\nRegion: ${destRegion}` : ''}${residencyInfo?.moveType ? `\nMove Type: ${residencyInfo.moveType}` : ''}`
             setSectionStories(prev => ({ ...prev, [sectionId]: story }))
             setLoadingSections(prev => ({ ...prev, [sectionId]: false }))
             return
@@ -87,12 +108,12 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
           response = await apiClient.getEducationStory(education)
           break
         case "residency":
-          const residency = formData.residencyIntentions || {}
-          response = await apiClient.getResidencyIntentionsStory(residency)
+          const residencyData = formData.residencyIntentions || {}
+          response = await apiClient.getResidencyIntentionsStory(residencyData)
           break
         case "finance":
           const finance = formData.finance || {}
-          response = await apiClient.getFinanceStory(finance, destCountry)
+          response = await apiClient.getFinanceStory(finance, destCountry, skipFinanceDetails)
           break
         case "socialSecurity":
           const socialSecurity = formData.socialSecurityAndPensions || {}
@@ -108,7 +129,7 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
           break
         case "additional":
           const additionalInfo = formData.additionalInformation || {}
-          response = await apiClient.getAdditionalInformationStory(additionalInfo, destCountry)
+          response = await apiClient.getAdditionalInformationStory(additionalInfo)
           break
         case "fullSummary":
           // Handle full summary by triggering the complete profile generation
@@ -121,7 +142,14 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
       setSectionStories(prev => ({ ...prev, [sectionId]: response.story }))
     } catch (error) {
       console.error(`Error fetching story for ${sectionId}:`, error)
-      setSectionStories(prev => ({ ...prev, [sectionId]: "Error loading section information." }))
+      const err: any = error
+      const authMsg = err?.message?.toLowerCase().includes('api key') || err?.message?.toLowerCase().includes('authentication')
+      setSectionStories(prev => ({
+        ...prev,
+        [sectionId]: authMsg
+          ? "Authentication required: set LOCAL_API_KEY/STAGING_API_KEY/PRODUCTION_API_KEY in both frontend and backend, then restart."
+          : "Error loading section information."
+      }))
     } finally {
       setLoadingSections(prev => ({ ...prev, [sectionId]: false }))
     }

@@ -90,7 +90,7 @@ const nextConfig = {
   // Environment variables for server-side API routes
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-    API_KEY: process.env.API_KEY,
+    // Do not expose secrets to the browser; API keys are read server-side in API routes
   },
 
   // Disable any built-in caching

@@ -1220,6 +1220,18 @@ export default function BackendTester() {
     
       const presetUrls = [
     {
+      label: 'Production',
+      url: process.env.NEXT_PUBLIC_PRODUCTION_API_URL,
+      description: 'Production Backend URL',
+      envVar: 'NEXT_PUBLIC_PRODUCTION_API_URL'
+    },
+    {
+      label: 'Staging',
+      url: process.env.NEXT_PUBLIC_STAGING_API_URL,
+      description: 'Staging Backend URL',
+      envVar: 'NEXT_PUBLIC_STAGING_API_URL'
+    },
+    {
       label: 'Railway Public',
       url: process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001',
       description: 'Public Railway URL (accessible from internet)',
@@ -1268,9 +1280,9 @@ export default function BackendTester() {
         {/* Debug: Show environment variables */}
         <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '8px', fontFamily: 'monospace', backgroundColor: '#f9fafb', padding: '4px 8px', borderRadius: '4px' }}>
           Debug: Public={process.env.NEXT_PUBLIC_API_URL || 'undefined'} |
-          Internal={process.env.NEXT_PUBLIC_INTERNAL_API_URL || 'undefined'} |
+          ProdURL={process.env.NEXT_PUBLIC_PRODUCTION_API_URL || 'undefined'} |
+          StagingURL={process.env.NEXT_PUBLIC_STAGING_API_URL || 'undefined'} |
           Local={process.env.NEXT_PUBLIC_LOCAL_URL || 'undefined'} |
-          API Key={process.env.API_KEY ? '✅ Set' : '❌ Not Set'} |
           Env={process.env.NODE_ENV || 'development'} |
           Active URL={getBackendUrl()}
         </div>

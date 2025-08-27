@@ -23,10 +23,23 @@ interface DatePickerProps {
 
 export function DatePicker({ date, onSelect, error, className, toDate }: DatePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false)
-  const [month, setMonth] = React.useState<Date>(date || new Date(2000, 0, 1))
+  
+  // Default to 30 years ago for better UX when selecting birth dates
+  const currentYear = new Date().getFullYear()
+  const defaultYear = currentYear - 30
+  const [month, setMonth] = React.useState<Date>(date || new Date(defaultYear, 0, 1))
 
-  // Generate years from 1900 to current year
-  const years = Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => 1900 + i).reverse()
+  // Generate years from 1900 to current year, but prioritize years around the default (30 years ago)
+  // This puts the most likely birth years at the top of the dropdown
+  const allYears = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => 1900 + i)
+  const years = [
+    // Recent years (current to 10 years ago)
+    ...allYears.slice(-10).reverse(),
+    // Common adult ages (11 to 80 years ago)  
+    ...allYears.slice(-80, -10).reverse(),
+    // Older ages (81+ years ago)
+    ...allYears.slice(0, -80).reverse()
+  ]
 
   // Month names for the select
   const months = [

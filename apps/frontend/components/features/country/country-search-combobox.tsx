@@ -45,9 +45,9 @@ const COUNTRY_ALIASES: Record<string, string[]> = {
 export function CountrySearchCombobox({ onSelect, className, placeholder = "Search for a country..." }: CountrySearchComboboxProps) {
   const [open, setOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
-  const [countries, setCountries] = useState<EnhancedCountry[]>([])
-  const [searchResults, setSearchResults] = useState<EnhancedCountry[]>([])
-  const [selectedCountry, setSelectedCountry] = useState<EnhancedCountry | null>(null)
+  const [countries, setCountries] = useState<Partial<EnhancedCountry>[]>([])
+  const [searchResults, setSearchResults] = useState<Partial<EnhancedCountry>[]>([])
+  const [selectedCountry, setSelectedCountry] = useState<Partial<EnhancedCountry> | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -67,7 +67,7 @@ export function CountrySearchCombobox({ onSelect, className, placeholder = "Sear
       setError(null)
       
       const countryNames = getCountries()
-      const enhancedCountries: EnhancedCountry[] = countryNames.map((name) => ({
+      const enhancedCountries: Partial<EnhancedCountry>[] = countryNames.map((name) => ({
         id: name.toLowerCase().replace(/\s+/g, '-'), // Simple ID generation
         name: name,
         aliases: COUNTRY_ALIASES[name] || []
@@ -126,7 +126,7 @@ export function CountrySearchCombobox({ onSelect, className, placeholder = "Sear
                 value={country.name}
                 onSelect={() => {
                   setSelectedCountry(country)
-                  onSelect(country)
+                  onSelect(country as Country)
                   setOpen(false)
                 }}
               >

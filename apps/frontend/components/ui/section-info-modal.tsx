@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { X, FileText, ArrowRight, MapPin, User, GraduationCap, Heart, DollarSign, Shield, Receipt, TrendingUp, Minimize2, Maximize2 } from "lucide-react"
 import { toast } from "sonner"
+import { PerplexityLoading } from "@/components/ui/perplexity-loading"
 
 interface SectionInfoModalProps {
   isOpen: boolean
@@ -123,11 +124,12 @@ export function SectionInfoModal({
         {/* Fixed height scrollable content window */}
         <div className="flex-shrink-0 border rounded-md bg-background">
           {isLoading ? (
-            <div className="flex items-center justify-center h-96">
-              <div className="flex items-center gap-3">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                <span className="text-muted-foreground">Generating your information story...</span>
-              </div>
+            <div className="h-96 flex items-center justify-center p-4">
+              <PerplexityLoading 
+                isLoading={true} 
+                loadingText="Generating your information story..."
+                className="w-full max-w-md"
+              />
             </div>
           ) : (
             <div className="h-96 overflow-y-auto p-4 border">

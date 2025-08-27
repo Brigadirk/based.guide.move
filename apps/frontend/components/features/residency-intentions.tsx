@@ -210,6 +210,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                       step="1"
                   value={tempDuration}
                       onChange={(e) => updateFormData("residencyIntentions.destinationCountry.intendedTemporaryDurationOfStay", parseInt(e.target.value) || 0)}
+                      onFocus={(e) => e.target.select()}
                       placeholder="12"
                 />
                 <p className="text-sm text-muted-foreground">
@@ -772,6 +773,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                                     max="10"
                                     value={maxServiceYears}
                                     onChange={(e) => updateFormData("residencyIntentions.citizenshipPlans.militaryService.maxServiceYears", parseInt(e.target.value) || 2)}
+                                    onFocus={(e) => e.target.select()}
                                     placeholder="2"
                                   />
                                 </div>
@@ -809,6 +811,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                                       min="0"
                                       value={investmentAmount}
                                       onChange={(e) => updateFormData("residencyIntentions.citizenshipPlans.investment.amount", parseInt(e.target.value) || 0)}
+                                      onFocus={(e) => e.target.select()}
                                       placeholder="0"
                                     />
                                   </div>
@@ -865,6 +868,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                                       min="0"
                                       value={donationAmount}
                                       onChange={(e) => updateFormData("residencyIntentions.citizenshipPlans.donation.amount", parseInt(e.target.value) || 0)}
+                                      onFocus={(e) => e.target.select()}
                                       placeholder="0"
                                     />
                                   </div>
@@ -917,102 +921,103 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
               <CardContent className="pt-6">
                 <div className="space-y-6">
                   
-                  {/* Visa Application Timeline Preference */}
+                  {/* Combined Family Visa Timeline & Priority */}
                   <div className="space-y-4">
-                    <Label className="text-base font-medium">Preferred Visa Application Timeline</Label>
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          id="timeline-together"
-                          name="familyVisaTimeline"
-                          value="together"
-                          checked={getFormData("residencyIntentions.familyVisaPlanning.applicationTimeline") === "together"}
-                          onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.applicationTimeline", e.target.value)}
-                          className="h-4 w-4"
-                        />
-                        <Label htmlFor="timeline-together" className="text-sm">
-                          Apply for all family visas together (coordinated timeline)
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          id="timeline-sequential"
-                          name="familyVisaTimeline" 
-                          value="sequential"
-                          checked={getFormData("residencyIntentions.familyVisaPlanning.applicationTimeline") === "sequential"}
-                          onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.applicationTimeline", e.target.value)}
-                          className="h-4 w-4"
-                        />
-                        <Label htmlFor="timeline-sequential" className="text-sm">
-                          Apply sequentially (primary applicant first, then family)
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          id="timeline-flexible"
-                          name="familyVisaTimeline"
-                          value="flexible"
-                          checked={getFormData("residencyIntentions.familyVisaPlanning.applicationTimeline") === "flexible"}
-                          onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.applicationTimeline", e.target.value)}
-                          className="h-4 w-4"
-                        />
-                        <Label htmlFor="timeline-flexible" className="text-sm">
-                          Flexible timing based on processing requirements
-                        </Label>
-                      </div>
-                    </div>
-                  </div>
+                    <Label className="text-base font-medium">Family Visa Application Strategy</Label>
+                    <p className="text-sm text-muted-foreground">Choose how you prefer to coordinate applications and relocation timing.</p>
+                    {(() => {
+                      const currentTimeline = getFormData("residencyIntentions.familyVisaPlanning.applicationTimeline") || ""
+                      const currentPriority = getFormData("residencyIntentions.familyVisaPlanning.relocationPriority") || ""
+                      const combinedValue = (() => {
+                        if (currentTimeline === "together" && currentPriority === "moveTogetherEssential") return "together_essential"
+                        if (currentTimeline === "together" && currentPriority === "flexibleTiming") return "together_flexible"
+                        if (currentTimeline === "sequential" && currentPriority === "primaryFirstAcceptable") return "sequential_primary"
+                        if (currentTimeline === "flexible" && currentPriority === "flexibleTiming") return "flexible_flexible"
+                        return ""
+                      })()
 
-                  {/* Family Relocation Priority */}
-                  <div className="space-y-4">
-                    <Label className="text-base font-medium">Family Relocation Priority</Label>
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          id="priority-together"
-                          name="familyRelocationPriority"
-                          value="moveTogetherEssential"
-                          checked={getFormData("residencyIntentions.familyVisaPlanning.relocationPriority") === "moveTogetherEssential"}
-                          onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.relocationPriority", e.target.value)}
-                          className="h-4 w-4"
-                        />
-                        <Label htmlFor="priority-together" className="text-sm">
-                          Moving together is essential - will delay if needed
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          id="priority-primary-first"
-                          name="familyRelocationPriority"
-                          value="primaryFirstAcceptable"
-                          checked={getFormData("residencyIntentions.familyVisaPlanning.relocationPriority") === "primaryFirstAcceptable"}
-                          onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.relocationPriority", e.target.value)}
-                          className="h-4 w-4"
-                        />
-                        <Label htmlFor="priority-primary-first" className="text-sm">
-                          Primary applicant can move first, family follows later
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          id="priority-flexible-timing"
-                          name="familyRelocationPriority"
-                          value="flexibleTiming"
-                          checked={getFormData("residencyIntentions.familyVisaPlanning.relocationPriority") === "flexibleTiming"}
-                          onChange={(e) => updateFormData("residencyIntentions.familyVisaPlanning.relocationPriority", e.target.value)}
-                          className="h-4 w-4"
-                        />
-                        <Label htmlFor="priority-flexible-timing" className="text-sm">
-                          Flexible timing - optimize for fastest overall process
-                        </Label>
-                      </div>
-                    </div>
+                      const selectPlan = (value: string) => {
+                        switch (value) {
+                          case "together_essential":
+                            updateFormData("residencyIntentions.familyVisaPlanning.applicationTimeline", "together")
+                            updateFormData("residencyIntentions.familyVisaPlanning.relocationPriority", "moveTogetherEssential")
+                            break
+                          case "together_flexible":
+                            updateFormData("residencyIntentions.familyVisaPlanning.applicationTimeline", "together")
+                            updateFormData("residencyIntentions.familyVisaPlanning.relocationPriority", "flexibleTiming")
+                            break
+                          case "sequential_primary":
+                            updateFormData("residencyIntentions.familyVisaPlanning.applicationTimeline", "sequential")
+                            updateFormData("residencyIntentions.familyVisaPlanning.relocationPriority", "primaryFirstAcceptable")
+                            break
+                          case "flexible_flexible":
+                            updateFormData("residencyIntentions.familyVisaPlanning.applicationTimeline", "flexible")
+                            updateFormData("residencyIntentions.familyVisaPlanning.relocationPriority", "flexibleTiming")
+                            break
+                        }
+                      }
+
+                      return (
+                        <div className="space-y-3">
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="plan-together-essential"
+                              name="familyVisaPlan"
+                              value="together_essential"
+                              checked={combinedValue === "together_essential"}
+                              onChange={(e) => selectPlan(e.target.value)}
+                              className="h-4 w-4"
+                            />
+                            <Label htmlFor="plan-together-essential" className="text-sm">
+                              Apply together; moving together is essential
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="plan-together-flexible"
+                              name="familyVisaPlan"
+                              value="together_flexible"
+                              checked={combinedValue === "together_flexible"}
+                              onChange={(e) => selectPlan(e.target.value)}
+                              className="h-4 w-4"
+                            />
+                            <Label htmlFor="plan-together-flexible" className="text-sm">
+                              Apply together; flexible timing
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="plan-sequential-primary"
+                              name="familyVisaPlan"
+                              value="sequential_primary"
+                              checked={combinedValue === "sequential_primary"}
+                              onChange={(e) => selectPlan(e.target.value)}
+                              className="h-4 w-4"
+                            />
+                            <Label htmlFor="plan-sequential-primary" className="text-sm">
+                              Apply sequentially; primary applicant first
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="plan-flexible-flexible"
+                              name="familyVisaPlan"
+                              value="flexible_flexible"
+                              checked={combinedValue === "flexible_flexible"}
+                              onChange={(e) => selectPlan(e.target.value)}
+                              className="h-4 w-4"
+                            />
+                            <Label htmlFor="plan-flexible-flexible" className="text-sm">
+                              Flexible timing for applications and relocation
+                            </Label>
+                          </div>
+                        </div>
+                      )
+                    })()}
                   </div>
 
                   {/* Document Preparation Concerns */}

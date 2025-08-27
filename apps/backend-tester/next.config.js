@@ -12,7 +12,9 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_LOCAL_URL: process.env.NEXT_PUBLIC_LOCAL_URL,
-    API_KEY: process.env.API_KEY,
+    NEXT_PUBLIC_STAGING_API_URL: process.env.NEXT_PUBLIC_STAGING_API_URL,
+    NEXT_PUBLIC_PRODUCTION_API_URL: process.env.NEXT_PUBLIC_PRODUCTION_API_URL,
+    // Do not expose secrets in the browser
   },
 }
 
