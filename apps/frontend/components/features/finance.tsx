@@ -897,7 +897,22 @@ function IncomeSourcesList({ incomeSources, updateFormData }: any) {
 
 function TotalWealthSection({ totalWealth, updateFormData, currencies, incomeSituation }: any) {
   const [editMode, setEditMode] = useState(false)
-  const [tempWealth, setTempWealth] = useState(totalWealth)
+  const [tempWealth, setTempWealth] = useState({
+    currency: totalWealth?.currency ?? 'USD',
+    total: Number(totalWealth?.total) || 0,
+    primaryResidence: Number(totalWealth?.primaryResidence) || 0
+  })
+
+  // Sync tempWealth when totalWealth prop changes (but not during edit mode)
+  useEffect(() => {
+    if (!editMode) {
+      setTempWealth({
+        currency: totalWealth?.currency ?? 'USD',
+        total: Number(totalWealth?.total) || 0,
+        primaryResidence: Number(totalWealth?.primaryResidence) || 0
+      })
+    }
+  }, [totalWealth, editMode])
 
   return (
     <Card className="shadow-sm border-l-4 border-l-emerald-500">
@@ -933,14 +948,14 @@ function TotalWealthSection({ totalWealth, updateFormData, currencies, incomeSit
         <div className="space-y-6">
           {!editMode ? (
             <div className="space-y-4">
-              {totalWealth.total > 0 ? (
+              {(totalWealth?.total ?? 0) > 0 ? (
                 <div className="grid md:grid-cols-2 gap-4 p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-emerald-600">{totalWealth.currency} {totalWealth.total.toLocaleString()}</p>
+                    <p className="text-2xl font-bold text-emerald-600">{totalWealth?.currency ?? 'USD'} {(Number(totalWealth?.total) || 0).toLocaleString()}</p>
                     <p className="text-sm text-muted-foreground">Total Net Worth</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-emerald-600">{totalWealth.currency} {totalWealth.primaryResidence.toLocaleString()}</p>
+                    <p className="text-2xl font-bold text-emerald-600">{totalWealth?.currency ?? 'USD'} {(Number(totalWealth?.primaryResidence) || 0).toLocaleString()}</p>
                     <p className="text-sm text-muted-foreground">Primary Residence</p>
                   </div>
                 </div>
@@ -1016,7 +1031,11 @@ function TotalWealthSection({ totalWealth, updateFormData, currencies, incomeSit
                   <Button 
                     variant="outline"
                     onClick={() => {
-                      setTempWealth(totalWealth)
+                      setTempWealth({
+                        currency: totalWealth?.currency ?? 'USD',
+                        total: Number(totalWealth?.total) || 0,
+                        primaryResidence: Number(totalWealth?.primaryResidence) || 0
+                      })
                       setEditMode(false)
                     }}
                     className="flex-1"
