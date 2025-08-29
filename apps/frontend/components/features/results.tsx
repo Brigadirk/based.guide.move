@@ -220,7 +220,7 @@ Please provide a detailed answer to the follow-up question, referencing the prev
         <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
             <Settings className="w-6 h-6 text-purple-600" />
-            AI Model Configuration (Only useful for testing: Sonar Deep Research is the best model for this use case in my experience.)
+            AI Model Configuration (Only useful for testing: Sonar Deep Research is the best model for this use case in my experience. We can try the GPT API actually because it can surf the web too these days apparently)
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             Select the AI model and generate your analysis (We will default this to Sonar Deep Research)
