@@ -1009,10 +1009,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                              <p><strong>3. Civil Partner:</strong> Kept for jurisdictions that recognize this status.</p>
                              <p><strong>4. Unmarried Partner:</strong> A common term in immigration contexts for long-term, committed relationships.</p>
                              <p><strong>5. Common-law Partner:</strong> Recognized in some countries for long-term cohabiting couples.</p>
-                             <p><strong>6. Cohabiting Partner:</strong> Retained from your original list, as some systems specifically use this term.</p>
-                             <p><strong>7. Domestic Partner:</strong> Added for jurisdictions that recognize this status.</p>
-                             <p><strong>8. Conjugal Partner:</strong> Recognized in some immigration systems (e.g., Canada) for committed partners unable to live together.</p>
-                             <p><strong>9. Other:</strong> Kept to cover any unique situations or relationships not fitting the above categories.</p>
+                             <p><strong>6. Domestic Partner:</strong> Added for jurisdictions that recognize this status.</p>
+                             <p><strong>7. Conjugal Partner:</strong> Recognized in some immigration systems (e.g., Canada) for committed partners unable to live together.</p>
+                             <p><strong>8. Other:</strong> Kept to cover any unique situations or relationships not fitting the above categories.</p>
                            </div>
                            <p className="italic text-xs">This expanded list aims to be more inclusive of various relationship types recognized across different immigration systems while maintaining clarity for users.</p>
                          </div>
@@ -1042,10 +1041,10 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                          return ["Civil Partner", "Domestic Partner"]
                        }
                        if (["Single", "Divorced", "Widowed"].includes(maritalStatus)) {
-                         return ["Unmarried Partner", "Fiancé(e)", "Cohabiting Partner", "Common-law Partner", "Conjugal Partner", "Other"]
+                         return ["Unmarried Partner", "Fiancé(e)", "Common-law Partner", "Conjugal Partner", "Other"]
                        }
                        // If no marital status set, default to non-married options only
-                       return ["Unmarried Partner", "Fiancé(e)", "Cohabiting Partner", "Common-law Partner", "Conjugal Partner", "Other"]
+                       return ["Unmarried Partner", "Fiancé(e)", "Common-law Partner", "Conjugal Partner", "Other"]
                      }
                      
                      const allowedTypes = getAllowedRelationshipTypes()

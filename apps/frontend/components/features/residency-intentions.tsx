@@ -108,8 +108,6 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   const maxServiceYears = getFormData("residencyIntentions.citizenshipPlans.militaryService.maxServiceYears") ?? 2
   
   const investmentWilling = getFormData("residencyIntentions.citizenshipPlans.investment.willing") ?? false
-  const investmentAmount = getFormData("residencyIntentions.citizenshipPlans.investment.amount") ?? 0
-  const investmentCurrency = getFormData("residencyIntentions.citizenshipPlans.investment.currency") ?? "USD"
   
   const donationWilling = getFormData("residencyIntentions.citizenshipPlans.donation.willing") ?? false
   const donationAmount = getFormData("residencyIntentions.citizenshipPlans.donation.amount") ?? 0
@@ -118,6 +116,10 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   // Center of life
   const maintainsSignificantTies = getFormData("residencyIntentions.centerOfLife.maintainsSignificantTies") ?? false
   const tiesDescription = getFormData("residencyIntentions.centerOfLife.tiesDescription") ?? ""
+
+  // Criminal record disclosure
+  const hasCriminalRecord = getFormData("residencyIntentions.criminalRecord.hasRecord") ?? false
+  const criminalRecordDetails = getFormData("residencyIntentions.criminalRecord.details") ?? ""
 
 
 
@@ -137,8 +139,10 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   if (!moveType) errors.push("Type of move is required")
   if (moveType === "Temporary" && !tempDuration) errors.push("Duration of temporary stay is required")
   if (applyForResidency && maxMonths === null) errors.push("Maximum months willing to reside is required")
-  if (interestedInCitizenship && investmentWilling && !investmentAmount) errors.push("Investment amount is required")
-  if (interestedInCitizenship && donationWilling && !donationAmount) errors.push("Donation amount is required")
+  
+  // No amounts required for donation; advisory only
+
+  if (hasCriminalRecord && !criminalRecordDetails.trim()) errors.push("Please provide details about your criminal record")
 
   const canContinue = errors.length === 0
 
@@ -169,6 +173,8 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
           </ul>
         </div>
       </SectionHint>
+
+      
 
       {destCountry && (
         <>
@@ -215,6 +221,15 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                 />
                 <p className="text-sm text-muted-foreground">
                       Enter how many months you plan to stay in {destCountry}
+                </p>
+              </div>
+            )}
+
+            {moveType === "Digital Nomad" && (
+              <div className="p-4 rounded-lg border bg-blue-50/30 dark:bg-blue-950/10 border-blue-200 dark:border-blue-800">
+                <p className="text-sm text-blue-900 dark:text-blue-200">
+                  We assume you will use {destCountry || "this country"} as a home base for taxation purposes and mostly travel to other countries.
+                  If that is not the case, select <strong>Permanent</strong>. If you intend to stay just a few months (up to ~180 days), you generally do not need to move there.
                 </p>
               </div>
             )}
@@ -617,61 +632,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
       </Card>
           )}
 
-          {/* Exploratory Visits Section */}
-          {!hasNoVisaRequirement && !isAlreadyCitizen && (
-            <Card className="shadow-sm border-l-4 border-l-blue-500">
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
-                <CardTitle className="text-xl flex items-center gap-3">
-                  <Plane className="w-6 h-6 text-blue-600" />
-                  Exploratory Visits
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">Planning visits before your main relocation</p>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
-                    <Checkbox
-                      id="open_visiting"
-                      checked={openToVisiting}
-                      onCheckedChange={(v) => updateFormData("residencyIntentions.residencyPlans.openToVisiting", !!v)}
-                    />
-                    <Label htmlFor="open_visiting" className="text-base font-medium">
-                      I plan or I am open to making exploratory visits before relocating
-                    </Label>
-                  </div>
-
-                  {openToVisiting && (
-                    <div className="space-y-4 mt-4 p-4 border rounded-lg bg-blue-50/30 dark:bg-blue-950/10">
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium">Tell us about your visit plans</Label>
-                        <Textarea
-                          className="resize-none text-sm"
-                          placeholder="e.g., I want to visit in spring to find housing and check out schools for my kids. Planning 2-3 weeks initially, maybe multiple trips..."
-                          maxLength={280}
-                          rows={4}
-                          value={getFormData("residencyIntentions.residencyPlans.exploratoryVisits.details") || ""}
-                          onChange={(e) => updateFormData("residencyIntentions.residencyPlans.exploratoryVisits.details", e.target.value)}
-                        />
-                        <div className="flex justify-between items-center text-xs text-muted-foreground">
-                          <span>Be specific about timing, purpose, and duration</span>
-                          <span>{(getFormData("residencyIntentions.residencyPlans.exploratoryVisits.details") || "").length}/280</span>
-                        </div>
-                      </div>
-
-                      <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950">
-                        <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                        <AlertDescription className="text-blue-800 dark:text-blue-200">
-                          <strong>Important:</strong> Exploratory visits may count toward annual tax residency day limits and affect visa application timing. We'll factor this into your recommendations.
-                        </AlertDescription>
-                      </Alert>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Citizenship Plans (only show if not already citizen/EU and interested) */}
+          {/* Citizenship Plans (moved above Exploratory Visits) */}
           {!hasNoVisaRequirement && !isAlreadyCitizen && (
             <Card className="shadow-sm border-l-4 border-l-orange-500">
               <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
@@ -765,17 +726,8 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                               </div>
                               
                               {militaryService && (
-                                <div className="space-y-2">
-                                  <Label className="text-sm">Maximum years of service</Label>
-                                  <Input
-                                    type="number"
-                                    min="1"
-                                    max="10"
-                                    value={maxServiceYears}
-                                    onChange={(e) => updateFormData("residencyIntentions.citizenshipPlans.militaryService.maxServiceYears", parseInt(e.target.value) || 2)}
-                                    onFocus={(e) => e.target.select()}
-                                    placeholder="2"
-                                  />
+                                <div className="p-3 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 text-amber-900 dark:text-amber-100 text-sm">
+                                  We will let you know about visa or citizenship pathways involving service where applicable.
                                 </div>
                               )}
                             </CardContent>
@@ -803,36 +755,8 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                 </div>
 
                               {investmentWilling && (
-                                <div className="grid grid-cols-2 gap-3">
-                                  <div className="space-y-2">
-                                    <Label className="text-sm">Investment Amount</Label>
-                                    <Input
-                                      type="number"
-                                      min="0"
-                                      value={investmentAmount}
-                                      onChange={(e) => updateFormData("residencyIntentions.citizenshipPlans.investment.amount", parseInt(e.target.value) || 0)}
-                                      onFocus={(e) => e.target.select()}
-                                      placeholder="0"
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label className="text-sm">Currency</Label>
-                                    <Select
-                                      value={investmentCurrency}
-                                      onValueChange={(value) => updateFormData("residencyIntentions.citizenshipPlans.investment.currency", value)}
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {currencies.map((currency) => (
-                                          <SelectItem key={currency} value={currency}>
-                                            {currency}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
+                                <div className="p-3 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 text-amber-900 dark:text-amber-100 text-sm">
+                                  We will let you know about visa options of this kind where applicable.
                                 </div>
                               )}
                             </CardContent>
@@ -860,37 +784,9 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                               </div>
                               
                               {donationWilling && (
-                                <div className="grid grid-cols-2 gap-3">
-                                  <div className="space-y-2">
-                                    <Label className="text-sm">Donation amount</Label>
-                                    <Input
-                                      type="number"
-                                      min="0"
-                                      value={donationAmount}
-                                      onChange={(e) => updateFormData("residencyIntentions.citizenshipPlans.donation.amount", parseInt(e.target.value) || 0)}
-                                      onFocus={(e) => e.target.select()}
-                                      placeholder="0"
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label className="text-sm">Currency</Label>
-                                    <Select
-                                      value={donationCurrency}
-                                      onValueChange={(value) => updateFormData("residencyIntentions.citizenshipPlans.donation.currency", value)}
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {currencies.map((currency) => (
-                                          <SelectItem key={currency} value={currency}>
-                                            {currency}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                </div>
-              </div>
+                                <div className="p-3 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 text-amber-900 dark:text-amber-100 text-sm">
+                                  We will let you know about visa options of this kind where applicable.
+                                </div>
                               )}
                             </CardContent>
                           </Card>
@@ -1125,17 +1021,151 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
             </Card>
           )}
 
+          {/* Exploratory Visits Section (moved below Citizenship Interest) */}
+          {!hasNoVisaRequirement && !isAlreadyCitizen && (
+            <Card className="shadow-sm border-l-4 border-l-blue-500">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
+                <CardTitle className="text-xl flex items-center gap-3">
+                  <Plane className="w-6 h-6 text-blue-600" />
+                  Exploratory Visits
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">Planning visits before your main relocation</p>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
+                    <Checkbox
+                      id="open_visiting"
+                      checked={openToVisiting}
+                      onCheckedChange={(v) => updateFormData("residencyIntentions.residencyPlans.openToVisiting", !!v)}
+                    />
+                    <Label htmlFor="open_visiting" className="text-base font-medium">
+                      I plan or I am open to making exploratory visits before relocating
+                    </Label>
+                  </div>
+
+                  {openToVisiting && (
+                    <div className="space-y-4 mt-4 p-4 border rounded-lg bg-blue-50/30 dark:bg-blue-950/10">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">Tell us about your visit plans</Label>
+                        <Textarea
+                          className="resize-none text-sm"
+                          placeholder="e.g., I want to visit in spring to find housing and check out schools for my kids. Planning 2-3 weeks initially, maybe multiple trips..."
+                          maxLength={280}
+                          rows={4}
+                          value={getFormData("residencyIntentions.residencyPlans.exploratoryVisits.details") || ""}
+                          onChange={(e) => updateFormData("residencyIntentions.residencyPlans.exploratoryVisits.details", e.target.value)}
+                        />
+                        <div className="flex justify-between items-center text-xs text-muted-foreground">
+                          <span>Be specific about timing, purpose, and duration</span>
+                          <span>{(getFormData("residencyIntentions.residencyPlans.exploratoryVisits.details") || "").length}/280</span>
+                        </div>
+                      </div>
+
+                      <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950">
+                        <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                        <AlertDescription className="text-blue-800 dark:text-blue-200">
+                          <strong>Important:</strong> Exploratory visits may count toward annual tax residency day limits and affect visa application timing. We'll factor this into your recommendations.
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Criminal Record & Tax Compliance (placed between Exploratory Visits and Motivation) */}
+          <Card className="shadow-sm border-l-4 border-l-red-500">
+            <CardHeader className="bg-gradient-to-r from-red-50 to-transparent dark:from-red-950/20">
+              <CardTitle className="text-xl flex items-center gap-3">
+                <Shield className="w-6 h-6 text-red-600" />
+                Criminal Record & Tax Compliance
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Visas commonly require police clearance and background disclosures; compliance history can be relevant</p>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-4">
+                <div className="flex items-start gap-3 p-4 border rounded-lg bg-card">
+                  <Checkbox
+                    id="has_criminal_record"
+                    checked={hasCriminalRecord}
+                    onCheckedChange={(v) => updateFormData("residencyIntentions.criminalRecord.hasRecord", !!v)}
+                  />
+                  <div>
+                    <Label htmlFor="has_criminal_record" className="text-base font-medium">
+                      I have a criminal record
+                    </Label>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Some visas require police clearances and disclosures; provide details if applicable.
+                    </p>
+                  </div>
+                </div>
+
+                {hasCriminalRecord && (
+                  <div className="space-y-2">
+                    <Label className="text-base font-medium">Please provide brief details *</Label>
+                    <Textarea
+                      placeholder="Offense type, year, jurisdiction, sentence or disposition (e.g., expunged), and any relevant context"
+                      value={criminalRecordDetails}
+                      onChange={(e) => updateFormData("residencyIntentions.criminalRecord.details", e.target.value)}
+                      rows={4}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      This helps us flag jurisdictions where disclosures or waiting periods may apply. Do not include sensitive third‑party data.
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex items-start gap-3 p-4 border rounded-lg bg-card">
+                  <Checkbox
+                    id="tax_noncompliance_in_criminal"
+                    checked={!taxCompliant}
+                    onCheckedChange={(v) => updateFormData("residencyIntentions.taxCompliantEverywhere", !v)}
+                  />
+                  <div>
+                    <Label htmlFor="tax_noncompliance_in_criminal" className="text-base font-medium">
+                      I have NOT been fully tax compliant in every country I have lived in
+                    </Label>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Check this if you have missed filings or payments in any country.
+                    </p>
+                  </div>
+                </div>
+
+                {!taxCompliant && (
+                  <div className="space-y-3">
+                    <Label htmlFor="tax_compliance_explanation_in_criminal" className="text-base font-medium">
+                      Please explain your tax compliance situation
+                    </Label>
+                    <Textarea
+                      id="tax_compliance_explanation_in_criminal"
+                      placeholder="Please provide details about your tax compliance history. For example: missed filings in certain years, outstanding tax obligations, or other relevant circumstances..."
+                      value={taxComplianceExplanation}
+                      onChange={(e) => updateFormData("residencyIntentions.taxComplianceExplanation", e.target.value)}
+                      rows={4}
+                      className="resize-none"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      This information helps us provide more accurate recommendations and identify potential issues before they become problems.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
 
-      {/* Motivation & Compliance - Only show for non-citizens/non-EU */}
+
+      {/* Motivation - Only show for non-citizens/non-EU */}
       {!hasNoVisaRequirement && (
       <Card className="shadow-sm border-l-4 border-l-amber-500">
         <CardHeader className="bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
             <Heart className="w-6 h-6 text-amber-600" />
-            Motivation & Compliance
+            Motivation
           </CardTitle>
-          <p className="text-sm text-muted-foreground">Your motivation for moving and tax compliance commitment</p>
+          <p className="text-sm text-muted-foreground">Your motivation for moving</p>
         </CardHeader>
         <CardContent className="pt-6">
           <div className="space-y-6">
@@ -1148,41 +1178,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                 rows={4}
               />
             </div>
-
-            <div className="flex items-start gap-3 p-4 border rounded-lg bg-card">
-              <Checkbox
-                id="tax_compliance"
-                checked={taxCompliant}
-                onCheckedChange={(v) => updateFormData("residencyIntentions.taxCompliantEverywhere", !!v)}
-              />
-              <div>
-                <Label htmlFor="tax_compliance" className="text-base font-medium">
-                  I have been fully tax compliant in every country I have lived in
-                </Label>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Uncheck this if you have NOT always filed and paid taxes as required in every country where you have lived. 
-                </p>
-              </div>
-            </div>
-
-            {!taxCompliant && (
-              <div className="space-y-3">
-                <Label htmlFor="tax_compliance_explanation" className="text-base font-medium">
-                  Please explain your tax compliance situation
-                </Label>
-                <Textarea
-                  id="tax_compliance_explanation"
-                  placeholder="Please provide details about your tax compliance history. For example: missed filings in certain years, outstanding tax obligations, or other relevant circumstances..."
-                  value={taxComplianceExplanation}
-                  onChange={(e) => updateFormData("residencyIntentions.taxComplianceExplanation", e.target.value)}
-                  rows={4}
-                  className="resize-none"
-                />
-                <p className="text-sm text-muted-foreground">
-                  This information helps us provide more accurate recommendations and identify potential issues before they become problems.
-                </p>
-              </div>
-            )}
+            
           </div>
         </CardContent>
       </Card>

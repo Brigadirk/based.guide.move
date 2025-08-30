@@ -1540,6 +1540,45 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
     else:
         sentences.append("User did not provide more information on education.")
 
+    # Partner degrees
+    partner_data = edu.get("partner", {})
+    partner_degrees = partner_data.get("previousDegrees", [])
+    if partner_degrees:
+        partner_degree_count = len(partner_degrees)
+        if partner_degree_count == 1:
+            degree = partner_degrees[0]
+            degree_name = degree.get("degree", "Unspecified degree")
+            institution = degree.get("institution", "Unspecified institution")
+            field = degree.get("field", "Unspecified field")
+            start_date = degree.get("start_date", "")
+            end_date = degree.get("end_date", "")
+            in_progress = degree.get("in_progress", False)
+
+            date_info = ""
+            if start_date and end_date:
+                start_formatted = (
+                    start_date[:4] if len(start_date) >= 4 else start_date
+                )  # Extract year from date
+                end_formatted = end_date[:4] if len(end_date) >= 4 else end_date
+                if in_progress:
+                    date_info = f" ({start_formatted} - present, in progress)"
+                else:
+                    date_info = f" ({start_formatted} - {end_formatted})"
+            elif start_date:
+                start_formatted = start_date[:4] if len(start_date) >= 4 else start_date
+                date_info = f" (started {start_formatted})"
+
+            sentences.append(f"Their partner holds a {degree_name} in {field} from {institution}{date_info}.")
+        else:
+            sentences.append(f"Their partner holds {partner_degree_count} degrees from various institutions.")
+            for degree in partner_degrees[:3]:  # Show first 3 degrees in detail
+                degree_name = degree.get("degree", "Unspecified degree")
+                institution = degree.get("institution", "Unspecified institution")
+                field = degree.get("field", "Unspecified field")
+                sentences.append(f"• {degree_name} in {field} from {institution}")
+            if partner_degree_count > 3:
+                sentences.append(f"...and {partner_degree_count - 3} additional degrees.")
+
     # Professional skills/credentials
     skills = edu.get("visaSkills", [])
     if skills:

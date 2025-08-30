@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
+ 
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
@@ -80,6 +81,8 @@ export function Education({ onComplete }: { onComplete: () => void }) {
 
   const skills: Skill[] = getFormData("education.visaSkills") ?? []
   const setSkills = (next: Skill[]) => updateFormData("education.visaSkills", next)
+  const partnerSkills: Skill[] = getFormData("education.partner.visaSkills") ?? []
+  const setPartnerSkills = (next: Skill[]) => updateFormData("education.partner.visaSkills", next)
 
   const interestedInStudy: boolean = getFormData("education.interestedInStudying") ?? false
   const setInterested = (v: boolean) => updateFormData("education.interestedInStudying", v)
@@ -120,9 +123,6 @@ export function Education({ onComplete }: { onComplete: () => void }) {
     school: "", program: "", startDate: "", fundingStatus: "Self-funded"
   })
 
-  // Degrees section tab state (isolated)
-  const [degreesTab, setDegreesTab] = useState("you")
-
   const handleComplete = () => {
     markSectionComplete("education")
     onComplete()
@@ -134,7 +134,7 @@ export function Education({ onComplete }: { onComplete: () => void }) {
   const hasLanguageProficiency = Object.keys(individualProficiency).length > 0
 
   // Validation
-  const errors = []
+  const errors: string[] = []
   if (!hasLanguageProficiency) errors.push("Language proficiency for destination country languages is required")
   
   const canContinue = errors.length === 0
@@ -143,6 +143,9 @@ export function Education({ onComplete }: { onComplete: () => void }) {
   const canAddSkill = skillDraft.skill.trim().length > 0
   const canAddInterest = interestDraft.skill.trim() !== "" && interestDraft.institute.trim() !== "" && interestDraft.months > 0 && interestDraft.hoursPerWeek > 0 && interestDraft.fundingStatus !== ""
   const canAddOffer = offerDraft.school.trim() !== "" && offerDraft.program.trim() !== "" && offerDraft.startDate.trim() !== "" && offerDraft.fundingStatus !== ""
+  
+  // Whether a partner was selected in Personal section
+  const hasPartnerSelected = getFormData("personalInformation.relocationPartner") ?? false
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
@@ -156,6 +159,8 @@ export function Education({ onComplete }: { onComplete: () => void }) {
           Your educational background and professional skills for visa applications and career opportunities
         </p>
       </div>
+
+      {/* Removed global You/Partner switch per request; switches will be added per section */}
 
       <SectionHint title="About this section">
         Educational qualifications and professional skills are crucial for visa applications, especially for skilled worker visas and professional registration in your destination country.
@@ -175,33 +180,267 @@ export function Education({ onComplete }: { onComplete: () => void }) {
         </CardHeader>
         <CardContent className="pt-6">
           <div className="space-y-6">
-            {/* Degrees Section with Isolated Tabs */}
+            {hasPartnerSelected ? (
+              <Tabs defaultValue="you" className="w-full">
+                <TabsList>
+                  <TabsTrigger value="you">You</TabsTrigger>
+                  <TabsTrigger value="partner">Partner</TabsTrigger>
+                </TabsList>
+                <TabsContent value="you">
+                  <div className="space-y-6">
+            {/* Existing degrees */}
+            {degrees.length > 0 && (
+              <div className="space-y-4">
+                <h4 className="font-medium text-base">Your Degrees</h4>
+                <div className="grid gap-4">
+                  {degrees.map((degree, idx) => (
+                    <div key={idx} className="p-4 border rounded-lg bg-card">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <Badge variant="secondary">{degree.degree || "Not specified"}</Badge>
+                            {degree.in_progress && <Badge variant="outline">In Progress</Badge>}
+                          </div>
+                          <p className="font-medium">{degree.institution || "Institution not specified"}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {degree.field || "Field not specified"}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {degree.start_date ? new Date(degree.start_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Start date not specified'} - {degree.in_progress ? "Present" : (degree.end_date ? new Date(degree.end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : "End date not specified")}
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setDegrees(degrees.filter((_, i) => i !== idx))}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Add degree form */}
+            <div className="space-y-4 p-4 border rounded-lg bg-card">
+              <h4 className="font-medium text-base">Add Degree</h4>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Degree name *</Label>
+                  <Input
+                    placeholder="e.g., Bachelor of Science in Computer Science"
+                    value={degreeDraft.degree}
+                    onChange={(e) => setDegreeDraft({...degreeDraft, degree: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Institution *</Label>
+                  <Input
+                    placeholder="e.g., University of Technology"
+                    value={degreeDraft.institution}
+                    onChange={(e) => setDegreeDraft({...degreeDraft, institution: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Start date *</Label>
+                  <Input type="date" value={degreeDraft.start_date} onChange={(e) => setDegreeDraft({...degreeDraft, start_date: e.target.value})} />
+                </div>
+                <div className="space-y-2">
+                  <Label>End date {!degreeDraft.in_progress && "*"}</Label>
+                  <Input type="date" disabled={degreeDraft.in_progress} value={degreeDraft.end_date} onChange={(e) => setDegreeDraft({...degreeDraft, end_date: e.target.value})} />
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox id="in_progress" checked={degreeDraft.in_progress} onCheckedChange={(v) => setDegreeDraft({...degreeDraft, in_progress: !!v, end_date: v ? "" : degreeDraft.end_date})} />
+                <Label htmlFor="in_progress">Currently in progress</Label>
+              </div>
+              <Button disabled={!canAddDegree} onClick={() => { setDegrees([...degrees, degreeDraft]); setDegreeDraft({degree: "", institution: "", field: "", start_date: "", end_date: "", in_progress: false}) }} className="w-full">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Degree
+              </Button>
+            </div>
+
+            <Separator />
+
+            {/* Professional Skills & Credentials Section */}
             <div className="space-y-6">
               <div className="flex items-center gap-3">
-                <GraduationCap className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-semibold">Degrees</h3>
+                <Award className="w-5 h-5 text-blue-600" />
+                <h3 className="text-lg font-semibold">Professional Skills & Credentials</h3>
               </div>
-              
-              {getFormData("personalInformation.relocationPartner") ? (
-                <Tabs value={degreesTab} onValueChange={setDegreesTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 rounded-lg h-12 transition-all duration-300">
-                    <TabsTrigger 
-                      value="you" 
-                      className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:font-semibold transition-all duration-300 rounded-md h-10 text-sm"
-                    >
-                      You
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="partner" 
-                      className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:font-semibold transition-all duration-300 rounded-md h-10 text-sm"
-                    >
-                      Partner
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="you" className="mt-6 space-y-6">
-                    {/* Your Degrees */}
-                    {degrees.length > 0 && (
+              {skills.length > 0 && (
+                <div className="space-y-4">
+                  <h4 className="font-medium text-base">Your Skills & Credentials</h4>
+                  <div className="grid gap-3">
+                    {skills.map((skill, idx) => (
+                      <div key={idx} className="p-3 border rounded-lg bg-card flex items-center justify-between">
+                        <div>
+                          <span className="font-medium">{skill.skill}</span>
+                          {skill.credentialName && (
+                            <div className="text-sm text-muted-foreground mt-1">
+                              {skill.credentialName} {skill.credentialInstitute && `• ${skill.credentialInstitute}`}
+                            </div>
+                          )}
+                        </div>
+                        <Button variant="ghost" size="sm" onClick={() => setSkills(skills.filter((_, i) => i !== idx))}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-4 p-4 border rounded-lg bg-card">
+                <h4 className="font-medium text-base">Add Skill or Credential</h4>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Skill or profession *</Label>
+                    <Input placeholder="e.g., Software Development, Nursing, Accounting..." value={skillDraft.skill} onChange={(e) => setSkillDraft({...skillDraft, skill: e.target.value})} />
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Credential name</Label>
+                      <Input placeholder="e.g., CPA, RN License, AWS Certification..." value={skillDraft.credentialName} onChange={(e) => setSkillDraft({...skillDraft, credentialName: e.target.value})} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Issuing organization</Label>
+                      <Input placeholder="e.g., AICPA, NMC, Amazon..." value={skillDraft.credentialInstitute} onChange={(e) => setSkillDraft({...skillDraft, credentialInstitute: e.target.value})} />
+                    </div>
+                  </div>
+                  <Button onClick={() => { setSkills([...skills, skillDraft]); setSkillDraft({skill: "", credentialName: "", credentialInstitute: ""}) }} className="w-full">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Skill
+                  </Button>
+                </div>
+              </div>
+            </div>
+                  </div>
+                </TabsContent>
+                <TabsContent value="partner">
+                  <div className="space-y-6">
+                    {partnerDegrees.length > 0 && (
+                      <div className="space-y-4">
+                        <h4 className="font-medium text-base">Partner Degrees</h4>
+                        <div className="grid gap-4">
+                          {partnerDegrees.map((degree, idx) => (
+                            <div key={idx} className="p-4 border rounded-lg bg-card">
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-3 mb-2">
+                                    <Badge variant="secondary">{degree.degree || "Not specified"}</Badge>
+                                    {degree.in_progress && <Badge variant="outline">In Progress</Badge>}
+                                  </div>
+                                  <p className="font-medium">{degree.institution || "Institution not specified"}</p>
+                                  <p className="text-sm text-muted-foreground">{degree.field || "Field not specified"}</p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {degree.start_date ? new Date(degree.start_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Start date not specified'} - {degree.in_progress ? "Present" : (degree.end_date ? new Date(degree.end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : "End date not specified")}
+                                  </p>
+                                </div>
+                                <Button variant="ghost" size="sm" onClick={() => setPartnerDegrees(partnerDegrees.filter((_, i) => i !== idx))}>
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="space-y-4 p-4 border rounded-lg bg-card">
+                      <h4 className="font-medium text-base">Add Partner Degree</h4>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Degree name *</Label>
+                          <Input placeholder="e.g., Bachelor of Arts" value={degreeDraft.degree} onChange={(e) => setDegreeDraft({...degreeDraft, degree: e.target.value})} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Institution *</Label>
+                          <Input placeholder="e.g., University" value={degreeDraft.institution} onChange={(e) => setDegreeDraft({...degreeDraft, institution: e.target.value})} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Start date *</Label>
+                          <Input type="date" value={degreeDraft.start_date} onChange={(e) => setDegreeDraft({...degreeDraft, start_date: e.target.value})} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>End date {!degreeDraft.in_progress && "*"}</Label>
+                          <Input type="date" disabled={degreeDraft.in_progress} value={degreeDraft.end_date} onChange={(e) => setDegreeDraft({...degreeDraft, end_date: e.target.value})} />
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Checkbox id="partner_in_progress" checked={degreeDraft.in_progress} onCheckedChange={(v) => setDegreeDraft({...degreeDraft, in_progress: !!v, end_date: v ? "" : degreeDraft.end_date})} />
+                        <Label htmlFor="partner_in_progress">Currently in progress</Label>
+                      </div>
+                      <Button disabled={!canAddDegree} onClick={() => { setPartnerDegrees([...partnerDegrees, degreeDraft]); setDegreeDraft({degree: "", institution: "", field: "", start_date: "", end_date: "", in_progress: false}) }} className="w-full">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Partner Degree
+                      </Button>
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-3">
+                        <Award className="w-5 h-5 text-blue-600" />
+                        <h3 className="text-lg font-semibold">Partner Skills & Credentials</h3>
+                      </div>
+                      {partnerSkills.length > 0 && (
+                        <div className="space-y-4">
+                          <h4 className="font-medium text-base">Partner Skills & Credentials</h4>
+                          <div className="grid gap-3">
+                            {partnerSkills.map((skill, idx) => (
+                              <div key={idx} className="p-3 border rounded-lg bg-card flex items-center justify-between">
+                                <div>
+                                  <span className="font-medium">{skill.skill}</span>
+                                  {skill.credentialName && (
+                                    <div className="text-sm text-muted-foreground mt-1">
+                                      {skill.credentialName} {skill.credentialInstitute && `• ${skill.credentialInstitute}`}
+                                    </div>
+                                  )}
+                                </div>
+                                <Button variant="ghost" size="sm" onClick={() => setPartnerSkills(partnerSkills.filter((_, i) => i !== idx))}>
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="space-y-4 p-4 border rounded-lg bg-card">
+                        <h4 className="font-medium text-base">Add Partner Skill or Credential</h4>
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label>Skill or profession *</Label>
+                            <Input placeholder="e.g., Marketing, Teaching, Engineering..." value={skillDraft.skill} onChange={(e) => setSkillDraft({...skillDraft, skill: e.target.value})} />
+                          </div>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label>Credential name</Label>
+                              <Input placeholder="e.g., TEFL, PMP, Chartered Engineer" value={skillDraft.credentialName} onChange={(e) => setSkillDraft({...skillDraft, credentialName: e.target.value})} />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Issuing organization</Label>
+                              <Input placeholder="e.g., PMI, British Council..." value={skillDraft.credentialInstitute} onChange={(e) => setSkillDraft({...skillDraft, credentialInstitute: e.target.value})} />
+                            </div>
+                          </div>
+                          <Button onClick={() => { setPartnerSkills([...partnerSkills, skillDraft]); setSkillDraft({skill: "", credentialName: "", credentialInstitute: ""}) }} className="w-full">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add Partner Skill
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            ) : (
+              <>
+            {/* Existing degrees */}
+            {/* Existing degrees */}
+            {degrees.length > 0 && (
               <div className="space-y-4">
                 <h4 className="font-medium text-base">Your Degrees</h4>
                 <div className="grid gap-4">
@@ -281,228 +520,17 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                 />
                 <Label htmlFor="in_progress">Currently in progress</Label>
               </div>
-                      <Button
-                        disabled={!canAddDegree}
-                        onClick={() => {
-                          setDegrees([...degrees, degreeDraft])
-                          setDegreeDraft({degree: "", institution: "", field: "", start_date: "", end_date: "", in_progress: false})
-                        }}
-                        className="w-full"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Degree
-                      </Button>
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="partner" className="mt-6 space-y-6">
-                    {/* Partner Degrees */}
-                    {partnerDegrees.length > 0 && (
-                      <div className="space-y-4">
-                        <h4 className="font-medium text-base">Partner Degrees</h4>
-                        <div className="grid gap-4">
-                          {partnerDegrees.map((degree, idx) => (
-                            <div key={idx} className="p-4 border rounded-lg bg-card">
-                              <div className="flex items-start justify-between mb-3">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-3 mb-2">
-                                    <Badge variant="secondary">{degree.degree || "Not specified"}</Badge>
-                                    {degree.in_progress && <Badge variant="outline">In Progress</Badge>}
-                                  </div>
-                                  <p className="font-medium">{degree.institution || "Institution not specified"}</p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {degree.field || "Field not specified"}
-                                  </p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {degree.start_date ? new Date(degree.start_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Start date not specified'} - {degree.in_progress ? "Present" : (degree.end_date ? new Date(degree.end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : "End date not specified")}
-                                  </p>
-                                </div>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => setPartnerDegrees(partnerDegrees.filter((_, i) => i !== idx))}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Add Partner Degree */}
-                    <div className="space-y-4 p-4 border rounded-lg bg-card">
-                      <h4 className="font-medium text-base">Add Partner Degree</h4>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label>Degree name *</Label>
-                          <Input
-                            placeholder="e.g., Master of Arts"
-                            value={degreeDraft.degree}
-                            onChange={(e) => setDegreeDraft({...degreeDraft, degree: e.target.value})}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Institution *</Label>
-                          <Input
-                            placeholder="e.g., State University"
-                            value={degreeDraft.institution}
-                            onChange={(e) => setDegreeDraft({...degreeDraft, institution: e.target.value})}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Field of study</Label>
-                          <Input
-                            placeholder="e.g., Literature, Psychology, Engineering"
-                            value={degreeDraft.field}
-                            onChange={(e) => setDegreeDraft({...degreeDraft, field: e.target.value})}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Start date *</Label>
-                          <Input
-                            type="date"
-                            value={degreeDraft.start_date}
-                            onChange={(e) => setDegreeDraft({...degreeDraft, start_date: e.target.value})}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>End date {!degreeDraft.in_progress && "*"}</Label>
-                          <Input
-                            type="date"
-                            disabled={degreeDraft.in_progress}
-                            value={degreeDraft.end_date}
-                            onChange={(e) => setDegreeDraft({...degreeDraft, end_date: e.target.value})}
-                          />
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Checkbox
-                          id="partner_in_progress"
-                          checked={degreeDraft.in_progress}
-                          onCheckedChange={(v) => setDegreeDraft({...degreeDraft, in_progress: !!v, end_date: v ? "" : degreeDraft.end_date})}
-                        />
-                        <Label htmlFor="partner_in_progress">Currently in progress</Label>
-                      </div>
-                      <Button
-                        disabled={!canAddDegree}
-                        onClick={() => {
-                          setPartnerDegrees([...partnerDegrees, degreeDraft])
-                          setDegreeDraft({degree: "", institution: "", field: "", start_date: "", end_date: "", in_progress: false})
-                        }}
-                        className="w-full"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Partner Degree
-                      </Button>
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              ) : (
-                <div className="space-y-6">
-                  {/* Single User Mode */}
-                  {degrees.length > 0 && (
-                    <div className="space-y-4">
-                      <h4 className="font-medium text-base">Your Degrees</h4>
-                      <div className="grid gap-4">
-                        {degrees.map((degree, idx) => (
-                          <div key={idx} className="p-4 border rounded-lg bg-card">
-                            <div className="flex items-start justify-between mb-3">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-2">
-                                  <Badge variant="secondary">{degree.degree || "Not specified"}</Badge>
-                                  {degree.in_progress && <Badge variant="outline">In Progress</Badge>}
-                                </div>
-                                <p className="font-medium">{degree.institution || "Institution not specified"}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {degree.field || "Field not specified"}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {degree.start_date ? new Date(degree.start_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Start date not specified'} - {degree.in_progress ? "Present" : (degree.end_date ? new Date(degree.end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : "End date not specified")}
-                                </p>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setDegrees(degrees.filter((_, i) => i !== idx))}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="space-y-4 p-4 border rounded-lg bg-card">
-                    <h4 className="font-medium text-base">Add Degree</h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Degree name *</Label>
-                        <Input
-                          placeholder="e.g., Bachelor of Science in Computer Science"
-                          value={degreeDraft.degree}
-                          onChange={(e) => setDegreeDraft({...degreeDraft, degree: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Institution *</Label>
-                        <Input
-                          placeholder="e.g., University of Technology"
-                          value={degreeDraft.institution}
-                          onChange={(e) => setDegreeDraft({...degreeDraft, institution: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Field of study</Label>
-                        <Input
-                          placeholder="e.g., Computer Science, Medicine, Business"
-                          value={degreeDraft.field}
-                          onChange={(e) => setDegreeDraft({...degreeDraft, field: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Start date *</Label>
-                        <Input
-                          type="date"
-                          value={degreeDraft.start_date}
-                          onChange={(e) => setDegreeDraft({...degreeDraft, start_date: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>End date {!degreeDraft.in_progress && "*"}</Label>
-                        <Input
-                          type="date"
-                          disabled={degreeDraft.in_progress}
-                          value={degreeDraft.end_date}
-                          onChange={(e) => setDegreeDraft({...degreeDraft, end_date: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="in_progress_single"
-                        checked={degreeDraft.in_progress}
-                        onCheckedChange={(v) => setDegreeDraft({...degreeDraft, in_progress: !!v, end_date: v ? "" : degreeDraft.end_date})}
-                      />
-                      <Label htmlFor="in_progress_single">Currently in progress</Label>
-                    </div>
-                    <Button
-                      disabled={!canAddDegree}
-                      onClick={() => {
-                        setDegrees([...degrees, degreeDraft])
-                        setDegreeDraft({degree: "", institution: "", field: "", start_date: "", end_date: "", in_progress: false})
-                      }}
-                      className="w-full"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Degree
-                    </Button>
-                  </div>
-                </div>
-              )}
+              <Button
+                disabled={!canAddDegree}
+                                  onClick={() => {
+                    setDegrees([...degrees, degreeDraft])
+                    setDegreeDraft({degree: "", institution: "", field: "", start_date: "", end_date: "", in_progress: false})
+                  }}
+                className="w-full"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Degree
+              </Button>
             </div>
 
             <Separator />
@@ -961,8 +989,8 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                     </div>
                   </div>
                 )}
-              </div>
-            </div>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -1420,6 +1448,13 @@ function LanguageProficiencyFull() {
           )}
 
           {/* Your Language Skills */}
+          {hasPartner ? (
+            <Tabs defaultValue="you" className="w-full">
+              <TabsList>
+                <TabsTrigger value="you">You</TabsTrigger>
+                <TabsTrigger value="partner">Partner</TabsTrigger>
+              </TabsList>
+              <TabsContent value="you">
           <div className="space-y-4">
             <h4 className="font-medium text-base">📊 Your Language Skills</h4>
             {languages.map((lang: string) => {
@@ -1518,9 +1553,10 @@ function LanguageProficiencyFull() {
               )
             })}
           </div>
+              </TabsContent>
 
           {/* Partner's Language Skills */}
-          {hasPartner && (
+              <TabsContent value="partner">
             <div className="space-y-4">
               <h4 className="font-medium text-base">👥 Partner's Language Skills</h4>
               {languages.map((lang: string) => {
@@ -1622,6 +1658,27 @@ function LanguageProficiencyFull() {
                         </div>
                       </div>
                     )}
+                  </div>
+                )
+              })}
+            </div>
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <div className="space-y-4">
+              <h4 className="font-medium text-base">📊 Your Language Skills</h4>
+              {languages.map((lang: string) => {
+                const currentLevel = Number(individualProficiency[lang] || 0)
+                return (
+                  <div key={`individual-${lang}`} className="space-y-3 p-4 border rounded-lg">
+                    <div className="flex justify-between items-center">
+                      <Label className="text-base font-medium">Your proficiency in {lang}</Label>
+                      <Badge variant="secondary">{proficiencyLabels[currentLevel]}</Badge>
+                    </div>
+                    <Slider value={[currentLevel]} onValueChange={(value) => { updateFormData(`residencyIntentions.languageProficiency.individual.${lang}`, value[0]) }} max={7} min={0} step={1} className="w-full" />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>None</span><span>A1</span><span>A2</span><span>B1</span><span>B2</span><span>C1</span><span>C2</span><span>Native</span>
+                    </div>
                   </div>
                 )
               })}
