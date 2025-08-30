@@ -158,6 +158,33 @@ export function Education({ onComplete }: { onComplete: () => void }) {
   const canContinue = errors.length === 0
 
   const canAddDegree = degreeDraft.degree && degreeDraft.institution && degreeDraft.start_date && (degreeDraft.in_progress || degreeDraft.end_date)
+  
+  // Simple reusable tab component for consistent styling
+  const SectionTabs = ({ children, tabState, setTabState }: { 
+    children: React.ReactNode, 
+    tabState: string, 
+    setTabState: (value: string) => void 
+  }) => (
+    <Tabs value={tabState} onValueChange={setTabState} className="w-full">
+      <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 rounded-lg h-12 transition-all duration-300">
+        <TabsTrigger 
+          value="you" 
+          className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:font-semibold transition-all duration-300 rounded-md h-10 text-sm"
+        >
+          You
+        </TabsTrigger>
+        <TabsTrigger 
+          value="partner" 
+          className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:font-semibold transition-all duration-300 rounded-md h-10 text-sm"
+        >
+          Partner
+        </TabsTrigger>
+      </TabsList>
+      {children}
+    </Tabs>
+  )
+
+
   const canAddSkill = skillDraft.skill.trim().length > 0
   const canAddInterest = interestDraft.skill.trim() !== "" && interestDraft.institute.trim() !== "" && interestDraft.months > 0 && interestDraft.hoursPerWeek > 0 && interestDraft.fundingStatus !== ""
   const canAddOffer = offerDraft.school.trim() !== "" && offerDraft.program.trim() !== "" && offerDraft.startDate.trim() !== "" && offerDraft.fundingStatus !== ""
