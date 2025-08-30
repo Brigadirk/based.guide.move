@@ -83,7 +83,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Page Header */}
-      <div className="text-center pb-4 border-b">
+      <div className="text-left pb-4 border-b">
         <h1 className="text-3xl font-bold text-primary mb-3">
           ⚖️ Social Security & Pensions
         </h1>

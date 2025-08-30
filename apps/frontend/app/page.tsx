@@ -98,16 +98,8 @@ export default function HomePage() {
     updateFormData("finance.skipDetails", checked)
     
     if (checked) {
-      // Mark all finance-related sections as complete when skipping details
-      markSectionComplete("finance")
-      markSectionComplete("social-security") 
-      markSectionComplete("tax-deductions")
-      markSectionComplete("future-plans")
-      
-      // Store which sections were auto-completed so we can unmark them later
-      updateFormData("finance.autoCompletedSections", [
-        "finance", "social-security", "tax-deductions", "future-plans"
-      ])
+      // Do not auto-complete sections; require explicit submission of each section
+      updateFormData("finance.autoCompletedSections", false)
     } else if (wasAutoCompleted) {
       // When unchecking, unmark the sections that were auto-completed
       const autoCompletedSections = Array.isArray(wasAutoCompleted) 
@@ -263,7 +255,7 @@ export default function HomePage() {
           {/* Visually hidden heading for accessibility */}
           <h1 className="sr-only">Mr Pro Bonobo's Ape Escape Consultancy</h1>
           <p className="text-lg text-muted-foreground">
-            Mr. Pro Bonobo's Ape Escape Consultancy Migration Questionnaire (APE-M)
+            Mr. Pro Bonobo's Ape Escape Consultancy Migration Questionnaire
           </p>
           
           {/* Auto-save indicator and reset button */}
@@ -368,10 +360,10 @@ export default function HomePage() {
                           
                           <div className="border-t border-emerald-200/40 pt-2">
                             <details className="group">
-                              <summary className="text-[10px] text-stone-700 dark:text-stone-300 cursor-pointer hover:text-stone-800 dark:hover:text-stone-200">
+                              <summary className="text-base font-semibold text-stone-900 dark:text-white cursor-pointer">
                                 💡 Why would I want to do this?
                               </summary>
-                              <p className="text-[9px] text-stone-600 dark:text-stone-400 mt-1 leading-relaxed">
+                              <p className="text-base text-stone-800 dark:text-stone-200 mt-2 leading-relaxed">
                                 You may not care about detailed taxation and finance tracking—you simply want to know if there are any financial requirements (income thresholds, bank balances, etc.) needed to be allowed into your destination country.
                               </p>
                             </details>
@@ -379,7 +371,7 @@ export default function HomePage() {
                           
                           {skipFinanceDetails && (
                             <div className="mt-2 p-1.5 rounded bg-emerald-100 dark:bg-emerald-900/30">
-                              <p className="text-[10px] text-emerald-800 dark:text-emerald-200">
+                              <p className="text-xs text-emerald-900 dark:text-emerald-100">
                                 ✅ Finance sections auto-completed
                               </p>
                             </div>
@@ -507,26 +499,8 @@ export default function HomePage() {
             {/* Main Content */}
             <div className="max-w-4xl mx-auto">
               <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <HeaderIcon className="w-6 h-6" />
-                    {SECTIONS[currentSection].title}
-                  </CardTitle>
-                  <CardDescription>
-                    {currentSection === 0 && "Please read and accept the disclaimer to continue"}
-                    {currentSection === 1 && "Select your desired destination country and region"}
-                    {currentSection === 2 && "Tell us about yourself and your family"}
-                    {currentSection === 3 && "Describe your residency intentions and timeline"}
-                    {currentSection === 4 && "Share your educational background and skills"}
-                    {currentSection === 5 && "Provide details about your income and assets"}
-                    {currentSection === 6 && "Information about your social security and pension plans"}
-                    {currentSection === 7 && "Potential tax deductions and credits you may qualify for"}
-                    {currentSection === 8 && "Your future financial plans and investments"}
-                    {currentSection === 9 && "Any additional information or special circumstances"}
-                    {currentSection === 10 && "Review and download your completed questionnaire"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
+                {/* Removed top-left CardHeader (icon + description) to avoid duplication with section headers */}
+                <CardContent className="pt-8">
                   {renderSection()}
                 </CardContent>
               </Card>

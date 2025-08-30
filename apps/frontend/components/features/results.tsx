@@ -159,12 +159,12 @@ Please provide a detailed answer to the follow-up question, referencing the prev
   return (
     <div id="results" className="space-y-8 max-w-6xl mx-auto">
       {/* Page Header */}
-      <div className="text-center pb-4 border-b">
-        <div className="flex items-center justify-center gap-3 mb-4">
+      <div className="text-left pb-4 border-b">
+        <div className="flex items-center gap-3 mb-4">
           <Sparkles className="w-7 h-7 text-purple-600" />
           <h1 className="text-3xl font-bold tracking-tight">AI Analysis Results</h1>
         </div>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-lg text-muted-foreground max-w-2xl">
           Generate comprehensive VISA and TAX guidance based on your profile
         </p>
       </div>

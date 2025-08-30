@@ -175,12 +175,12 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Page Header */}
-      <div className="text-center pb-4 border-b">
-        <div className="flex items-center justify-center gap-3 mb-4">
+      <div className="text-left pb-4 border-b">
+        <div className="flex items-center gap-3 mb-4">
           <DollarSign className="w-7 h-7 text-primary" />
           <h1 className="text-3xl font-bold tracking-tight">Income and Assets</h1>
         </div>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-lg text-muted-foreground max-w-2xl">
           Your financial profile for visa applications and tax planning
         </p>
       </div>

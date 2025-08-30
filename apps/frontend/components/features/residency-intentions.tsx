@@ -147,11 +147,11 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Page Header */}
-      <div className="text-center pb-4 border-b">
+      <div className="text-left pb-4 border-b">
         <h1 className="text-3xl font-bold text-primary mb-3">
           🌐 Residency Intentions
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-lg text-muted-foreground max-w-2xl">
           Understanding your residency intentions helps determine appropriate visa pathways and tax implications
         </p>
       </div>

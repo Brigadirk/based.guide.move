@@ -177,30 +177,21 @@ export function Destination({ onComplete }: DestinationProps) {
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Page Header */}
-      <div className="text-center pb-4 border-b">
-        <div className="flex items-center justify-center gap-3 mb-4">
+      <div className="text-left pb-4 border-b">
+        <div className="flex items-center gap-3 mb-4">
           <Globe className="w-7 h-7 text-primary" />
           <h1 className="text-3xl font-bold tracking-tight">Desired Destination</h1>
         </div>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Select the country and region you plan to relocate to
+        <p className="text-lg text-muted-foreground max-w-2xl">
+          Select the country and region you are interested in relocating to
         </p>
       </div>
 
-      <SectionHint title="About this section">
-        Multi‑destination comparison is coming soon.
-      </SectionHint>
+      {/* Removed About this section hint per request */}
 
       {/* Country Selection Card */}
       <Card className="shadow-sm border-l-4 border-l-primary">
-        <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent">
-          <CardTitle className="text-xl flex items-center gap-3">
-            <Globe className="w-6 h-6 text-primary" />
-            Destination Country
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">Enter the country you plan to relocate to</p>
-        </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className="pt-4">
           <div className="space-y-6">
             <div className="space-y-2">
               <Label className="text-base font-medium">Destination country *</Label>
@@ -298,7 +289,7 @@ export function Destination({ onComplete }: DestinationProps) {
               className="w-full"
               size="lg"
             >
-              Continue to Personal Information
+              Submit and Continue to Personal Information
             </Button>
           </div>
         </CardFooter>
