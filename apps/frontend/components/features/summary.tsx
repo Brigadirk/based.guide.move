@@ -160,11 +160,241 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
 
 
 
+  // Helper function to format education data for display
+  const formatEducationData = (eduData: any) => {
+    if (!eduData) return null
+    
+    const sections = []
+    
+    // Destination Language Skills
+    const languageData = formData.residencyIntentions?.languageProficiency
+    if (languageData?.saved) {
+      sections.push({
+        title: "Destination Language Skills",
+        items: []
+      })
+      
+      // Your language abilities
+      const individual = languageData.individual || {}
+      const willing = languageData.willing_to_learn || []
+      const teaching = languageData.willing_to_teach || []
+      const credentials = languageData.teaching_credentials || []
+      
+      const proficiencyLabels = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Proficient", "Native Speaker"]
+      
+      Object.entries(individual).forEach(([lang, level]: [string, any]) => {
+        const profLevel = proficiencyLabels[level] || "Unknown"
+        let desc = `${lang}: ${profLevel}`
+        if (willing.includes(lang) && level === 0) desc += " (Willing to learn)"
+        if (teaching.includes(lang)) {
+          desc += credentials.includes(lang) ? " (Can teach - Certified)" : " (Can teach)"
+        }
+        sections[sections.length - 1].items.push(desc)
+      })
+      
+      // Partner language abilities
+      const partner = languageData.partner || {}
+      const partnerWilling = languageData.partner_willing_to_learn || []
+      const partnerTeaching = languageData.partner_willing_to_teach || []
+      const partnerCredentials = languageData.partner_teaching_credentials || []
+      
+      if (Object.keys(partner).length > 0) {
+        sections.push({
+          title: "Partner's Destination Language Skills",
+          items: []
+        })
+        
+        Object.entries(partner).forEach(([lang, level]: [string, any]) => {
+          const profLevel = proficiencyLabels[level] || "Unknown"
+          let desc = `${lang}: ${profLevel}`
+          if (partnerWilling.includes(lang) && level === 0) desc += " (Willing to learn)"
+          if (partnerTeaching.includes(lang)) {
+            desc += partnerCredentials.includes(lang) ? " (Can teach - Certified)" : " (Can teach)"
+          }
+          sections[sections.length - 1].items.push(desc)
+        })
+      }
+    }
+    
+    // Other Languages
+    if (eduData.otherLanguages?.length > 0) {
+      sections.push({
+        title: "Your Other Languages",
+        items: eduData.otherLanguages.map((lang: any) => {
+          const proficiencyLabels = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Proficient", "Native Speaker"]
+          let desc = `${lang.language}: ${proficiencyLabels[lang.proficiency] || "Unknown"}`
+          if (lang.willingToTeach) {
+            desc += lang.hasCredentials ? " (Can teach - Certified)" : " (Can teach)"
+          }
+          return desc
+        })
+      })
+    }
+    
+    if (eduData.partner?.otherLanguages?.length > 0) {
+      sections.push({
+        title: "Partner's Other Languages", 
+        items: eduData.partner.otherLanguages.map((lang: any) => {
+          const proficiencyLabels = ["None", "A1 Basic", "A2 Elementary", "B1 Intermediate", "B2 Upper Intermediate", "C1 Advanced", "C2 Proficient", "Native Speaker"]
+          let desc = `${lang.language}: ${proficiencyLabels[lang.proficiency] || "Unknown"}`
+          if (lang.willingToTeach) {
+            desc += lang.hasCredentials ? " (Can teach - Certified)" : " (Can teach)"
+          }
+          return desc
+        })
+      })
+    }
+    
+    // Degrees
+    if (eduData.previousDegrees?.length > 0) {
+      sections.push({
+        title: "Your Degrees",
+        items: eduData.previousDegrees.map((degree: any) => 
+          `${degree.degree} from ${degree.institution} (${degree.start_date} - ${degree.in_progress ? 'Present' : degree.end_date})`
+        )
+      })
+    }
+    
+    if (eduData.partner?.previousDegrees?.length > 0) {
+      sections.push({
+        title: "Partner's Degrees",
+        items: eduData.partner.previousDegrees.map((degree: any) => 
+          `${degree.degree} from ${degree.institution} (${degree.start_date} - ${degree.in_progress ? 'Present' : degree.end_date})`
+        )
+      })
+    }
+    
+    // Skills & Credentials
+    if (eduData.visaSkills?.length > 0) {
+      sections.push({
+        title: "Your Skills & Credentials",
+        items: eduData.visaSkills.map((skill: any) => {
+          let desc = skill.skill
+          if (skill.credentialName) {
+            desc += ` (${skill.credentialName}`
+            if (skill.credentialInstitute) desc += ` from ${skill.credentialInstitute}`
+            desc += ")"
+          }
+          return desc
+        })
+      })
+    }
+    
+    if (eduData.partner?.visaSkills?.length > 0) {
+      sections.push({
+        title: "Partner's Skills & Credentials",
+        items: eduData.partner.visaSkills.map((skill: any) => {
+          let desc = skill.skill
+          if (skill.credentialName) {
+            desc += ` (${skill.credentialName}`
+            if (skill.credentialInstitute) desc += ` from ${skill.credentialInstitute}`
+            desc += ")"
+          }
+          return desc
+        })
+      })
+    }
+    
+    // Work Experience
+    if (eduData.workExperience?.length > 0) {
+      sections.push({
+        title: "Your Work Experience",
+        items: eduData.workExperience.map((work: any) => 
+          `${work.jobTitle} at ${work.company} (${work.startDate} - ${work.current ? 'Present' : work.endDate})`
+        )
+      })
+    }
+    
+    if (eduData.partner?.workExperience?.length > 0) {
+      sections.push({
+        title: "Partner's Work Experience", 
+        items: eduData.partner.workExperience.map((work: any) => 
+          `${work.jobTitle} at ${work.company} (${work.startDate} - ${work.current ? 'Present' : work.endDate})`
+        )
+      })
+    }
+    
+    // Professional Licenses
+    if (eduData.professionalLicenses?.length > 0) {
+      sections.push({
+        title: "Your Professional Licenses",
+        items: eduData.professionalLicenses.map((license: any) => 
+          `${license.licenseName} (${license.licenseType}) from ${license.issuingBody} in ${license.country}${license.active ? ' - Active' : ''}`
+        )
+      })
+    }
+    
+    if (eduData.partner?.professionalLicenses?.length > 0) {
+      sections.push({
+        title: "Partner's Professional Licenses",
+        items: eduData.partner.professionalLicenses.map((license: any) => 
+          `${license.licenseName} (${license.licenseType}) from ${license.issuingBody} in ${license.country}${license.active ? ' - Active' : ''}`
+        )
+      })
+    }
+    
+    // Military Service
+    const military = eduData.militaryService
+    if (military?.hasService) {
+      sections.push({
+        title: "Military Service",
+        items: [
+          `${military.branch} in ${military.country} (${military.startDate} - ${military.currentlyServing ? 'Present' : military.endDate})`,
+          ...(military.rank ? [`Rank: ${military.rank}`] : []),
+          ...(military.occupation ? [`Occupation: ${military.occupation}`] : []),
+          ...(military.securityClearance && military.securityClearance !== 'None' ? [`Security Clearance: ${military.securityClearance}`] : []),
+          ...(military.languages ? [`Languages: ${military.languages}`] : []),
+          ...(military.certifications ? [`Certifications: ${military.certifications}`] : []),
+          ...(military.leadership ? [`Leadership: ${military.leadership}`] : [])
+        ].filter(Boolean)
+      })
+    }
+    
+    // Study Plans
+    if (eduData.interestedInStudying === true) {
+      sections.push({
+        title: "Study Plans",
+        items: [
+          "Interested in studying in destination country",
+          ...(eduData.schoolInterestDetails ? [eduData.schoolInterestDetails] : [])
+        ]
+      })
+    }
+    
+    // Learning Interests
+    if (eduData.learningInterests?.length > 0) {
+      sections.push({
+        title: "Learning & Development Goals",
+        items: eduData.learningInterests.map((interest: any) => 
+          `${interest.skill} (${interest.status}) - ${interest.months} months, ${interest.hoursPerWeek}h/week at ${interest.institute} (${interest.fundingStatus})`
+        )
+      })
+    }
+    
+    // School Offers
+    if (eduData.schoolOffers?.length > 0) {
+      sections.push({
+        title: "School Offers & Applications",
+        items: eduData.schoolOffers.map((offer: any) => 
+          `${offer.program} at ${offer.school} (Starting: ${offer.startDate}) - ${offer.fundingStatus}`
+        )
+      })
+    }
+    
+    return sections.length > 0 ? sections : null
+  }
+
   // Section completion status
   const sections = [
     { id: "destination", name: "Destination Country", icon: MapPin, data: formData.residencyIntentions?.destinationCountry },
     { id: "personal", name: "Personal Information", icon: User, data: formData.personalInformation },
-    { id: "education", name: "Education & Skills", icon: GraduationCap, data: formData.education },
+    { 
+      id: "education", 
+      name: "Education & Skills", 
+      icon: GraduationCap, 
+      data: formData.education,
+      detailedData: formatEducationData(formData.education)
+    },
     { id: "residency", name: "Residency Intentions", icon: Heart, data: formData.residencyIntentions },
     { id: "finance", name: "Financial Information", icon: DollarSign, data: formData.finance },
     { id: "socialSecurity", name: "Social Security & Pensions", icon: Shield, data: formData.socialSecurityAndPensions },
