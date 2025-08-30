@@ -1609,6 +1609,36 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
             if skill_count > 3:
                 sentences.append(f"...and {skill_count - 3} additional skills.")
 
+    # Partner skills/credentials
+    partner_skills = partner_data.get("visaSkills", [])
+    if partner_skills:
+        partner_skill_count = len(partner_skills)
+        if partner_skill_count == 1:
+            skill = partner_skills[0]
+            skill_name = skill.get("skill", "Unspecified skill")
+            credential = skill.get("credentialName", "")
+            institute = skill.get("credentialInstitute", "")
+
+            skill_desc = skill_name
+            if credential:
+                skill_desc += f" ({credential}"
+                if institute:
+                    skill_desc += f" from {institute}"
+                skill_desc += ")"
+
+            sentences.append(f"Their partner has professional expertise in {skill_desc}.")
+        else:
+            sentences.append(f"Their partner has {partner_skill_count} professional skills and credentials:")
+            for skill in partner_skills[:3]:  # Show first 3 skills
+                skill_name = skill.get("skill", "Unspecified skill")
+                credential = skill.get("credentialName", "")
+                if credential:
+                    sentences.append(f"• {skill_name} ({credential})")
+                else:
+                    sentences.append(f"• {skill_name}")
+            if partner_skill_count > 3:
+                sentences.append(f"...and {partner_skill_count - 3} additional skills.")
+
     # Work experience
     work_exp = edu.get("workExperience", [])
     if work_exp:
@@ -1640,6 +1670,38 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
         if exp_count > 3:
             sentences.append(f"...and {exp_count - 3} additional work experiences.")
 
+    # Partner work experience
+    partner_work_exp = partner_data.get("workExperience", [])
+    if partner_work_exp:
+        partner_exp_count = len(partner_work_exp)
+        sentences.append(
+            f"Their partner has {partner_exp_count} work experience entr{'ies' if partner_exp_count != 1 else 'y'}:"
+        )
+        for exp in partner_work_exp[:3]:  # Show first 3 experiences
+            company = exp.get("company", "Unspecified company")
+            position = exp.get(
+                "jobTitle", exp.get("position", "Unspecified position")
+            )  # Try jobTitle first, then position
+            start_date = exp.get("startDate", "")
+            end_date = exp.get("endDate", "")
+            current = exp.get("current", False)
+
+            date_range = ""
+            if start_date:
+                start_year = start_date[:4] if len(start_date) >= 4 else start_date
+                if current:
+                    date_range = f" ({start_year} - present)"
+                elif end_date:
+                    end_year = end_date[:4] if len(end_date) >= 4 else end_date
+                    date_range = f" ({start_year} - {end_year})"
+                else:
+                    date_range = f" (since {start_year})"
+
+            sentences.append(f"• {position} at {company}{date_range}")
+
+        if partner_exp_count > 3:
+            sentences.append(f"...and {partner_exp_count - 3} additional work experiences.")
+
     # Professional licenses
     licenses = edu.get("professionalLicenses", [])
     if licenses:
@@ -1665,6 +1727,35 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
             sentences.append(f"• {license_desc}")
         if license_count > 3:
             sentences.append(f"...and {license_count - 3} additional licenses.")
+
+    # Partner professional licenses
+    partner_licenses = partner_data.get("professionalLicenses", [])
+    if partner_licenses:
+        partner_license_count = len(partner_licenses)
+        sentences.append(
+            f"Their partner holds {partner_license_count} professional license{'s' if partner_license_count != 1 else ''}:"
+        )
+        for license in partner_licenses[:3]:  # Show first 3 licenses
+            license_name = license.get("licenseName", "Unspecified license")
+            license_type = license.get("licenseType", "")
+            issuing_body = license.get("issuingBody", "")
+            country = license.get("country", "")
+            active = license.get("active", False)
+
+            license_desc = license_name
+            if license_type:
+                license_desc = f"{license_type} ({license_name})"
+            if issuing_body:
+                license_desc += f" from {issuing_body}"
+            if country:
+                license_desc += f" in {country}"
+            if active:
+                license_desc += " (active)"
+
+            sentences.append(f"• {license_desc}")
+
+        if partner_license_count > 3:
+            sentences.append(f"...and {partner_license_count - 3} additional licenses.")
 
     # Study interests
     if edu.get("interestedInStudying") is True:
