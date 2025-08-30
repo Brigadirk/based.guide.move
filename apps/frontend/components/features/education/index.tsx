@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { GraduationCap, BookOpen } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { GraduationCap, BookOpen, CheckCircle, Info } from "lucide-react"
 import { SectionHint } from "@/components/ui/section-hint"
 import { SectionFooter } from "@/components/ui/section-footer"
 import { ValidationAlert } from "@/components/ui/validation-alert"
@@ -12,6 +13,7 @@ import { useFormStore } from "@/lib/stores"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { useEducationState } from "./hooks/use-education-state"
 import { useTabStates } from "./hooks/use-tab-states"
+import { hasEUCitizenship, isEUCountry, canMoveWithinEU } from "@/lib/utils/eu-utils"
 import { DegreesSection } from "./academic/degrees-section"
 import { SkillsSection } from "./academic/skills-section"
 import { WorkExperienceSection } from "./academic/work-experience-section"
@@ -32,6 +34,48 @@ export function Education({ onComplete }: EducationProps) {
   const educationState = useEducationState()
   const tabStates = useTabStates()
 
+  // Get user and family citizenship information
+  const destCountry = educationState.getFormData("residencyIntentions.destinationCountry.country") ?? ""
+  const userNationalities = educationState.getFormData("personalInformation.nationalities") ?? []
+  const partnerInfo = educationState.getFormData("personalInformation.relocationPartnerInfo")
+  const dependentsInfo = educationState.getFormData("personalInformation.relocationDependents") ?? []
+  
+  // Check citizenship and EU status
+  const isAlreadyCitizen = userNationalities.some((nat: any) => nat.country === destCountry)
+  const userHasEUCitizenship = hasEUCitizenship(userNationalities)
+  const canUserMoveWithinEU = destCountry && canMoveWithinEU(userNationalities, destCountry)
+  const isDestinationEU = destCountry && isEUCountry(destCountry)
+  
+  // Check if partner needs visa
+  const partnerNeedsVisa = (() => {
+    if (!partnerInfo || !educationState.hasPartnerSelected) return false
+    const partnerNationalities = partnerInfo.nationalities ?? []
+    const partnerIsAlreadyCitizen = partnerNationalities.some((nat: any) => nat.country === destCountry)
+    const partnerCanMoveWithinEU = destCountry && canMoveWithinEU(partnerNationalities, destCountry)
+    return !partnerIsAlreadyCitizen && !partnerCanMoveWithinEU
+  })()
+  
+  // Check if any dependents need visa
+  const dependentsNeedVisa = dependentsInfo.some((dep: any) => {
+    const depNationalities = dep.nationalities ?? []
+    const depIsAlreadyCitizen = depNationalities.some((nat: any) => nat.country === destCountry)
+    const depCanMoveWithinEU = destCountry && canMoveWithinEU(depNationalities, destCountry)
+    return !depIsAlreadyCitizen && !depCanMoveWithinEU
+  })
+  
+  // Determine education section behavior
+  const userNeedsVisa = !isAlreadyCitizen && !canUserMoveWithinEU
+  const anyFamilyNeedsVisa = partnerNeedsVisa || dependentsNeedVisa
+  const shouldAutoComplete = !userNeedsVisa && !anyFamilyNeedsVisa && !educationState.hasPartnerSelected
+  const shouldShowAdvisory = !userNeedsVisa && anyFamilyNeedsVisa
+
+  // Auto-mark section as complete when auto-completed
+  useEffect(() => {
+    if (shouldAutoComplete) {
+      markSectionComplete("education")
+    }
+  }, [shouldAutoComplete, markSectionComplete])
+
   const handleComplete = () => {
     markSectionComplete("education")
     onComplete()
@@ -42,11 +86,13 @@ export function Education({ onComplete }: EducationProps) {
   const individualProficiency = languageData.individual || {}
   const hasLanguageProficiency = Object.keys(individualProficiency).length > 0
 
-  // Validation
+  // Validation - relax requirements for auto-completed sections
   const errors: string[] = []
-  if (!hasLanguageProficiency) errors.push("Language proficiency for destination country languages is required")
+  if (!hasLanguageProficiency && !shouldAutoComplete) {
+    errors.push("Language proficiency for destination country languages is required")
+  }
   
-  const canContinue = errors.length === 0
+  const canContinue = errors.length === 0 || shouldAutoComplete
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
@@ -64,6 +110,26 @@ export function Education({ onComplete }: EducationProps) {
       <SectionHint title="About this section">
         Educational qualifications and professional skills are crucial for visa applications, especially for skilled worker visas and professional registration in your destination country.
       </SectionHint>
+
+      {/* Auto-completion message for EU citizens without visa requirements */}
+      {shouldAutoComplete && (
+        <Alert className="border-stone-200 bg-stone-50 dark:border-stone-700 dark:bg-stone-900/50">
+          <CheckCircle className="h-4 w-4 text-stone-600 dark:text-stone-400" />
+          <AlertDescription className="text-stone-700 dark:text-stone-300">
+            <strong>Education section auto-completed:</strong> You do not need a visa to move to {destCountry} as an EU citizen, so detailed educational documentation is not required for immigration purposes. You can still add information if desired for professional registration or other purposes.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Advisory message for mixed EU/non-EU partnerships */}
+      {shouldShowAdvisory && (
+        <Alert className="border-stone-200 bg-stone-50 dark:border-stone-700 dark:bg-stone-900/50">
+          <Info className="h-4 w-4 text-stone-600 dark:text-stone-400" />
+          <AlertDescription className="text-stone-700 dark:text-stone-300">
+            <strong>Recommendation:</strong> While you don't need a visa as an EU citizen, it's advisable to enter education information for both partners. This can increase your chances of successfully relocating together, as your partner {partnerNeedsVisa ? 'requires' : 'may benefit from'} visa documentation{dependentsNeedVisa ? ' and some dependents may need visa support' : ''}.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Language Proficiency Card */}
       <LanguageProficiencyFull />

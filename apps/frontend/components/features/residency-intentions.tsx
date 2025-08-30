@@ -45,9 +45,33 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   // Treat EU movement the same as direct citizenship for most purposes
   const hasNoVisaRequirement = isAlreadyCitizen || canMoveWithinEUFreedom
   
-  // Family visa analysis
+  // Get family information for visa analysis
   const partnerInfo = getFormData("personalInformation.relocationPartnerInfo") 
   const dependentsInfo = getFormData("personalInformation.relocationDependents") || []
+  
+  // Check if education section would be auto-completed
+  const partnerNeedsVisa = (() => {
+    if (!partnerInfo) return false
+    const partnerNationalities = partnerInfo.nationalities ?? []
+    const partnerIsAlreadyCitizen = partnerNationalities.some((nat: any) => nat.country === destCountry)
+    const partnerCanMoveWithinEU = destCountry && canMoveWithinEU(partnerNationalities, destCountry)
+    return !partnerIsAlreadyCitizen && !partnerCanMoveWithinEU
+  })()
+  
+  const dependentsNeedVisa = dependentsInfo.some((dep: any) => {
+    const depNationalities = dep.nationalities ?? []
+    const depIsAlreadyCitizen = depNationalities.some((nat: any) => nat.country === destCountry)
+    const depCanMoveWithinEU = destCountry && canMoveWithinEU(depNationalities, destCountry)
+    return !depIsAlreadyCitizen && !depCanMoveWithinEU
+  })
+  
+  const userNeedsVisa = !isAlreadyCitizen && !canMoveWithinEUFreedom
+  const anyFamilyNeedsVisa = partnerNeedsVisa || dependentsNeedVisa
+  const hasPartnerSelected = getFormData("personalInformation.relocationPartner") ?? false
+  const educationWouldAutoComplete = !userNeedsVisa && !anyFamilyNeedsVisa && !hasPartnerSelected
+  
+  // Determine next section
+  const nextSectionName = educationWouldAutoComplete ? "Income and Assets" : "Education"
   
   const familyVisaAnalysis = useMemo(() => {
     if (!destCountry) return null
@@ -632,8 +656,8 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
       </Card>
           )}
 
-          {/* Citizenship Plans (moved above Exploratory Visits) */}
-          {!hasNoVisaRequirement && !isAlreadyCitizen && (
+          {/* Citizenship Plans - Show for non-citizens (including EU citizens moving to other EU countries) */}
+          {!isAlreadyCitizen && (
             <Card className="shadow-sm border-l-4 border-l-orange-500">
               <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
@@ -1204,6 +1228,16 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
               </Alert>
             )}
 
+            {/* Education Auto-Complete Notice */}
+            {educationWouldAutoComplete && canContinue && (
+              <Alert className="border-stone-200 bg-stone-50 dark:border-stone-700 dark:bg-stone-900/50">
+                <CheckCircle className="h-4 w-4 text-stone-600 dark:text-stone-400" />
+                <AlertDescription className="text-stone-700 dark:text-stone-300">
+                  <strong>Education section will be skipped:</strong> Since you don't need a visa to move to {destCountry} as an EU citizen, the education section has been auto-completed. You'll proceed directly to the Income and Assets section.
+                </AlertDescription>
+              </Alert>
+            )}
+
             {/* Validation Alert */}
             <ValidationAlert 
               errors={errors} 
@@ -1217,7 +1251,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
               sectionId="residency"
               onContinue={handleComplete}
               canContinue={canContinue}
-              nextSectionName="Education"
+              nextSectionName={nextSectionName}
             />
           </div>
         </CardFooter>

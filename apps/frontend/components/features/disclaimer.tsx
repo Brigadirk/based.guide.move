@@ -60,17 +60,17 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
         </div>
         
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Step into my professional consultation room where AI meets expertise. I'll guide you through your international relocation journey with personalized insights and professional advice.
+          Step into my professional consultation room. I'll guide you through your international relocation journey with personalized insights and professional advice.
         </p>
       </div>
 
       {/* Feature Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { icon: Target, title: "Tax Analysis", desc: "Smart tax obligation insights", color: "blue" },
-          { icon: CheckCircle, title: "Visa Guidance", desc: "Residency requirements", color: "green" },
-          { icon: FileText, title: "Financial Planning", desc: "Cross-border strategies", color: "purple" },
-          { icon: Download, title: "Custom Report", desc: "Downloadable summary", color: "orange" }
+          { icon: Target, title: "Tax Analysis", color: "blue" },
+          { icon: CheckCircle, title: "Visa Guidance", color: "green" },
+          { icon: FileText, title: "Financial Planning", color: "purple" },
+          { icon: Download, title: "Custom Report", color: "orange" }
         ].map((feature, i) => (
           <Card 
             key={i}
