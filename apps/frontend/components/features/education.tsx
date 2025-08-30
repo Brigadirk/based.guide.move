@@ -134,6 +134,9 @@ export function Education({ onComplete }: { onComplete: () => void }) {
     school: "", program: "", startDate: "", fundingStatus: "Self-funded"
   })
 
+  // Tab state for Military Service section only
+  const [militaryTab, setMilitaryTab] = useState("you")
+
   // Individual tab states for each section (isolated)
   const [degreesTab, setDegreesTab] = useState("you")
   const [skillsTab, setSkillsTab] = useState("you")
@@ -218,7 +221,7 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                   
                   <TabsContent value="you" className="mt-6 space-y-6">
                     {/* Your Degrees */}
-                    {degrees.length > 0 && (
+            {degrees.length > 0 && (
               <div className="space-y-4">
                 <h4 className="font-medium text-base">Your Degrees</h4>
                 <div className="grid gap-4">
@@ -298,17 +301,17 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                 />
                 <Label htmlFor="in_progress">Currently in progress</Label>
               </div>
-                      <Button
-                        disabled={!canAddDegree}
-                        onClick={() => {
-                          setDegrees([...degrees, degreeDraft])
-                          setDegreeDraft({degree: "", institution: "", field: "", start_date: "", end_date: "", in_progress: false})
-                        }}
-                        className="w-full"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Degree
-                      </Button>
+              <Button
+                disabled={!canAddDegree}
+                                  onClick={() => {
+                    setDegrees([...degrees, degreeDraft])
+                    setDegreeDraft({degree: "", institution: "", field: "", start_date: "", end_date: "", in_progress: false})
+                  }}
+                className="w-full"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Degree
+              </Button>
                     </div>
                   </TabsContent>
                   
@@ -517,7 +520,7 @@ export function Education({ onComplete }: { onComplete: () => void }) {
             <Separator />
 
             {/* Professional Skills & Credentials Section */}
-            <div className="space-y-6">
+          <div className="space-y-6">
               <div className="flex items-center gap-3">
                 <Award className="w-5 h-5 text-blue-600" />
                 <h3 className="text-lg font-semibold">Professional Skills & Credentials</h3>
@@ -607,10 +610,10 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                   }}
                   className="w-full"
                 >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Skill
-                    </Button>
-                  </div>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Skill
+                </Button>
+              </div>
                 </div>
               </TabsContent>
               
@@ -765,14 +768,14 @@ export function Education({ onComplete }: { onComplete: () => void }) {
           )}
             </div>
 
-            <Separator />
+              <Separator />
 
-            {/* Work Experience Section */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <Users className="w-5 h-5 text-green-600" />
-                <h3 className="text-lg font-semibold">Work Experience</h3>
-              </div>
+              {/* Work Experience Section */}
+          <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <Users className="w-5 h-5 text-green-600" />
+                  <h3 className="text-lg font-semibold">Work Experience</h3>
+            </div>
 
               {getFormData("personalInformation.relocationPartner") ? (
                 <Tabs value={workExpTab} onValueChange={setWorkExpTab} className="w-full">
@@ -900,9 +903,9 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                  >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Work Experience
-                        </Button>
-                      </div>
-                    </div>
+                </Button>
+              </div>
+            </div>
                   </TabsContent>
                   
                   <TabsContent value="partner" className="mt-6 space-y-6">
@@ -1130,17 +1133,17 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                   </div>
                 </div>
               )}
-            </div>
+          </div>
 
-            <Separator />
+              <Separator />
 
-            {/* Professional Licenses Section */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <Shield className="w-5 h-5 text-purple-600" />
-                <h3 className="text-lg font-semibold">Professional Licenses</h3>
-              </div>
-              
+              {/* Professional Licenses Section */}
+          <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <Shield className="w-5 h-5 text-purple-600" />
+                  <h3 className="text-lg font-semibold">Professional Licenses</h3>
+                </div>
+                
               {getFormData("personalInformation.relocationPartner") ? (
                 <Tabs value={licensesTab} onValueChange={setLicensesTab} className="w-full">
                   <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 rounded-lg h-12 transition-all duration-300">
@@ -1260,9 +1263,9 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                  >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Professional License
-                        </Button>
-                      </div>
-                    </div>
+                </Button>
+                  </div>
+                </div>
                   </TabsContent>
                   
                   <TabsContent value="partner" className="mt-6 space-y-6">
@@ -1476,17 +1479,36 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                   </div>
                 </div>
               )}
-            </div>
+              </div>
 
-            <Separator />
+              <Separator />
 
-            {/* Military Service Section */}
+              {/* Military Service Section */}
               <div className="space-y-6">
                 <div className="flex items-center gap-3">
                   <Shield className="w-5 h-5 text-red-600" />
                   <h3 className="text-lg font-semibold">Military Service</h3>
                 </div>
                 
+              {getFormData("personalInformation.relocationPartner") ? (
+                <Tabs value={militaryTab} onValueChange={setMilitaryTab} className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 rounded-lg h-12 transition-all duration-300">
+                    <TabsTrigger 
+                      value="you" 
+                      className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:font-semibold transition-all duration-300 rounded-md h-10 text-sm"
+                    >
+                      You
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="partner" 
+                      className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:font-semibold transition-all duration-300 rounded-md h-10 text-sm"
+                    >
+                      Partner
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="you" className="mt-6 space-y-6">
+                    {/* Your Military Service */}
                 <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
                   <Checkbox
                     id="has_military"
@@ -1616,8 +1638,277 @@ export function Education({ onComplete }: { onComplete: () => void }) {
                     </div>
                   </div>
                 )}
+                  </TabsContent>
+                  
+                  <TabsContent value="partner" className="mt-6 space-y-6">
+                    {/* Partner Military Service */}
+                    <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
+                      <Checkbox
+                        id="partner_has_military"
+                        checked={getFormData("education.partner.militaryService.hasService") ?? false}
+                        onCheckedChange={(v) => updateFormData("education.partner.militaryService.hasService", !!v)}
+                      />
+                      <Label htmlFor="partner_has_military" className="text-base font-medium">
+                        Partner has served in the military
+                      </Label>
               </div>
+
+                    {getFormData("education.partner.militaryService.hasService") && (
+                      <div className="space-y-4 p-4 border rounded-lg bg-card">
+                        <div className="mb-4">
+                          <p className="text-sm text-muted-foreground">
+                            Partner's military experience, skills, and security clearances can strengthen visa applications
+                          </p>
             </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Country of service</Label>
+                            <Input
+                              placeholder="e.g., Canada"
+                              value={getFormData("education.partner.militaryService.country") ?? ""}
+                              onChange={(e) => updateFormData("education.partner.militaryService.country", e.target.value)}
+                            />
+          </div>
+                          <div className="space-y-2">
+                            <Label>Branch of service</Label>
+                            <Input
+                              placeholder="e.g., Army, Navy, Air Force"
+                              value={getFormData("education.partner.militaryService.branch") ?? ""}
+                              onChange={(e) => updateFormData("education.partner.militaryService.branch", e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Start date</Label>
+                            <Input
+                              type="date"
+                              value={getFormData("education.partner.militaryService.startDate") ?? ""}
+                              onChange={(e) => updateFormData("education.partner.militaryService.startDate", e.target.value)}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>End date</Label>
+                            <Input
+                              type="date"
+                              value={getFormData("education.partner.militaryService.endDate") ?? ""}
+                              onChange={(e) => updateFormData("education.partner.militaryService.endDate", e.target.value)}
+                              disabled={getFormData("education.partner.militaryService.currentlyServing") ?? false}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            id="partner_currently_serving"
+                            checked={getFormData("education.partner.militaryService.currentlyServing") ?? false}
+                            onCheckedChange={(v) => updateFormData("education.partner.militaryService.currentlyServing", !!v)}
+                          />
+                          <Label htmlFor="partner_currently_serving">Currently serving</Label>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Rank achieved</Label>
+                            <Input
+                              placeholder="e.g., Corporal, Captain"
+                              value={getFormData("education.partner.militaryService.rank") ?? ""}
+                              onChange={(e) => updateFormData("education.partner.militaryService.rank", e.target.value)}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Military occupation/specialization</Label>
+                            <Input
+                              placeholder="e.g., Communications, Medical Corps"
+                              value={getFormData("education.partner.militaryService.occupation") ?? ""}
+                              onChange={(e) => updateFormData("education.partner.militaryService.occupation", e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Security clearance level</Label>
+                          <Select
+                            value={getFormData("education.partner.militaryService.securityClearance") ?? ""}
+                            onValueChange={(v) => updateFormData("education.partner.militaryService.securityClearance", v)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select clearance level" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="None">None</SelectItem>
+                              <SelectItem value="Confidential">Confidential</SelectItem>
+                              <SelectItem value="Secret">Secret</SelectItem>
+                              <SelectItem value="Top Secret">Top Secret</SelectItem>
+                              <SelectItem value="SCI">Sensitive Compartmented Information (SCI)</SelectItem>
+                              <SelectItem value="Other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Languages used in service</Label>
+                          <Textarea
+                            placeholder="Languages partner learned or used during military service..."
+                            value={getFormData("education.partner.militaryService.languages") ?? ""}
+                            onChange={(e) => updateFormData("education.partner.militaryService.languages", e.target.value)}
+                            rows={2}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Military certifications and training</Label>
+                          <Textarea
+                            placeholder="Special training, certifications, or skills acquired during service..."
+                            value={getFormData("education.partner.militaryService.certifications") ?? ""}
+                            onChange={(e) => updateFormData("education.partner.militaryService.certifications", e.target.value)}
+                            rows={3}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Leadership experience</Label>
+                          <Textarea
+                            placeholder="Leadership roles, team management, or command experience..."
+                            value={getFormData("education.partner.militaryService.leadership") ?? ""}
+                            onChange={(e) => updateFormData("education.partner.militaryService.leadership", e.target.value)}
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
+                </Tabs>
+              ) : (
+                <div className="space-y-6">
+                  {/* Single User Mode - Military Service */}
+                  <div className="flex items-center gap-3 p-4 border rounded-lg bg-card">
+                    <Checkbox
+                      id="has_military_single"
+                      checked={getFormData("education.militaryService.hasService") ?? false}
+                      onCheckedChange={(v) => updateFormData("education.militaryService.hasService", !!v)}
+                    />
+                    <Label htmlFor="has_military_single" className="text-base font-medium">
+                      I have served in the military
+                    </Label>
+                  </div>
+
+                  {getFormData("education.militaryService.hasService") && (
+                    <div className="space-y-4 p-4 border rounded-lg bg-card">
+                      <div className="mb-4">
+                        <p className="text-sm text-muted-foreground">
+                          Military experience, skills, and security clearances can strengthen visa applications
+                        </p>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Country of service</Label>
+                          <Input
+                            placeholder="e.g., United States"
+                            value={getFormData("education.militaryService.country") ?? ""}
+                            onChange={(e) => updateFormData("education.militaryService.country", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Branch of service</Label>
+                          <Input
+                            placeholder="e.g., Army, Navy, Air Force"
+                            value={getFormData("education.militaryService.branch") ?? ""}
+                            onChange={(e) => updateFormData("education.militaryService.branch", e.target.value)}
+                          />
+                        </div>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Start date</Label>
+                          <Input
+                            type="date"
+                            value={getFormData("education.militaryService.startDate") ?? ""}
+                            onChange={(e) => updateFormData("education.militaryService.startDate", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>End date</Label>
+                          <Input
+                            type="date"
+                            value={getFormData("education.militaryService.endDate") ?? ""}
+                            onChange={(e) => updateFormData("education.militaryService.endDate", e.target.value)}
+                            disabled={getFormData("education.militaryService.currentlyServing") ?? false}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="currently_serving_single"
+                          checked={getFormData("education.militaryService.currentlyServing") ?? false}
+                          onCheckedChange={(v) => updateFormData("education.militaryService.currentlyServing", !!v)}
+                        />
+                        <Label htmlFor="currently_serving_single">Currently serving</Label>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Rank achieved</Label>
+                          <Input
+                            placeholder="e.g., Sergeant, Lieutenant"
+                            value={getFormData("education.militaryService.rank") ?? ""}
+                            onChange={(e) => updateFormData("education.militaryService.rank", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Military occupation/specialization</Label>
+                          <Input
+                            placeholder="e.g., Intelligence Analyst, Combat Engineer"
+                            value={getFormData("education.militaryService.occupation") ?? ""}
+                            onChange={(e) => updateFormData("education.militaryService.occupation", e.target.value)}
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Security clearance level</Label>
+                        <Select
+                          value={getFormData("education.militaryService.securityClearance") ?? ""}
+                          onValueChange={(v) => updateFormData("education.militaryService.securityClearance", v)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select clearance level" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="None">None</SelectItem>
+                            <SelectItem value="Confidential">Confidential</SelectItem>
+                            <SelectItem value="Secret">Secret</SelectItem>
+                            <SelectItem value="Top Secret">Top Secret</SelectItem>
+                            <SelectItem value="SCI">Sensitive Compartmented Information (SCI)</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Languages used in service</Label>
+                        <Textarea
+                          placeholder="Languages you learned or used during military service..."
+                          value={getFormData("education.militaryService.languages") ?? ""}
+                          onChange={(e) => updateFormData("education.militaryService.languages", e.target.value)}
+                          rows={2}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Military certifications and training</Label>
+                        <Textarea
+                          placeholder="Special training, certifications, or skills acquired during service..."
+                          value={getFormData("education.militaryService.certifications") ?? ""}
+                          onChange={(e) => updateFormData("education.militaryService.certifications", e.target.value)}
+                          rows={3}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Leadership experience</Label>
+                        <Textarea
+                          placeholder="Leadership roles, team management, or command experience..."
+                          value={getFormData("education.militaryService.leadership") ?? ""}
+                          onChange={(e) => updateFormData("education.militaryService.leadership", e.target.value)}
+                          rows={3}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         </CardContent>
       </Card>
 
