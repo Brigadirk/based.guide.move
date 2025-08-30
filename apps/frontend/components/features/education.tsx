@@ -134,14 +134,12 @@ export function Education({ onComplete }: { onComplete: () => void }) {
     school: "", program: "", startDate: "", fundingStatus: "Self-funded"
   })
 
-  // Tab state for Military Service section only
-  const [militaryTab, setMilitaryTab] = useState("you")
-
   // Individual tab states for each section (isolated)
   const [degreesTab, setDegreesTab] = useState("you")
   const [skillsTab, setSkillsTab] = useState("you")
   const [workExpTab, setWorkExpTab] = useState("you")
   const [licensesTab, setLicensesTab] = useState("you")
+  const [militaryTab, setMilitaryTab] = useState("you")
 
   const handleComplete = () => {
     markSectionComplete("education")
