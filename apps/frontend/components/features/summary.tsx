@@ -384,6 +384,130 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
     return sections.length > 0 ? sections : null
   }
 
+  // Helper function to format finance data for display
+  const formatFinanceData = (financeData: any) => {
+    if (!financeData) return null
+    
+    const sections = []
+    
+    // Your Income Situation
+    if (financeData.incomeSituation) {
+      const situationLabels = {
+        "continuing_income": "Continue Current Income",
+        "current_and_new_income": "Current and New Income",
+        "seeking_income": "Seeking New Income",
+        "gainfully_unemployed": "Gainfully Unemployed",
+        "dependent/supported": "Financially Dependent/Supported"
+      }
+      let situationText = situationLabels[financeData.incomeSituation] || financeData.incomeSituation
+      
+      // Add support relationship details
+      if (financeData.incomeSituation === "dependent/supported" && financeData.supportedByPartner) {
+        situationText += " (supported by partner)"
+      }
+      
+      sections.push({
+        title: "Your Income Situation",
+        items: [situationText]
+      })
+    }
+    
+    // Partner's Income Situation
+    if (financeData.partner?.incomeSituation) {
+      const situationLabels = {
+        "continuing_income": "Continue Current Income",
+        "current_and_new_income": "Current and New Income",
+        "seeking_income": "Seeking New Income",
+        "gainfully_unemployed": "Gainfully Unemployed",
+        "dependent/supported": "Financially Dependent/Supported"
+      }
+      let situationText = situationLabels[financeData.partner.incomeSituation] || financeData.partner.incomeSituation
+      
+      // Add support relationship details
+      if (financeData.partner.incomeSituation === "dependent/supported" && financeData.partner.supportedByMe) {
+        situationText += " (supported by you)"
+      }
+      
+      sections.push({
+        title: "Partner's Income Situation",
+        items: [situationText]
+      })
+    }
+    
+    // Your Income Sources
+    if (financeData.incomeSources?.length > 0) {
+      sections.push({
+        title: "Your Income Sources",
+        items: financeData.incomeSources.map((source: any) => 
+          `${source.category}: ${source.amount?.toLocaleString()} ${source.currency} from ${source.country || 'Unknown'}`
+        )
+      })
+    }
+    
+    // Partner Income Sources
+    if (financeData.partner?.incomeSources?.length > 0) {
+      sections.push({
+        title: "Partner's Income Sources",
+        items: financeData.partner.incomeSources.map((source: any) => 
+          `${source.category}: ${source.amount?.toLocaleString()} ${source.currency} from ${source.country || 'Unknown'}`
+        )
+      })
+    }
+    
+    // Total Wealth
+    if (financeData.totalWealth?.total > 0) {
+      sections.push({
+        title: "Total Wealth",
+        items: [
+          `Net Worth: ${financeData.totalWealth.total?.toLocaleString()} ${financeData.totalWealth.currency}`,
+          `Primary Residence: ${financeData.totalWealth.primaryResidence?.toLocaleString()} ${financeData.totalWealth.currency}`
+        ]
+      })
+    }
+    
+    // Your Capital Gains
+    if (financeData.capitalGains?.futureSales?.length > 0) {
+      sections.push({
+        title: "Your Planned Asset Sales",
+        items: financeData.capitalGains.futureSales.map((sale: any) => 
+          `${sale.asset}: ${sale.currentValue?.toLocaleString()} ${sale.currency} (Sale: ${sale.saleDate})`
+        )
+      })
+    }
+    
+    // Partner Capital Gains
+    if (financeData.partner?.capitalGains?.futureSales?.length > 0) {
+      sections.push({
+        title: "Partner's Planned Asset Sales",
+        items: financeData.partner.capitalGains.futureSales.map((sale: any) => 
+          `${sale.asset}: ${sale.currentValue?.toLocaleString()} ${sale.currency} (Sale: ${sale.saleDate})`
+        )
+      })
+    }
+    
+    // Your Liabilities
+    if (financeData.liabilities?.length > 0) {
+      sections.push({
+        title: "Your Liabilities & Debts",
+        items: financeData.liabilities.map((liability: any) => 
+          `${liability.category}: ${liability.amount?.toLocaleString()} ${liability.currency} in ${liability.country}`
+        )
+      })
+    }
+    
+    // Partner Liabilities
+    if (financeData.partner?.liabilities?.length > 0) {
+      sections.push({
+        title: "Partner's Liabilities & Debts",
+        items: financeData.partner.liabilities.map((liability: any) => 
+          `${liability.category}: ${liability.amount?.toLocaleString()} ${liability.currency} in ${liability.country}`
+        )
+      })
+    }
+    
+    return sections.length > 0 ? sections : null
+  }
+
   // Section completion status
   const sections = [
     { id: "destination", name: "Destination Country", icon: MapPin, data: formData.residencyIntentions?.destinationCountry },
@@ -396,7 +520,13 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
       detailedData: formatEducationData(formData.education)
     },
     { id: "residency", name: "Residency Intentions", icon: Heart, data: formData.residencyIntentions },
-    { id: "finance", name: "Financial Information", icon: DollarSign, data: formData.finance },
+    { 
+      id: "finance", 
+      name: "Financial Information", 
+      icon: DollarSign, 
+      data: formData.finance,
+      detailedData: formatFinanceData(formData.finance)
+    },
     { id: "socialSecurity", name: "Social Security & Pensions", icon: Shield, data: formData.socialSecurityAndPensions },
     { id: "taxDeductions", name: "Tax Deductions & Credits", icon: Receipt, data: formData.taxDeductionsAndCredits },
     { id: "futurePlans", name: "Future Financial Plans", icon: TrendingUp, data: formData.futureFinancialPlans },

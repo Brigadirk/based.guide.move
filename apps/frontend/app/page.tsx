@@ -156,29 +156,9 @@ export default function HomePage() {
     }
   };
 
-  // Called when user clicks navigation "Next" button (should NOT mark complete)
-  const handleNavigateNext = () => {
-    if (currentSection < SECTIONS.length - 1) {
-      setCurrentSection(currentSection + 1);
-      // Scroll to top when navigating
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
+  // Navigation functions removed - users now navigate only through section Submit buttons
 
-  const handlePrevious = () => {
-    if (currentSection > 0) {
-      setCurrentSection(currentSection - 1);
-      // Scroll to top when navigating
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const canProceed = () => {
-    const currentSectionData = SECTIONS[currentSection];
-    if (!currentSectionData.required) return true;
-    // Use hasRequiredData for navigation (not isSectionComplete which is for manual completion)
-    return hasRequiredData(currentSectionData.id);
-  };
+  // canProceed function removed - no longer needed without navigation buttons
 
   // FIXED: Progress based on actual completion, not navigation position
   const completedSections = SECTIONS.filter(section => isSectionComplete(section.id))
@@ -505,24 +485,8 @@ export default function HomePage() {
                 </CardContent>
               </Card>
 
-              {/* Navigation Buttons */}
-              {currentSection < SECTIONS.length - 1 && (
-                <div className="flex justify-between mt-6">
-                  <Button
-                    variant="outline"
-                    onClick={handlePrevious}
-                    disabled={currentSection === 0}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    onClick={handleNavigateNext}
-                    disabled={!canProceed()}
-                  >
-                    {currentSection === SECTIONS.length - 2 ? "Finish" : "Next"}
-                  </Button>
-                </div>
-              )}
+              {/* Navigation Buttons - Completely removed */}
+              {/* Users now navigate only through section-specific Submit buttons */}
             </div>
 
           </main>

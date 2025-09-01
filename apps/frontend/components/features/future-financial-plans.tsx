@@ -18,6 +18,7 @@ import { Plus, TrendingUp, Building, PiggyBank, Briefcase, HelpCircle } from "lu
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
+
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { useCurrencies } from "@/lib/hooks/use-currencies"
 import { getCountries } from "@/lib/utils/country-utils"
@@ -759,6 +760,7 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
               canContinue={true}
               nextSectionName="Additional Information"
             />
+
           </div>
         </CardFooter>
       </Card>

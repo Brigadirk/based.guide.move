@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { GraduationCap, BookOpen, CheckCircle, Info } from "lucide-react"
 import { SectionHint } from "@/components/ui/section-hint"
 import { SectionFooter } from "@/components/ui/section-footer"
+
 import { ValidationAlert } from "@/components/ui/validation-alert"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { useFormStore } from "@/lib/stores"
@@ -299,6 +300,8 @@ export function Education({ onComplete }: EducationProps) {
         }}
         isCheckingInfo={isCheckingInfo}
       />
+
+
       
       {/* Section Info Modal */}
       <SectionInfoModal

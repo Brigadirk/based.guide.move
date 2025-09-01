@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
+
 import { ValidationAlert } from "@/components/ui/validation-alert"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { canMoveWithinEU, isEUCountry, hasEUCitizenship } from "@/lib/utils/eu-utils"
@@ -1253,6 +1254,8 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
               canContinue={canContinue}
               nextSectionName={nextSectionName}
             />
+
+
           </div>
         </CardFooter>
       </Card>

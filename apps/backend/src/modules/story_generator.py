@@ -1211,6 +1211,10 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
 
     # Income Situation Assessment
     income_situation = fin.get("income_situation", fin.get("incomeSituation"))
+    partner_income_situation = fin.get("partner", {}).get("income_situation", fin.get("partner", {}).get("incomeSituation"))
+    supported_by_partner = fin.get("supportedByPartner", False)
+    partner_supported_by_me = fin.get("partner", {}).get("supportedByMe", False)
+    
     if income_situation:
         situation_descriptions = {
             "continuing_income": "plans to continue all current income sources after moving (remote work, investments, rental income, etc.)",
@@ -1220,7 +1224,31 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
             "dependent/supported": "will be financially supported by family, partner, scholarship, or institutional funding",
         }
         description = situation_descriptions.get(income_situation, income_situation)
-        parts.append(f"Income Situation Assessment: {description}.")
+        
+        # Add support relationship details
+        support_detail = ""
+        if income_situation == "dependent/supported" and supported_by_partner:
+            support_detail = " (specifically supported by their partner)"
+        
+        parts.append(f"User's Income Situation: {description}{support_detail}.")
+    
+    # Partner's income situation
+    if partner_income_situation:
+        situation_descriptions = {
+            "continuing_income": "plans to continue all current income sources after moving (remote work, investments, rental income, etc.)",
+            "current_and_new_income": "will maintain some existing income sources while adding new ones in the destination country",
+            "seeking_income": "plans to find new employment, start a business, or develop other new income sources after moving",
+            "gainfully_unemployed": "will be self-funded, living off savings, gifts, or investment returns without active employment",
+            "dependent/supported": "will be financially supported by family, partner, scholarship, or institutional funding",
+        }
+        description = situation_descriptions.get(partner_income_situation, partner_income_situation)
+        
+        # Add support relationship details
+        support_detail = ""
+        if partner_income_situation == "dependent/supported" and partner_supported_by_me:
+            support_detail = " (specifically supported by the user)"
+        
+        parts.append(f"Partner's Income Situation: {description}{support_detail}.")
 
     # Total Wealth
     tw = fin.get("totalWealth", fin.get("total_wealth"))
@@ -1242,6 +1270,16 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
     if income_sources:
         parts.append(_summarise_income_sources(income_sources, dest_currency))
 
+    # Partner income sources
+    partner_data = fin.get("partner", {})
+    partner_income_sources = partner_data.get("incomeSources", partner_data.get("income_sources", []))
+    if partner_income_sources:
+        partner_summary = _summarise_income_sources(partner_income_sources, dest_currency)
+        if partner_summary:
+            # Replace "User" with "Partner" in the summary
+            partner_summary = partner_summary.replace("User has ", "Partner has ").replace("User's ", "Partner's ")
+            parts.append(partner_summary)
+
     # Planned Asset Sales in Your First Year (Capital Gains)
     cg = fin.get("capitalGains", fin.get("capital_gains", {}))
     capital_gains_summary = _summarise_capital_gains(cg, dest_currency)
@@ -1253,12 +1291,29 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
         if isinstance(future_sales, list) and len(future_sales) == 0:
             parts.append("User has no planned asset sales in their first year after moving.")
 
+    # Partner capital gains
+    partner_cg = partner_data.get("capitalGains", partner_data.get("capital_gains", {}))
+    partner_capital_gains_summary = _summarise_capital_gains(partner_cg, dest_currency)
+    if partner_capital_gains_summary:
+        # Replace "User" with "Partner" in the summary
+        partner_capital_gains_summary = partner_capital_gains_summary.replace("User has ", "Partner has ").replace("User's ", "Partner's ")
+        parts.append(partner_capital_gains_summary)
+
     # Liabilities & Debts
     liabs = fin.get("liabilities", [])
     if liabs:
         liabs_summary = _summarise_liabilities(liabs, dest_currency)
         if liabs_summary:
             parts.append(liabs_summary)
+
+    # Partner liabilities
+    partner_liabs = partner_data.get("liabilities", [])
+    if partner_liabs:
+        partner_liabs_summary = _summarise_liabilities(partner_liabs, dest_currency)
+        if partner_liabs_summary:
+            # Replace "User" with "Partner" in the summary
+            partner_liabs_summary = partner_liabs_summary.replace("User has ", "Partner has ").replace("User's ", "Partner's ")
+            parts.append(partner_liabs_summary)
 
     # Assets summary
     assets = fin.get("assets", [])

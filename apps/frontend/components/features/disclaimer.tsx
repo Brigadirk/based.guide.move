@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -28,7 +28,6 @@ interface DisclaimerProps {
 export function Disclaimer({ onComplete }: DisclaimerProps) {
   const { getFormData, updateFormData } = useFormStore()
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
-  const [hasClickedTerms, setHasClickedTerms] = useState(getFormData("disclaimer.termsClicked") || false)
   
   const accepted = getFormData("disclaimer.accepted") || false
 
@@ -67,10 +66,10 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
       {/* Feature Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { icon: Target, title: "Tax Analysis", color: "blue" },
-          { icon: CheckCircle, title: "Visa Guidance", color: "green" },
-          { icon: FileText, title: "Financial Planning", color: "purple" },
-          { icon: Download, title: "Custom Report", color: "orange" }
+          { icon: Target, title: "Tax Analysis", color: "blue", desc: "Comprehensive tax implications analysis" },
+          { icon: CheckCircle, title: "Visa Guidance", color: "green", desc: "Step-by-step visa requirements" },
+          { icon: FileText, title: "Financial Planning", color: "purple", desc: "Detailed financial roadmap" },
+          { icon: Download, title: "Custom Report", color: "orange", desc: "Personalized PDF report" }
         ].map((feature, i) => (
           <Card 
             key={i}
@@ -161,22 +160,18 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
             />
             <div className="space-y-2">
               <Label htmlFor="accept-disclaimer" className="text-base font-medium cursor-pointer">
-                I'm ready to begin my consultation with Mr. Pro Bonobo
+                I have read and agree to the Terms & Conditions
               </Label>
               <p className="text-sm text-muted-foreground">
                 By proceeding, you acknowledge this consultation is for informational purposes, agree to verify all recommendations with qualified professionals, and agree to our{' '}
                 <a
                   href="/terms"
                   target="_blank"
-                  onClick={() => {
-                    setHasClickedTerms(true)
-                    updateFormData("disclaimer.termsClicked", true)
-                  }}
                   className="underline font-medium hover:text-foreground"
                 >
                   Terms & Conditions
                 </a>
-                .
+                . I'm ready to begin my consultation with Mr. Pro Bonobo.
               </p>
             </div>
           </div>
@@ -187,7 +182,7 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
       <div className="text-center py-6">
         <Button
           onClick={handleAccept}
-          disabled={!(accepted && hasClickedTerms)}
+          disabled={!accepted}
           size="lg"
           className={`px-10 py-4 text-lg transition-all duration-300 ${
             accepted 
@@ -201,10 +196,27 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
           </span>
         </Button>
         
-        {!(accepted && hasClickedTerms) && (
-          <p className="text-sm text-muted-foreground mt-3">
-            Please open the Terms & Conditions and check the box to continue
-          </p>
+        {!accepted && (
+          <div className="mt-3 space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Please check the box above to continue
+            </p>
+            {/* Debug info */}
+            <p className="text-xs text-muted-foreground/70">
+              Status: Terms agreed {accepted ? '✓' : '✗'}
+            </p>
+            {/* Debug button for testing */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                updateFormData("disclaimer.accepted", true)
+              }}
+              className="text-xs"
+            >
+              Quick Test (Accept Terms)
+            </Button>
+          </div>
         )}
       </div>
 

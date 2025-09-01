@@ -18,8 +18,9 @@ import { Plus, Info, AlertTriangle, HelpCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
-import { getCountries } from "@/lib/utils/country-utils"
 import { SectionFooter } from "@/components/ui/section-footer"
+import { getCountries } from "@/lib/utils/country-utils"
+
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { useCurrencies } from "@/lib/hooks/use-currencies"
 
@@ -537,6 +538,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
               canContinue={true}
               nextSectionName="Future Financial Plans"
             />
+
           </div>
         </CardFooter>
       </Card>

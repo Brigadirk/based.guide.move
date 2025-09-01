@@ -28,6 +28,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
+
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 
 export function AdditionalInformation({ onComplete }: { onComplete: () => void }) {
@@ -327,6 +328,7 @@ export function AdditionalInformation({ onComplete }: { onComplete: () => void }
               canContinue={true}
               nextSectionName="Summary"
             />
+
           </div>
         </CardFooter>
       </Card>

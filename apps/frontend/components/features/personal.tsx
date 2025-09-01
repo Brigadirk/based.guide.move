@@ -20,6 +20,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
+
 import { ValidationAlert } from "@/components/ui/validation-alert"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { hasEUCitizenship, getUserEUCountries } from "@/lib/utils/eu-utils"
@@ -2554,6 +2555,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               canContinue={canContinue}
               nextSectionName="Residency Intentions"
             />
+
           </div>
         </CardFooter>
       </Card>
