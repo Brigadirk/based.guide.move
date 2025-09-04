@@ -191,7 +191,7 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
           }`}
         >
           <span className="flex items-center gap-2">
-            Enter Mr. Pro Bonobo's Office
+            Start Your Assessment
             <ArrowRight className="w-5 h-5" />
           </span>
         </Button>

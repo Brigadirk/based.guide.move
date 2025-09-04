@@ -19,7 +19,7 @@ import { getCountries } from "@/lib/utils/country-utils"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Trash2, Plus, DollarSign, TrendingUp, Wallet, CreditCard, Target, Info } from "lucide-react"
+import { Trash2, Plus, DollarSign, TrendingUp, Wallet, CreditCard, Target, Info, Zap } from "lucide-react"
 import { validateFinanceData } from "@/lib/utils/finance-validation"
 import { ValidationSummary, ValidationBadge, RealTimeValidation } from "@/components/ui/enhanced-validation"
 import { useAutoSave, useAutoSaveStatus } from "@/lib/hooks/use-auto-save"
@@ -102,6 +102,8 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
   
   // Partner selection
   const hasPartnerSelected = getFormData("personalInformation.relocationPartner") ?? false
+  const financeScope = getFormData("finance.scope") ?? (hasPartnerSelected ? "joint" : "me")
+  const partnerEnabled = hasPartnerSelected && financeScope === "joint"
 
   // Enhanced validation with memoization
   const financeData = useMemo(() => ({
@@ -241,7 +243,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
   const incomeValidation = useMemo(() => {
     if (skipDetails) return { isValid: true, message: "" }
     
-    if (hasPartnerSelected) {
+    if (partnerEnabled) {
       const hasYourSituation = Boolean(incomeSituation)
       const hasPartnerSituation = Boolean(partnerIncomeSituation)
       
@@ -271,12 +273,12 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
     }
     
     return { isValid: true, message: "" }
-  }, [skipDetails, hasPartnerSelected, incomeSituation, partnerIncomeSituation])
+  }, [skipDetails, partnerEnabled, incomeSituation, partnerIncomeSituation])
 
   // Income Sources section visibility logic
   const shouldShowIncomeSources = useMemo(() => {
     // If no income situations are set, don't show
-    if (!incomeSituation && !partnerIncomeSituation) return false
+    if (!incomeSituation && !(partnerEnabled && partnerIncomeSituation)) return false
     
     // Check if either partner needs income details
     const userNeedsIncomeDetails = incomeSituation && [
@@ -285,7 +287,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
       "seeking_income"
     ].includes(incomeSituation)
     
-    const partnerNeedsIncomeDetails = partnerIncomeSituation && [
+    const partnerNeedsIncomeDetails = partnerEnabled && partnerIncomeSituation && [
       "continuing_income", 
       "current_and_new_income", 
       "seeking_income"
@@ -293,11 +295,11 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
     
     // Check support relationships
     const userSupportedByPartner = incomeSituation === "dependent/supported" && supportedByPartner
-    const partnerSupportedByUser = partnerIncomeSituation === "dependent/supported" && partnerSupportedByMe
+    const partnerSupportedByUser = partnerEnabled && partnerIncomeSituation === "dependent/supported" && partnerSupportedByMe
     
     // Check if both are self-funded
     const userSelfFunded = incomeSituation === "gainfully_unemployed"
-    const partnerSelfFunded = partnerIncomeSituation === "gainfully_unemployed"
+    const partnerSelfFunded = partnerEnabled && partnerIncomeSituation === "gainfully_unemployed"
     const bothSelfFunded = userSelfFunded && partnerSelfFunded
     
     // Show income sources if:
@@ -336,6 +338,103 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
           Your financial profile for visa applications and tax planning
         </p>
       </div>
+
+      {/* Quick Finance Skip (duplicate of sidebar control for visibility) */}
+      <Card className="border-amber-200 bg-amber-50/50 dark:bg-amber-950/20">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-900/50">
+                <Zap className="w-4 h-4 text-amber-600" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                  Quick Finance Skip
+                </div>
+                <p className="text-xs text-amber-700 dark:text-amber-300">
+                  Skip detailed finance sections
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant={skipDetails ? "secondary" : "default"}
+                size="sm"
+                onClick={() => {
+                  const wasAutoCompleted = getFormData("finance.autoCompletedSections") ?? false
+                  updateFormData("finance.skipDetails", !skipDetails)
+                  if (!skipDetails) {
+                    markSectionComplete("finance")
+                    markSectionComplete("social-security")
+                    markSectionComplete("tax-deductions")
+                    markSectionComplete("future-plans")
+                    updateFormData("finance.autoCompletedSections", [
+                      "finance", "social-security", "tax-deductions", "future-plans"
+                    ])
+                  } else if (wasAutoCompleted) {
+                    const autoCompletedSections = Array.isArray(wasAutoCompleted)
+                      ? wasAutoCompleted
+                      : ["finance", "social-security", "tax-deductions", "future-plans"]
+                    autoCompletedSections.forEach((sectionId: string) => {
+                      updateFormData(`completedSections.${sectionId}`, false)
+                    })
+                    updateFormData("finance.autoCompletedSections", false)
+                  }
+                }}
+              >
+                {skipDetails ? "Unskip Details" : "Skip Details"}
+              </Button>
+            </div>
+          </div>
+          <div className="border-t border-amber-200/40 pt-2 mt-2">
+            <details className="group">
+              <summary className="text-sm font-semibold text-stone-900 dark:text-white cursor-pointer">
+                💡 Why would I want to do this?
+              </summary>
+              <p className="text-sm text-stone-800 dark:text-stone-200 mt-2 leading-relaxed">
+                You may not care about detailed taxation and finance tracking—you simply want to know if there are any financial requirements (income thresholds, bank balances, etc.) needed to be allowed into your destination country.
+              </p>
+            </details>
+          </div>
+          {skipDetails && (
+            <div className="mt-3 p-2 rounded bg-green-100 dark:bg-green-900/30">
+              <p className="text-xs text-green-800 dark:text-green-200">
+                ✅ Finance sections auto-completed
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Finance scope selector */}
+      {hasPartnerSelected && (
+        <Card className="shadow-sm border-l-4 border-l-purple-500">
+          <CardContent className="p-4">
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm font-medium">Apply finance and taxes to</Label>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant={financeScope === "me" ? "default" : "secondary"}
+                  size="sm"
+                  onClick={() => updateFormData("finance.scope", "me")}
+                >
+                  Only me
+                </Button>
+                <Button
+                  variant={financeScope === "joint" ? "default" : "secondary"}
+                  size="sm"
+                  onClick={() => updateFormData("finance.scope", "joint")}
+                >
+                  Me and partner together
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                This controls whether entries and validations should consider your partner alongside you.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <SectionHint title="About this section">
         We'll calculate your tax liability for your first year in the destination country, which should give you an indication of what it would cost for you to live there long term. This information is also crucial for visa applications and ensuring you meet minimum income requirements.
@@ -510,7 +609,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
             <CardContent className="pt-6">
               <div className="space-y-4">
                 {/* Income Situation Ownership Selection */}
-                {hasPartnerSelected && (
+                {partnerEnabled && (
                   <div className="space-y-3">
                     <Label className="text-base font-medium">Income Situation Applies To</Label>
                     <div className="grid grid-cols-3 bg-muted/50 p-1 rounded-lg h-12 transition-all duration-300">
@@ -635,7 +734,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                     </p>
                           
                           {/* "Supported by partner" toggle for financially supported */}
-                          {hasPartnerSelected && incomeSituation === "dependent/supported" && (
+                          {partnerEnabled && incomeSituation === "dependent/supported" && (
                             <div className="mt-2 flex items-center gap-2">
                               <input
                                 type="checkbox"
@@ -665,7 +764,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                   )}
 
                   {/* Partner's saved situation */}
-                  {hasPartnerSelected && partnerIncomeSituation && (
+                  {partnerEnabled && partnerIncomeSituation && (
                     <div className="p-3 bg-muted/30 rounded-lg border-l-4 border-l-green-500">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
@@ -768,7 +867,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
               partnerIncomeSituation={partnerIncomeSituation}
               supportedByPartner={supportedByPartner}
               partnerSupportedByMe={partnerSupportedByMe}
-              hasPartnerSelected={hasPartnerSelected}
+              hasPartnerSelected={partnerEnabled}
               incomeTab={incomeTab}
               setIncomeTab={setIncomeTab}
             />
@@ -796,7 +895,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
               partnerIncomeSources={partnerIncomeSources}
               updateFormData={updateFormData}
               currencies={currencies}
-              hasPartnerSelected={hasPartnerSelected}
+              hasPartnerSelected={partnerEnabled}
             />
           )}
 
@@ -808,7 +907,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
             updateFormData={updateFormData}
             currencies={currencies}
             incomeSituation={incomeSituation}
-            hasPartnerSelected={hasPartnerSelected}
+            hasPartnerSelected={partnerEnabled}
           />
 
           {/* Capital Gains Section - Streamlit Structure */}
@@ -819,7 +918,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
             setNewCapitalGain={setNewCapitalGain}
             updateFormData={updateFormData}
             currencies={currencies}
-            hasPartnerSelected={hasPartnerSelected}
+            hasPartnerSelected={partnerEnabled}
             capitalGainsTab={capitalGainsTab}
             setCapitalGainsTab={setCapitalGainsTab}
           />
@@ -833,7 +932,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
             updateFormData={updateFormData}
             currencies={currencies}
             getCountryOptions={getCountryOptions}
-            hasPartnerSelected={hasPartnerSelected}
+            hasPartnerSelected={partnerEnabled}
             liabilitiesTab={liabilitiesTab}
             setLiabilitiesTab={setLiabilitiesTab}
           />
@@ -1782,7 +1881,7 @@ function CapitalGainsSection({ capitalGains, partnerCapitalGains, newCapitalGain
 
   // Unified function for adding capital gains
   const addCapitalGain = (isPartner: boolean = false, isBoth: boolean = false) => {
-    if (!newCapitalGain.asset || newCapitalGain.currentValue <= 0) return
+    if (!newCapitalGain.asset || newCapitalGain.surplusValue <= 0) return
 
     const newGain = { ...newCapitalGain }
 
@@ -1803,11 +1902,11 @@ function CapitalGainsSection({ capitalGains, partnerCapitalGains, newCapitalGain
     // Reset form
     setNewCapitalGain({
       asset: "",
-      purchasePrice: 0,
-      currentValue: 0,
-      saleDate: "",
+      type: "Real Estate",
+      holdingTime: "< 12 months (short-term)",
+      surplusValue: 0,
       currency: "USD",
-      country: ""
+      reason: ""
     })
   }
 
@@ -1949,31 +2048,36 @@ function CapitalGainsSection({ capitalGains, partnerCapitalGains, newCapitalGain
               
               {/* Asset ownership options */}
               <div className="mb-4">
-                <div className="grid grid-cols-3 bg-muted/50 p-1 rounded-lg h-12 transition-all duration-300">
-                  <button
+                <div className="grid grid-cols-3 gap-2">
+                  <Button
                     type="button"
                     onClick={() => addCapitalGain(false, false)}
-                    disabled={!newCapitalGain.asset || newCapitalGain.currentValue <= 0}
-                    className="transition-all duration-300 rounded-md h-10 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!newCapitalGain.asset || newCapitalGain.surplusValue <= 0}
+                    size="sm"
+                    className="h-10"
                   >
                     You
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => addCapitalGain(true, false)}
-                    disabled={!newCapitalGain.asset || newCapitalGain.currentValue <= 0}
-                    className="transition-all duration-300 rounded-md h-10 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!newCapitalGain.asset || newCapitalGain.surplusValue <= 0}
+                    variant="secondary"
+                    size="sm"
+                    className="h-10"
                   >
                     Partner
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => addCapitalGain(false, true)}
-                    disabled={!newCapitalGain.asset || newCapitalGain.currentValue <= 0}
-                    className="transition-all duration-300 rounded-md h-10 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!newCapitalGain.asset || newCapitalGain.surplusValue <= 0}
+                    variant="outline"
+                    size="sm"
+                    className="h-10"
                   >
                     Both
-                  </button>
+                  </Button>
                 </div>
               </div>
               

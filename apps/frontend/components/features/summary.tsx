@@ -469,9 +469,10 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
     if (financeData.capitalGains?.futureSales?.length > 0) {
       sections.push({
         title: "Your Planned Asset Sales",
-        items: financeData.capitalGains.futureSales.map((sale: any) => 
-          `${sale.asset}: ${sale.currentValue?.toLocaleString()} ${sale.currency} (Sale: ${sale.saleDate})`
-        )
+        items: financeData.capitalGains.futureSales.map((sale: any) => {
+          const value = (sale.surplusValue ?? sale.currentValue)?.toLocaleString()
+          return `${sale.asset}: ${value} ${sale.currency}${sale.saleDate ? ` (Sale: ${sale.saleDate})` : ''}`
+        })
       })
     }
     
@@ -479,9 +480,10 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
     if (financeData.partner?.capitalGains?.futureSales?.length > 0) {
       sections.push({
         title: "Partner's Planned Asset Sales",
-        items: financeData.partner.capitalGains.futureSales.map((sale: any) => 
-          `${sale.asset}: ${sale.currentValue?.toLocaleString()} ${sale.currency} (Sale: ${sale.saleDate})`
-        )
+        items: financeData.partner.capitalGains.futureSales.map((sale: any) => {
+          const value = (sale.surplusValue ?? sale.currentValue)?.toLocaleString()
+          return `${sale.asset}: ${value} ${sale.currency}${sale.saleDate ? ` (Sale: ${sale.saleDate})` : ''}`
+        })
       })
     }
     
