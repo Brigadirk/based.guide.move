@@ -1635,9 +1635,13 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                 start_formatted = start_date[:4] if len(start_date) >= 4 else start_date
                 date_info = f" (started {start_formatted})"
 
-            sentences.append(f"Their partner holds a {degree_name} in {field} from {institution}{date_info}.")
+            sentences.append(
+                f"Their partner holds a {degree_name} in {field} from {institution}{date_info}."
+            )
         else:
-            sentences.append(f"Their partner holds {partner_degree_count} degrees from various institutions.")
+            sentences.append(
+                f"Their partner holds {partner_degree_count} degrees from various institutions."
+            )
             for degree in partner_degrees[:3]:  # Show first 3 degrees in detail
                 degree_name = degree.get("degree", "Unspecified degree")
                 institution = degree.get("institution", "Unspecified institution")
@@ -1695,7 +1699,9 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
 
             sentences.append(f"Their partner has professional expertise in {skill_desc}.")
         else:
-            sentences.append(f"Their partner has {partner_skill_count} professional skills and credentials:")
+            sentences.append(
+                f"Their partner has {partner_skill_count} professional skills and credentials:"
+            )
             for skill in partner_skills[:3]:  # Show first 3 skills
                 skill_name = skill.get("skill", "Unspecified skill")
                 credential = skill.get("credentialName", "")
