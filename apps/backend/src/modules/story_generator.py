@@ -1214,7 +1214,7 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
     partner_income_situation = fin.get("partner", {}).get("income_situation", fin.get("partner", {}).get("incomeSituation"))
     supported_by_partner = fin.get("supportedByPartner", False)
     partner_supported_by_me = fin.get("partner", {}).get("supportedByMe", False)
-    
+
     if income_situation:
         situation_descriptions = {
             "continuing_income": "plans to continue all current income sources after moving (remote work, investments, rental income, etc.)",
@@ -1224,14 +1224,14 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
             "dependent/supported": "will be financially supported by family, partner, scholarship, or institutional funding",
         }
         description = situation_descriptions.get(income_situation, income_situation)
-        
+
         # Add support relationship details
         support_detail = ""
         if income_situation == "dependent/supported" and supported_by_partner:
             support_detail = " (specifically supported by their partner)"
-        
+
         parts.append(f"User's Income Situation: {description}{support_detail}.")
-    
+
     # Partner's income situation
     if partner_income_situation:
         situation_descriptions = {
@@ -1242,12 +1242,12 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
             "dependent/supported": "will be financially supported by family, partner, scholarship, or institutional funding",
         }
         description = situation_descriptions.get(partner_income_situation, partner_income_situation)
-        
+
         # Add support relationship details
         support_detail = ""
         if partner_income_situation == "dependent/supported" and partner_supported_by_me:
             support_detail = " (specifically supported by the user)"
-        
+
         parts.append(f"Partner's Income Situation: {description}{support_detail}.")
 
     # Total Wealth
