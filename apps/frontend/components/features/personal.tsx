@@ -670,7 +670,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
           {/* Add citizenship */}
           <div className="flex gap-3 mb-6">
             <Select value={addCountry} onValueChange={setAddCountry}>
-              <SelectTrigger className="flex-1">
+              <SelectTrigger id="user-add-citizenship-trigger" className="flex-1">
                 <SelectValue placeholder="Add citizenship" />
               </SelectTrigger>
               <SelectContent>
@@ -741,6 +741,19 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                 ⚠️ You must be a citizen of at least one country!
               </AlertDescription>
             </Alert>
+          )}
+
+          {natList.length > 0 && (
+            <div className="mt-2">
+              <Button
+                variant="link"
+                size="sm"
+                className="px-0 text-muted-foreground"
+                onClick={() => document.getElementById('user-add-citizenship-trigger')?.click()}
+              >
+                I have another citizenship
+              </Button>
+            </div>
           )}
 
           {/* EU Citizenship Indicator */}
@@ -1453,7 +1466,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       value={partnerSel}
                       onValueChange={setPartnerSel}
                     >
-                      <SelectTrigger className="flex-1">
+                      <SelectTrigger id="partner-add-citizenship-trigger" className="flex-1">
                         <SelectValue placeholder="Add partner citizenship" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1484,6 +1497,22 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       Add
                     </Button>
                   </div>
+
+                  {(() => {
+                    const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+                    return partnerNats.length > 0 && (
+                      <div className="mt-2">
+                        <Button
+                          variant="link"
+                          size="sm"
+                          className="px-0 text-muted-foreground"
+                          onClick={() => document.getElementById('partner-add-citizenship-trigger')?.click()}
+                        >
+                          Partner has another citizenship
+                        </Button>
+                      </div>
+                    )
+                  })()}
                 </div>
 
                 {/* Save Partner Information Button */}
@@ -2341,7 +2370,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             }
                           }}
                         >
-                          <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                          <SelectTrigger id={`dep-${idx}-add-citizenship-trigger`} className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
                             <SelectValue placeholder="Select a country to add" />
                           </SelectTrigger>
                           <SelectContent>
@@ -2355,6 +2384,18 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             ))}
                           </SelectContent>
                         </Select>
+                        {dep.nationalities && dep.nationalities.length > 0 && (
+                          <div className="mt-2">
+                            <Button
+                              variant="link"
+                              size="sm"
+                              className="px-0 text-muted-foreground"
+                              onClick={() => document.getElementById(`dep-${idx}-add-citizenship-trigger`)?.click()}
+                            >
+                              This dependent has another citizenship
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

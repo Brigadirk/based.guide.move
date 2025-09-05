@@ -201,21 +201,6 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
             <p className="text-sm text-muted-foreground">
               Please check the box above to continue
             </p>
-            {/* Debug info */}
-            <p className="text-xs text-muted-foreground/70">
-              Status: Terms agreed {accepted ? '✓' : '✗'}
-            </p>
-            {/* Debug button for testing */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                updateFormData("disclaimer.accepted", true)
-              }}
-              className="text-xs"
-            >
-              Quick Test (Accept Terms)
-            </Button>
           </div>
         )}
       </div>

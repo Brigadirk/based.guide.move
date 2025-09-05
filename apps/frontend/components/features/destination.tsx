@@ -180,7 +180,7 @@ export function Destination({ onComplete }: DestinationProps) {
       <div className="text-left pb-4 border-b">
         <div className="flex items-center gap-3 mb-4">
           <Globe className="w-7 h-7 text-primary" />
-          <h1 className="text-3xl font-bold tracking-tight">Desired Destination</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Candidate Destination</h1>
         </div>
         <p className="text-lg text-muted-foreground max-w-2xl">
           Select the country and region you are interested in relocating to

@@ -52,7 +52,7 @@ interface Section {
 
 const SECTIONS: Section[] = [
   { id: "disclaimer", title: "Disclaimer", icon: AlertCircle, required: true, showDot: true },
-  { id: "destination", title: "Desired Destination", icon: Globe, required: true, showDot: true },
+  { id: "destination", title: "Candidate Destination", icon: Globe, required: true, showDot: true },
   { id: "personal", title: "Personal Information", icon: User, required: true, showDot: true },
   { id: "residency", title: "Residency Intentions", icon: Plane, required: true, showDot: true },
   { id: "education", title: "Education", icon: BookOpen, required: false, showDot: true },
@@ -177,7 +177,7 @@ export default function HomePage() {
     ) {
       const missingSteps = [];
       if (!disclaimerComplete) missingSteps.push("Disclaimer");
-      if (!destinationComplete) missingSteps.push("Desired Destination");
+      if (!destinationComplete) missingSteps.push("Destination Candidate");
       
       return (
         <div className="p-6 text-center text-sm text-muted-foreground">

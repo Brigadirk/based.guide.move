@@ -510,7 +510,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                     <Alert>
                       <AlertTriangle className="h-4 w-4" />
                       <AlertDescription>
-                        ⚠️ Whether this is a deductible in your desired destination remains to be seen.
+                        ⚠️ Whether this is a deductible in your desired candidate destination remains to be seen.
                       </AlertDescription>
                     </Alert>
                   </div>
