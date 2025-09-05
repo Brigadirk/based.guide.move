@@ -163,6 +163,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
       status?: string
       duration?: string
     }
+    // Local UI flag to avoid rendering unsaved drafts after refresh
+    isDraft?: boolean
   }
   const depList: Dependent[] = getFormData("personalInformation.dependents") ?? []
   const updateDepList = (next: Dependent[]) => {
@@ -184,12 +186,13 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   // Check for data consistency on component mount
   useEffect(() => {
     const storedDeps = getFormData("personalInformation.dependents") ?? []
-    if (storedDeps.length > 0) {
-      console.log("📊 Found", storedDeps.length, "dependents in storage:", storedDeps)
-      // Initialize visible dependents if there are stored dependents
-      if (visibleDependents.length === 0) {
-        setVisibleDependents(storedDeps.map((_, idx) => idx))
-      }
+    // Only show previously saved dependents (filter out drafts)
+    if (storedDeps.length > 0 && visibleDependents.length === 0) {
+      const indices = storedDeps
+        .map((d: any, idx: number) => ({ d, idx }))
+        .filter(({ d }) => !d?.isDraft)
+        .map(({ idx }) => idx)
+      setVisibleDependents(indices)
     }
   }, [])
   const [visibleDependents, setVisibleDependents] = useState<number[]>([])
@@ -447,6 +450,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     setAttemptedDependentSaves(prev => [...prev.filter(i => i !== depIndex), depIndex])
     
     if (validateDependentInfo(depIndex)) {
+      // Mark draft as persisted
+      const updated = [...depList]
+      if (updated[depIndex]?.isDraft) {
+        delete (updated[depIndex] as any).isDraft
+        updateDepList(updated)
+      }
       setSavedDependents(prev => [...prev.filter(i => i !== depIndex), depIndex])
       setEditingDependents(prev => prev.filter(i => i !== depIndex))
       setAttemptedDependentSaves(prev => prev.filter(i => i !== depIndex))
@@ -485,8 +494,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   if (!curStatus) errors.push("Current residency status is required")
   if (natList.length === 0) errors.push("At least one citizenship is required")
   if (!maritalStatus) errors.push("Marital status is required")
-  if (hasPartner && !partnerSaved) errors.push("Partner information must be completed and saved")
-  if (!allDependentsSaved) errors.push("All dependents information must be completed and saved")
+  if (hasPartner && !partnerSaved) errors.push("Complete and save partner information")
+  if (!allDependentsSaved) errors.push("Complete and save all dependents information")
   if (!mainPersonDurationValid) errors.push("Duration in current status cannot exceed your age")
   
   const canContinue = errors.length === 0
@@ -2574,7 +2583,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                 <Button
                   variant="outline"
                   onClick={() => {
-                    // Add new dependent to data
+                    // Add new dependent as draft (not considered saved)
                     const newDependent = {
                       relationship: "Child",
                       relationshipDetails: {
@@ -2594,7 +2603,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                         country: "",
                         status: "",
                         duration: ""
-                      }
+                      },
+                      isDraft: true
                     }
                     updateDepList([...depList, newDependent])
                     // Make this dependent form visible and editable
