@@ -197,6 +197,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   const [savedDependents, setSavedDependents] = useState<number[]>([])
   const [attemptedDependentSaves, setAttemptedDependentSaves] = useState<number[]>([])
   const [addCountry, setAddCountry] = useState("")
+  // Toggles to reveal additional citizenship add rows after at least one exists
+  const [showMoreUserCitizenship, setShowMoreUserCitizenship] = useState(false)
+  const [showPartnerMore, setShowPartnerMore] = useState(false)
 
   // Local state
   const [partnerSel, setPartnerSel] = useState("")
@@ -667,7 +670,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
             </AlertDescription>
           </Alert>
 
-          {/* Add citizenship */}
+          {/* Add citizenship (top) - only when none exist yet */}
+          {natList.length === 0 && (
           <div className="flex gap-3 mb-6">
             <Select value={addCountry} onValueChange={setAddCountry}>
               <SelectTrigger id="user-add-citizenship-trigger" className="flex-1">
@@ -693,6 +697,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               Add
             </Button>
           </div>
+          )}
 
           {/* Citizenship list */}
           {natList.length > 0 ? (
@@ -743,13 +748,43 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
             </Alert>
           )}
 
-          {natList.length > 0 && (
+          {/* Add citizenship (below list) - when user clicks link */}
+          {natList.length > 0 && showMoreUserCitizenship && (
+            <div className="flex gap-3 mt-3">
+              <Select value={addCountry} onValueChange={setAddCountry}>
+                <SelectTrigger className="flex-1">
+                  <SelectValue placeholder="Add citizenship" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries.filter((c) => !nationalityExists(c)).map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                disabled={!addCountry}
+                onClick={() => {
+                  updateNatList([...natList, { country: addCountry, willingToRenounce: false }])
+                  setAddCountry("")
+                  setShowMoreUserCitizenship(false)
+                }}
+                className="shrink-0"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add
+              </Button>
+            </div>
+          )}
+
+          {natList.length > 0 && !showMoreUserCitizenship && (
             <div className="mt-2">
               <Button
                 variant="link"
                 size="sm"
                 className="px-0 text-muted-foreground"
-                onClick={() => document.getElementById('user-add-citizenship-trigger')?.click()}
+                onClick={() => setShowMoreUserCitizenship(true)}
               >
                 I have another citizenship
               </Button>
@@ -1460,59 +1495,98 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     )
                   })()}
 
-                  {/* Add partner citizenship */}
-                  <div className="flex gap-2">
-                    <Select
-                      value={partnerSel}
-                      onValueChange={setPartnerSel}
-                    >
-                      <SelectTrigger id="partner-add-citizenship-trigger" className="flex-1">
-                        <SelectValue placeholder="Add partner citizenship" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {countries.filter(c => {
-                          const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
-                          return !partnerNats.some((n: any) => n.country === c)
-                        }).map((c) => (
-                          <SelectItem key={c} value={c}>
-                            {c}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      disabled={!partnerSel}
-                      onClick={() => {
-                        if (partnerSel) {
-                          const current = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
-                          updateFormData("personalInformation.relocationPartnerInfo.partnerNationalities", [
-                            ...current,
-                            { country: partnerSel, willingToRenounce: false }
-                          ])
-                          setPartnerSel("")
-                        }
-                      }}
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add
-                    </Button>
-                  </div>
+                  {/* Add partner citizenship (top) - only when none exist yet */}
+                  {(() => { const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []; return partnerNats.length === 0; })() && (
+                    <div className="flex gap-2">
+                      <Select
+                        value={partnerSel}
+                        onValueChange={setPartnerSel}
+                      >
+                        <SelectTrigger id="partner-add-citizenship-trigger" className="flex-1">
+                          <SelectValue placeholder="Add partner citizenship" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countries.filter(c => {
+                            const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+                            return !partnerNats.some((n: any) => n.country === c)
+                          }).map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        disabled={!partnerSel}
+                        onClick={() => {
+                          if (partnerSel) {
+                            const current = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+                            updateFormData("personalInformation.relocationPartnerInfo.partnerNationalities", [
+                              ...current,
+                              { country: partnerSel, willingToRenounce: false }
+                            ])
+                            setPartnerSel("")
+                          }
+                        }}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add
+                      </Button>
+                    </div>
+                  )}
 
-                  {(() => {
-                    const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
-                    return partnerNats.length > 0 && (
-                      <div className="mt-2">
-                        <Button
-                          variant="link"
-                          size="sm"
-                          className="px-0 text-muted-foreground"
-                          onClick={() => document.getElementById('partner-add-citizenship-trigger')?.click()}
-                        >
-                          Partner has another citizenship
-                        </Button>
-                      </div>
-                    )
-                  })()}
+                  {/* Add partner citizenship (below list) - when clicked */}
+                  {(() => { const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []; return partnerNats.length > 0 && showPartnerMore; })() && (
+                    <div className="flex gap-2 mt-2">
+                      <Select
+                        value={partnerSel}
+                        onValueChange={setPartnerSel}
+                      >
+                        <SelectTrigger className="flex-1">
+                          <SelectValue placeholder="Add partner citizenship" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countries.filter(c => {
+                            const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+                            return !partnerNats.some((n: any) => n.country === c)
+                          }).map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        disabled={!partnerSel}
+                        onClick={() => {
+                          if (partnerSel) {
+                            const current = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+                            updateFormData("personalInformation.relocationPartnerInfo.partnerNationalities", [
+                              ...current,
+                              { country: partnerSel, willingToRenounce: false }
+                            ])
+                            setPartnerSel("")
+                            setShowPartnerMore(false)
+                          }
+                        }}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add
+                      </Button>
+                    </div>
+                  )}
+                  {(() => { const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []; return partnerNats.length > 0 && !showPartnerMore; })() && (
+                    <div className="mt-2">
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="px-0 text-muted-foreground"
+                        onClick={() => setShowPartnerMore(true)}
+                      >
+                        Partner has another citizenship
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Save Partner Information Button */}
@@ -2348,7 +2422,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                         </div>
                       )}
 
-                      {/* Add citizenship */}
+                      {/* Add citizenship (top) - only when none exist yet */}
+                      {!(dep.nationalities && dep.nationalities.length > 0) && (
                       <div className="space-y-3">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full bg-purple-500"></div>
@@ -2384,19 +2459,22 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             ))}
                           </SelectContent>
                         </Select>
-                        {dep.nationalities && dep.nationalities.length > 0 && (
-                          <div className="mt-2">
-                            <Button
-                              variant="link"
-                              size="sm"
-                              className="px-0 text-muted-foreground"
-                              onClick={() => document.getElementById(`dep-${idx}-add-citizenship-trigger`)?.click()}
-                            >
-                              This dependent has another citizenship
-                            </Button>
-                          </div>
-                        )}
                       </div>
+                      )}
+
+                      {/* Add citizenship (below list) - when clicked */}
+                      {dep.nationalities && dep.nationalities.length > 0 && (
+                        <div className="mt-2">
+                          <Button
+                            variant="link"
+                            size="sm"
+                            className="px-0 text-muted-foreground"
+                            onClick={() => document.getElementById(`dep-${idx}-add-citizenship-trigger`)?.click()}
+                          >
+                            This dependent has another citizenship
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                   
