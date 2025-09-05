@@ -1299,9 +1299,7 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
 
     # Partner capital gains
     partner_cg = partner_data.get("capitalGains", partner_data.get("capital_gains", {}))
-    partner_capital_gains_summary = _summarise_capital_gains(
-        partner_cg, dest_currency
-    )
+    partner_capital_gains_summary = _summarise_capital_gains(partner_cg, dest_currency)
     if partner_capital_gains_summary:
         # Replace "User" with "Partner" in the summary
         partner_capital_gains_summary = partner_capital_gains_summary.replace(
