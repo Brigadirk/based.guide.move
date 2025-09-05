@@ -1272,12 +1272,16 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
 
     # Partner income sources
     partner_data = fin.get("partner", {})
-    partner_income_sources = partner_data.get("incomeSources", partner_data.get("income_sources", []))
+    partner_income_sources = partner_data.get(
+        "incomeSources", partner_data.get("income_sources", [])
+    )
     if partner_income_sources:
         partner_summary = _summarise_income_sources(partner_income_sources, dest_currency)
         if partner_summary:
             # Replace "User" with "Partner" in the summary
-            partner_summary = partner_summary.replace("User has ", "Partner has ").replace("User's ", "Partner's ")
+            partner_summary = partner_summary.replace("User has ", "Partner has ").replace(
+                "User's ", "Partner's "
+            )
             parts.append(partner_summary)
 
     # Planned Asset Sales in Your First Year (Capital Gains)
@@ -1293,10 +1297,14 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
 
     # Partner capital gains
     partner_cg = partner_data.get("capitalGains", partner_data.get("capital_gains", {}))
-    partner_capital_gains_summary = _summarise_capital_gains(partner_cg, dest_currency)
+    partner_capital_gains_summary = _summarise_capital_gains(
+        partner_cg, dest_currency
+    )
     if partner_capital_gains_summary:
         # Replace "User" with "Partner" in the summary
-        partner_capital_gains_summary = partner_capital_gains_summary.replace("User has ", "Partner has ").replace("User's ", "Partner's ")
+        partner_capital_gains_summary = partner_capital_gains_summary.replace(
+            "User has ", "Partner has "
+        ).replace("User's ", "Partner's ")
         parts.append(partner_capital_gains_summary)
 
     # Liabilities & Debts
@@ -1309,10 +1317,14 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
     # Partner liabilities
     partner_liabs = partner_data.get("liabilities", [])
     if partner_liabs:
-        partner_liabs_summary = _summarise_liabilities(partner_liabs, dest_currency)
+        partner_liabs_summary = _summarise_liabilities(
+            partner_liabs, dest_currency
+        )
         if partner_liabs_summary:
             # Replace "User" with "Partner" in the summary
-            partner_liabs_summary = partner_liabs_summary.replace("User has ", "Partner has ").replace("User's ", "Partner's ")
+            partner_liabs_summary = partner_liabs_summary.replace(
+                "User has ", "Partner has "
+            ).replace("User's ", "Partner's ")
             parts.append(partner_liabs_summary)
 
     # Assets summary
