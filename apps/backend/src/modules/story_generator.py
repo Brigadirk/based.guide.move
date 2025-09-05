@@ -1317,9 +1317,7 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
     # Partner liabilities
     partner_liabs = partner_data.get("liabilities", [])
     if partner_liabs:
-        partner_liabs_summary = _summarise_liabilities(
-            partner_liabs, dest_currency
-        )
+        partner_liabs_summary = _summarise_liabilities(partner_liabs, dest_currency)
         if partner_liabs_summary:
             # Replace "User" with "Partner" in the summary
             partner_liabs_summary = partner_liabs_summary.replace(
