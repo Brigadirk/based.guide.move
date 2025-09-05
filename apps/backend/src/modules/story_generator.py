@@ -1211,7 +1211,9 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
 
     # Income Situation Assessment
     income_situation = fin.get("income_situation", fin.get("incomeSituation"))
-    partner_income_situation = fin.get("partner", {}).get("income_situation", fin.get("partner", {}).get("incomeSituation"))
+    partner_income_situation = fin.get("partner", {}).get(
+        "income_situation", fin.get("partner", {}).get("incomeSituation")
+    )
     supported_by_partner = fin.get("supportedByPartner", False)
     partner_supported_by_me = fin.get("partner", {}).get("supportedByMe", False)
 
