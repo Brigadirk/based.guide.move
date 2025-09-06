@@ -1681,12 +1681,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
       </Card>
 
       {/* Dependents Card */}
-      <Card className="shadow-sm border-l-4 border-l-orange-500">
-        <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
-          <CardTitle className="text-xl flex items-center gap-3">
-            <Baby className="w-6 h-6 text-orange-600" />
-            Dependents
-          </CardTitle>
+      <Card className="shadow-sm border-l-4 border-l-emerald-500">
+        <CardHeader className="bg-gradient-to-r from-emerald-50 to-transparent dark:from-emerald-950/20">
+          <CardTitle className="text-xl">Dependents</CardTitle>
           <p className="text-sm text-muted-foreground">Family members who will relocate with you and depend on your support</p>
         </CardHeader>
         <CardContent className="pt-6">
@@ -1710,60 +1707,30 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                   "Not specified"
                 
                 return (
-                  <Card key={idx} className="shadow-lg border-2 border-blue-100 dark:border-blue-900/30 bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/30 dark:from-blue-950/20 dark:via-background dark:to-indigo-950/20">
+                  <Card key={idx} className="shadow-lg border-2 border-stone-200/60 dark:border-stone-800/40 bg-gradient-to-br from-stone-50/30 via-white to-stone-100/20 dark:from-stone-900/10 dark:via-background dark:to-stone-900/10">
                     <CardHeader className="pb-4">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg">
-                            {dep.relationship === 'Child' ? (
-                              <Baby className="w-6 h-6 text-white" />
-                            ) : dep.relationship === 'Parent' ? (
-                              <Users className="w-6 h-6 text-white" />
-                            ) : (
-                              <User className="w-6 h-6 text-white" />
-                            )}
-                          </div>
-                          <div>
-                            <CardTitle className="text-lg text-blue-900 dark:text-blue-100">
-                              Dependent {dependentNumber}
-                            </CardTitle>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:border-blue-800">
-                                {dep.relationship}
-                              </Badge>
-                              <Badge variant="secondary" className="text-xs">
-                                {(() => {
-                                  const details = dep.relationshipDetails
-                                  if (!details) return "relationship not specified"
-                                  
-                                  const bio = details.biologicalRelationTo
-                                  const legal = details.legalRelationTo  
-                                  const custodial = details.custodialRelationTo
-                                  
-                                  // Simplified display logic for badges
-                                  if (bio === "both" || legal === "both" || custodial === "both") return "to both"
-                                  if (bio === "partner" || legal === "partner" || custodial === "partner") return "to partner"
-                                  if (bio === "user" || legal === "user" || custodial === "user") return "to me"
-                                  return "no direct relation"
-                                })()}
-                              </Badge>
-                              {dep.student && (
-                                <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-200 dark:border-amber-800">
-                                  <GraduationCap className="w-3 h-3 mr-1" />
-                                  Student
-                                </Badge>
-                              )}
-                            </div>
+                        <div>
+                          <CardTitle className="text-lg text-stone-900 dark:text-stone-100">Dependent {dependentNumber}</CardTitle>
+                          <div className="mt-1 text-sm text-muted-foreground">
+                            {dep.relationship}
+                            {(() => {
+                              const details = dep.relationshipDetails
+                              if (!details) return ""
+                              const bio = details.biologicalRelationTo
+                              const legal = details.legalRelationTo
+                              const custodial = details.custodialRelationTo
+                              if (bio === "both" || legal === "both" || custodial === "both") return " • related to both of you"
+                              if (bio === "partner" || legal === "partner" || custodial === "partner") return " • related to your partner"
+                              if (bio === "user" || legal === "user" || custodial === "user") return " • related to you"
+                              return ""
+                            })()}
+                            {dep.student ? " • student" : ""}
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setEditingDependents([...editingDependents, idx])}
-                            className="border-blue-200 hover:bg-blue-50 dark:border-blue-800 dark:hover:bg-blue-950/20"
-                          >
-                            <Pencil className="w-4 h-4" />
+                          <Button variant="outline" size="sm" onClick={() => setEditingDependents([...editingDependents, idx])}>
+                            Edit
                           </Button>
                           <Button
                             variant="outline"
@@ -1781,7 +1748,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             }}
                             className="border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 dark:border-red-800 dark:hover:bg-red-950/20 dark:text-red-400"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            Remove
                           </Button>
                         </div>
                       </div>
@@ -1790,56 +1757,36 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     <CardContent className="space-y-4">
                       <div className="grid md:grid-cols-2 gap-4">
                         {/* Personal Information */}
-                        <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-blue-100 dark:border-blue-900/50">
-                          <h5 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
-                            <User className="w-4 h-4" />
-                            Personal Info
-                          </h5>
+                        <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                          <h5 className="font-semibold text-stone-900 dark:text-stone-100 mb-3">Personal information</h5>
                           <div className="space-y-3">
-                            <div className="flex items-center gap-3">
-                              <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                              <div>
-                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</Label>
-                                <p className="text-sm font-medium">{formattedBirthDate}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  Age: {formatAge(calculateAge(dep.dateOfBirth))}
-                                </p>
-                              </div>
+                            <div>
+                              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of birth</Label>
+                              <p className="text-sm font-medium">{formattedBirthDate}</p>
+                              <p className="text-xs text-muted-foreground">Age: {formatAge(calculateAge(dep.dateOfBirth))}</p>
                             </div>
                           </div>
                         </div>
 
                         {/* Current Residency */}
                         {dep.currentResidency?.country && (
-                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-blue-100 dark:border-blue-900/50">
-                            <h5 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
-                              <MapPin className="w-4 h-4" />
-                              Current Residency
-                            </h5>
-                            <div className="flex items-center gap-3">
-                              <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
-                                <Globe className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                              </div>
-                              <div>
-                                <p className="font-medium">{dep.currentResidency.country}</p>
-                                <p className="text-sm text-muted-foreground">{dep.currentResidency.status}</p>
-                              </div>
+                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                            <h5 className="font-semibold text-stone-900 dark:text-stone-100 mb-3">Current residency</h5>
+                            <div>
+                              <p className="font-medium">{dep.currentResidency.country}</p>
+                              <p className="text-sm text-muted-foreground">{dep.currentResidency.status}</p>
                             </div>
                           </div>
                         )}
                       </div>
 
                       {/* Citizenships */}
-                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-blue-100 dark:border-blue-900/50">
-                        <h5 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
-                          <Flag className="w-4 h-4" />
-                          Citizenships
-                        </h5>
+                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                        <h5 className="font-semibold text-stone-900 dark:text-stone-100 mb-3">Citizenships</h5>
                         {citizenshipCount > 0 ? (
                           <div className="flex flex-wrap gap-2">
                             {(dep.nationalities || []).map((nat: any, natIdx: number) => (
-                              <Badge key={natIdx} variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:border-blue-800">
-                                <Flag className="w-3 h-3 mr-1" />
+                              <Badge key={natIdx} variant="secondary" className="bg-stone-100 text-stone-800 border-stone-200 dark:bg-stone-900/30 dark:text-stone-200 dark:border-stone-800">
                                 {nat.country}
                                 {nat.willingToRenounce && (
                                   <span className="ml-1 text-xs opacity-75">(willing to renounce)</span>
@@ -1858,7 +1805,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               
               // Show full form if editing
               return (
-                <div key={idx} className="relative overflow-hidden rounded-2xl border border-stone-200/60 dark:border-stone-800/40 bg-gradient-to-br from-stone-50/30 via-white to-stone-100/20 dark:from-stone-900/10 dark:via-background dark:to-stone-900/10 shadow-xl">
+                <div key={idx} className="relative overflow-hidden rounded-2xl border border-stone-200/60 dark:border-stone-800/40 bg-card shadow-xl">
                   {/* Header */}
                   <div className="relative bg-gradient-to-r from-green-500/5 to-emerald-500/5 dark:from-green-500/10 dark:to-emerald-500/10 px-6 py-4 border-b border-stone-200 dark:border-stone-800/50">
                     <div className="flex items-center justify-between">
@@ -2189,12 +2136,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     {/* Current Residency */}
                     <div className="space-y-6">
                       <div className="flex items-center justify-between pb-2 border-b border-stone-200 dark:border-stone-800/50">
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-500 shadow-sm">
-                            <MapPin className="w-4 h-4 text-white" />
-                          </div>
-                          <h6 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Current Residency</h6>
-                        </div>
+                        <h6 className="text-lg font-semibold text-stone-900 dark:text-stone-100">Current residency</h6>
                         <Button
                           type="button"
                           variant="outline"
@@ -2213,10 +2155,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             }
                             updateDepList(updated)
                           }}
-                        >
-                          <Copy className="w-4 h-4 mr-2" />
-                          Same as mine
-                        </Button>
+                        >Copy from my details</Button>
                       </div>
                   
                       <div className="grid gap-6 md:grid-cols-3">
@@ -2287,8 +2226,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           return (
                             <div className={`space-y-3 ${dependentStatus === "Citizen" ? "opacity-50" : ""}`}>
                               <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-pink-500"></div>
-                                <Label className="font-medium text-blue-900 dark:text-blue-100">
+                                <Label className="font-medium text-stone-900 dark:text-stone-100">
                                   Duration (years) {dependentStatus !== "Citizen" ? "*" : ""}
                                 </Label>
                               </div>
@@ -2298,7 +2236,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                 min={0}
                                 max={dep.dateOfBirth ? Math.ceil(dependentAge * 2) / 2 : 100} // Round up to nearest 0.5
                                 placeholder="2.5"
-                                className={`bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600 placeholder:!text-muted-foreground/60 ${durationExceedsAge ? 'border-red-500 focus:ring-red-500' : ''}`}
+                                className={`bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600 placeholder:!text-muted-foreground/60 ${durationExceedsAge ? 'border-red-500 focus:ring-red-500' : ''}`}
                                 value={dependentStatus === "Citizen" ? "" : dep.currentResidency?.duration ?? ""}
                                 onChange={(e) => {
                                   const updated = [...depList]
@@ -2329,18 +2267,13 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
                     {/* Citizenships */}
                     <div className="space-y-6">
-                      <div className="flex items-center justify-between pb-2 border-b border-blue-100 dark:border-blue-800/50">
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 shadow-sm">
-                            <Flag className="w-4 h-4 text-white" />
-                          </div>
-                          <h6 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Citizenships</h6>
-                        </div>
+                      <div className="flex items-center justify-between pb-2 border-b border-stone-200 dark:border-stone-800/50">
+                        <h6 className="text-lg font-semibold text-stone-900 dark:text-stone-100">Citizenships</h6>
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30"
+                          className="border-stone-300 text-stone-700 hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-900/30"
                           onClick={() => {
                             // Copy main user's citizenships to dependent
                             const updated = [...depList]
@@ -2350,10 +2283,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             }
                             updateDepList(updated)
                           }}
-                        >
-                          <Copy className="w-4 h-4 mr-2" />
-                          Same as mine
-                        </Button>
+                        >Copy from my details</Button>
                       </div>
 
                       {/* Existing citizenships */}
@@ -2403,11 +2333,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
                       {/* Add citizenship (top) - only when none exist yet */}
                       {!(dep.nationalities && dep.nationalities.length > 0) && (
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-                          <Label className="font-medium text-blue-900 dark:text-blue-100">Add citizenship</Label>
-                        </div>
+                      <div className="flex gap-3">
                         <Select
                           value=""
                           onValueChange={(country) => {
@@ -2424,8 +2350,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             }
                           }}
                         >
-                          <SelectTrigger id={`dep-${idx}-add-citizenship-trigger`} className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
-                            <SelectValue placeholder="Select a country to add" />
+                          <SelectTrigger id={`dep-${idx}-add-citizenship-trigger`} className="flex-1">
+                            <SelectValue placeholder="Add citizenship" />
                           </SelectTrigger>
                           <SelectContent>
                             {countries.filter(c => {
@@ -2438,10 +2364,19 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             ))}
                           </SelectContent>
                         </Select>
+                        <Button
+                          onClick={() => {
+                            const trigger = document.getElementById(`dep-${idx}-add-citizenship-trigger`)
+                            if (trigger) (trigger as HTMLButtonElement).click()
+                          }}
+                          className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white"
+                        >
+                          Add
+                        </Button>
                       </div>
                       )}
 
-                      {/* Add citizenship (below list) - when clicked */}
+                      {/* Add citizenship (below list) - link reveals the same add row */}
                       {dep.nationalities && dep.nationalities.length > 0 && (
                         <div className="mt-2">
                           <Button
@@ -2452,6 +2387,47 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           >
                             This dependent has another citizenship
                           </Button>
+                          <div className="flex gap-3 mt-2">
+                            <Select
+                              value=""
+                              onValueChange={(country) => {
+                                if (country) {
+                                  const updated = [...depList]
+                                  const currentNats = updated[idx].nationalities || []
+                                  if (!currentNats.some((n: any) => n.country === country)) {
+                                    updated[idx] = {
+                                      ...updated[idx],
+                                      nationalities: [...currentNats, { country, willingToRenounce: false }]
+                                    }
+                                    updateDepList(updated)
+                                  }
+                                }
+                              }}
+                            >
+                              <SelectTrigger className="flex-1">
+                                <SelectValue placeholder="Add citizenship" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {countries.filter(c => {
+                                  const currentNats = dep.nationalities || []
+                                  return !currentNats.some((n: any) => n.country === c)
+                                }).map((c) => (
+                                  <SelectItem key={c} value={c}>
+                                    {c}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Button
+                              onClick={() => {
+                                const trigger = document.getElementById(`dep-${idx}-add-citizenship-trigger`)
+                                if (trigger) (trigger as HTMLButtonElement).click()
+                              }}
+                              className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white"
+                            >
+                              Add
+                            </Button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -2595,22 +2571,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               Include children, elderly parents, or other family members who depend on your financial support and will move with you.
             </p>
             
-            {/* Debug section - remove in production */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                <p className="text-xs font-medium text-yellow-800 dark:text-yellow-200 mb-2">
-                  Debug: {depList.length} dependents in store
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clearAllDependents}
-                  className="text-xs"
-                >
-                  Clear All Dependents (Debug)
-                </Button>
-              </div>
-            )}
+            {/* Debug section removed */}
           </div>
         </CardContent>
       </Card>
@@ -2619,24 +2580,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
       <Card className="shadow-md">
         <CardFooter className="pt-6">
           <div className="w-full space-y-4">
-            {!canContinue && (
-              <Alert variant="destructive">
-                <AlertDescription>
-                  <strong>Complete required fields:</strong>
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    {!dob && <li>Date of birth</li>}
-                    {!curCountry && <li>Country of current residence</li>}
-                    {!curStatus && <li>Current residency status</li>}
-                    {natList.length === 0 && <li>At least one citizenship</li>}
-                    {!maritalStatus && <li>Marital status</li>}
-                    {curStatus === "Temporary Resident" && !tempDuration && <li>Years at current residence</li>}
-                    {!mainPersonDurationValid && <li>Residence duration cannot exceed your age ({formatAge(userAge)})</li>}
-                    {hasPartner && !partnerSaved && <li>Complete and save partner information</li>}
-                    {!allDependentsSaved && <li>Complete and save all dependent information</li>}
-                  </ul>
-                </AlertDescription>
-              </Alert>
-            )}
+            {/* Removed duplicate custom required-fields alert; ValidationAlert below handles this */}
 
             {/* Validation Alert */}
             <ValidationAlert 
