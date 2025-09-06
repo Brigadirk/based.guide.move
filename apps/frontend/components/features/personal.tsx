@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -1857,16 +1858,16 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               
               // Show full form if editing
               return (
-                <div key={idx} className="relative overflow-hidden rounded-2xl border border-blue-200/60 dark:border-blue-800/40 bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20 dark:from-blue-950/10 dark:via-background dark:to-indigo-950/10 shadow-xl">
+                <div key={idx} className="relative overflow-hidden rounded-2xl border border-stone-200/60 dark:border-stone-800/40 bg-gradient-to-br from-stone-50/30 via-white to-stone-100/20 dark:from-stone-900/10 dark:via-background dark:to-stone-900/10 shadow-xl">
                   {/* Header */}
-                  <div className="relative bg-gradient-to-r from-blue-500/5 to-indigo-500/5 dark:from-blue-500/10 dark:to-indigo-500/10 px-6 py-4 border-b border-blue-100 dark:border-blue-800/50">
+                  <div className="relative bg-gradient-to-r from-green-500/5 to-emerald-500/5 dark:from-green-500/10 dark:to-emerald-500/10 px-6 py-4 border-b border-stone-200 dark:border-stone-800/50">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg">
                           <Baby className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                          <h5 className="text-xl font-semibold text-blue-900 dark:text-blue-100">Dependent {dependentNumber}</h5>
+                          <h5 className="text-xl font-semibold text-stone-900 dark:text-stone-100">Dependent {dependentNumber}</h5>
                           <Badge variant="secondary" className="text-xs mt-1">
                             {(() => {
                               const details = dep.relationshipDetails
@@ -1910,19 +1911,15 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                   <div className="p-6 space-y-8">
                     {/* Basic Information */}
                     <div className="space-y-6">
-                      <div className="flex items-center gap-3 pb-2 border-b border-blue-100 dark:border-blue-800/50">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 shadow-sm">
-                          <User className="w-4 h-4 text-white" />
-                        </div>
-                        <h6 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Basic Information</h6>
+                      <div className="flex items-center gap-3 pb-2 border-b border-stone-200 dark:border-stone-800/50">
+                        <h6 className="text-lg font-semibold text-stone-900 dark:text-stone-100">Basic Information</h6>
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-6">
                         {/* Date of birth */}
                         <div className="space-y-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                            <Label className="font-medium text-blue-900 dark:text-blue-100">Date of birth *</Label>
+                            <Label className="font-medium text-stone-900 dark:text-stone-100">Date of birth *</Label>
                           </div>
                           <Input
                             type="date"
@@ -1941,15 +1938,14 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                 updateDepList(updated)
                               }
                             }}
-                            className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600"
+                            className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600"
                           />
                         </div>
 
                         {/* Relationship */}
                         <div className="space-y-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                            <Label className="font-medium text-blue-900 dark:text-blue-100">Relationship type *</Label>
+                            <Label className="font-medium text-stone-900 dark:text-stone-100">Relationship type *</Label>
                           </div>
                           <Select
                             value={dep.relationship}
@@ -1959,7 +1955,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               updateDepList(updated)
                             }}
                           >
-                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -1974,7 +1970,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       </div>
 
                       {/* Student status */}
-                      <div className="flex items-center gap-3 p-4 rounded-lg bg-stone-50/80 dark:bg-stone-900/30 border border-blue-100 dark:border-blue-800/50">
+                      <div className="flex items-center gap-3 p-4 rounded-lg bg-stone-50/80 dark:bg-stone-900/30 border border-stone-200 dark:border-stone-800/50">
                         <Checkbox
                           id={`student_${idx}`}
                           checked={dep.student}
@@ -1984,8 +1980,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             updateDepList(updated)
                           }}
                         />
-                        <Label htmlFor={`student_${idx}`} className="font-medium text-blue-900 dark:text-blue-100 flex items-center gap-2">
-                          <GraduationCap className="w-4 h-4" />
+                        <Label htmlFor={`student_${idx}`} className="font-medium text-stone-900 dark:text-stone-100">
                           Is currently a student
                         </Label>
                       </div>
@@ -1993,11 +1988,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
                 {/* Relationship Details Section */}
                 <div className="space-y-6">
-                  <div className="flex items-center gap-3 pb-2 border-b border-blue-100 dark:border-blue-800/50">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 shadow-sm">
-                      <Network className="w-4 h-4 text-white" />
-                    </div>
-                    <h6 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Relationship Details</h6>
+                  <div className="flex items-center gap-3 pb-2 border-b border-stone-200 dark:border-stone-800/50">
+                    <h6 className="text-lg font-semibold text-stone-900 dark:text-stone-100">Relationship Details</h6>
                   </div>
 
                   {/* Core Relationship Grid */}
@@ -2005,8 +1997,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     {/* Biological Relationship */}
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                        <Label className="font-medium text-blue-900 dark:text-blue-100">Biological relationship</Label>
+                        <Label className="font-medium text-stone-900 dark:text-stone-100">Biological relationship</Label>
                       </div>
                       <Select
                         value={dep.relationshipDetails?.biologicalRelationTo ?? (hasPartner ? "both" : "user")}
@@ -2031,7 +2022,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           updateDepList(updated)
                         }}
                       >
-                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -2046,8 +2037,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     {/* Legal Care Responsibility */}
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
-                        <Label className="font-medium text-blue-900 dark:text-blue-100">Legal care responsibility</Label>
+                        <Label className="font-medium text-stone-900 dark:text-stone-100">Legal care responsibility</Label>
                       </div>
                       <Select
                         value={dep.relationshipDetails?.custodialRelationTo ?? "both"}
@@ -2064,7 +2054,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           updateDepList(updated)
                         }}
                       >
-                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -2082,8 +2072,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     {/* Relationship Subtype */}
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-                        <Label className="font-medium text-blue-900 dark:text-blue-100">Relationship type</Label>
+                        <Label className="font-medium text-stone-900 dark:text-stone-100">Relationship type</Label>
                       </div>
                       <Select
                         value={(() => {
@@ -2108,7 +2097,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           updateDepList(updated)
                         }}
                       >
-                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -2137,24 +2126,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     {/* Guardianship Type */}
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                        <Label className="font-medium text-blue-900 dark:text-blue-100">Guardianship type</Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <HelpCircle className="w-4 h-4 text-blue-500 hover:text-blue-600 cursor-help" />
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-xs">
-                              <p className="text-sm">
-                                The legal form of guardianship as documented by authorities. 
-                                <strong>Full:</strong> Complete legal authority. 
-                                <strong>Partial:</strong> Shared or limited authority. 
-                                <strong>Temporary:</strong> Time-limited guardianship. 
-                                Select what matches your official documentation.
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <Label className="font-medium text-stone-900 dark:text-stone-100">Guardianship type</Label>
                       </div>
                       <Select
                         value={dep.relationshipDetails?.guardianshipType ?? "none"}
@@ -2171,7 +2143,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           updateDepList(updated)
                         }}
                       >
-                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -2191,7 +2163,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-gray-400"></div>
-                      <Label className="font-medium text-blue-900 dark:text-blue-100">Additional notes (optional)</Label>
+                      <Label className="font-medium text-stone-900 dark:text-stone-100">Additional notes (optional)</Label>
                     </div>
                     <Textarea
                       placeholder="Any additional context about this relationship that might be relevant for immigration purposes..."
@@ -2209,14 +2181,14 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                         updateDepList(updated)
                       }}
                       rows={3}
-                      className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600 resize-none"
+                      className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600 resize-none"
                     />
                   </div>
                 </div>
 
                     {/* Current Residency */}
                     <div className="space-y-6">
-                      <div className="flex items-center justify-between pb-2 border-b border-blue-100 dark:border-blue-800/50">
+                      <div className="flex items-center justify-between pb-2 border-b border-stone-200 dark:border-stone-800/50">
                         <div className="flex items-center gap-3">
                           <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-500 shadow-sm">
                             <MapPin className="w-4 h-4 text-white" />
@@ -2227,7 +2199,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30"
+                          className="border-stone-300 text-stone-700 hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-900/30"
                           onClick={() => {
                             // Copy main user's residency info to dependent
                             const updated = [...depList]
@@ -2250,8 +2222,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       <div className="grid gap-6 md:grid-cols-3">
                         <div className="space-y-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                            <Label className="font-medium text-blue-900 dark:text-blue-100">Country *</Label>
+                            <Label className="font-medium text-stone-900 dark:text-stone-100">Country *</Label>
                           </div>
                           <Select
                             value={dep.currentResidency?.country ?? ""}
@@ -2264,7 +2235,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               updateDepList(updated)
                             }}
                           >
-                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
                               <SelectValue placeholder="Select country" />
                             </SelectTrigger>
                             <SelectContent>
@@ -2279,8 +2250,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
                         <div className="space-y-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                            <Label className="font-medium text-blue-900 dark:text-blue-100">Residency status *</Label>
+                            <Label className="font-medium text-stone-900 dark:text-stone-100">Residency status *</Label>
                           </div>
                           <Select
                             value={dep.currentResidency?.status ?? ""}
@@ -2293,7 +2263,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               updateDepList(updated)
                             }}
                           >
-                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
                               <SelectValue placeholder="Select status" />
                             </SelectTrigger>
                             <SelectContent>
@@ -2533,20 +2503,19 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           </div>
                         )}
                         
-                        <div className="flex gap-2 pt-4 border-t border-blue-200/60 dark:border-blue-800/30">
+                        <div className="flex gap-2 pt-4 border-t border-stone-200/60 dark:border-stone-800/30">
                           <Button
                             size="sm"
                             onClick={() => saveDependentInfo(idx)}
                             disabled={!isValid}
-                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 dark:border-blue-500 dark:hover:border-blue-600 disabled:bg-blue-300 disabled:border-blue-300 dark:disabled:bg-blue-700 dark:disabled:border-blue-700"
+                            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600 hover:border-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 dark:border-emerald-500 dark:hover:border-emerald-600 disabled:bg-emerald-300 disabled:border-emerald-300 dark:disabled:bg-emerald-700 dark:disabled:border-emerald-700"
                           >
-                            <Check className="w-4 h-4 mr-2" />
                             Save Dependent Information
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30"
+                            className="border-stone-300 text-stone-700 hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-900/30"
                             onClick={() => {
                               // If this dependent was never saved (not in savedDependents), remove it entirely
                               if (!savedDependents.includes(idx)) {
