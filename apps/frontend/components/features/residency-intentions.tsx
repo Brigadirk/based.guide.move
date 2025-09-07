@@ -103,6 +103,16 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   const moveType = getFormData("residencyIntentions.destinationCountry.moveType") ?? ""
   const tempDuration = getFormData("residencyIntentions.destinationCountry.intendedTemporaryDurationOfStay") ?? 0
 
+  // Ensure a default duration of 12 months is saved when Temporary is selected
+  useEffect(() => {
+    if (moveType === "Temporary" && (!tempDuration || tempDuration <= 0)) {
+      updateFormData(
+        "residencyIntentions.destinationCountry.intendedTemporaryDurationOfStay",
+        12
+      )
+    }
+  }, [moveType, tempDuration])
+
   // Automatically update citizenship status based on personal information
   useEffect(() => {
     if (destCountry) {
@@ -218,7 +228,15 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
               <Label className="text-base font-medium">Type of move *</Label>
                   <Select 
                     value={moveType} 
-                    onValueChange={(value) => updateFormData("residencyIntentions.destinationCountry.moveType", value)}
+                    onValueChange={(value) => {
+                      updateFormData("residencyIntentions.destinationCountry.moveType", value)
+                      if (value === "Temporary" && (!tempDuration || tempDuration <= 0)) {
+                        updateFormData(
+                          "residencyIntentions.destinationCountry.intendedTemporaryDurationOfStay",
+                          12
+                        )
+                      }
+                    }}
                   >
                 <SelectTrigger>
                   <SelectValue placeholder="Select type" />
