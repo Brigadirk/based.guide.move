@@ -156,6 +156,11 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
       guardianshipType?: "full" | "partial" | "temporary" | "none"
       additionalNotes?: string
     }
+    // Simplified relationship model (new)
+    relationshipToUser?: "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none"
+    relationshipToPartner?: "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable"
+    custodyArrangement?: "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable"
+    canProveRelationship?: boolean
     dateOfBirth: string
     student: boolean
     nationalities: { country: string; willingToRenounce: boolean }[]
@@ -427,9 +432,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     }
   }
 
-  // Dependent validation function
+  // Dependent validation function (validate local edits)
   const validateDependentInfo = (depIndex: number) => {
-    const dep = depList[depIndex]
+    const dep = localDepList[depIndex]
     if (!dep) return false
     
     const dobValid = !!dep.dateOfBirth
@@ -457,6 +462,14 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     if (validateDependentInfo(depIndex)) {
       // Persist to global store from local state
       const persisted = [...localDepList]
+      // Normalize relationships if no partner
+      if (!hasPartner && persisted[depIndex]?.relationshipDetails) {
+        const rd = persisted[depIndex].relationshipDetails as any
+        const normalize = (v: string) => (v === "partner" || v === "both" ? "user" : v)
+        rd.biologicalRelationTo = normalize(rd.biologicalRelationTo)
+        rd.legalRelationTo = normalize(rd.legalRelationTo)
+        rd.custodialRelationTo = normalize(rd.custodialRelationTo)
+      }
       if (persisted[depIndex]?.isDraft) {
         delete (persisted[depIndex] as any).isDraft
       }
@@ -1892,6 +1905,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             }}
                             className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600"
                           />
+                          {attemptedDependentSaves.includes(idx) && !dep.dateOfBirth && (
+                            <p className="text-xs text-red-600 mt-1">Please enter date of birth</p>
+                          )}
                         </div>
 
                         {/* Relationship */}
@@ -1918,6 +1934,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               <SelectItem value="Other">Other</SelectItem>
                             </SelectContent>
                           </Select>
+                          {attemptedDependentSaves.includes(idx) && !dep.relationship && (
+                            <p className="text-xs text-red-600 mt-1">Please select relationship</p>
+                          )}
                         </div>
                       </div>
 
@@ -1938,203 +1957,111 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       </div>
                     </div>
 
-                {/* Relationship Details Section */}
+                {/* Relationship Details Section (Simplified) */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-3 pb-2 border-b border-stone-200 dark:border-stone-800/50">
                     <h6 className="text-lg font-semibold text-stone-900 dark:text-stone-100">Relationship Details</h6>
                   </div>
 
-                  {/* Core Relationship Grid */}
                   <div className="grid md:grid-cols-2 gap-6">
-                    {/* Biological Relationship */}
                     <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <Label className="font-medium text-stone-900 dark:text-stone-100">Biological relationship</Label>
-                      </div>
+                      <Label className="font-medium text-stone-900 dark:text-stone-100">Your relationship to the dependent *</Label>
                       <Select
-                        value={dep.relationshipDetails?.biologicalRelationTo ?? (hasPartner ? "both" : "user")}
-                        onValueChange={(v: "user" | "partner" | "both" | "neither") => {
+                        value={dep.relationshipToUser ?? "none"}
+                        onValueChange={(v: "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none") => {
                           const updated = [...localDepList]
-                          if (!updated[idx].relationshipDetails) {
-                            updated[idx].relationshipDetails = {
-                              biologicalRelationTo: "neither",
-                              legalRelationTo: "neither", 
-                              custodialRelationTo: "neither"
-                            }
-                          }
-                          updated[idx].relationshipDetails.biologicalRelationTo = v
-                          // If there is any biological relationship, "Adopted" cannot apply
-                          if (v !== "neither") {
-                            updated[idx].relationshipDetails.isAdopted = false
-                          }
-                          // Step-relationship only makes sense when exactly one party is biological (user or partner)
-                          if (v === "both" || v === "neither") {
-                            updated[idx].relationshipDetails.isStepRelation = false
-                          }
+                          updated[idx] = { ...updated[idx], relationshipToUser: v }
                           updateDepList(updated)
                         }}
                       >
                         <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="user">Me</SelectItem>
-                          {hasPartner && <SelectItem value="partner">My partner</SelectItem>}
-                          {hasPartner && <SelectItem value="both">Both of us</SelectItem>}
-                          <SelectItem value="neither">Neither</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Legal Care Responsibility */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <Label className="font-medium text-stone-900 dark:text-stone-100">Legal care responsibility</Label>
-                      </div>
-                      <Select
-                        value={dep.relationshipDetails?.custodialRelationTo ?? "both"}
-                        onValueChange={(v: "user" | "partner" | "both" | "neither") => {
-                          const updated = [...localDepList]
-                          if (!updated[idx].relationshipDetails) {
-                            updated[idx].relationshipDetails = {
-                              biologicalRelationTo: "neither",
-                              legalRelationTo: "neither", 
-                              custodialRelationTo: "neither"
-                            }
-                          }
-                          updated[idx].relationshipDetails.custodialRelationTo = v
-                          updateDepList(updated)
-                        }}
-                      >
-                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="user">Me</SelectItem>
-                          {hasPartner && <SelectItem value="partner">My partner</SelectItem>}
-                          {hasPartner && <SelectItem value="both">Both of us</SelectItem>}
-                          <SelectItem value="neither">Neither</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {/* Relationship Type & Guardianship */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {/* Relationship Subtype */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <Label className="font-medium text-stone-900 dark:text-stone-100">Relationship type</Label>
-                      </div>
-                      <Select
-                        value={(() => {
-                          const details = dep.relationshipDetails
-                          if (details?.isAdopted) return "adopted"
-                          if (details?.isLegalWard) return "ward"
-                          if (details?.isStepRelation) return "step"
-                          return "biological"
-                        })()}
-                        onValueChange={(v: "biological" | "step" | "adopted" | "ward" | "other") => {
-                          const updated = [...localDepList]
-                          if (!updated[idx].relationshipDetails) {
-                            updated[idx].relationshipDetails = {
-                              biologicalRelationTo: hasPartner ? "both" : "user",
-                              legalRelationTo: "both", 
-                              custodialRelationTo: "both"
-                            }
-                          }
-                          updated[idx].relationshipDetails.isStepRelation = v === "step"
-                          updated[idx].relationshipDetails.isAdopted = v === "adopted"
-                          updated[idx].relationshipDetails.isLegalWard = v === "ward"
-                          updateDepList(updated)
-                        }}
-                      >
-                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
-                          <SelectValue />
+                          <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="biological">Biological</SelectItem>
-                          {(() => {
-                            const bio = dep.relationshipDetails?.biologicalRelationTo ?? (hasPartner ? "both" : "user")
-                            const allowStep = bio === "user" || bio === "partner"
-                            const allowAdopted = bio === "neither"
-                            const allowWard = bio === "neither"
-                            return (
-                              <>
-                                {allowStep && <SelectItem value="step">Step‑relationship</SelectItem>}
-                                {allowAdopted && <SelectItem value="adopted">Adopted</SelectItem>}
-                                {allowWard && <SelectItem value="ward">Legal ward</SelectItem>}
-                              </>
-                            )
-                          })()}
-                          <SelectItem value="other">Other</SelectItem>
+                          <SelectItem value="adopted">Adopted</SelectItem>
+                          <SelectItem value="step">Step</SelectItem>
+                          <SelectItem value="foster">Foster</SelectItem>
+                          <SelectItem value="legal_ward">Legal ward</SelectItem>
+                          <SelectItem value="none">None</SelectItem>
                         </SelectContent>
                       </Select>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        How government forms typically categorize this relationship
-                      </p>
+                      {attemptedDependentSaves.includes(idx) && (!dep.relationshipToUser || dep.relationshipToUser === "none") && (
+                        <p className="text-xs text-red-600 mt-1">Please specify your relationship</p>
+                      )}
                     </div>
 
-                    {/* Guardianship Type */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <Label className="font-medium text-stone-900 dark:text-stone-100">Guardianship type</Label>
+                    {hasPartner && (
+                      <div className="space-y-3">
+                        <Label className="font-medium text-stone-900 dark:text-stone-100">Partner's relationship to the dependent *</Label>
+                        <Select
+                          value={dep.relationshipToPartner ?? "not_applicable"}
+                          onValueChange={(v: "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable") => {
+                            const updated = [...localDepList]
+                            updated[idx] = { ...updated[idx], relationshipToPartner: v }
+                            updateDepList(updated)
+                          }}
+                        >
+                          <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="biological">Biological</SelectItem>
+                            <SelectItem value="adopted">Adopted</SelectItem>
+                            <SelectItem value="step">Step</SelectItem>
+                            <SelectItem value="foster">Foster</SelectItem>
+                            <SelectItem value="legal_ward">Legal ward</SelectItem>
+                            <SelectItem value="none">None</SelectItem>
+                            <SelectItem value="not_applicable">Not applicable</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
+                    )}
+
+                    <div className="space-y-3">
+                      <Label className="font-medium text-stone-900 dark:text-stone-100">Custody arrangement *</Label>
                       <Select
-                        value={dep.relationshipDetails?.guardianshipType ?? "none"}
-                        onValueChange={(v: "full" | "partial" | "temporary" | "none") => {
+                        value={dep.custodyArrangement ?? (hasPartner ? "shared" : "sole_user")}
+                        onValueChange={(v: "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable") => {
                           const updated = [...localDepList]
-                          if (!updated[idx].relationshipDetails) {
-                            updated[idx].relationshipDetails = {
-                              biologicalRelationTo: "neither",
-                              legalRelationTo: "neither", 
-                              custodialRelationTo: "neither"
-                            }
-                          }
-                          updated[idx].relationshipDetails.guardianshipType = v
+                          updated[idx] = { ...updated[idx], custodyArrangement: v }
                           updateDepList(updated)
                         }}
                       >
                         <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
-                          <SelectValue />
+                          <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="none">No formal guardianship</SelectItem>
-                          <SelectItem value="full">Full legal guardian</SelectItem>
-                          <SelectItem value="partial">Partial guardian</SelectItem>
-                          <SelectItem value="temporary">Temporary guardian</SelectItem>
+                          <SelectItem value="sole_user">Sole custody (you)</SelectItem>
+                          {hasPartner && <SelectItem value="sole_partner">Sole custody (partner)</SelectItem>}
+                          {hasPartner && <SelectItem value="shared">Shared custody</SelectItem>}
+                          <SelectItem value="neither">Neither</SelectItem>
+                          {!hasPartner && <SelectItem value="not_applicable">Not applicable</SelectItem>}
                         </SelectContent>
                       </Select>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        Legal form of guardianship as documented by authorities
-                      </p>
+                      {attemptedDependentSaves.includes(idx) && !dep.custodyArrangement && (
+                        <p className="text-xs text-red-600 mt-1">Please select custody arrangement</p>
+                      )}
                     </div>
-                  </div>
 
-                  {/* Additional Notes */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-gray-400"></div>
-                      <Label className="font-medium text-stone-900 dark:text-stone-100">Additional notes (optional)</Label>
+                    <div className="space-y-3 md:col-span-2">
+                      <Label className="font-medium text-stone-900 dark:text-stone-100">Can you provide documentation? *</Label>
+                      <div className="flex items-center gap-3 p-3 border rounded-lg bg-stone-50/80 dark:bg-stone-900/30 border-stone-200 dark:border-stone-800/50">
+                        <Checkbox
+                          id={`dep_doc_${idx}`}
+                          checked={!!dep.canProveRelationship}
+                          onCheckedChange={(v) => {
+                            const updated = [...localDepList]
+                            updated[idx] = { ...updated[idx], canProveRelationship: !!v }
+                            updateDepList(updated)
+                          }}
+                        />
+                        <Label htmlFor={`dep_doc_${idx}`}>I can provide official documents (birth/adoption certificates, court orders, etc.)</Label>
+                      </div>
+                      {attemptedDependentSaves.includes(idx) && !dep.canProveRelationship && (
+                        <p className="text-xs text-red-600 mt-1">Please confirm if you can provide documentation</p>
+                      )}
                     </div>
-                    <Textarea
-                      placeholder="Any additional context about this relationship that might be relevant for immigration purposes..."
-                      value={dep.relationshipDetails?.additionalNotes ?? ""}
-                      onChange={(e) => {
-                        const updated = [...localDepList]
-                        if (!updated[idx].relationshipDetails) {
-                          updated[idx].relationshipDetails = {
-                            biologicalRelationTo: "neither",
-                            legalRelationTo: "neither", 
-                            custodialRelationTo: "neither"
-                          }
-                        }
-                        updated[idx].relationshipDetails.additionalNotes = e.target.value
-                        updateDepList(updated)
-                      }}
-                      rows={3}
-                      className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600 resize-none"
-                    />
                   </div>
                 </div>
 
@@ -2190,6 +2117,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               ))}
                             </SelectContent>
                           </Select>
+                          {attemptedDependentSaves.includes(idx) && !dep.currentResidency?.country && (
+                            <p className="text-xs text-red-600 mt-1">Please select country</p>
+                          )}
                         </div>
 
                         <div className="space-y-3">
@@ -2220,6 +2150,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               <SelectItem value="Other">Other</SelectItem>
                             </SelectContent>
                           </Select>
+                          {attemptedDependentSaves.includes(idx) && !dep.currentResidency?.status && (
+                            <p className="text-xs text-red-600 mt-1">Please select residency status</p>
+                          )}
                         </div>
 
                         {(() => {
@@ -2258,6 +2191,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                 <p className="text-sm text-red-600 dark:text-red-400">
                                   Duration cannot exceed their age ({formatAge(dependentAge)})
                                 </p>
+                              )}
+                              {attemptedDependentSaves.includes(idx) && dependentStatus !== "Citizen" && !dep.currentResidency?.duration && (
+                                <p className="text-xs text-red-600 mt-1">Please enter duration</p>
                               )}
                               {dep.dateOfBirth && dependentAge > 0 && dependentStatus !== "Citizen" && !durationExceedsAge && (
                                 <p className="text-xs text-muted-foreground">
@@ -2556,8 +2492,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       relationship: "Child",
                       relationshipDetails: {
                         biologicalRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
-                        legalRelationTo: "both" as "user" | "partner" | "both" | "neither",
-                        custodialRelationTo: "both" as "user" | "partner" | "both" | "neither",
+                        legalRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
+                        custodialRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
                         isStepRelation: false,
                         isAdopted: false,
                         isLegalWard: false,
