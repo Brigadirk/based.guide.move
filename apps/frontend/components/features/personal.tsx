@@ -200,6 +200,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
         .filter(({ d }) => !d?.isDraft)
         .map(({ idx }) => idx)
       setVisibleDependents(indices)
+      // Mark previously saved dependents as saved so the Add button stays enabled after refresh
+      setSavedDependents(indices)
     }
   }, [])
   const [visibleDependents, setVisibleDependents] = useState<number[]>([])
@@ -216,6 +218,76 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
   // Local state
   const [partnerSel, setPartnerSel] = useState("")
+  
+  // Reusable add-citizenship committers
+  const commitAddCitizenshipForUser = () => {
+    if (!addCountry) return
+    const next = [...natList]
+    if (!next.some(n => n.country === addCountry)) {
+      updateNatList([...next, { country: addCountry, willingToRenounce: false }])
+    }
+    setAddCountry("")
+  }
+  const commitAddCitizenshipForPartner = () => {
+    if (!partnerSel) return
+    const current = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+    if (!current.some((n: any) => n.country === partnerSel)) {
+      updateFormData(
+        "personalInformation.relocationPartnerInfo.partnerNationalities",
+        [...current, { country: partnerSel, willingToRenounce: false }]
+      )
+    }
+    setPartnerSel("")
+  }
+  const commitAddCitizenshipForDependent = (depIndex: number) => {
+    const country = depAddCountry[depIndex]
+    if (!country) return
+    const updated = [...localDepList]
+    const currentNats = updated[depIndex].nationalities || []
+    if (!currentNats.some((n: any) => n.country === country)) {
+      updated[depIndex] = {
+        ...updated[depIndex],
+        nationalities: [...currentNats, { country, willingToRenounce: false }]
+      }
+      updateDepList(updated)
+    }
+    setDepAddCountry(prev => ({ ...prev, [depIndex]: "" }))
+  }
+
+  // Reusable dependent creator
+  const handleAddDependent = () => {
+    const newDependent = {
+      relationship: "Child",
+      relationshipDetails: {
+        biologicalRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
+        legalRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
+        custodialRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
+        isStepRelation: false,
+        isAdopted: false,
+        isLegalWard: false,
+        guardianshipType: "none" as "full" | "partial" | "temporary" | "none",
+        additionalNotes: ""
+      },
+      relationshipToUser: "none" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none",
+      relationshipToPartner: hasPartner ? "none" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable" : "not_applicable" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable",
+      custodyArrangement: hasPartner ? "shared" as "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable" : "sole_user" as "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable",
+      canProveRelationship: false,
+      dateOfBirth: "",
+      student: false,
+      nationalities: [],
+      currentResidency: {
+        country: "",
+        status: "",
+        duration: ""
+      },
+      isDraft: true
+    }
+    const next = [...localDepList, newDependent]
+    updateDepList(next)
+    const newIndex = next.length - 1
+    setVisibleDependents(prev => [...prev, newIndex])
+    setEditingDependents(prev => [...prev, newIndex])
+  }
 
   // Auto-citizenship management (matches Streamlit logic exactly)
   useEffect(() => {
@@ -714,10 +786,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
             </Select>
             <Button
               disabled={!addCountry}
-              onClick={() => {
-                updateNatList([...natList, { country: addCountry, willingToRenounce: false }])
-                setAddCountry("")
-              }}
+              onClick={commitAddCitizenshipForUser}
               size="sm"
               className="shrink-0"
             >
@@ -1546,16 +1615,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       </Select>
                       <Button
                         disabled={!partnerSel}
-                        onClick={() => {
-                          if (partnerSel) {
-                            const current = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
-                            updateFormData("personalInformation.relocationPartnerInfo.partnerNationalities", [
-                              ...current,
-                              { country: partnerSel, willingToRenounce: false }
-                            ])
-                            setPartnerSel("")
-                          }
-                        }}
+                        onClick={commitAddCitizenshipForPartner}
                       >
                         <Plus className="w-4 h-4 mr-2" />
                         Add
@@ -1586,17 +1646,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       </Select>
                       <Button
                         disabled={!partnerSel}
-                        onClick={() => {
-                          if (partnerSel) {
-                            const current = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
-                            updateFormData("personalInformation.relocationPartnerInfo.partnerNationalities", [
-                              ...current,
-                              { country: partnerSel, willingToRenounce: false }
-                            ])
-                            setPartnerSel("")
-                            setShowPartnerMore(false)
-                          }
-                        }}
+                        onClick={() => { commitAddCitizenshipForPartner(); setShowPartnerMore(false) }}
                       >
                         <Plus className="w-4 h-4 mr-2" />
                         Add
@@ -2276,19 +2326,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       {!(dep.nationalities && dep.nationalities.length > 0) && (
                       <div className="flex gap-3">
                         <Select
-                          value=""
+                          value={depAddCountry[idx] || ""}
                           onValueChange={(country) => {
-                            if (country) {
-                              const updated = [...localDepList]
-                              const currentNats = updated[idx].nationalities || []
-                              if (!currentNats.some((n: any) => n.country === country)) {
-                                updated[idx] = {
-                                  ...updated[idx],
-                                  nationalities: [...currentNats, { country, willingToRenounce: false }]
-                                }
-                                updateDepList(updated)
-                              }
-                            }
+                            setDepAddCountry(prev => ({ ...prev, [idx]: country }))
                           }}
                         >
                           <SelectTrigger id={`dep-${idx}-add-citizenship-trigger`} className="flex-1">
@@ -2306,9 +2346,20 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           </SelectContent>
                         </Select>
                         <Button
+                          disabled={!depAddCountry[idx]}
                           onClick={() => {
-                            const trigger = document.getElementById(`dep-${idx}-add-citizenship-trigger`)
-                            if (trigger) (trigger as HTMLButtonElement).click()
+                            const country = depAddCountry[idx]
+                            if (!country) return
+                            const updated = [...localDepList]
+                            const currentNats = updated[idx].nationalities || []
+                            if (!currentNats.some((n: any) => n.country === country)) {
+                              updated[idx] = {
+                                ...updated[idx],
+                                nationalities: [...currentNats, { country, willingToRenounce: false }]
+                              }
+                              updateDepList(updated)
+                            }
+                            setDepAddCountry(prev => ({ ...prev, [idx]: "" }))
                           }}
                           className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white"
                         >
@@ -2500,6 +2551,10 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                         guardianshipType: "none" as "full" | "partial" | "temporary" | "none",
                         additionalNotes: ""
                       },
+                      relationshipToUser: "none" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none",
+                      relationshipToPartner: hasPartner ? "none" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable" : "not_applicable" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable",
+                      custodyArrangement: hasPartner ? "shared" as "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable" : "sole_user" as "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable",
+                      canProveRelationship: false,
                       dateOfBirth: "",
                       student: false,
                       nationalities: [],
@@ -2510,9 +2565,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       },
                       isDraft: true
                     }
-                    updateDepList([...depList, newDependent])
+                    updateDepList([...localDepList, newDependent])
                     // Make this dependent form visible and editable
-                    const newIndex = depList.length
+                    const newIndex = localDepList.length
                     setVisibleDependents([...visibleDependents, newIndex])
                     setEditingDependents([...editingDependents, newIndex])
                   }}

@@ -54,6 +54,11 @@ export interface Dependent {
     guardianshipType?: "full" | "partial" | "temporary" | "none"
     additionalNotes?: string
   }
+  // Simplified model additions
+  relationshipToUser?: "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none"
+  relationshipToPartner?: "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable"
+  custodyArrangement?: "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable"
+  canProveRelationship?: boolean
   dateOfBirth: string
   student: boolean
   nationalities: { country: string; willingToRenounce: boolean }[]

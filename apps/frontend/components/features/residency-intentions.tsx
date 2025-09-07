@@ -163,7 +163,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   if (!destCountry) errors.push("Destination country is required")
   if (!moveType) errors.push("Type of move is required")
   if (moveType === "Temporary" && !tempDuration) errors.push("Duration of temporary stay is required")
-  if (applyForResidency && maxMonths === null) errors.push("Maximum months willing to reside is required")
+  // 'undecided' does not require extra fields
   
   // No amounts required for donation; advisory only
 
@@ -221,12 +221,13 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                     onValueChange={(value) => updateFormData("residencyIntentions.destinationCountry.moveType", value)}
                   >
                 <SelectTrigger>
-                      <SelectValue placeholder="Select the type of move you are planning" />
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
                       <SelectItem value="Permanent">Permanent</SelectItem>
                       <SelectItem value="Temporary">Temporary</SelectItem>
                       <SelectItem value="Digital Nomad">Digital Nomad</SelectItem>
+                      <SelectItem value="undecided">Not sure yet</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -236,25 +237,21 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                     <Label className="text-base font-medium">Intended duration (months) *</Label>
                 <Input
                       type="number"
-                      min="0"
-                      max="120"
+                      min="1"
                       step="1"
                   value={tempDuration}
                       onChange={(e) => updateFormData("residencyIntentions.destinationCountry.intendedTemporaryDurationOfStay", parseInt(e.target.value) || 0)}
                       onFocus={(e) => e.target.select()}
                       placeholder="12"
+                      className="max-w-xs"
                 />
-                <p className="text-sm text-muted-foreground">
-                      Enter how many months you plan to stay in {destCountry}
-                </p>
               </div>
             )}
 
             {moveType === "Digital Nomad" && (
               <div className="p-4 rounded-lg border bg-blue-50/30 dark:bg-blue-950/10 border-blue-200 dark:border-blue-800">
                 <p className="text-sm text-blue-900 dark:text-blue-200">
-                  We assume you will use {destCountry || "this country"} as a home base for taxation purposes and mostly travel to other countries.
-                  If that is not the case, select <strong>Permanent</strong>. If you intend to stay just a few months (up to ~180 days), you generally do not need to move there.
+                  Some countries offer special visas for remote workers with minimum income requirements.
                 </p>
               </div>
             )}

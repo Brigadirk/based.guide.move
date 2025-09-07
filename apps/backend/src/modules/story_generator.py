@@ -311,12 +311,36 @@ def personal_section(pi: dict[str, Any]) -> str:
                 except Exception:
                     pass
 
-            # Student status
-            student_status = " - currently a student" if d.get("isStudent") else ""
+            # Student status (support both keys)
+            student_flag = d.get("student") if d.get("student") is not None else d.get("isStudent")
+            student_status = " - currently a student" if student_flag else ""
 
             # Build dependent description
             nationality_text = f" with citizenship of {', '.join(nat_list)}" if nat_list else ""
             dep_desc = f"{rel_desc}{age_str}{nationality_text}{student_status}"
+
+            # Include simplified relationship fields if present
+            rel_to_user = (d.get("relationshipToUser") or "").replace("_", " ")
+            if rel_to_user and rel_to_user != "none":
+                dep_desc += f" (your relationship: {rel_to_user})"
+
+            rel_to_partner = (d.get("relationshipToPartner") or "").replace("_", " ")
+            if rel_to_partner and rel_to_partner not in ("none", "not applicable", "not_applicable"):
+                dep_desc += f" (partner's relationship: {rel_to_partner})"
+
+            custody = d.get("custodyArrangement")
+            custody_map = {
+                "sole_user": "sole custody (you)",
+                "sole_partner": "sole custody (partner)",
+                "shared": "shared custody",
+                "neither": "no custody",
+                "not_applicable": None,
+            }
+            if custody in custody_map and custody_map[custody]:
+                dep_desc += f" ({custody_map[custody]})"
+
+            if d.get("canProveRelationship") is True:
+                dep_desc += " (documentation available)"
 
             # Include additional notes if provided
             notes = rel_details.get("additionalNotes", "").strip()
@@ -399,6 +423,8 @@ def residency_section(
         duration = dest.get("intendedTemporaryDurationOfStay")
         if duration:
             sent = sent.rstrip(".") + f" for approximately {duration} months."
+    if move_type in ("undecided", "not sure yet", "not_sure_yet"):
+        sent = f"The individual is not yet sure about the type or length of their move to {country}."
     sentences.append(sent)
 
     # Add region information if specified (may be omitted in citizen/EU minimal mode below)
