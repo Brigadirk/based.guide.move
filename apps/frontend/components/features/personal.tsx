@@ -168,10 +168,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     isDraft?: boolean
   }
   const depList: Dependent[] = getFormData("personalInformation.dependents") ?? []
+  const [localDepList, setLocalDepList] = useState<Dependent[]>(depList)
+  useEffect(() => {
+    setLocalDepList(depList)
+  }, [depList])
   const updateDepList = (next: Dependent[]) => {
-    updateFormData("personalInformation.dependents", next)
-    // Debug logging to track dependent changes
-    console.log("📝 Dependents updated:", next.length, "dependents")
+    setLocalDepList(next)
   }
   
   // Function to clear all dependents
@@ -181,7 +183,6 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     setEditingDependents([])
     setSavedDependents([])
     setAttemptedDependentSaves([])
-    console.log("🗑️ All dependents cleared")
   }
   
   // Check for data consistency on component mount
@@ -204,6 +205,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   // Toggles to reveal additional citizenship add rows after at least one exists
   const [showMoreUserCitizenship, setShowMoreUserCitizenship] = useState(false)
   const [showPartnerMore, setShowPartnerMore] = useState(false)
+  // Dependent add-citizenship UI state
+  const [showMoreDependentCitizenship, setShowMoreDependentCitizenship] = useState<number[]>([])
+  const [depAddCountry, setDepAddCountry] = useState<Record<number, string>>({})
 
   // Local state
   const [partnerSel, setPartnerSel] = useState("")
@@ -270,12 +274,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     }
   }, [getFormData("personalInformation.relocationPartnerInfo.currentResidency.country"), getFormData("personalInformation.relocationPartnerInfo.currentResidency.status"), getFormData("personalInformation.relocationPartnerInfo.partnerNationalities")])
 
-  // Auto-citizenship for dependents
+  // Auto-citizenship for dependents (local-only until save)
   useEffect(() => {
     let hasChanges = false
-    const updatedDepList = [...depList]
+    const updatedDepList = [...localDepList]
     
-    depList.forEach((dep: any, idx: number) => {
+    localDepList.forEach((dep: any, idx: number) => {
       const depCountry = dep.currentResidency?.country
       const depStatus = dep.currentResidency?.status
       const depNats = dep.nationalities || []
@@ -307,7 +311,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     if (hasChanges) {
       updateDepList(updatedDepList)
     }
-  }, [depList.map((dep: any) => `${dep.currentResidency?.country}-${dep.currentResidency?.status}-${JSON.stringify(dep.nationalities)}`).join(',')])
+  }, [localDepList.map((dep: any) => `${dep.currentResidency?.country}-${dep.currentResidency?.status}-${JSON.stringify(dep.nationalities)}`).join(',')])
 
   // Clear partner info when partner checkbox is unchecked
   useEffect(() => {
@@ -451,12 +455,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     setAttemptedDependentSaves(prev => [...prev.filter(i => i !== depIndex), depIndex])
     
     if (validateDependentInfo(depIndex)) {
-      // Mark draft as persisted
-      const updated = [...depList]
-      if (updated[depIndex]?.isDraft) {
-        delete (updated[depIndex] as any).isDraft
-        updateDepList(updated)
+      // Persist to global store from local state
+      const persisted = [...localDepList]
+      if (persisted[depIndex]?.isDraft) {
+        delete (persisted[depIndex] as any).isDraft
       }
+      updateFormData("personalInformation.dependents", persisted)
       setSavedDependents(prev => [...prev.filter(i => i !== depIndex), depIndex])
       setEditingDependents(prev => prev.filter(i => i !== depIndex))
       setAttemptedDependentSaves(prev => prev.filter(i => i !== depIndex))
@@ -469,7 +473,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   }
 
   const removeDependentInfo = (depIndex: number) => {
-    const newDepList = depList.filter((_, idx) => idx !== depIndex)
+    const newDepList = localDepList.filter((_, idx) => idx !== depIndex)
     updateDepList(newDepList)
     
     // Clean up state arrays by removing this index and adjusting higher indices
@@ -701,6 +705,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                 updateNatList([...natList, { country: addCountry, willingToRenounce: false }])
                 setAddCountry("")
               }}
+              size="sm"
               className="shrink-0"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -1689,7 +1694,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
         <CardContent className="pt-6">
           <div className="space-y-6">
             {/* Dependent cards and forms */}
-            {depList.map((dep, idx) => {
+            {localDepList.map((dep, idx) => {
               if (!visibleDependents.includes(idx)) return null
               
               const isEditing = editingDependents.includes(idx)
@@ -1740,7 +1745,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
                               setEditingDependents(editingDependents.filter((i: number) => i !== idx))
                               // Remove from data list  
-                              const updated = depList.filter((_, i) => i !== idx)
+                              const updated = localDepList.filter((_, i) => i !== idx)
                               updateDepList(updated)
                               // Adjust indices for remaining dependents
                               setVisibleDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
@@ -1842,7 +1847,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
                           setEditingDependents(editingDependents.filter((i: number) => i !== idx))
                           // Remove from data list  
-                          const updated = depList.filter((_, i) => i !== idx)
+                          const updated = localDepList.filter((_, i) => i !== idx)
                           updateDepList(updated)
                           // Adjust indices for remaining dependents
                           setVisibleDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
@@ -1873,14 +1878,14 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             value={dep.dateOfBirth}
                             max={getTodayDate()}
                             onChange={(e) => {
-                              const updated = [...depList]
+                              const updated = [...localDepList]
                               updated[idx] = { ...updated[idx], dateOfBirth: e.target.value }
                               updateDepList(updated)
                             }}
                             onFocus={(e) => {
                               // If the field is empty, set it to a reasonable default when focused
                               if (!dep.dateOfBirth) {
-                                const updated = [...depList]
+                                const updated = [...localDepList]
                                 updated[idx] = { ...updated[idx], dateOfBirth: getDependentDefaultBirthDate() }
                                 updateDepList(updated)
                               }
@@ -1897,7 +1902,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           <Select
                             value={dep.relationship}
                             onValueChange={(v) => {
-                              const updated = [...depList]
+                              const updated = [...localDepList]
                               updated[idx] = { ...updated[idx], relationship: v }
                               updateDepList(updated)
                             }}
@@ -1922,7 +1927,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           id={`student_${idx}`}
                           checked={dep.student}
                           onCheckedChange={(v) => {
-                            const updated = [...depList]
+                            const updated = [...localDepList]
                             updated[idx] = { ...updated[idx], student: !!v }
                             updateDepList(updated)
                           }}
@@ -1949,7 +1954,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       <Select
                         value={dep.relationshipDetails?.biologicalRelationTo ?? (hasPartner ? "both" : "user")}
                         onValueChange={(v: "user" | "partner" | "both" | "neither") => {
-                          const updated = [...depList]
+                          const updated = [...localDepList]
                           if (!updated[idx].relationshipDetails) {
                             updated[idx].relationshipDetails = {
                               biologicalRelationTo: "neither",
@@ -1989,7 +1994,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       <Select
                         value={dep.relationshipDetails?.custodialRelationTo ?? "both"}
                         onValueChange={(v: "user" | "partner" | "both" | "neither") => {
-                          const updated = [...depList]
+                          const updated = [...localDepList]
                           if (!updated[idx].relationshipDetails) {
                             updated[idx].relationshipDetails = {
                               biologicalRelationTo: "neither",
@@ -2030,7 +2035,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           return "biological"
                         })()}
                         onValueChange={(v: "biological" | "step" | "adopted" | "ward" | "other") => {
-                          const updated = [...depList]
+                          const updated = [...localDepList]
                           if (!updated[idx].relationshipDetails) {
                             updated[idx].relationshipDetails = {
                               biologicalRelationTo: hasPartner ? "both" : "user",
@@ -2078,7 +2083,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       <Select
                         value={dep.relationshipDetails?.guardianshipType ?? "none"}
                         onValueChange={(v: "full" | "partial" | "temporary" | "none") => {
-                          const updated = [...depList]
+                          const updated = [...localDepList]
                           if (!updated[idx].relationshipDetails) {
                             updated[idx].relationshipDetails = {
                               biologicalRelationTo: "neither",
@@ -2116,7 +2121,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       placeholder="Any additional context about this relationship that might be relevant for immigration purposes..."
                       value={dep.relationshipDetails?.additionalNotes ?? ""}
                       onChange={(e) => {
-                        const updated = [...depList]
+                        const updated = [...localDepList]
                         if (!updated[idx].relationshipDetails) {
                           updated[idx].relationshipDetails = {
                             biologicalRelationTo: "neither",
@@ -2143,8 +2148,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           size="sm"
                           className="border-stone-300 text-stone-700 hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-900/30"
                           onClick={() => {
-                            // Copy main user's residency info to dependent
-                            const updated = [...depList]
+                            // Copy main user's residency info to dependent (local)
+                            const updated = [...localDepList]
                             updated[idx] = { 
                               ...updated[idx], 
                               currentResidency: {
@@ -2166,7 +2171,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           <Select
                             value={dep.currentResidency?.country ?? ""}
                             onValueChange={(val) => {
-                              const updated = [...depList]
+                              const updated = [...localDepList]
                               updated[idx] = { 
                                 ...updated[idx], 
                                 currentResidency: { ...updated[idx].currentResidency, country: val }
@@ -2194,7 +2199,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           <Select
                             value={dep.currentResidency?.status ?? ""}
                             onValueChange={(val) => {
-                              const updated = [...depList]
+                              const updated = [...localDepList]
                               updated[idx] = { 
                                 ...updated[idx], 
                                 currentResidency: { ...updated[idx].currentResidency, status: val }
@@ -2239,7 +2244,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                 className={`bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600 placeholder:!text-muted-foreground/60 ${durationExceedsAge ? 'border-red-500 focus:ring-red-500' : ''}`}
                                 value={dependentStatus === "Citizen" ? "" : dep.currentResidency?.duration ?? ""}
                                 onChange={(e) => {
-                                  const updated = [...depList]
+                                  const updated = [...localDepList]
                                   updated[idx] = { 
                                     ...updated[idx], 
                                     currentResidency: { ...updated[idx].currentResidency, duration: e.target.value }
@@ -2275,8 +2280,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           size="sm"
                           className="border-stone-300 text-stone-700 hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-900/30"
                           onClick={() => {
-                            // Copy main user's citizenships to dependent
-                            const updated = [...depList]
+                            // Copy main user's citizenships to dependent (local)
+                            const updated = [...localDepList]
                             updated[idx] = { 
                               ...updated[idx], 
                               nationalities: [...natList]
@@ -2301,7 +2306,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                     id={`dep_${idx}_renounce_${natIdx}`}
                                     checked={nat.willingToRenounce ?? false}
                                     onCheckedChange={(v) => {
-                                      const updated = [...depList]
+                                      const updated = [...localDepList]
                                       const updatedNats = [...(updated[idx].nationalities || [])]
                                       updatedNats[natIdx] = { ...updatedNats[natIdx], willingToRenounce: !!v }
                                       updated[idx] = { ...updated[idx], nationalities: updatedNats }
@@ -2318,7 +2323,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                 size="sm"
                                 className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/20"
                                 onClick={() => {
-                                  const updated = [...depList]
+                                  const updated = [...localDepList]
                                   const updatedNats = (updated[idx].nationalities || []).filter((_: any, i: number) => i !== natIdx)
                                   updated[idx] = { ...updated[idx], nationalities: updatedNats }
                                   updateDepList(updated)
@@ -2338,7 +2343,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           value=""
                           onValueChange={(country) => {
                             if (country) {
-                              const updated = [...depList]
+                              const updated = [...localDepList]
                               const currentNats = updated[idx].nationalities || []
                               if (!currentNats.some((n: any) => n.country === country)) {
                                 updated[idx] = {
@@ -2383,16 +2388,52 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             variant="link"
                             size="sm"
                             className="px-0 text-muted-foreground"
-                            onClick={() => document.getElementById(`dep-${idx}-add-citizenship-trigger`)?.click()}
+                            onClick={() => {
+                              setShowMoreDependentCitizenship(prev => prev.includes(idx) ? prev : [...prev, idx])
+                              setDepAddCountry(prev => ({ ...prev, [idx]: "" }))
+                            }}
                           >
                             This dependent has another citizenship
                           </Button>
-                          <div className="flex gap-3 mt-2">
-                            <Select
-                              value=""
-                              onValueChange={(country) => {
-                                if (country) {
-                                  const updated = [...depList]
+                          {showMoreDependentCitizenship.includes(idx) && (
+                            <div className="flex gap-3 mt-2">
+                              <Select
+                                value={depAddCountry[idx] || ""}
+                                onValueChange={(country) => {
+                                  if (country) {
+                                    const updated = [...localDepList]
+                                    const currentNats = updated[idx].nationalities || []
+                                    if (!currentNats.some((n: any) => n.country === country)) {
+                                      updated[idx] = {
+                                        ...updated[idx],
+                                        nationalities: [...currentNats, { country, willingToRenounce: false }]
+                                      }
+                                      updateDepList(updated)
+                                    }
+                                    setDepAddCountry(prev => ({ ...prev, [idx]: country }))
+                                  }
+                                }}
+                              >
+                                <SelectTrigger className="flex-1">
+                                  <SelectValue placeholder="Add citizenship" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {countries.filter(c => {
+                                    const currentNats = dep.nationalities || []
+                                    return !currentNats.some((n: any) => n.country === c)
+                                  }).map((c) => (
+                                    <SelectItem key={c} value={c}>
+                                      {c}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <Button
+                                disabled={!depAddCountry[idx]}
+                                onClick={() => {
+                                  const country = depAddCountry[idx]
+                                  if (!country) return
+                                  const updated = [...localDepList]
                                   const currentNats = updated[idx].nationalities || []
                                   if (!currentNats.some((n: any) => n.country === country)) {
                                     updated[idx] = {
@@ -2401,33 +2442,15 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                     }
                                     updateDepList(updated)
                                   }
-                                }
-                              }}
-                            >
-                              <SelectTrigger className="flex-1">
-                                <SelectValue placeholder="Add citizenship" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {countries.filter(c => {
-                                  const currentNats = dep.nationalities || []
-                                  return !currentNats.some((n: any) => n.country === c)
-                                }).map((c) => (
-                                  <SelectItem key={c} value={c}>
-                                    {c}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <Button
-                              onClick={() => {
-                                const trigger = document.getElementById(`dep-${idx}-add-citizenship-trigger`)
-                                if (trigger) (trigger as HTMLButtonElement).click()
-                              }}
-                              className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white"
-                            >
-                              Add
-                            </Button>
-                          </div>
+                                  setDepAddCountry(prev => ({ ...prev, [idx]: "" }))
+                                  setShowMoreDependentCitizenship(prev => prev.filter(i => i !== idx))
+                                }}
+                                className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white"
+                              >
+                                Add
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
