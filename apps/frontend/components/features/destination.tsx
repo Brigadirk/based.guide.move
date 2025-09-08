@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { Globe, MapPin, Languages, Lightbulb } from "lucide-react"
+import { PageHeading } from "@/components/ui/page-heading"
 import { useFormStore } from "@/lib/stores"
 import { getLanguages } from "@/lib/utils/country-utils"
 import { SectionHint } from "@/components/ui/section-hint"
@@ -176,16 +177,11 @@ export function Destination({ onComplete }: DestinationProps) {
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      {/* Page Header */}
-      <div className="text-left pb-4 border-b">
-        <div className="flex items-center gap-3 mb-4">
-          <Globe className="w-7 h-7 text-primary" />
-          <h1 className="text-3xl font-bold tracking-tight">Candidate Destination</h1>
-        </div>
-        <p className="text-lg text-muted-foreground max-w-2xl">
-          Select the country and region you are interested in relocating to
-        </p>
-      </div>
+      <PageHeading 
+        title="Candidate Destination"
+        description="Select the country and region you are interested in relocating to"
+        icon={<Globe className="w-7 h-7 text-green-600" />}
+      />
 
       {/* Removed About this section hint per request */}
 

@@ -26,6 +26,7 @@ import { ValidationAlert } from "@/components/ui/validation-alert"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { hasEUCitizenship, getUserEUCountries } from "@/lib/utils/eu-utils"
 import { getCountries } from "@/lib/utils/country-utils"
+import { PageHeading } from "@/components/ui/page-heading"
 
 const RESIDENCY_OPTIONS = ["Citizen", "Permanent Resident", "Temporary Resident", "Work Visa", "Student Visa", "Refugee", "Other"] as const
 const MARITAL_OPTIONS = [
@@ -601,15 +602,11 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Page Header */}
-      <div className="text-left pb-4 border-b">
-        <div className="flex items-center gap-3 mb-4">
-          <UserPlus className="w-7 h-7 text-primary" />
-          <h1 className="text-3xl font-bold tracking-tight">Personal Information</h1>
-        </div>
-        <p className="text-lg text-muted-foreground max-w-2xl">
-          Tell us about yourself to determine visa eligibility, tax obligations, and residency requirements
-        </p>
-      </div>
+      <PageHeading 
+        title="Personal Information"
+        description="Provide your personal details to help us tailor recommendations"
+        icon={<User className="w-7 h-7 text-green-600" />}
+      />
 
       <SectionHint title="About this section">
         Accurate personal and family information enables country-specific tax residency analysis, spousal/dependent visa eligibility checks, and tailored planning based on your household composition.
@@ -955,27 +952,20 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               <>
                 {/* Partner Card Display (when saved) */}
                 {partnerSaved && !editingPartner && (
-                  <Card className="shadow-lg border-2 border-pink-100 dark:border-pink-900/30 bg-gradient-to-br from-pink-50/50 via-white to-rose-50/30 dark:from-pink-950/20 dark:via-background dark:to-rose-950/20">
+                  <Card className="relative overflow-hidden rounded-2xl border border-stone-200/60 dark:border-stone-800/40 bg-card shadow-xl">
                     <CardHeader className="pb-4">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-lg">
-                            <Heart className="w-6 h-6 text-white" />
-                          </div>
-                          <div>
-                            <CardTitle className="text-xl text-pink-900 dark:text-pink-100">Partner Information</CardTitle>
-                            <p className="text-sm text-pink-700 dark:text-pink-300 font-medium">
-                              {getFormData("personalInformation.relocationPartnerInfo.relationshipType")}
-                            </p>
-                          </div>
+                        <div>
+                          <CardTitle className="text-xl">Partner Information</CardTitle>
+                          <p className="text-sm text-muted-foreground">
+                            {getFormData("personalInformation.relocationPartnerInfo.relationshipType")}
+                          </p>
                         </div>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setEditingPartner(true)}
-                          className="border-pink-200 hover:bg-pink-50 dark:border-pink-800 dark:hover:bg-pink-950/20"
                         >
-                          <Pencil className="w-4 h-4 mr-2" />
                           Edit
                         </Button>
                       </div>
@@ -985,33 +975,23 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       <div className="grid md:grid-cols-2 gap-6">
                         {/* Personal Details */}
                         <div className="space-y-4">
-                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-pink-100 dark:border-pink-900/50">
-                            <h5 className="font-semibold text-pink-900 dark:text-pink-100 mb-3 flex items-center gap-2">
-                              <User className="w-4 h-4" />
-                              Personal Details
-                            </h5>
+                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                            <h5 className="font-semibold mb-3">Personal Details</h5>
                             <div className="space-y-3">
-                              <div className="flex items-center gap-3">
-                                <Calendar className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-                                <div>
-                                  <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</Label>
-                                  <p className="text-sm font-medium">{new Date(getFormData("personalInformation.relocationPartnerInfo.dateOfBirth")).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                                </div>
+                              <div>
+                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</Label>
+                                <p className="text-sm font-medium">{new Date(getFormData("personalInformation.relocationPartnerInfo.dateOfBirth")).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                               </div>
-                              
-                              <div className="flex items-center gap-3">
-                                <Users className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-                                <div>
-                                  <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Relationship Type</Label>
-                                  <p className="text-sm font-medium flex items-center gap-2">
-                                    {getFormData("personalInformation.relocationPartnerInfo.relationshipType")}
-                                    {getFormData("personalInformation.relocationPartnerInfo.sameSex") && (
-                                      <Badge variant="outline" className="text-xs bg-rainbow-100 border-rainbow-300">
-                                        Same-Sex
-                                      </Badge>
-                                    )}
-                                  </p>
-                                </div>
+                              <div>
+                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Relationship Type</Label>
+                                <p className="text-sm font-medium">
+                                  {getFormData("personalInformation.relocationPartnerInfo.relationshipType")}
+                                  {getFormData("personalInformation.relocationPartnerInfo.sameSex") && (
+                                    <Badge variant="outline" className="text-xs">
+                                      Same-Sex
+                                    </Badge>
+                                  )}
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -1019,26 +999,16 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
                         {/* Relationship Timeline */}
                         <div className="space-y-4">
-                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-pink-100 dark:border-pink-900/50">
-                            <h5 className="font-semibold text-pink-900 dark:text-pink-100 mb-3 flex items-center gap-2">
-                              <Clock className="w-4 h-4" />
-                              Relationship Timeline
-                            </h5>
+                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                            <h5 className="font-semibold mb-3">Relationship Timeline</h5>
                             <div className="space-y-3">
-                              <div className="flex items-center gap-3">
-                                <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
-                                <div>
-                                  <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total Duration</Label>
-                                  <p className="text-sm font-medium">{getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration")} years together</p>
-                                </div>
+                              <div>
+                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total Duration</Label>
+                                <p className="text-sm font-medium">{getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration")} years together</p>
                               </div>
-                              
-                              <div className="flex items-center gap-3">
-                                <div className="w-2 h-2 bg-rose-500 rounded-full"></div>
-                                <div>
-                                  <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Official Duration</Label>
-                                  <p className="text-sm font-medium">{getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration")} years official</p>
-                                </div>
+                              <div>
+                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Official Duration</Label>
+                                <p className="text-sm font-medium">{getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration")} years official</p>
                               </div>
                             </div>
                           </div>
@@ -1046,37 +1016,25 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       </div>
 
                       {/* Current Residency */}
-                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-pink-100 dark:border-pink-900/50">
-                        <h5 className="font-semibold text-pink-900 dark:text-pink-100 mb-3 flex items-center gap-2">
-                          <MapPin className="w-4 h-4" />
-                          Current Residency
-                        </h5>
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-full bg-pink-100 dark:bg-pink-900/30">
-                            <Globe className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-                          </div>
-                          <div>
-                            <p className="font-medium">
-                              {getFormData("personalInformation.relocationPartnerInfo.currentResidency.country")}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {getFormData("personalInformation.relocationPartnerInfo.currentResidency.status")}
-                            </p>
-                          </div>
+                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                        <h5 className="font-semibold mb-3">Current Residency</h5>
+                        <div>
+                          <p className="font-medium">
+                            {getFormData("personalInformation.relocationPartnerInfo.currentResidency.country")}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {getFormData("personalInformation.relocationPartnerInfo.currentResidency.status")}
+                          </p>
                         </div>
                       </div>
                       
                       {/* Citizenships */}
-                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-pink-100 dark:border-pink-900/50">
-                        <h5 className="font-semibold text-pink-900 dark:text-pink-100 mb-3 flex items-center gap-2">
-                          <Flag className="w-4 h-4" />
-                          Citizenships
-                        </h5>
+                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                        <h5 className="font-semibold mb-3">Citizenships</h5>
                         <div className="flex flex-wrap gap-2">
                           {(getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") || []).map((nat: any, idx: number) => (
-                            <Badge key={idx} variant="secondary" className="bg-pink-100 text-pink-800 border-pink-200 dark:bg-pink-900/30 dark:text-pink-200 dark:border-pink-800">
-                              <Flag className="w-3 h-3 mr-1" />
-                              {nat.country} 
+                            <Badge key={idx} variant="secondary" className="bg-stone-100 text-stone-800 border-stone-200 dark:bg-stone-900/30 dark:text-stone-200 dark:border-stone-800">
+                              {nat.country}
                               {nat.willingToRenounce && (
                                 <span className="ml-1 text-xs opacity-75">(willing to renounce)</span>
                               )}
@@ -1087,16 +1045,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
                       {/* Relationship Proof Indicator */}
                       {getFormData("personalInformation.relocationPartnerInfo.canProveRelationship") && (
-                        <div className="p-4 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border border-green-200 dark:border-green-800">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-                            </div>
-                            <div>
-                              <p className="font-semibold text-green-800 dark:text-green-200">Documentation Available</p>
-                              <p className="text-sm text-green-700 dark:text-green-300">Can provide relationship proof</p>
-                            </div>
-                          </div>
+                        <div className="p-4 rounded-lg border border-stone-200/60 dark:border-stone-800/40">
+                          <p className="font-semibold">Documentation Available</p>
+                          <p className="text-sm text-muted-foreground">Can provide relationship proof</p>
                         </div>
                       )}
                     </CardContent>
@@ -1105,7 +1056,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
                 {/* Partner Form (when editing or not saved) */}
                 {(!partnerSaved || editingPartner) && (
-              <div className="space-y-6 p-6 border rounded-lg bg-card">
+              <div className="space-y-6 p-6 border rounded-lg bg-stone-50/80 dark:bg-stone-900/30 border-stone-200 dark:border-stone-800/50">
                 <h4 className="font-medium text-lg">Partner Information</h4>
                 
                 {/* Partner Date of Birth */}
@@ -1833,6 +1784,10 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               <p className="text-sm font-medium">{formattedBirthDate}</p>
                               <p className="text-xs text-muted-foreground">Age: {formatAge(calculateAge(dep.dateOfBirth))}</p>
                             </div>
+                            <div>
+                              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Student</Label>
+                              <p className="text-sm font-medium">{dep.student ? "Yes" : "No"}</p>
+                            </div>
                           </div>
                         </div>
 
@@ -1840,10 +1795,44 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                         {dep.currentResidency?.country && (
                           <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
                             <h5 className="font-semibold text-stone-900 dark:text-stone-100 mb-3">Current residency</h5>
-                            <div>
+                            <div className="space-y-1">
                               <p className="font-medium">{dep.currentResidency.country}</p>
                               <p className="text-sm text-muted-foreground">{dep.currentResidency.status}</p>
+                              {dep.currentResidency?.duration && dep.currentResidency.status !== "Citizen" && (
+                                <p className="text-sm text-muted-foreground">Duration in current status: {dep.currentResidency.duration} years</p>
+                              )}
                             </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Relationships and custody */}
+                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                        <h5 className="font-semibold text-stone-900 dark:text-stone-100 mb-3">Relationships and custody</h5>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div>
+                            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Your relationship</Label>
+                            <p className="text-sm font-medium">{dep.relationshipToUser || "Not specified"}</p>
+                          </div>
+                          {hasPartner && (
+                            <div>
+                              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Partner relationship</Label>
+                              <p className="text-sm font-medium">{dep.relationshipToPartner || "Not specified"}</p>
+                            </div>
+                          )}
+                          <div>
+                            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Custody arrangement</Label>
+                            <p className="text-sm font-medium">{dep.custodyArrangement || "Not specified"}</p>
+                          </div>
+                          <div>
+                            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Documentation available</Label>
+                            <p className="text-sm font-medium">{dep.canProveRelationship ? "Yes" : "No"}</p>
+                          </div>
+                        </div>
+                        {dep.relationshipDetails?.additionalNotes && (
+                          <div className="mt-3">
+                            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Notes</Label>
+                            <p className="text-sm">{dep.relationshipDetails.additionalNotes}</p>
                           </div>
                         )}
                       </div>

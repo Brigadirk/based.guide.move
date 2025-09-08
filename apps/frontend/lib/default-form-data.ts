@@ -31,37 +31,28 @@ export const defaultFormData: FormData = {
   education: {
     previousDegrees: [],
     visaSkills: [],
-    workExperience: [],
-    professionalLicenses: [],
-    interestedInStudying: undefined,
-    schoolInterestDetails: "",
-    learningInterests: [],
-    schoolOffers: [],
-    militaryService: {
-      hasService: undefined,
-      country: "",
-      branch: "",
-      startDate: "",
-      endDate: "",
-      currentlyServing: false,
-      rank: "",
-      occupation: "",
-      securityClearance: "",
-      languages: "",
-      certifications: "",
-      leadership: ""
-    }
+    learningInterests: []
   },
   residencyIntentions: {
     destinationCountry: {
+      country: "",
+      region: "",
       moveType: "",
-      intendedTemporaryDurationOfStay: "",
-      citizenshipStatus: ""
+      intendedTemporaryDurationOfStay: 0,
+      citizenshipStatus: "",
+      currentlyInDestination: false,
+      currentStatus: ""
     },
     residencyPlans: {
       applyForResidency: false,
       maxMonthsWillingToReside: 6,
       openToVisiting: false,
+    },
+    physicalPresenceIntentions: {
+      minDaysInDestinationPerYear: undefined,
+      maxDaysOutsidePerYear: undefined,
+      flexibleOnMinimumStay: undefined,
+      plansForMaintainingOtherCountryTies: ""
     },
     familyVisaPlanning: {
       applicationTimeline: undefined,
@@ -76,6 +67,16 @@ export const defaultFormData: FormData = {
       donationCitizenship: false,
       militaryService: false,
     },
+    citizenshipInterest: {
+      interest: undefined,
+      willingToConsider: {
+        familyConnections: false,
+        investmentPrograms: false,
+        militaryService: false,
+        otherPrograms: false,
+        otherDetails: ""
+      }
+    },
     languageProficiency: {
       primaryLanguage: "",
       otherLanguages: []
@@ -85,8 +86,39 @@ export const defaultFormData: FormData = {
       businessTies: false,
       socialTies: false,
     },
+    backgroundDisclosures: {
+      criminalRecord: false,
+      criminalDetails: "",
+      taxComplianceIssues: false,
+      taxComplianceDetails: "",
+      previousVisaDenials: false,
+      visaDenialDetails: "",
+      otherRelevantFactors: ""
+    },
+    userVisa: {
+      applyForResidency: false,
+      physicalPresenceDays: undefined,
+      exploratoryVisits: { details: "" },
+      citizenshipInterest: undefined as any
+    },
+    partnerVisa: {
+      applyForResidency: false,
+      physicalPresenceDays: undefined,
+      exploratoryVisits: { details: "" },
+      citizenshipInterest: undefined as any
+    },
+    dependentsVisa: [],
     moveMotivation: "",
+    moveMotivationDetails: "",
     taxCompliantEverywhere: true,
+    familyCoordination: {
+      partnerVisaStatusInDestination: "",
+      dependentsVisaStatusInDestination: "",
+      applicationTiming: undefined,
+      documentPreparationReadiness: "",
+      specialFamilyCircumstances: "",
+      schoolTimingConsiderations: ""
+    }
   },
   finance: {
     skipTaxSections: false,

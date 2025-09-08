@@ -11,6 +11,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { useFormStore } from "@/lib/stores"
 import { SectionHint } from "@/components/ui/section-hint"
 import { Plus, Trash2, Info, AlertTriangle, Shield, PiggyBank, Building, Globe, Users, CreditCard } from "lucide-react"
+import { PageHeading } from "@/components/ui/page-heading"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
@@ -115,15 +116,11 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      {/* Page Header */}
-      <div className="text-left pb-4 border-b">
-        <h1 className="text-3xl font-bold text-primary mb-3">
-          ⚖️ Social Security & Pensions
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Your pension and social security profile for international tax compliance and retirement planning
-        </p>
-      </div>
+      <PageHeading 
+        title="Social Security & Pensions"
+        description="Your pension and social security profile for international tax compliance and retirement planning"
+        icon={<Shield className="w-7 h-7 text-green-600" />}
+      />
 
       <SectionHint title="Why is this section important?">
         <div className="space-y-2 text-sm">

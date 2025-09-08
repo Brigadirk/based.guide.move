@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { GraduationCap, BookOpen, CheckCircle, Info } from "lucide-react"
+import { PageHeading } from "@/components/ui/page-heading"
 import { SectionHint } from "@/components/ui/section-hint"
 import { SectionFooter } from "@/components/ui/section-footer"
 
@@ -97,16 +98,74 @@ export function Education({ onComplete }: EducationProps) {
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      {/* Page Header */}
-      <div className="text-left pb-4 border-b">
-        <div className="flex items-center gap-3 mb-4">
-          <GraduationCap className="w-7 h-7 text-primary" />
-          <h1 className="text-3xl font-bold tracking-tight">Education & Skills</h1>
-        </div>
-        <p className="text-lg text-muted-foreground max-w-2xl">
-          Your educational background and professional skills for visa applications and career opportunities
-        </p>
-      </div>
+      <PageHeading 
+        title="Education & Skills"
+        description="Your educational background and professional skills for visa applications and career opportunities"
+        icon={<GraduationCap className="w-7 h-7 text-green-600" />}
+      />
+
+      {/* Visa Requirement Summary (read-only) */}
+      {destCountry && (
+        (() => {
+          const isUserCitizen = Array.isArray(userNationalities) && destCountry ? userNationalities.some((n: any) => n?.country === destCountry) : false
+          const userCanMoveEU = destCountry ? canMoveWithinEU(userNationalities, destCountry) : false
+          const eduUserNeedsVisa = !(isUserCitizen || userCanMoveEU)
+
+          const partnerNats = partnerInfo?.nationalities ?? []
+          const eduPartnerNeedsVisa = partnerInfo
+            ? !(
+                partnerNats.some((n: any) => n?.country === destCountry) ||
+                canMoveWithinEU(partnerNats, destCountry)
+              )
+            : false
+
+          const depStatuses = dependentsInfo.map((dep: any) => {
+            const depNats = dep?.nationalities ?? []
+            const depCitizen = depNats.some((n: any) => n?.country === destCountry)
+            const depMoveEU = canMoveWithinEU(depNats, destCountry)
+            return { needsVisa: !(depCitizen || depMoveEU) }
+          })
+
+          return (
+            <Card className="shadow-sm border-l-4 border-l-blue-500">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
+                <CardTitle className="text-xl flex items-center gap-3">Visa Requirement Summary</CardTitle>
+                <p className="text-sm text-muted-foreground">Based on citizenship and EU freedom of movement</p>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center justify-between max-w-md">
+                    <span className="font-medium">You</span>
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${eduUserNeedsVisa ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                      {eduUserNeedsVisa ? 'Needs visa' : 'No visa needed'}
+                    </span>
+                  </div>
+                  {partnerInfo && (
+                    <div className="flex items-center justify-between max-w-md">
+                      <span className="font-medium">Partner</span>
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${eduPartnerNeedsVisa ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                        {eduPartnerNeedsVisa ? 'Needs visa' : 'No visa needed'}
+                      </span>
+                    </div>
+                  )}
+                  {depStatuses.length > 0 && (
+                    <div className="space-y-2">
+                      {depStatuses.map((d: any, i: number) => (
+                        <div key={i} className="flex items-center justify-between max-w-md">
+                          <span className="font-medium">Dependent {i + 1}</span>
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${d.needsVisa ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                            {d.needsVisa ? 'Needs visa' : 'No visa needed'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })()
+      )}
 
       <SectionHint title="About this section">
         Educational qualifications and professional skills are crucial for visa applications, especially for skilled worker visas and professional registration in your destination country.

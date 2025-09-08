@@ -87,14 +87,24 @@ export interface FormData {
   }
   residencyIntentions?: {
     destinationCountry: {
+      country?: string
+      region?: string
       moveType: string
-      intendedTemporaryDurationOfStay: string
+      intendedTemporaryDurationOfStay: number
       citizenshipStatus: string
+      currentlyInDestination?: boolean
+      currentStatus?: string
     }
     residencyPlans: {
       applyForResidency: boolean
       maxMonthsWillingToReside: number
       openToVisiting: boolean
+    }
+    physicalPresenceIntentions?: {
+      minDaysInDestinationPerYear?: number
+      maxDaysOutsidePerYear?: number
+      flexibleOnMinimumStay?: boolean
+      plansForMaintainingOtherCountryTies?: string
     }
     familyVisaPlanning?: {
       applicationTimeline?: "together" | "sequential" | "flexible"
@@ -109,6 +119,16 @@ export interface FormData {
       donationCitizenship: boolean
       militaryService: boolean
     }
+    citizenshipInterest?: {
+      interest?: "yes" | "no" | "undecided"
+      willingToConsider?: {
+        familyConnections?: boolean
+        investmentPrograms?: boolean
+        militaryService?: boolean
+        otherPrograms?: boolean
+        otherDetails?: string
+      }
+    }
     languageProficiency: {
       primaryLanguage: string
       otherLanguages: Array<{
@@ -122,8 +142,47 @@ export interface FormData {
       businessTies: boolean
       socialTies: boolean
     }
+    backgroundDisclosures?: {
+      criminalRecord?: boolean
+      criminalDetails?: string
+      taxComplianceIssues?: boolean
+      taxComplianceDetails?: string
+      previousVisaDenials?: boolean
+      visaDenialDetails?: string
+      otherRelevantFactors?: string
+    }
+    userVisa?: {
+      applyForResidency?: boolean
+      physicalPresenceDays?: number
+      exploratoryVisits?: {
+        details?: string
+      }
+      citizenshipInterest?: "yes" | "no" | "undecided"
+    }
+    partnerVisa?: {
+      applyForResidency?: boolean
+      physicalPresenceDays?: number
+      exploratoryVisits?: {
+        details?: string
+      }
+      citizenshipInterest?: "yes" | "no" | "undecided"
+    }
+    dependentsVisa?: Array<{
+      index: number
+      notes?: string
+      schoolTiming?: string
+    }>
     moveMotivation: string
+    moveMotivationDetails?: string
     taxCompliantEverywhere: boolean
+    familyCoordination?: {
+      partnerVisaStatusInDestination?: string
+      dependentsVisaStatusInDestination?: string
+      applicationTiming?: "together" | "sequential" | "undecided"
+      documentPreparationReadiness?: string
+      specialFamilyCircumstances?: string
+      schoolTimingConsiderations?: string
+    }
   }
   finance?: {
     skipTaxSections: boolean

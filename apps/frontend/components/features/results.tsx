@@ -12,6 +12,7 @@ import { Sparkles, Settings, Loader2, FileText, Zap, ChevronUp, ChevronDown, Mes
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { PerplexityLoading } from "@/components/ui/perplexity-loading"
+import { PageHeading } from "@/components/ui/page-heading"
 
 const PERPLEXITY_MODELS = [
   { id: "sonar-deep-research", name: "Sonar Deep Research", description: "Best for comprehensive analysis" },
@@ -158,16 +159,11 @@ Please provide a detailed answer to the follow-up question, referencing the prev
 
   return (
     <div id="results" className="space-y-8 max-w-6xl mx-auto">
-      {/* Page Header */}
-      <div className="text-left pb-4 border-b">
-        <div className="flex items-center gap-3 mb-4">
-          <Sparkles className="w-7 h-7 text-purple-600" />
-          <h1 className="text-3xl font-bold tracking-tight">AI Analysis Results</h1>
-        </div>
-        <p className="text-lg text-muted-foreground max-w-2xl">
-          Generate comprehensive VISA and TAX guidance based on your profile
-        </p>
-      </div>
+      <PageHeading 
+        title="AI Analysis Results"
+        description="Generate comprehensive VISA and TAX guidance based on your profile"
+        icon={<Sparkles className="w-7 h-7 text-green-600" />}
+      />
 
       {/* Full Prompt Card */}
       <Card className="shadow-sm border-l-4 border-l-blue-500">

@@ -18,6 +18,7 @@ import { Plus, TrendingUp, Building, PiggyBank, Briefcase, HelpCircle } from "lu
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
+import { PageHeading } from "@/components/ui/page-heading"
 
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { useCurrencies } from "@/lib/hooks/use-currencies"
@@ -176,15 +177,11 @@ export function FutureFinancialPlans({ onComplete }: { onComplete: () => void })
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      {/* Page Header */}
-      <div className="text-left pb-4 border-b">
-        <h1 className="text-3xl font-bold text-primary mb-3">
-          🏡 Future Financial Plans
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Your planned financial activities and future investments
-        </p>
-      </div>
+      <PageHeading 
+        title="Future Financial Plans"
+        description="Your planned financial activities and future investments"
+        icon={<PiggyBank className="w-7 h-7 text-green-600" />}
+      />
 
       <SectionHint title="About this section">
         Future financial planning information helps tax advisors understand your long-term intentions, 

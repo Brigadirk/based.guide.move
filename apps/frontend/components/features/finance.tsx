@@ -25,6 +25,7 @@ import { ValidationSummary, ValidationBadge, RealTimeValidation } from "@/compon
 import { useAutoSave, useAutoSaveStatus } from "@/lib/hooks/use-auto-save"
 import { SaveStatus } from "@/components/ui/loading-states"
 import { FinanciallySupportedSection } from "./financially-supported-section"
+import { PageHeading } from "@/components/ui/page-heading"
 
 // Income Categories (Streamlit structure)
 const INCOME_CATEGORIES = {
@@ -329,15 +330,11 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Page Header */}
-      <div className="text-left pb-4 border-b">
-        <div className="flex items-center gap-3 mb-4">
-          <DollarSign className="w-7 h-7 text-primary" />
-          <h1 className="text-3xl font-bold tracking-tight">Income and Assets</h1>
-        </div>
-        <p className="text-lg text-muted-foreground max-w-2xl">
-          Your financial profile for visa applications and tax planning
-        </p>
-      </div>
+      <PageHeading 
+        title="Income and Assets"
+        description="Provide your financial profile to inform tax and visa recommendations"
+        icon={<CreditCard className="w-7 h-7 text-green-600" />}
+      />
 
       {/* Quick Finance Skip (duplicate of sidebar control for visibility) */}
       <Card className="border-amber-200 bg-amber-50/50 dark:bg-amber-950/20">

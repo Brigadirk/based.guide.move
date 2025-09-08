@@ -26,6 +26,7 @@ import {
   Info,
   Loader2
 } from "lucide-react"
+import { PageHeading } from "@/components/ui/page-heading"
 
 
 interface SummaryProps {
@@ -545,13 +546,10 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      {/* Page Header */}
-      <div className="text-center pb-4 border-b">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <FileText className="w-7 h-7 text-primary" />
-          <h1 className="text-3xl font-bold tracking-tight">Profile Summary</h1>
-        </div>
-      </div>
+      <PageHeading 
+        title="Profile Summary"
+        icon={<FileText className="w-7 h-7 text-green-600" />}
+      />
 
       {/* Completion Overview Card */}
       <Card className="shadow-sm border-l-4 border-l-primary">

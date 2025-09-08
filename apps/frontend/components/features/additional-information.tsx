@@ -28,6 +28,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
+import { PageHeading } from "@/components/ui/page-heading"
 
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 
@@ -102,15 +103,11 @@ export function AdditionalInformation({ onComplete }: { onComplete: () => void }
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      {/* Page Header */}
-      <div className="text-left pb-4 border-b">
-        <h1 className="text-3xl font-bold text-primary mb-3">
-          📝 Additional Information
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Any additional information that doesn't fit in other sections
-        </p>
-      </div>
+      <PageHeading 
+        title="Additional Information"
+        description="Any additional information that doesn't fit in other sections"
+        icon={<span className="text-xl">📝</span>}
+      />
 
       {/* Why is this section important */}
       <Card className="shadow-sm border-l-4 border-l-yellow-500">
