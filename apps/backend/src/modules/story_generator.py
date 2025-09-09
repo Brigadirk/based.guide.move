@@ -325,7 +325,11 @@ def personal_section(pi: dict[str, Any]) -> str:
                 dep_desc += f" (your relationship: {rel_to_user})"
 
             rel_to_partner = (d.get("relationshipToPartner") or "").replace("_", " ")
-            if rel_to_partner and rel_to_partner not in ("none", "not applicable", "not_applicable"):
+            if rel_to_partner and rel_to_partner not in (
+                "none",
+                "not applicable",
+                "not_applicable",
+            ):
                 dep_desc += f" (partner's relationship: {rel_to_partner})"
 
             custody = d.get("custodyArrangement")
@@ -424,14 +428,16 @@ def residency_section(
         if duration:
             sent = sent.rstrip(".") + f" for approximately {duration} months."
     if move_type in ("undecided", "not sure yet", "not_sure_yet"):
-        sent = f"The individual is not yet sure about the type or length of their move to {country}."
+        sent = (
+            f"The individual is not yet sure about the type or length of their move to {country}."
+        )
     sentences.append(sent)
 
     # Add region information if specified (may be omitted in citizen/EU minimal mode below)
     region = dest.get("region", "").strip()
     if region:
         sentences.append(f"They are specifically interested in the {region} region.")
-    
+
     # Special situation details
     special_situation = dest.get("specialSituation", "").strip()
     if special_situation:
@@ -617,8 +623,10 @@ def residency_section(
             col = ri.get("centerOfLife", {})
             # Support both new and legacy field names
             ties_text = col.get("maintainOtherCountryTiesDetails") or col.get("tiesDescription", "")
-            maintain_ties = col.get("maintainOtherCountryTies") or col.get("maintainsSignificantTies", False)
-            
+            maintain_ties = col.get("maintainOtherCountryTies") or col.get(
+                "maintainsSignificantTies", False
+            )
+
             if maintain_ties:
                 minimal.append(
                     "They maintain significant ties to their current country ("
@@ -793,7 +801,7 @@ def residency_section(
             sentences.append("They are not interested in citizenship.")
         elif interest == "undecided":
             sentences.append("They are undecided about pursuing citizenship.")
-        
+
         # Citizenship pathways
         willing = ci.get("willingToConsider", {})
         if willing:
@@ -811,12 +819,16 @@ def residency_section(
                 pathways.append("military service")
             if willing.get("otherPrograms"):
                 pathways.append("other special programs")
-            
+
             if pathways:
                 if len(pathways) == 1:
-                    sentences.append(f"They are willing to consider {pathways[0]} as a citizenship pathway.")
+                    sentences.append(
+                        f"They are willing to consider {pathways[0]} as a citizenship pathway."
+                    )
                 else:
-                    sentences.append(f"They are willing to consider multiple citizenship pathways: {', '.join(pathways[:-1])}, and {pathways[-1]}.")
+                    sentences.append(
+                        f"They are willing to consider multiple citizenship pathways: {', '.join(pathways[:-1])}, and {pathways[-1]}."
+                    )
 
     # Partner citizenship interest (check for special situation first)
     partner_special_situation = ci.get("partnerSpecialSituation", "").strip()
@@ -838,27 +850,39 @@ def residency_section(
                         p_pathways.append("family connections")
                         p_family_details = p_willing.get("familyConnectionDetails", "").strip()
                         if p_family_details:
-                            sentences.append(f'Partner family connection details: "{p_family_details}"')
+                            sentences.append(
+                                f'Partner family connection details: "{p_family_details}"'
+                            )
                     if p_willing.get("investmentPrograms"):
                         p_pathways.append("investment programs")
                     if p_willing.get("militaryService"):
                         p_pathways.append("military service")
                     if p_willing.get("otherPrograms"):
                         p_pathways.append("other special programs")
-                    
+
                     if p_pathways:
                         if len(p_pathways) == 1:
-                            sentences.append(f"Their partner is willing to consider {p_pathways[0]} as a citizenship pathway.")
+                            sentences.append(
+                                f"Their partner is willing to consider {p_pathways[0]} as a citizenship pathway."
+                            )
                         else:
-                            sentences.append(f"Their partner is willing to consider multiple citizenship pathways: {', '.join(p_pathways[:-1])}, and {p_pathways[-1]}.")
+                            sentences.append(
+                                f"Their partner is willing to consider multiple citizenship pathways: {', '.join(p_pathways[:-1])}, and {p_pathways[-1]}."
+                            )
             elif p_interest == "no":
                 sentences.append("Their partner is not interested in citizenship.")
             elif p_interest == "undecided":
                 sentences.append("Their partner is undecided about pursuing citizenship.")
-        elif hasPartner and not partner_special_situation:
+        elif (
+            personal_info
+            and personal_info.get("relocationPartner")
+            and not partner_special_situation
+        ):
             # If partner exists but no specific citizenship info, use user's citizenship interest as default
             if interest == "yes":
-                sentences.append("Their partner shares the same citizenship interest and pathway preferences.")
+                sentences.append(
+                    "Their partner shares the same citizenship interest and pathway preferences."
+                )
             elif interest == "no":
                 sentences.append("Their partner also is not interested in citizenship.")
             elif interest == "undecided":
@@ -900,7 +924,9 @@ def residency_section(
     col = ri.get("centerOfLife", {})
     # Support both new and legacy field names
     ties_text = col.get("maintainOtherCountryTiesDetails") or col.get("tiesDescription", "")
-    maintain_ties = col.get("maintainOtherCountryTies") or col.get("maintainsSignificantTies", False)
+    maintain_ties = col.get("maintainOtherCountryTies") or col.get(
+        "maintainsSignificantTies", False
+    )
 
     # Check if user is citizen or EU citizen for the destination country
     user_is_citizen_or_eu = False
@@ -927,17 +953,19 @@ def residency_section(
     # Physical presence intentions
     ppi = ri.get("physicalPresenceIntentions", {})
     if ppi and ppi.get("interestedInMinimumStay"):
-        sentences.append("They are interested in understanding minimum stay requirements for visa compliance.")
+        sentences.append(
+            "They are interested in understanding minimum stay requirements for visa compliance."
+        )
 
     # Residency applications
     user_visa = ri.get("userVisa", {})
     if user_visa and user_visa.get("applyForResidency"):
         sentences.append("They will apply for a residency permit.")
-    
+
     partner_visa = ri.get("partnerVisa", {})
     if partner_visa and partner_visa.get("applyForResidency"):
         sentences.append("Their partner will apply for a residency permit.")
-    
+
     dependents_visa = ri.get("dependentsVisa", {})
     # Only mention dependents visa if there are actual dependents and they need visas
     if dependents_visa and dependents_visa.get("applyForResidency"):
@@ -946,7 +974,7 @@ def residency_section(
         if personal_info:
             dependents_info = personal_info.get("dependents", [])
             has_dependents = len(dependents_info) > 0
-        
+
         if has_dependents:
             sentences.append("They will apply for residency permits for their dependents.")
 
@@ -955,26 +983,41 @@ def residency_section(
     if bg:
         if bg.get("criminalRecord"):
             details = bg.get("criminalDetails", "").strip()
-            sentences.append(f"They have disclosed a criminal record" + (f': "{details}"' if details else "."))
+            sentences.append(
+                "They have disclosed a criminal record" + (f': "{details}"' if details else ".")
+            )
         if bg.get("taxComplianceIssues"):
             details = bg.get("taxComplianceDetails", "").strip()
-            sentences.append(f"They have tax compliance issues" + (f': "{details}"' if details else "."))
+            sentences.append(
+                "They have tax compliance issues" + (f': "{details}"' if details else ".")
+            )
         if bg.get("previousVisaDenials"):
             details = bg.get("visaDenialDetails", "").strip()
-            sentences.append(f"They have previous visa denials/immigration issues" + (f': "{details}"' if details else "."))
+            sentences.append(
+                "They have previous visa denials/immigration issues"
+                + (f': "{details}"' if details else ".")
+            )
 
     # Partner background disclosures
     p_bg = ri.get("backgroundDisclosuresPartner", {})
     if p_bg:
         if p_bg.get("criminalRecord"):
             details = p_bg.get("criminalDetails", "").strip()
-            sentences.append(f"Their partner has disclosed a criminal record" + (f': "{details}"' if details else "."))
+            sentences.append(
+                "Their partner has disclosed a criminal record"
+                + (f': "{details}"' if details else ".")
+            )
         if p_bg.get("taxComplianceIssues"):
             details = p_bg.get("taxComplianceDetails", "").strip()
-            sentences.append(f"Their partner has tax compliance issues" + (f': "{details}"' if details else "."))
+            sentences.append(
+                "Their partner has tax compliance issues" + (f': "{details}"' if details else ".")
+            )
         if p_bg.get("previousVisaDenials"):
             details = p_bg.get("visaDenialDetails", "").strip()
-            sentences.append(f"Their partner has previous visa denials/immigration issues" + (f': "{details}"' if details else "."))
+            sentences.append(
+                "Their partner has previous visa denials/immigration issues"
+                + (f': "{details}"' if details else ".")
+            )
 
     # Tax compliance - explicit mention for both compliant and non-compliant
     tax_compliant = ri.get("taxCompliantEverywhere")
