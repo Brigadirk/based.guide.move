@@ -28,8 +28,6 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   const destCountry = getFormData("residencyIntentions.destinationCountry.country") ?? ""
   const moveType = getFormData("residencyIntentions.destinationCountry.moveType") ?? ""
   const tempDuration = getFormData("residencyIntentions.destinationCountry.intendedTemporaryDurationOfStay") ?? 0
-  const currentlyInDestination = getFormData("residencyIntentions.destinationCountry.currentlyInDestination") ?? false
-  const currentStatus = getFormData("residencyIntentions.destinationCountry.currentStatus") ?? ""
 
   // Ensure a default duration of 12 months is saved when Temporary is selected
   useEffect(() => {
@@ -41,11 +39,7 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
     }
   }, [moveType, tempDuration])
 
-  // Physical presence intentions
-  const minDays = getFormData("residencyIntentions.physicalPresenceIntentions.minDaysInDestinationPerYear") ?? undefined
-  const maxDaysOutside = getFormData("residencyIntentions.physicalPresenceIntentions.maxDaysOutsidePerYear") ?? undefined
-  const flexibleOnMinimumStay = getFormData("residencyIntentions.physicalPresenceIntentions.flexibleOnMinimumStay") ?? false
-  const plansForMaintainingOtherTies = getFormData("residencyIntentions.physicalPresenceIntentions.plansForMaintainingOtherCountryTies") ?? ""
+  // Physical presence intentions (now merged with center of life)
 
   // Citizenship interest
   const citizenshipInterest = getFormData("residencyIntentions.citizenshipInterest.interest") ?? "undecided"
@@ -69,7 +63,6 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
 
   // Motivation
   const motivation = getFormData("residencyIntentions.moveMotivation") ?? ""
-  const motivationDetails = getFormData("residencyIntentions.moveMotivationDetails") ?? ""
 
   // Family coordination visibility
   const hasPartner = getFormData("personalInformation.relocationPartner") ?? false
@@ -163,16 +156,15 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
   if (!destCountry) errors.push("Destination country is required")
   if (!moveType) errors.push("Type of move is required")
   if (moveType === "Temporary" && !tempDuration) errors.push("Duration of temporary stay is required")
-  if ((s1_userNeeds_partnerNot || s2_userNot_partnerNeeds || s3_bothNeed) && currentlyInDestination && !currentStatus.trim()) {
-    errors.push("Current status in destination is required")
-  }
   if (criminalRecord && !criminalDetails.trim()) errors.push("Please provide details about your criminal record")
+  if (p_criminalRecord && !p_criminalDetails.trim()) errors.push("Please provide details about partner's criminal record")
+  if (taxComplianceIssues && !taxComplianceDetails.trim()) errors.push("Please provide tax compliance details")
+  if (p_taxComplianceIssues && !p_taxComplianceDetails.trim()) errors.push("Please provide partner's tax compliance details")
+  if (previousVisaDenials && !visaDenialDetails.trim()) errors.push("Please provide visa denial details")
+  if (p_previousVisaDenials && !p_visaDenialDetails.trim()) errors.push("Please provide partner's visa denial details")
   if ((s1_userNeeds_partnerNot || s2_userNot_partnerNeeds || s3_bothNeed) && !motivation.trim()) {
     errors.push("Motivation is required for visa applications")
   }
-  if ((s1_userNeeds_partnerNot || s3_bothNeed) && (!minDays && minDays !== 0)) errors.push("Minimum days in destination is required for visa planning")
-  if ((s1_userNeeds_partnerNot || s3_bothNeed) && (!maxDaysOutside && maxDaysOutside !== 0)) errors.push("Maximum days outside is required for visa compliance")
-  if ((s1_userNeeds_partnerNot || s3_bothNeed) && !plansForMaintainingOtherTies.trim()) errors.push("Plans for maintaining ties is required for visa applications")
 
   const canContinue = errors.length === 0
 
@@ -360,326 +352,46 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
         </Card>
       )}
 
-      {/* Physical Presence Intentions */}
-      {destCountry && (userNeedsVisa || partnerNeedsVisa || anyDependentNeedsVisa) && (
-        <Card className="shadow-sm border-l-4 border-l-purple-500">
-          <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
-            <CardTitle className="text-xl flex items-center gap-3">
-              <Clock className="w-6 h-6 text-purple-600" />
-              Physical Presence Intentions
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">Facts about time in destination vs outside</p>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="space-y-6">
-              {/* Minimum stay requirements interest */}
-              <div className="flex items-start gap-3 p-4 border rounded-lg bg-card">
-                <Checkbox
-                  id="interested_in_minimum_stay"
-                  checked={!!getFormData("residencyIntentions.physicalPresenceIntentions.interestedInMinimumStay")}
-                  onCheckedChange={(v) => updateFormData("residencyIntentions.physicalPresenceIntentions.interestedInMinimumStay", !!v)}
-                />
-                <Label htmlFor="interested_in_minimum_stay" className="text-base font-medium">
-                  I am interested in minimum stay requirements for {(() => {
-                    const visaNeededPeople = []
-                    if (userNeedsVisa) visaNeededPeople.push("myself")
-                    if (partnerNeedsVisa) visaNeededPeople.push("my partner")
-                    if (anyDependentNeedsVisa) visaNeededPeople.push("dependents")
-                    
-                    if (visaNeededPeople.length === 0) return "no one"
-                    if (visaNeededPeople.length === 1) return visaNeededPeople[0]
-                    if (visaNeededPeople.length === 2) return visaNeededPeople.join(" and ")
-                    return visaNeededPeople.slice(0, -1).join(", ") + ", and " + visaNeededPeople.slice(-1)
-                  })()}
-                </Label>
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="text-base font-medium">Plans for maintaining other country ties{(s1_userNeeds_partnerNot || s3_bothNeed) ? " *" : ""}</Label>
-                <Textarea
-                  value={plansForMaintainingOtherTies}
-                  onChange={(e) => updateFormData("residencyIntentions.physicalPresenceIntentions.plansForMaintainingOtherCountryTies", e.target.value)}
-                  placeholder={(s1_userNeeds_partnerNot || s3_bothNeed) ? "Required: Describe ties you plan to maintain (property, work, family, etc.). This affects visa applications." : "Optional: Briefly describe any ties you plan to maintain outside the destination"}
-                  rows={3}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Visa Requirement Summary */}
-      {destCountry && (
-        <Card className="shadow-sm border-l-4 border-l-blue-500">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
-            <CardTitle className="text-xl flex items-center gap-3">
-              Visa Requirement Summary
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">Based on citizenship and EU freedom of movement</p>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center justify-between max-w-md">
-                <span className="font-medium">You</span>
-                <div className="flex items-center gap-2">
-                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${userNeedsVisa ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
-                    {userNeedsVisa ? 'Needs visa' : 'No visa needed'}
-                  </span>
-                  {!userNeedsVisa && (
-                    <span className="text-xs text-muted-foreground">
-                      ({isUserCitizen ? 'Citizen' : 'EU rights'})
-                    </span>
-                  )}
-                </div>
-              </div>
-              {hasPartner && (
-                <div className="flex items-center justify-between max-w-md">
-                  <span className="font-medium">Partner</span>
-                  <div className="flex items-center gap-2">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${partnerNeedsVisa ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
-                      {partnerNeedsVisa ? 'Needs visa' : 'No visa needed'}
-                    </span>
-                    {!partnerNeedsVisa && (
-                      <span className="text-xs text-muted-foreground">
-                        ({(() => {
-                          const isPartnerCitizen = Array.isArray(partnerNationalities) && partnerNationalities.some((n: any) => n?.country === destCountry)
-                          return isPartnerCitizen ? 'Citizen' : 'EU rights'
-                        })()})
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
-              {dependentVisaStatus.length > 0 && (
-                <div className="space-y-2">
-                  {dependentVisaStatus.map((d, i) => {
-                    const dep = dependentsForVisaCheck[i]
-                    const depNats = dep?.nationalities ?? []
-                    const depIsCitizen = destCountry && Array.isArray(depNats) ? depNats.some((n: any) => n?.country === destCountry) : false
-                    return (
-                      <div key={i} className="flex items-center justify-between max-w-md">
-                        <span className="font-medium">Dependent {i + 1}</span>
-                        <div className="flex items-center gap-2">
-                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${d.needsVisa ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
-                            {d.needsVisa ? 'Needs visa' : 'No visa needed'}
-                          </span>
-                          {!d.needsVisa && (
-                            <span className="text-xs text-muted-foreground">
-                              ({depIsCitizen ? 'Citizen' : 'EU rights'})
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
       
 
-      {/* Center of Life (only when neither adult needs a visa) */}
-      {destCountry && adultsNoVisa && (
-        <Card className="shadow-sm border-l-4 border-l-amber-500">
-          <CardHeader className="bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-950/20">
-            <CardTitle className="text-xl flex items-center gap-3">Center of Life Tax Implications</CardTitle>
-            <p className="text-sm text-muted-foreground">Understanding 'Center of Life' for Tax Purposes</p>
-          </CardHeader>
-          <CardContent className="pt-6 space-y-4">
-            <div className="text-sm text-muted-foreground space-y-2">
-              <p>If you maintain significant presence or business connections with another country after moving, that country may consider your "Center of Life" to be there, making you liable for taxation.</p>
-              <p>Countries determine your "center of life" based on:</p>
-              <ul className="list-disc list-inside">
-                <li>Time spent in the country (often {'>'}183 days/year)</li>
-                <li>Location of permanent home</li>
-                <li>Family ties</li>
-                <li>Economic interests (job, bank accounts)</li>
-                <li>Social connections</li>
-              </ul>
-              <p>Simplified explanation: Your "center of life" is like your favorite playground. Countries want to know if their 'playground' is your favorite because it affects how much 'taxes' they can collect from you.</p>
-            </div>
-            <div className="flex items-start gap-3 p-4 border rounded-lg bg-card">
-              <Checkbox
-                id="maintain_ties_after_moving"
-                checked={!!getFormData("residencyIntentions.centerOfLife.maintainOtherCountryTies")}
-                onCheckedChange={(v) => updateFormData("residencyIntentions.centerOfLife.maintainOtherCountryTies", !!v)}
-              />
-              <div>
-                <Label htmlFor="maintain_ties_after_moving" className="text-base font-medium">
-                  I will maintain significant ties with my current country, or another country that is not the destination country, after moving.
-                </Label>
-                <p className="text-xs text-muted-foreground">Check if you'll keep a home, business, or spend substantial time in your current country</p>
-              </div>
-            </div>
-            {getFormData("residencyIntentions.centerOfLife.maintainOtherCountryTies") && (
-              <div className="space-y-2">
-                <Label className="text-base font-medium">Please describe the ties you will maintain</Label>
-                <Textarea
-                  value={getFormData("residencyIntentions.centerOfLife.maintainOtherCountryTiesDetails") || ""}
-                  onChange={(e) => updateFormData("residencyIntentions.centerOfLife.maintainOtherCountryTiesDetails", e.target.value)}
-                  placeholder="e.g., second home, business ownership, frequent travel, family care duties, banking/investments"
-                  rows={3}
-                />
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
 
-      {/* Your Requirements (when user needs a visa) */}
-      {userNeedsVisa && (
+      {/* Residency (unified for all who need visas) */}
+      {(userNeedsVisa || partnerNeedsVisa || anyDependentNeedsVisa) && (
         <Card className="shadow-sm border-l-4 border-l-emerald-500">
           <CardHeader className="bg-gradient-to-r from-emerald-50 to-transparent dark:from-emerald-950/20">
-            <CardTitle className="text-xl flex items-center gap-3">Your Requirements (You need a visa)</CardTitle>
+            <CardTitle className="text-xl flex items-center gap-3">Residency</CardTitle>
+            <p className="text-sm text-muted-foreground">Residency permit applications for those who need visas</p>
           </CardHeader>
           <CardContent className="pt-6">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
-                <Checkbox
-                  id="user_apply_residency_top"
-                  checked={getFormData("residencyIntentions.userVisa.applyForResidency") ?? false}
-                  onCheckedChange={(v) => updateFormData("residencyIntentions.userVisa.applyForResidency", !!v)}
-                />
-                <Label htmlFor="user_apply_residency_top" className="text-sm">I will apply for residency permit</Label>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm">My physical presence target (days/year)</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  max="365"
-                  value={getFormData("residencyIntentions.userVisa.physicalPresenceDays") ?? ""}
-                  onChange={(e) => updateFormData("residencyIntentions.userVisa.physicalPresenceDays", e.target.value === "" ? undefined : Math.max(0, Math.min(365, parseInt(e.target.value) || 0)))}
-                  className="max-w-xs"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm">Exploratory visits (optional)</Label>
-                <Textarea
-                  value={getFormData("residencyIntentions.userVisa.exploratoryVisits.details") ?? ""}
-                  onChange={(e) => updateFormData("residencyIntentions.userVisa.exploratoryVisits.details", e.target.value)}
-                  rows={3}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm">Citizenship pathway interest</Label>
-                <Select
-                  value={getFormData("residencyIntentions.userVisa.citizenshipInterest") ?? ""}
-                  onValueChange={(v) => updateFormData("residencyIntentions.userVisa.citizenshipInterest", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes">Yes</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                    <SelectItem value="undecided">Undecided</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Partner Requirements (when partner needs a visa) */}
-      {partnerNeedsVisa && (
-        <Card className="shadow-sm border-l-4 border-l-pink-500">
-          <CardHeader className="bg-gradient-to-r from-pink-50 to-transparent dark:from-pink-950/20">
-            <CardTitle className="text-xl flex items-center gap-3">Partner Requirements (Partner needs a visa)</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
-                <Checkbox
-                  id="partner_apply_residency_top"
-                  checked={getFormData("residencyIntentions.partnerVisa.applyForResidency") ?? false}
-                  onCheckedChange={(v) => updateFormData("residencyIntentions.partnerVisa.applyForResidency", !!v)}
-                />
-                <Label htmlFor="partner_apply_residency_top" className="text-sm">Partner will apply for residency permit</Label>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm">Partner physical presence target (days/year)</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  max="365"
-                  value={getFormData("residencyIntentions.partnerVisa.physicalPresenceDays") ?? ""}
-                  onChange={(e) => updateFormData("residencyIntentions.partnerVisa.physicalPresenceDays", e.target.value === "" ? undefined : Math.max(0, Math.min(365, parseInt(e.target.value) || 0)))}
-                  className="max-w-xs"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm">Partner exploratory visits (optional)</Label>
-                <Textarea
-                  value={getFormData("residencyIntentions.partnerVisa.exploratoryVisits.details") ?? ""}
-                  onChange={(e) => updateFormData("residencyIntentions.partnerVisa.exploratoryVisits.details", e.target.value)}
-                  rows={3}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm">Partner citizenship pathway interest</Label>
-                <Select
-                  value={getFormData("residencyIntentions.partnerVisa.citizenshipInterest") ?? ""}
-                  onValueChange={(v) => updateFormData("residencyIntentions.partnerVisa.citizenshipInterest", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes">Yes</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                    <SelectItem value="undecided">Undecided</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              {getFormData("residencyIntentions.partnerVisa.citizenshipInterest") === "yes" && (
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
-                    <Checkbox
-                      id="partner_consider_family"
-                      checked={!!getFormData("residencyIntentions.partnerVisa.willingToConsider.familyConnections")}
-                      onCheckedChange={(v) => updateFormData("residencyIntentions.partnerVisa.willingToConsider.familyConnections", !!v)}
-                    />
-                    <Label htmlFor="partner_consider_family" className="text-sm">Family connections</Label>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
-                    <Checkbox
-                      id="partner_consider_investment"
-                      checked={!!getFormData("residencyIntentions.partnerVisa.willingToConsider.investmentPrograms")}
-                      onCheckedChange={(v) => updateFormData("residencyIntentions.partnerVisa.willingToConsider.investmentPrograms", !!v)}
-                    />
-                    <Label htmlFor="partner_consider_investment" className="text-sm">Investment programs</Label>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
-                    <Checkbox
-                      id="partner_consider_military"
-                      checked={!!getFormData("residencyIntentions.partnerVisa.willingToConsider.militaryService")}
-                      onCheckedChange={(v) => updateFormData("residencyIntentions.partnerVisa.willingToConsider.militaryService", !!v)}
-                    />
-                    <Label htmlFor="partner_consider_military" className="text-sm">Military service</Label>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
-                    <Checkbox
-                      id="partner_consider_other"
-                      checked={!!getFormData("residencyIntentions.partnerVisa.willingToConsider.otherPrograms")}
-                      onCheckedChange={(v) => updateFormData("residencyIntentions.partnerVisa.willingToConsider.otherPrograms", !!v)}
-                    />
-                    <Label htmlFor="partner_consider_other" className="text-sm">Other special programs</Label>
-                  </div>
-                  {getFormData("residencyIntentions.partnerVisa.willingToConsider.otherPrograms") && (
-                    <div className="md:col-span-2 space-y-2">
-                      <Label className="text-sm">Other program details</Label>
-                      <Textarea
-                        value={getFormData("residencyIntentions.partnerVisa.willingToConsider.otherDetails") || ""}
-                        onChange={(e) => updateFormData("residencyIntentions.partnerVisa.willingToConsider.otherDetails", e.target.value)}
-                        placeholder="Briefly describe"
-                        rows={3}
-                      />
-                    </div>
-                  )}
+            <div className="space-y-4">
+              {userNeedsVisa && (
+                <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
+                  <Checkbox
+                    id="user_apply_residency"
+                    checked={getFormData("residencyIntentions.userVisa.applyForResidency") ?? true}
+                    onCheckedChange={(v) => updateFormData("residencyIntentions.userVisa.applyForResidency", !!v)}
+                  />
+                  <Label htmlFor="user_apply_residency" className="text-sm">I will apply for residency permit</Label>
+                </div>
+              )}
+              {partnerNeedsVisa && (
+                <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
+                  <Checkbox
+                    id="partner_apply_residency"
+                    checked={getFormData("residencyIntentions.partnerVisa.applyForResidency") ?? true}
+                    onCheckedChange={(v) => updateFormData("residencyIntentions.partnerVisa.applyForResidency", !!v)}
+                  />
+                  <Label htmlFor="partner_apply_residency" className="text-sm">Partner will apply for residency permit</Label>
+                </div>
+              )}
+              {anyDependentNeedsVisa && (
+                <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
+                  <Checkbox
+                    id="dependents_apply_residency"
+                    checked={anyDependentNeedsVisa ? (getFormData("residencyIntentions.dependentsVisa.applyForResidency") ?? true) : false}
+                    onCheckedChange={(v) => updateFormData("residencyIntentions.dependentsVisa.applyForResidency", !!v)}
+                  />
+                  <Label htmlFor="dependents_apply_residency" className="text-sm">We will apply for residency permits for dependents who need them</Label>
                 </div>
               )}
             </div>
@@ -689,8 +401,8 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
 
 
 
-      {/* Citizenship Interest (only when adults need visas) */}
-      {adultsNeedVisa && (
+      {/* Citizenship Interest (unified for all who need visas) */}
+      {(userNeedsVisa || partnerNeedsVisa) && (
         <Card className="shadow-sm border-l-4 border-l-orange-500">
           <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
             <CardTitle className="text-xl flex items-center gap-3">
@@ -700,11 +412,203 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
             <p className="text-sm text-muted-foreground">Interest in eventual citizenship and alternate pathways</p>
           </CardHeader>
           <CardContent className="pt-6">
+            <div className="space-y-8">
+              {userNeedsVisa && (
+                <div className="space-y-4">
+                  <h4 className="font-medium">Your Citizenship Interest</h4>
+                  <div className="space-y-2">
+                    <Label className="text-base font-medium">Interest in eventual citizenship</Label>
+                    <Select
+                      value={citizenshipInterest}
+                      onValueChange={(value) => updateFormData("residencyIntentions.citizenshipInterest.interest", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select interest" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                        <SelectItem value="undecided">Undecided</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {citizenshipInterest === "yes" && (
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">Tell me about which citizenship pathways you might be interested in exploring:</p>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                          <Checkbox
+                            id="consider_naturalization"
+                            checked={willingToConsider.naturalization ?? true}
+                            onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.naturalization", !!v)}
+                          />
+                          <Label htmlFor="consider_naturalization" className="text-sm">Naturalization</Label>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                          <Checkbox
+                            id="consider_family"
+                            checked={!!willingToConsider.familyConnections}
+                            onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnections", !!v)}
+                          />
+                          <Label htmlFor="consider_family" className="text-sm">Family connections</Label>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                          <Checkbox
+                            id="consider_investment"
+                            checked={!!willingToConsider.investmentPrograms}
+                            onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.investmentPrograms", !!v)}
+                          />
+                          <Label htmlFor="consider_investment" className="text-sm">Investment programs</Label>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                          <Checkbox
+                            id="consider_military"
+                            checked={!!willingToConsider.militaryService}
+                            onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.militaryService", !!v)}
+                          />
+                          <Label htmlFor="consider_military" className="text-sm">Military service</Label>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                          <Checkbox
+                            id="consider_other"
+                            checked={!!willingToConsider.otherPrograms}
+                            onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.otherPrograms", !!v)}
+                          />
+                          <Label htmlFor="consider_other" className="text-sm">Other special programs</Label>
+                        </div>
+                      </div>
+                      {willingToConsider?.familyConnections && (
+                        <div className="space-y-2">
+                          <Label className="text-sm">Family connection details</Label>
+                          <Input
+                            value={getFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnectionDetails") || ""}
+                            onChange={(e) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnectionDetails", e.target.value)}
+                            placeholder="e.g., spouse is a citizen, grandparent was born there"
+                            className="max-w-md"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Special situation for different partner interests */}
+                  {hasPartner && (
+                    <div className="space-y-3">
+                      <button
+                        type="button"
+                        className="text-sm text-muted-foreground hover:text-foreground"
+                        onClick={() => updateFormData("residencyIntentions.citizenshipInterest.showPartnerSpecialSituation", !getFormData("residencyIntentions.citizenshipInterest.showPartnerSpecialSituation"))}
+                      >
+                        I have a special situation (e.g. my partner has different citizenship interests)
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {hasPartner && getFormData("residencyIntentions.citizenshipInterest.showPartnerSpecialSituation") && (
+                <div className="space-y-4">
+                  <h4 className="font-medium">Partner Citizenship Interest</h4>
+                  <div className="space-y-2">
+                    <Select
+                      value={getFormData("residencyIntentions.partnerVisa.citizenshipInterest") ?? ""}
+                      onValueChange={(v) => updateFormData("residencyIntentions.partnerVisa.citizenshipInterest", v)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                        <SelectItem value="undecided">Undecided</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {getFormData("residencyIntentions.partnerVisa.citizenshipInterest") === "yes" && (
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">Tell me about which citizenship pathways your partner might be interested in exploring:</p>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                          <Checkbox
+                            id="partner_consider_naturalization"
+                            checked={getFormData("residencyIntentions.partnerVisa.willingToConsider.naturalization") ?? true}
+                            onCheckedChange={(v) => updateFormData("residencyIntentions.partnerVisa.willingToConsider.naturalization", !!v)}
+                          />
+                          <Label htmlFor="partner_consider_naturalization" className="text-sm">Naturalization</Label>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                          <Checkbox
+                            id="partner_consider_family"
+                            checked={!!getFormData("residencyIntentions.partnerVisa.willingToConsider.familyConnections")}
+                            onCheckedChange={(v) => updateFormData("residencyIntentions.partnerVisa.willingToConsider.familyConnections", !!v)}
+                          />
+                          <Label htmlFor="partner_consider_family" className="text-sm">Family connections</Label>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                          <Checkbox
+                            id="partner_consider_investment"
+                            checked={!!getFormData("residencyIntentions.partnerVisa.willingToConsider.investmentPrograms")}
+                            onCheckedChange={(v) => updateFormData("residencyIntentions.partnerVisa.willingToConsider.investmentPrograms", !!v)}
+                          />
+                          <Label htmlFor="partner_consider_investment" className="text-sm">Investment programs</Label>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                          <Checkbox
+                            id="partner_consider_military"
+                            checked={!!getFormData("residencyIntentions.partnerVisa.willingToConsider.militaryService")}
+                            onCheckedChange={(v) => updateFormData("residencyIntentions.partnerVisa.willingToConsider.militaryService", !!v)}
+                          />
+                          <Label htmlFor="partner_consider_military" className="text-sm">Military service</Label>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                          <Checkbox
+                            id="partner_consider_other"
+                            checked={!!getFormData("residencyIntentions.partnerVisa.willingToConsider.otherPrograms")}
+                            onCheckedChange={(v) => updateFormData("residencyIntentions.partnerVisa.willingToConsider.otherPrograms", !!v)}
+                          />
+                          <Label htmlFor="partner_consider_other" className="text-sm">Other special programs</Label>
+                        </div>
+                      </div>
+                      {getFormData("residencyIntentions.partnerVisa.willingToConsider.familyConnections") && (
+                        <div className="space-y-2">
+                          <Label className="text-sm">Partner family connection details</Label>
+                          <Textarea
+                            value={getFormData("residencyIntentions.partnerVisa.willingToConsider.familyConnectionDetails") || ""}
+                            onChange={(e) => updateFormData("residencyIntentions.partnerVisa.willingToConsider.familyConnectionDetails", e.target.value)}
+                            placeholder="e.g., spouse is a citizen, grandparent was born there"
+                            maxLength={280}
+                            rows={3}
+                          />
+                          <div className="text-xs text-muted-foreground text-right">
+                            {(getFormData("residencyIntentions.partnerVisa.willingToConsider.familyConnectionDetails") || "").length}/280
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Citizenship Interest for EU Rights Holders (when adults don't need visas but have EU rights) */}
+      {destCountry && adultsNoVisa && (
+        <Card className="shadow-sm border-l-4 border-l-orange-500">
+          <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
+            <CardTitle className="text-xl flex items-center gap-3">
+              <Shield className="w-6 h-6 text-orange-600" />
+              Citizenship Interest
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Limited citizenship pathways for EU citizens/residents</p>
+          </CardHeader>
+          <CardContent className="pt-6">
             <div className="space-y-6">
               <div className="space-y-2">
                 <Label className="text-base font-medium">Interest in eventual citizenship</Label>
                 <Select
-                  value={citizenshipInterest}
+                  value={getFormData("residencyIntentions.citizenshipInterest.interest") ?? "undecided"}
                   onValueChange={(value) => updateFormData("residencyIntentions.citizenshipInterest.interest", value)}
                 >
                   <SelectTrigger>
@@ -716,59 +620,129 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
                     <SelectItem value="undecided">Undecided</SelectItem>
                   </SelectContent>
                 </Select>
-                {(s1_userNeeds_partnerNot || s3_bothNeed) && (
-                  <p className="text-xs text-muted-foreground">Citizenship pathways are important considerations for visa holders planning long-term residence.</p>
-                )}
               </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
-                  <Checkbox
-                    id="consider_family"
-                    checked={!!willingToConsider.familyConnections}
-                    onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnections", !!v)}
-                  />
-                  <Label htmlFor="consider_family" className="text-sm">Family connections</Label>
-                </div>
-                {(s1_userNeeds_partnerNot || s3_bothNeed) && (
-                  <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
-                    <Checkbox
-                      id="consider_investment"
-                      checked={!!willingToConsider.investmentPrograms}
-                      onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.investmentPrograms", !!v)}
-                    />
-                    <Label htmlFor="consider_investment" className="text-sm">Investment programs</Label>
+              {getFormData("residencyIntentions.citizenshipInterest.interest") === "yes" && (
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">Tell me about which citizenship pathways you might be interested in exploring:</p>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                      <Checkbox
+                        id="eu_consider_naturalization"
+                        checked={getFormData("residencyIntentions.citizenshipInterest.willingToConsider.naturalization") ?? true}
+                        onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.naturalization", !!v)}
+                      />
+                      <Label htmlFor="eu_consider_naturalization" className="text-sm">Naturalization</Label>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                      <Checkbox
+                        id="eu_consider_family"
+                        checked={!!getFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnections")}
+                        onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnections", !!v)}
+                      />
+                      <Label htmlFor="eu_consider_family" className="text-sm">Family connections</Label>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                      <Checkbox
+                        id="eu_consider_investment"
+                        checked={!!getFormData("residencyIntentions.citizenshipInterest.willingToConsider.investmentPrograms")}
+                        onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.investmentPrograms", !!v)}
+                      />
+                      <Label htmlFor="eu_consider_investment" className="text-sm">Investment programs</Label>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                      <Checkbox
+                        id="eu_consider_other"
+                        checked={!!getFormData("residencyIntentions.citizenshipInterest.willingToConsider.otherPrograms")}
+                        onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.otherPrograms", !!v)}
+                      />
+                      <Label htmlFor="eu_consider_other" className="text-sm">Other special programs</Label>
+                    </div>
                   </div>
-                )}
-                {(s1_userNeeds_partnerNot || s3_bothNeed) && (
-                  <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
-                    <Checkbox
-                      id="consider_military"
-                      checked={!!willingToConsider.militaryService}
-                      onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.militaryService", !!v)}
-                    />
-                    <Label htmlFor="consider_military" className="text-sm">Military service</Label>
-                  </div>
-                )}
-                <div className="flex items-center gap-3 p-3 border rounded-lg bg-card">
-                  <Checkbox
-                    id="consider_other"
-                    checked={!!willingToConsider.otherPrograms}
-                    onCheckedChange={(v) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.otherPrograms", !!v)}
-                  />
-                  <Label htmlFor="consider_other" className="text-sm">Other special programs</Label>
-                </div>
-              </div>
-              {willingToConsider?.otherPrograms && (
-                <div className="space-y-2">
-                  <Label className="text-base font-medium">Other program details</Label>
-                  <Textarea
-                    value={willingToConsider?.otherDetails || ""}
-                    onChange={(e) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.otherDetails", e.target.value)}
-                    placeholder="Briefly describe"
-                    rows={3}
-                  />
+                  {getFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnections") && (
+                    <div className="space-y-2">
+                      <Label className="text-sm">Family connection details</Label>
+                      <Textarea
+                        value={getFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnectionDetails") || ""}
+                        onChange={(e) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnectionDetails", e.target.value)}
+                        placeholder="e.g., spouse is a citizen, grandparent was born there"
+                        maxLength={280}
+                        rows={3}
+                      />
+                      <div className="text-xs text-muted-foreground text-right">
+                        {(getFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnectionDetails") || "").length}/280
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Physical Presence Intentions (always shown after citizenship sections) */}
+      {destCountry && (
+        <Card className="shadow-sm border-l-4 border-l-purple-500">
+          <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
+            <CardTitle className="text-xl flex items-center gap-3">
+              <Clock className="w-6 h-6 text-purple-600" />
+              Physical Presence Intentions
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Facts about time in destination vs outside</p>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="space-y-6">
+              {/* Minimum stay requirements interest */}
+              {(userNeedsVisa || partnerNeedsVisa || anyDependentNeedsVisa) && (
+                <div className="flex items-start gap-3 p-4 border rounded-lg bg-card">
+                  <Checkbox
+                    id="interested_in_minimum_stay"
+                    checked={!!getFormData("residencyIntentions.physicalPresenceIntentions.interestedInMinimumStay")}
+                    onCheckedChange={(v) => updateFormData("residencyIntentions.physicalPresenceIntentions.interestedInMinimumStay", !!v)}
+                  />
+                  <Label htmlFor="interested_in_minimum_stay" className="text-base font-medium">
+                    I am interested in minimum stay requirements for {(() => {
+                      const visaNeededPeople = []
+                      if (userNeedsVisa) visaNeededPeople.push("myself")
+                      if (partnerNeedsVisa) visaNeededPeople.push("my partner")
+                      if (anyDependentNeedsVisa) visaNeededPeople.push("dependents")
+                      
+                      if (visaNeededPeople.length === 0) return "no one"
+                      if (visaNeededPeople.length === 1) return visaNeededPeople[0]
+                      if (visaNeededPeople.length === 2) return visaNeededPeople.join(" and ")
+                      return visaNeededPeople.slice(0, -1).join(", ") + ", and " + visaNeededPeople.slice(-1)
+                    })()}
+                  </Label>
+                </div>
+              )}
+              
+              <div className="space-y-4">
+                <h5 className="font-medium">Center of Life considerations</h5>
+                <div className="flex items-start gap-3 p-4 border rounded-lg bg-card">
+                  <Checkbox
+                    id="maintain_ties_physical_presence"
+                    checked={!!getFormData("residencyIntentions.centerOfLife.maintainOtherCountryTies")}
+                    onCheckedChange={(v) => updateFormData("residencyIntentions.centerOfLife.maintainOtherCountryTies", !!v)}
+                  />
+                  <div>
+                    <Label htmlFor="maintain_ties_physical_presence" className="text-base font-medium">
+                      I will maintain significant ties with my current country, or another country that is not the destination country, after moving.
+                    </Label>
+                    <p className="text-xs text-muted-foreground">Check if you'll keep a home, business, or spend substantial time in your current country</p>
+                  </div>
+                </div>
+                {getFormData("residencyIntentions.centerOfLife.maintainOtherCountryTies") && (
+                  <div className="space-y-2">
+                    <Label className="text-base font-medium">Please describe the ties you will maintain</Label>
+                    <Textarea
+                      value={getFormData("residencyIntentions.centerOfLife.maintainOtherCountryTiesDetails") || ""}
+                      onChange={(e) => updateFormData("residencyIntentions.centerOfLife.maintainOtherCountryTiesDetails", e.target.value)}
+                      placeholder="e.g., second home, business ownership, frequent travel, family care duties, banking/investments"
+                      rows={3}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -1038,12 +1012,12 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-base font-medium">Additional context/circumstances</Label>
+              <Label className="text-base font-medium">Move timing and readiness</Label>
               <Textarea
-                value={motivationDetails}
-                onChange={(e) => updateFormData("residencyIntentions.moveMotivationDetails", e.target.value)}
-                placeholder="Optional"
-                rows={4}
+                value={getFormData("residencyIntentions.moveTiming") || ""}
+                onChange={(e) => updateFormData("residencyIntentions.moveTiming", e.target.value)}
+                placeholder="e.g., planning to move in 6 months, just exploring options for future, have specific job offer starting January, etc."
+                rows={3}
               />
             </div>
             
@@ -1051,38 +1025,6 @@ export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) 
         </CardContent>
       </Card>
 
-      {/* Dependents Residency/Citizenship Plans (bottom; shown whenever any dependent needs a visa) */}
-      {destCountry && anyDependentNeedsVisa && (
-        <Card className="shadow-sm border-l-4 border-l-emerald-500">
-          <CardHeader className="bg-gradient-to-r from-emerald-50 to-transparent dark:from-emerald-950/20">
-            <CardTitle className="text-xl flex items-center gap-3">Dependents Residency/Citizenship Plans</CardTitle>
-            <p className="text-sm text-muted-foreground">Mark if you plan to file applications for dependents</p>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-3 p-4 border rounded-lg bg-card">
-              <Checkbox
-                id="dependents_request_visas"
-                checked={getFormData("residencyIntentions.centerOfLife.requestDependentVisas") ?? true}
-                onCheckedChange={(v) => updateFormData("residencyIntentions.centerOfLife.requestDependentVisas", !!v)}
-              />
-              <Label htmlFor="dependents_request_visas" className="text-base font-medium">
-                We will request visas for any dependents who need them.
-              </Label>
-            </div>
-            {(getFormData("residencyIntentions.centerOfLife.requestDependentVisas") ?? true) && (
-              <div className="space-y-2 mt-3">
-                <Label className="text-sm">Dependent visa plan details</Label>
-                <Textarea
-                  value={getFormData("residencyIntentions.centerOfLife.requestDependentVisasDetails") || ""}
-                  onChange={(e) => updateFormData("residencyIntentions.centerOfLife.requestDependentVisasDetails", e.target.value)}
-                  placeholder="e.g., Dependent 1: student permit, apply in June"
-                  rows={4}
-                />
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
 
       {/* Action Card */}
       <Card className="shadow-md">

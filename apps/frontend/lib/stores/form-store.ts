@@ -87,60 +87,33 @@ export interface FormData {
   }
   residencyIntentions?: {
     destinationCountry: {
-      country?: string
-      region?: string
       moveType: string
       intendedTemporaryDurationOfStay: number
-      citizenshipStatus: string
-      currentlyInDestination?: boolean
-      currentStatus?: string
-    }
-    residencyPlans: {
-      applyForResidency: boolean
-      maxMonthsWillingToReside: number
-      openToVisiting: boolean
+      showSpecialSituation?: boolean
+      specialSituation?: string
     }
     physicalPresenceIntentions?: {
-      minDaysInDestinationPerYear?: number
-      maxDaysOutsidePerYear?: number
-      flexibleOnMinimumStay?: boolean
-      plansForMaintainingOtherCountryTies?: string
-    }
-    familyVisaPlanning?: {
-      applicationTimeline?: "together" | "sequential" | "flexible"
-      relocationPriority?: "moveTogetherEssential" | "primaryFirstAcceptable" | "flexibleTiming"
-      concerns?: string[]
-      specialCircumstances?: string
-    }
-    citizenshipPlans: {
-      interestedInCitizenship: boolean
-      willingToRenounceCurrent: boolean
-      investmentCitizenship: boolean
-      donationCitizenship: boolean
-      militaryService: boolean
+      interestedInMinimumStay?: boolean
     }
     citizenshipInterest?: {
       interest?: "yes" | "no" | "undecided"
       willingToConsider?: {
+        naturalization?: boolean
         familyConnections?: boolean
+        familyConnectionDetails?: string
         investmentPrograms?: boolean
         militaryService?: boolean
         otherPrograms?: boolean
-        otherDetails?: string
       }
+      showPartnerSpecialSituation?: boolean
+      partnerSpecialSituation?: string
     }
-    languageProficiency: {
-      primaryLanguage: string
-      otherLanguages: Array<{
-        language: string
-        proficiency: string
-        teachingCapability: string
-      }>
-    }
-    centerOfLife: {
-      familyTies: boolean
-      businessTies: boolean
-      socialTies: boolean
+    centerOfLife?: {
+      maintainOtherCountryTies?: boolean
+      maintainOtherCountryTiesDetails?: string
+      // Legacy fields for backend compatibility
+      maintainsSignificantTies?: boolean
+      tiesDescription?: string
     }
     backgroundDisclosures?: {
       criminalRecord?: boolean
@@ -149,37 +122,46 @@ export interface FormData {
       taxComplianceDetails?: string
       previousVisaDenials?: boolean
       visaDenialDetails?: string
-      otherRelevantFactors?: string
+    }
+    backgroundDisclosuresPartner?: {
+      criminalRecord?: boolean
+      criminalDetails?: string
+      taxComplianceIssues?: boolean
+      taxComplianceDetails?: string
+      previousVisaDenials?: boolean
+      visaDenialDetails?: string
     }
     userVisa?: {
       applyForResidency?: boolean
-      physicalPresenceDays?: number
-      exploratoryVisits?: {
-        details?: string
-      }
-      citizenshipInterest?: "yes" | "no" | "undecided"
     }
     partnerVisa?: {
       applyForResidency?: boolean
-      physicalPresenceDays?: number
-      exploratoryVisits?: {
-        details?: string
-      }
       citizenshipInterest?: "yes" | "no" | "undecided"
+      willingToConsider?: {
+        naturalization?: boolean
+        familyConnections?: boolean
+        familyConnectionDetails?: string
+        investmentPrograms?: boolean
+        militaryService?: boolean
+        otherPrograms?: boolean
+      }
     }
-    dependentsVisa?: Array<{
-      index: number
+    dependentsVisa?: {
+      applyForResidency?: boolean
+    } & Record<string, {
       notes?: string
       schoolTiming?: string
     }>
-    moveMotivation: string
-    moveMotivationDetails?: string
-    taxCompliantEverywhere: boolean
+    residencyPlans?: {
+      openToVisiting?: boolean
+      exploratoryVisits?: {
+        details?: string
+      }
+    }
+    moveMotivation?: string
+    moveTiming?: string
     familyCoordination?: {
-      partnerVisaStatusInDestination?: string
-      dependentsVisaStatusInDestination?: string
       applicationTiming?: "together" | "sequential" | "undecided"
-      documentPreparationReadiness?: string
       specialFamilyCircumstances?: string
       schoolTimingConsiderations?: string
     }
@@ -414,7 +396,7 @@ export const useFormStore = create<FormStoreState>()(
     }),
     {
       name: 'base-recommender-form-data',
-      version: 3,
+      version: 4,
       skipHydration: true, // Skip automatic hydration to avoid SSR conflicts
       migrate: (persistedState: any, version: number) => {
         if (version < 2) {
@@ -462,6 +444,72 @@ export const useFormStore = create<FormStoreState>()(
               relocationPriority: undefined,
               concerns: [],
               specialCircumstances: ""
+            }
+          }
+        }
+        if (version < 4) {
+          // Major residency intentions restructure
+          const ri = persistedState?.formData?.residencyIntentions
+          if (ri) {
+            // Migrate old centerOfLife structure
+            if (ri.centerOfLife) {
+              // Map old fields to new fields for backward compatibility
+              if (ri.centerOfLife.maintainsSignificantTies !== undefined) {
+                ri.centerOfLife.maintainOtherCountryTies = ri.centerOfLife.maintainsSignificantTies
+              }
+              if (ri.centerOfLife.tiesDescription !== undefined) {
+                ri.centerOfLife.maintainOtherCountryTiesDetails = ri.centerOfLife.tiesDescription
+              }
+            }
+            
+            // Migrate old physicalPresenceIntentions
+            if (ri.physicalPresenceIntentions) {
+              // Remove old fields that no longer exist
+              delete ri.physicalPresenceIntentions.minDaysInDestinationPerYear
+              delete ri.physicalPresenceIntentions.maxDaysOutsidePerYear
+              delete ri.physicalPresenceIntentions.flexibleOnMinimumStay
+              // Move plansForMaintainingOtherCountryTies to centerOfLife
+              if (ri.physicalPresenceIntentions.plansForMaintainingOtherCountryTies) {
+                if (!ri.centerOfLife) ri.centerOfLife = {}
+                ri.centerOfLife.maintainOtherCountryTiesDetails = ri.physicalPresenceIntentions.plansForMaintainingOtherCountryTies
+                ri.centerOfLife.maintainOtherCountryTies = true
+                delete ri.physicalPresenceIntentions.plansForMaintainingOtherCountryTies
+              }
+            }
+            
+            // Migrate old citizenship structure
+            if (ri.citizenshipPlans && !ri.citizenshipInterest) {
+              ri.citizenshipInterest = {
+                interest: ri.citizenshipPlans.interestedInCitizenship ? "yes" : "no",
+                willingToConsider: {
+                  naturalization: true,
+                  familyConnections: false,
+                  familyConnectionDetails: "",
+                  investmentPrograms: ri.citizenshipPlans.investmentCitizenship || false,
+                  militaryService: ri.citizenshipPlans.militaryService || false,
+                  otherPrograms: false
+                }
+              }
+            }
+            
+            // Remove old fields
+            delete ri.citizenshipPlans
+            delete ri.languageProficiency
+            delete ri.taxCompliantEverywhere
+            
+            // Migrate moveMotivationDetails to moveTiming
+            if (ri.moveMotivationDetails) {
+              ri.moveTiming = ri.moveMotivationDetails
+              delete ri.moveMotivationDetails
+            }
+            
+            // Remove old destination fields
+            if (ri.destinationCountry) {
+              delete ri.destinationCountry.citizenshipStatus
+              delete ri.destinationCountry.currentlyInDestination
+              delete ri.destinationCountry.currentStatus
+              delete ri.destinationCountry.country
+              delete ri.destinationCountry.region
             }
           }
         }

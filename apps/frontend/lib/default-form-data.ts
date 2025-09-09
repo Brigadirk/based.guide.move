@@ -35,56 +35,33 @@ export const defaultFormData: FormData = {
   },
   residencyIntentions: {
     destinationCountry: {
-      country: "",
-      region: "",
       moveType: "",
       intendedTemporaryDurationOfStay: 0,
-      citizenshipStatus: "",
-      currentlyInDestination: false,
-      currentStatus: ""
-    },
-    residencyPlans: {
-      applyForResidency: false,
-      maxMonthsWillingToReside: 6,
-      openToVisiting: false,
+      showSpecialSituation: false,
+      specialSituation: ""
     },
     physicalPresenceIntentions: {
-      minDaysInDestinationPerYear: undefined,
-      maxDaysOutsidePerYear: undefined,
-      flexibleOnMinimumStay: undefined,
-      plansForMaintainingOtherCountryTies: ""
-    },
-    familyVisaPlanning: {
-      applicationTimeline: undefined,
-      relocationPriority: undefined,
-      concerns: [],
-      specialCircumstances: "",
-    },
-    citizenshipPlans: {
-      interestedInCitizenship: false,
-      willingToRenounceCurrent: false,
-      investmentCitizenship: false,
-      donationCitizenship: false,
-      militaryService: false,
+      interestedInMinimumStay: false
     },
     citizenshipInterest: {
-      interest: undefined,
+      interest: "undecided",
       willingToConsider: {
+        naturalization: true,
         familyConnections: false,
+        familyConnectionDetails: "",
         investmentPrograms: false,
         militaryService: false,
-        otherPrograms: false,
-        otherDetails: ""
-      }
-    },
-    languageProficiency: {
-      primaryLanguage: "",
-      otherLanguages: []
+        otherPrograms: false
+      },
+      showPartnerSpecialSituation: false,
+      partnerSpecialSituation: ""
     },
     centerOfLife: {
-      familyTies: false,
-      businessTies: false,
-      socialTies: false,
+      maintainOtherCountryTies: false,
+      maintainOtherCountryTiesDetails: "",
+      // Legacy fields for backend compatibility
+      maintainsSignificantTies: false,
+      tiesDescription: ""
     },
     backgroundDisclosures: {
       criminalRecord: false,
@@ -92,30 +69,44 @@ export const defaultFormData: FormData = {
       taxComplianceIssues: false,
       taxComplianceDetails: "",
       previousVisaDenials: false,
-      visaDenialDetails: "",
-      otherRelevantFactors: ""
+      visaDenialDetails: ""
+    },
+    backgroundDisclosuresPartner: {
+      criminalRecord: false,
+      criminalDetails: "",
+      taxComplianceIssues: false,
+      taxComplianceDetails: "",
+      previousVisaDenials: false,
+      visaDenialDetails: ""
     },
     userVisa: {
-      applyForResidency: false,
-      physicalPresenceDays: undefined,
-      exploratoryVisits: { details: "" },
-      citizenshipInterest: undefined as any
+      applyForResidency: true
     },
     partnerVisa: {
-      applyForResidency: false,
-      physicalPresenceDays: undefined,
-      exploratoryVisits: { details: "" },
-      citizenshipInterest: undefined as any
+      applyForResidency: true,
+      citizenshipInterest: "undecided",
+      willingToConsider: {
+        naturalization: true,
+        familyConnections: false,
+        familyConnectionDetails: "",
+        investmentPrograms: false,
+        militaryService: false,
+        otherPrograms: false
+      }
     },
-    dependentsVisa: [],
+    dependentsVisa: {
+      applyForResidency: false
+    },
+    residencyPlans: {
+      openToVisiting: false,
+      exploratoryVisits: {
+        details: ""
+      }
+    },
     moveMotivation: "",
     moveMotivationDetails: "",
-    taxCompliantEverywhere: true,
     familyCoordination: {
-      partnerVisaStatusInDestination: "",
-      dependentsVisaStatusInDestination: "",
-      applicationTiming: undefined,
-      documentPreparationReadiness: "",
+      applicationTiming: "undecided",
       specialFamilyCircumstances: "",
       schoolTimingConsiderations: ""
     }
