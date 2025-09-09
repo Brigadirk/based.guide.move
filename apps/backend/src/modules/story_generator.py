@@ -835,7 +835,9 @@ def residency_section(
     if show_partner_special:
         partner_special_situation = ci.get("partnerSpecialSituation", "").strip()
         if partner_special_situation:
-            sentences.append(f'Partner citizenship special situation: "{partner_special_situation}"')
+            sentences.append(
+                f'Partner citizenship special situation: "{partner_special_situation}"'
+            )
         else:
             # Use standard partner citizenship interest when special situation is active
             partner_visa = ri.get("partnerVisa", {})
@@ -879,7 +881,9 @@ def residency_section(
         # When no special situation, citizenship interest applies to both if partner exists
         if personal_info and personal_info.get("relocationPartner") and interest in ["yes", "no"]:
             if interest == "yes":
-                sentences.append("Both partners share the same citizenship interest and pathway preferences.")
+                sentences.append(
+                    "Both partners share the same citizenship interest and pathway preferences."
+                )
             elif interest == "no":
                 sentences.append("Neither partner is interested in citizenship.")
 
