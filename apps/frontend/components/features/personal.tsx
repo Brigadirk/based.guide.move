@@ -561,6 +561,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   const removeDependentInfo = (depIndex: number) => {
     const newDepList = localDepList.filter((_, idx) => idx !== depIndex)
     updateDepList(newDepList)
+    // Persist to global store
+    updateFormData("personalInformation.dependents", newDepList)
     
     // Clean up state arrays by removing this index and adjusting higher indices
     setVisibleDependents(prev => prev.filter(i => i !== depIndex).map(i => i > depIndex ? i - 1 : i))
@@ -1898,9 +1900,14 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           // Remove from all state
                           setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
                           setEditingDependents(editingDependents.filter((i: number) => i !== idx))
-                          // Remove from data list  
-                          const updated = localDepList.filter((_, i) => i !== idx)
-                          updateDepList(updated)
+                          // Remove from data list and persist
+                          const updatedList = localDepList.filter((_, i) => i !== idx)
+                          updateDepList(updatedList)
+                          updateFormData("personalInformation.dependents", updatedList)
+                          // Remove from data list and persist
+                          const updatedList2 = localDepList.filter((_, i) => i !== idx)
+                          updateDepList(updatedList2)
+                          updateFormData("personalInformation.dependents", updatedList2)
                           // Adjust indices for remaining dependents
                           setVisibleDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
                           setEditingDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
