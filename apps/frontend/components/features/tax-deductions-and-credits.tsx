@@ -533,7 +533,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
               sectionId="tax-deductions"
               onContinue={handleComplete}
               canContinue={true}
-              nextSectionName="Future Financial Plans"
+              nextSectionName={getFormData("finance.skipDetails") ? "Additional Information" : "Future Financial Plans"}
             />
 
           </div>

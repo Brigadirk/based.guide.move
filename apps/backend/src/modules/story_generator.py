@@ -830,63 +830,58 @@ def residency_section(
                         f"They are willing to consider multiple citizenship pathways: {', '.join(pathways[:-1])}, and {pathways[-1]}."
                     )
 
-    # Partner citizenship interest (check for special situation first)
-    partner_special_situation = ci.get("partnerSpecialSituation", "").strip()
-    if partner_special_situation:
-        sentences.append(f'Partner citizenship special situation: "{partner_special_situation}"')
-    else:
-        # Use standard partner citizenship interest if no special situation
-        partner_visa = ri.get("partnerVisa", {})
-        if partner_visa and partner_visa.get("citizenshipInterest"):
-            p_interest = partner_visa.get("citizenshipInterest")
-            if p_interest == "yes":
-                sentences.append("Their partner is interested in eventual citizenship.")
-                p_willing = partner_visa.get("willingToConsider", {})
-                if p_willing:
-                    p_pathways = []
-                    if p_willing.get("naturalization"):
-                        p_pathways.append("naturalization")
-                    if p_willing.get("familyConnections"):
-                        p_pathways.append("family connections")
-                        p_family_details = p_willing.get("familyConnectionDetails", "").strip()
-                        if p_family_details:
-                            sentences.append(
-                                f'Partner family connection details: "{p_family_details}"'
-                            )
-                    if p_willing.get("investmentPrograms"):
-                        p_pathways.append("investment programs")
-                    if p_willing.get("militaryService"):
-                        p_pathways.append("military service")
-                    if p_willing.get("otherPrograms"):
-                        p_pathways.append("other special programs")
+    # Partner citizenship interest (only process if special situation is explicitly set)
+    show_partner_special = ci.get("showPartnerSpecialSituation", False)
+    if show_partner_special:
+        partner_special_situation = ci.get("partnerSpecialSituation", "").strip()
+        if partner_special_situation:
+            sentences.append(f'Partner citizenship special situation: "{partner_special_situation}"')
+        else:
+            # Use standard partner citizenship interest when special situation is active
+            partner_visa = ri.get("partnerVisa", {})
+            if partner_visa and partner_visa.get("citizenshipInterest"):
+                p_interest = partner_visa.get("citizenshipInterest")
+                if p_interest == "yes":
+                    sentences.append("Their partner is interested in eventual citizenship.")
+                    p_willing = partner_visa.get("willingToConsider", {})
+                    if p_willing:
+                        p_pathways = []
+                        if p_willing.get("naturalization"):
+                            p_pathways.append("naturalization")
+                        if p_willing.get("familyConnections"):
+                            p_pathways.append("family connections")
+                            p_family_details = p_willing.get("familyConnectionDetails", "").strip()
+                            if p_family_details:
+                                sentences.append(
+                                    f'Partner family connection details: "{p_family_details}"'
+                                )
+                        if p_willing.get("investmentPrograms"):
+                            p_pathways.append("investment programs")
+                        if p_willing.get("militaryService"):
+                            p_pathways.append("military service")
+                        if p_willing.get("otherPrograms"):
+                            p_pathways.append("other special programs")
 
-                    if p_pathways:
-                        if len(p_pathways) == 1:
-                            sentences.append(
-                                f"Their partner is willing to consider {p_pathways[0]} as a citizenship pathway."
-                            )
-                        else:
-                            sentences.append(
-                                f"Their partner is willing to consider multiple citizenship pathways: {', '.join(p_pathways[:-1])}, and {p_pathways[-1]}."
-                            )
-            elif p_interest == "no":
-                sentences.append("Their partner is not interested in citizenship.")
-            elif p_interest == "undecided":
-                sentences.append("Their partner is undecided about pursuing citizenship.")
-        elif (
-            personal_info
-            and personal_info.get("relocationPartner")
-            and not partner_special_situation
-        ):
-            # If partner exists but no specific citizenship info, use user's citizenship interest as default
+                        if p_pathways:
+                            if len(p_pathways) == 1:
+                                sentences.append(
+                                    f"Their partner is willing to consider {p_pathways[0]} as a citizenship pathway."
+                                )
+                            else:
+                                sentences.append(
+                                    f"Their partner is willing to consider multiple citizenship pathways: {', '.join(p_pathways[:-1])}, and {p_pathways[-1]}."
+                                )
+                elif p_interest == "no":
+                    sentences.append("Their partner is not interested in citizenship.")
+                elif p_interest == "undecided":
+                    sentences.append("Their partner is undecided about pursuing citizenship.")
+    else:
+        # When no special situation, citizenship interest applies to both if partner exists
+        if personal_info and personal_info.get("relocationPartner") and interest in ["yes", "no"]:
             if interest == "yes":
-                sentences.append(
-                    "Their partner shares the same citizenship interest and pathway preferences."
-                )
+                sentences.append("Both partners share the same citizenship interest and pathway preferences.")
             elif interest == "no":
-                sentences.append("Their partner also is not interested in citizenship.")
-            elif interest == "undecided":
-                sentences.append("Their partner is also undecided about pursuing citizenship.")
+                sentences.append("Neither partner is interested in citizenship.")
 
     # Legacy citizenship plans support (for backward compatibility)
     cp = ri.get("citizenshipPlans", {})

@@ -26,6 +26,7 @@ import { useAutoSave, useAutoSaveStatus } from "@/lib/hooks/use-auto-save"
 import { SaveStatus } from "@/components/ui/loading-states"
 import { FinanciallySupportedSection } from "./financially-supported-section"
 import { PageHeading } from "@/components/ui/page-heading"
+import { FinanceSkipToggle } from "@/components/features/finance-skip-toggle"
 
 // Income Categories (Streamlit structure)
 const INCOME_CATEGORIES = {
@@ -336,75 +337,11 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
         icon={<CreditCard className="w-7 h-7 text-green-600" />}
       />
 
-      {/* Quick Finance Skip (duplicate of sidebar control for visibility) */}
-      <Card className="border-amber-200 bg-amber-50/50 dark:bg-amber-950/20">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-900/50">
-                <Zap className="w-4 h-4 text-amber-600" />
-              </div>
-              <div>
-                <div className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                  Quick Finance Skip
-                </div>
-                <p className="text-xs text-amber-700 dark:text-amber-300">
-                  Skip detailed finance sections
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant={skipDetails ? "secondary" : "default"}
-                size="sm"
-                onClick={() => {
-                  const wasAutoCompleted = getFormData("finance.autoCompletedSections") ?? false
-                  updateFormData("finance.skipDetails", !skipDetails)
-                  if (!skipDetails) {
-                    markSectionComplete("finance")
-                    markSectionComplete("social-security")
-                    markSectionComplete("tax-deductions")
-                    markSectionComplete("future-plans")
-                    updateFormData("finance.autoCompletedSections", [
-                      "finance", "social-security", "tax-deductions", "future-plans"
-                    ])
-                  } else if (wasAutoCompleted) {
-                    const autoCompletedSections = Array.isArray(wasAutoCompleted)
-                      ? wasAutoCompleted
-                      : ["finance", "social-security", "tax-deductions", "future-plans"]
-                    autoCompletedSections.forEach((sectionId: string) => {
-                      updateFormData(`completedSections.${sectionId}`, false)
-                    })
-                    updateFormData("finance.autoCompletedSections", false)
-                  }
-                }}
-              >
-                {skipDetails ? "Unskip Details" : "Skip Details"}
-              </Button>
-            </div>
-          </div>
-          <div className="border-t border-amber-200/40 pt-2 mt-2">
-            <details className="group">
-              <summary className="text-sm font-semibold text-stone-900 dark:text-white cursor-pointer">
-                💡 Why would I want to do this?
-              </summary>
-              <p className="text-sm text-stone-800 dark:text-stone-200 mt-2 leading-relaxed">
-                You may not care about detailed taxation and finance tracking—you simply want to know if there are any financial requirements (income thresholds, bank balances, etc.) needed to be allowed into your destination country.
-              </p>
-            </details>
-          </div>
-          {skipDetails && (
-            <div className="mt-3 p-2 rounded bg-green-100 dark:bg-green-900/30">
-              <p className="text-xs text-green-800 dark:text-green-200">
-                ✅ Finance sections auto-completed
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Finance Skip Toggle */}
+      <FinanceSkipToggle variant="section" />
 
       {/* Finance scope selector */}
-      {hasPartnerSelected && (
+      {!skipDetails && hasPartnerSelected && (
         <Card className="shadow-sm border-l-4 border-l-purple-500">
           <CardContent className="p-4">
             <div className="flex flex-col gap-2">
@@ -433,11 +370,14 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
         </Card>
       )}
 
-      <SectionHint title="About this section">
-        We'll calculate your tax liability for your first year in the destination country, which should give you an indication of what it would cost for you to live there long term. This information is also crucial for visa applications and ensuring you meet minimum income requirements.
-      </SectionHint>
+      {!skipDetails && (
+        <SectionHint title="About this section">
+          We'll calculate your tax liability for your first year in the destination country, which should give you an indication of what it would cost for you to live there long term. This information is also crucial for visa applications and ensuring you meet minimum income requirements.
+        </SectionHint>
+      )}
 
       {/* Financial Information Guide - Collapsible */}
+      {!skipDetails && (
       <Card className="shadow-sm border-l-4 border-l-blue-500">
         <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
@@ -563,8 +503,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
           </Accordion>
         </CardContent>
       </Card>
-
-
+      )}
 
       {/* Skip Mode Indicator */}
       {skipDetails && (
@@ -954,7 +893,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
               sectionId="finance"
               onContinue={handleComplete}
               canContinue={canContinue}
-              nextSectionName="Social Security & Pensions"
+              nextSectionName={skipDetails ? "Additional Information" : "Social Security & Pensions"}
             />
 
 

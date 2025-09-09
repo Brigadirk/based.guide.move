@@ -29,11 +29,9 @@ import {
 import { PageHeading } from "@/components/ui/page-heading"
 
 
-interface SummaryProps {
-  onNavigateToResults?: () => void
-}
+interface SummaryProps {}
 
-export function Summary({ onNavigateToResults }: SummaryProps = {}) {
+export function Summary({}: SummaryProps = {}) {
   const { formData, hasRequiredData, completedSections, isSectionMarkedComplete } = useFormStore()
   
   // Section info modal functionality
@@ -513,27 +511,6 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
 
   // Section completion status
   const sections = [
-    { id: "destination", name: "Destination Country", icon: MapPin, data: formData.residencyIntentions?.destinationCountry },
-    { id: "personal", name: "Personal Information", icon: User, data: formData.personalInformation },
-    { 
-      id: "education", 
-      name: "Education & Skills", 
-      icon: GraduationCap, 
-      data: formData.education,
-      detailedData: formatEducationData(formData.education)
-    },
-    { id: "residency", name: "Residency Intentions", icon: Heart, data: formData.residencyIntentions },
-    { 
-      id: "finance", 
-      name: "Financial Information", 
-      icon: DollarSign, 
-      data: formData.finance,
-      detailedData: formatFinanceData(formData.finance)
-    },
-    { id: "socialSecurity", name: "Social Security & Pensions", icon: Shield, data: formData.socialSecurityAndPensions },
-    { id: "taxDeductions", name: "Tax Deductions & Credits", icon: Receipt, data: formData.taxDeductionsAndCredits },
-    { id: "futurePlans", name: "Future Financial Plans", icon: TrendingUp, data: formData.futureFinancialPlans },
-    { id: "additional", name: "Additional Information", icon: FileEdit, data: formData.additionalInformation },
     { id: "fullSummary", name: "Full Summary", icon: FileText, data: { hasData: true }, isSpecial: true }
   ]
 
@@ -598,31 +575,15 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
                 }
                 
                 // Special styling for Full Summary section
-                const isFullSummary = section.id === "fullSummary"
-                const borderClass = isFullSummary 
-                  ? "border-2 border-purple-300 dark:border-purple-700" 
-                  : "border-2 border-emerald-300 dark:border-emerald-700"
-                const bgClass = isFullSummary 
-                  ? "bg-gradient-to-r from-purple-100/90 to-indigo-100/70 dark:from-purple-900/40 dark:to-indigo-900/30" 
-                  : "bg-gradient-to-r from-emerald-100/90 to-green-100/70 dark:from-emerald-900/40 dark:to-green-900/30"
-                const hoverClass = isFullSummary 
-                  ? "hover:bg-purple-100/80 dark:hover:bg-purple-900/50" 
-                  : "hover:bg-emerald-100/80 dark:hover:bg-emerald-900/50"
-                const iconBgClass = isFullSummary 
-                  ? "bg-gradient-to-br from-purple-200 to-indigo-200 dark:from-purple-800 dark:to-indigo-800" 
-                  : "bg-gradient-to-br from-emerald-200 to-green-200 dark:from-emerald-800 dark:to-green-800"
-                const iconTextClass = isFullSummary 
-                  ? "text-purple-700 dark:text-purple-200" 
-                  : "text-emerald-700 dark:text-emerald-200"
-                const titleClass = isFullSummary 
-                  ? "text-purple-900 dark:text-purple-100" 
-                  : "text-emerald-900 dark:text-emerald-100"
-                const subtitleClass = isFullSummary 
-                  ? "text-purple-700 dark:text-purple-300" 
-                  : "text-emerald-700 dark:text-emerald-300"
-                const badgeClass = isFullSummary 
-                  ? "bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-100 border-purple-400 dark:border-purple-600" 
-                  : "bg-emerald-200 dark:bg-emerald-800 text-emerald-800 dark:text-emerald-100 border-emerald-400 dark:border-emerald-600"
+                // Simple stone styling
+                const borderClass = "border border-stone-200 dark:border-stone-800"
+                const bgClass = "bg-stone-50 dark:bg-stone-900/50"
+                const hoverClass = "hover:bg-stone-100 dark:hover:bg-stone-900/70"
+                const iconBgClass = "bg-stone-200 dark:bg-stone-800"
+                const iconTextClass = "text-stone-700 dark:text-stone-300"
+                const titleClass = "text-stone-900 dark:text-stone-100"
+                const subtitleClass = "text-stone-700 dark:text-stone-300"
+                const badgeClass = "bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-100 border-stone-400 dark:border-stone-600"
                 
                 return (
                   <AccordionItem key={section.id} value={section.id} className={`${borderClass} rounded-xl ${bgClass} shadow-md hover:shadow-lg transition-all duration-200`}>
@@ -632,16 +593,16 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
                     >
                       <div className="flex items-center gap-4 flex-1">
                         <div className={`p-3 rounded-xl ${iconBgClass} ${iconTextClass} shadow-inner`}>
-                          {isFullSummary ? <section.icon className="w-6 h-6" /> : <CheckCircle className="w-6 h-6" />}
+                          <section.icon className="w-6 h-6" />
                         </div>
                         <div className="flex-1 text-left">
                           <div className={`font-bold ${titleClass} text-base`}>{section.name}</div>
                           <div className={`text-sm ${subtitleClass} mt-1 font-semibold`}>
-                            {isFullSummary ? "Click to view complete profile" : "Click to view section summary"}
+                            Click to view complete profile
                           </div>
                         </div>
                         <Badge className={`${badgeClass} font-bold px-3 py-1 text-sm`}>
-                          {isFullSummary ? "Available" : "Complete"}
+                          Available
                         </Badge>
                       </div>
                     </AccordionTrigger>
@@ -693,21 +654,10 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
           </div>
         </CardContent>
         <CardFooter className="pt-6">
-          <div className="w-full flex justify-center">
-            <Button
-              onClick={() => {
-                if (onNavigateToResults) {
-                  onNavigateToResults()
-                  // Scroll to top when navigating (same as handleNavigateNext)
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-              }}
-              variant="default"
-              size="lg"
-              className="px-8 py-3 text-lg font-semibold bg-green-600 hover:bg-green-700 text-white shadow-lg"
-            >
-              Information is Correct - Bring Me to Results
-            </Button>
+          <div className="w-full text-center">
+            <p className="text-sm text-muted-foreground">
+              Your complete profile summary and results are shown below.
+            </p>
           </div>
         </CardFooter>
       </Card>
@@ -725,7 +675,6 @@ export function Summary({ onNavigateToResults }: SummaryProps = {}) {
         isFullView={isFullView}
         onGoToSection={goToSection}
         onNavigateToSection={navigateToSection}
-        onNavigateToResults={onNavigateToResults}
       />
     </div>
   )

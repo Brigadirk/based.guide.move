@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +19,8 @@ import {
   CheckCircle,
   AlertCircle,
   Check,
-  Zap
+  Zap,
+  Bug
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -41,6 +42,7 @@ import { DevStateViewer } from "@/components/dev/state-viewer";
 import { AlternativeInterestsModal } from "@/components/ui/alternative-interests-modal";
 import { useAlternativeInterests } from "@/lib/hooks/use-alternative-interests";
 import { SelectedDestinationCard } from "@/components/features/selected-destination-card";
+import { DebugProvider } from "@/lib/contexts/debug-context";
 
 interface Section {
   id: string
@@ -61,8 +63,7 @@ const SECTIONS: Section[] = [
   { id: "tax-deductions", title: "Tax Deductions and Credits", icon: Calculator, required: false, showDot: true },
   { id: "future-plans", title: "Future Financial Plans", icon: TrendingUp, required: false, showDot: true },
   { id: "additional", title: "Additional Information", icon: Info, required: false, showDot: true },
-  { id: "summary", title: "Summary", icon: CheckCircle, required: false, showDot: false }, // No red dot for summary
-  { id: "results", title: "Results", icon: Zap, required: false, showDot: false }, // No red dot for results
+  { id: "summary", title: "Summary & Results", icon: CheckCircle, required: false, showDot: false }, // Combined section
 ];
 
 export default function HomePage() {
@@ -78,6 +79,10 @@ export default function HomePage() {
     setCurrentSection,
     getFormData
   } = useFormStore();
+
+  // Debug mode state (only in development)
+  const [debugMode, setDebugMode] = useState(false)
+  const isDev = process.env.NODE_ENV === 'development'
 
   // Alternative interests modal for visa-free + finance-skipped users
   const {
@@ -149,6 +154,23 @@ export default function HomePage() {
   // Called when user clicks "Continue" button within a section component
   const handleContinue = () => {
     markSectionComplete(SECTIONS[currentSection].id)
+    
+    // Check if we should skip finance sections
+    const skipDetails = getFormData("finance.skipDetails") ?? false
+    const currentSectionId = SECTIONS[currentSection].id
+    const isFinanceSection = ["finance", "social-security", "tax-deductions", "future-plans"].includes(currentSectionId)
+    
+    if (skipDetails && isFinanceSection) {
+      // Skip to Additional Information (index 9)
+      const additionalInfoIndex = SECTIONS.findIndex(s => s.id === "additional")
+      if (additionalInfoIndex !== -1) {
+        setCurrentSection(additionalInfoIndex)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        return
+      }
+    }
+    
+    // Normal progression
     if (currentSection < SECTIONS.length - 1) {
       setCurrentSection(currentSection + 1);
       // Scroll to top of the page when navigating to next section
@@ -208,9 +230,12 @@ export default function HomePage() {
       case "additional":
         return <AdditionalInformation onComplete={handleContinue} />;
       case "summary":
-        return <Summary onNavigateToResults={() => setCurrentSection(11)} />;
-      case "results":
-        return <Results />;
+        return (
+          <div className="space-y-8">
+            <Summary />
+            <Results />
+          </div>
+        );
       default:
         return <div>Section not found</div>;
     }
@@ -220,7 +245,29 @@ export default function HomePage() {
   const HeaderIcon = SECTIONS[currentSection].icon
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <DebugProvider>
+      <div className="min-h-screen bg-background text-foreground">
+        {/* Debug Toggle (Development Only) */}
+        {isDev && (
+          <div className="fixed top-4 left-4 z-50">
+            <Card className="shadow-lg border-amber-200 bg-amber-50/90 dark:bg-amber-950/90 backdrop-blur-sm">
+              <CardContent className="p-3">
+                <div className="flex items-center gap-2">
+                  <Bug className="w-4 h-4 text-amber-600" />
+                  <Label htmlFor="debug-mode" className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                    Debug
+                  </Label>
+                  <Switch
+                    id="debug-mode"
+                    checked={debugMode}
+                    onCheckedChange={setDebugMode}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8 text-center relative">
@@ -505,5 +552,6 @@ export default function HomePage() {
         />
       </div>
     </div>
+    </DebugProvider>
   );
 } 
