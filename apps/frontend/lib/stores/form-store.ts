@@ -257,6 +257,14 @@ export interface FormData {
   summary?: {
     editedFullStory?: string
   }
+  results?: {
+    fullPrompt?: string
+    aiAnalysis?: string
+    followUpQuestion?: string
+    followUpAnswer?: string
+    generatedAt?: string
+    model?: string
+  }
 }
 
 interface FormStoreState {

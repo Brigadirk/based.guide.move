@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label"
 import { useFormStore } from "@/lib/stores"
 import { apiClient } from "@/lib/api-client"
-import { Sparkles, Settings, Loader2, FileText, Zap, ChevronUp, ChevronDown, MessageCirclePlus } from "lucide-react"
+import { Sparkles, Settings, Loader2, FileText, Zap, ChevronUp, ChevronDown, MessageCirclePlus, Download, Eye, EyeOff, Trash2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { PerplexityLoading } from "@/components/ui/perplexity-loading"
@@ -22,26 +22,171 @@ const PERPLEXITY_MODELS = [
 ]
 
 export function Results({ debugMode }: { debugMode?: boolean }) {
-  const { formData } = useFormStore()
-  const [fullPrompt, setFullPrompt] = useState("")
+  const { formData, updateFormData, getFormData } = useFormStore()
+  
+  // Load saved results from store
+  const savedResults = getFormData("results") || {}
+  
+  const [fullPrompt, setFullPrompt] = useState(savedResults.fullPrompt || "")
   const [selectedModel, setSelectedModel] = useState("sonar-deep-research")
   const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false)
   const [isGeneratingResult, setIsGeneratingResult] = useState(false)
-  const [result, setResult] = useState("")
+  const [result, setResult] = useState(savedResults.aiAnalysis || "")
   const [error, setError] = useState("")
   
   // Collapsible and follow-up states
   const [isResultCollapsed, setIsResultCollapsed] = useState(false)
-  const [followUpQuestion, setFollowUpQuestion] = useState("")
+  const [followUpQuestion, setFollowUpQuestion] = useState(savedResults.followUpQuestion || "")
   const [followUpModel, setFollowUpModel] = useState("sonar-deep-research")
   const [isGeneratingFollowUp, setIsGeneratingFollowUp] = useState(false)
-  const [followUpResult, setFollowUpResult] = useState("")
+  const [followUpResult, setFollowUpResult] = useState(savedResults.followUpAnswer || "")
   const [followUpError, setFollowUpError] = useState("")
 
-  // Generate the full prompt when component mounts
+  // Rate limiting state
+  const [lastApiCall, setLastApiCall] = useState<number>(0)
+  const [isRateLimited, setIsRateLimited] = useState(false)
+
+  // Check if we're in a rate limit cooldown
+  const checkRateLimit = () => {
+    const now = Date.now()
+    const timeSinceLastCall = now - lastApiCall
+    const cooldownPeriod = 10000 // 10 seconds between calls
+    
+    if (timeSinceLastCall < cooldownPeriod) {
+      setIsRateLimited(true)
+      const remainingTime = Math.ceil((cooldownPeriod - timeSinceLastCall) / 1000)
+      setError(`Please wait ${remainingTime} seconds before making another request.`)
+      
+      // Clear rate limit after cooldown
+      setTimeout(() => {
+        setIsRateLimited(false)
+        setError("")
+      }, cooldownPeriod - timeSinceLastCall)
+      
+      return false
+    }
+    
+    setLastApiCall(now)
+    setIsRateLimited(false)
+    return true
+  }
+
+  // Process result to separate think section from main content
+  const processResult = (rawResult: string) => {
+    const thinkMatch = rawResult.match(/<think>([\s\S]*?)<\/think>/i)
+    const thinkSection = thinkMatch ? thinkMatch[1].trim() : ""
+    const mainContent = rawResult.replace(/<think>[\s\S]*?<\/think>/i, "").trim()
+    
+    return { thinkSection, mainContent }
+  }
+
+  const { thinkSection, mainContent } = result ? processResult(result) : { thinkSection: "", mainContent: "" }
+
+  // Simple markdown renderer for basic formatting
+  const renderMarkdown = (text: string) => {
+    return text
+      // Headers
+      .replace(/^### (.*$)/gm, '<h3 class="text-lg font-semibold mt-6 mb-3">$1</h3>')
+      .replace(/^## (.*$)/gm, '<h2 class="text-xl font-bold mt-8 mb-4">$1</h2>')
+      .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mt-8 mb-6">$1</h1>')
+      // Bold and italic
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      // Lists
+      .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-1">• $1</li>')
+      .replace(/^\d+\. (.*$)/gm, '<li class="ml-4 mb-1 list-decimal">$1</li>')
+      // Line breaks
+      .replace(/\n\n/g, '</p><p class="mb-4">')
+      .replace(/\n/g, '<br>')
+      // Wrap in paragraphs
+      .replace(/^(?!<[h|l])/gm, '<p class="mb-4">')
+      .replace(/(?<!>)$/gm, '</p>')
+      // Clean up extra paragraph tags
+      .replace(/<p class="mb-4"><\/p>/g, '')
+      .replace(/<p class="mb-4">(<h[1-6])/g, '$1')
+      .replace(/(<\/h[1-6]>)<\/p>/g, '$1')
+      .replace(/<p class="mb-4">(<li)/g, '$1')
+      .replace(/(<\/li>)<\/p>/g, '$1')
+  }
+
+  // Safe update function that handles localStorage quota errors
+  const safeUpdateFormData = (path: string, value: any) => {
+    try {
+      updateFormData(path, value)
+    } catch (error) {
+      if (error instanceof Error && error.name === 'QuotaExceededError') {
+        console.warn('localStorage quota exceeded, clearing old results to make space')
+        // Clear old results and try again
+        try {
+          updateFormData("results.aiAnalysis", "")
+          updateFormData("results.followUpAnswer", "")
+          updateFormData("results.fullPrompt", "")
+          // Try saving again with cleared space
+          updateFormData(path, value)
+        } catch (secondError) {
+          console.error('Failed to save even after clearing space:', secondError)
+          setError("Storage full - results won't persist across sessions. Consider downloading your analysis.")
+        }
+      } else {
+        console.error('Error saving to storage:', error)
+      }
+    }
+  }
+
+  // Clear all results
+  const clearResults = () => {
+    setResult("")
+    setFollowUpResult("")
+    setFollowUpQuestion("")
+    setError("")
+    setFollowUpError("")
+    
+    // Clear from store
+    safeUpdateFormData("results.aiAnalysis", "")
+    safeUpdateFormData("results.followUpQuestion", "")
+    safeUpdateFormData("results.followUpAnswer", "")
+  }
+
+  // Get localStorage usage info for debug mode
+  const getStorageInfo = () => {
+    try {
+      const used = JSON.stringify(localStorage).length
+      const total = 5 * 1024 * 1024 // Approximate 5MB limit
+      const percentage = Math.round((used / total) * 100)
+      return { used, total, percentage }
+    } catch {
+      return { used: 0, total: 0, percentage: 0 }
+    }
+  }
+
+  // Download function for markdown
+  const downloadMarkdown = () => {
+    const date = new Date().toISOString().split('T')[0]
+    const filename = `immigration-analysis-${date}.md`
+    const content = `# Immigration & Tax Analysis\n\nGenerated on: ${new Date().toLocaleDateString()}\n\n${mainContent}`
+    
+    const blob = new Blob([content], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
+  // Generate the full prompt when component mounts (with debouncing to avoid rate limits)
   useEffect(() => {
-    generateFullPrompt()
-  }, [formData])
+    // Only generate if we don't already have a prompt or if form data changed significantly
+    if (!fullPrompt || !savedResults.fullPrompt) {
+      const timeoutId = setTimeout(() => {
+        generateFullPrompt()
+      }, 500) // Debounce to avoid rapid API calls
+      
+      return () => clearTimeout(timeoutId)
+    }
+  }, [formData, fullPrompt, savedResults.fullPrompt])
 
   const generateFullPrompt = async () => {
     setIsGeneratingPrompt(true)
@@ -49,52 +194,50 @@ export function Results({ debugMode }: { debugMode?: boolean }) {
     
     try {
       // Get the full story from the backend
-      const response = await apiClient.getFullStory(formData)
+      const storyResponse = await apiClient.getFullStory(formData)
       
-      // Clean the story by removing metadata sections
-      const cleanStory = response.story
-        .replace(/Completed[Ss]ections:[\s\S]*?(?=\n\n|\n[A-Z]|$)/g, '')
-        .replace(/Destination:[\s\S]*?(?=\n\n|\n[A-Z]|$)/g, '')
-        .replace(/Disclaimer:[\s\S]*?(?=\n\n|\n[A-Z]|$)/g, '')
-        .replace(/^\s*-\s*$/gm, '') // Remove standalone dashes
-        .replace(/\n{3,}/g, '\n\n') // Reduce multiple newlines
-        .trim()
+      // Get destination country from form data
+      const destinationCountry = formData.destination?.country || "Unknown"
       
-      // Create the comprehensive prompt
-      const prompt = `As an expert immigration lawyer and tax advisor, please analyze the following individual's profile and provide comprehensive VISA and TAX guidance for their relocation plans. Include exactly how much tax they would pay in their first year of living there, with some guesstimates of how this could go in later years. Additionally suggest what visas they may want to apply for and why. 
-
-INDIVIDUAL PROFILE:
-${cleanStory}
-
-ANALYSIS REQUESTED:
-Please provide a detailed analysis covering:
-
-1. VISA ELIGIBILITY & REQUIREMENTS:
-   - Available visa options for this person's situation
-   - Specific requirements and documentation needed
-   - Timeline and application process
-   - Likelihood of approval based on their profile
-   - Alternative visa strategies if primary options are challenging
-
-2. TAX IMPLICATIONS & OPTIMIZATION:
-   - Tax residency implications in both current and destination countries
-   - Potential tax obligations and liabilities
-   - Tax optimization strategies specific to their financial situation
-   - Double taxation treaty benefits if applicable
-   - Recommended tax planning steps before and after relocation
-
-3. SPECIFIC RECOMMENDATIONS:
-   - Immediate action items to prepare for the move
-   - Professional services they should engage (lawyers, tax advisors, etc.)
-   - Common pitfalls to avoid in their specific situation
-   - Timeline recommendations for the entire relocation process
-
-Please be specific and actionable in your recommendations, considering their unique circumstances including family situation, financial profile, education background, and intended destination.`
-
-      setFullPrompt(prompt)
+      // Generate prompt using backend prompt.py
+      const promptResponse = await fetch('/api/backend/generate-prompt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': 'local-development-key'
+        },
+        body: JSON.stringify({
+          profile_story: storyResponse.story,
+          destination_country: destinationCountry,
+          include_raw_data: false,
+          raw_data: ""
+        })
+      })
+      
+      if (!promptResponse.ok) {
+        if (promptResponse.status === 429) {
+          throw new Error("Rate limit exceeded. Please wait a moment before trying again.")
+        }
+        throw new Error(`Failed to generate prompt: ${promptResponse.statusText}`)
+      }
+      
+      const promptData = await promptResponse.json()
+      setFullPrompt(promptData.prompt)
+      
+      // Save prompt to store (truncate if too large to avoid localStorage quota issues)
+      const truncatedPrompt = promptData.prompt.length > 10000 
+        ? promptData.prompt.substring(0, 10000) + "...\n\n[Prompt truncated for storage]"
+        : promptData.prompt
+      safeUpdateFormData("results.fullPrompt", truncatedPrompt)
+      safeUpdateFormData("results.generatedAt", new Date().toISOString())
+      
     } catch (error) {
       console.error("Error generating full prompt:", error)
-      setError("Failed to generate the analysis prompt. Please try again.")
+      if (error instanceof Error && error.message.includes("Rate limit")) {
+        setError("Rate limit exceeded. Please wait 30 seconds before generating a new prompt.")
+      } else {
+        setError("Failed to generate the analysis prompt. Please try again.")
+      }
     } finally {
       setIsGeneratingPrompt(false)
     }
@@ -106,16 +249,39 @@ Please be specific and actionable in your recommendations, considering their uni
       return
     }
 
+    if (!checkRateLimit()) {
+      return
+    }
+
     setIsGeneratingResult(true)
     setError("")
     setResult("")
     
+    // Clear any existing follow-up results when generating new analysis
+    setFollowUpResult("")
+    setFollowUpQuestion("")
+    safeUpdateFormData("results.followUpQuestion", "")
+    safeUpdateFormData("results.followUpAnswer", "")
+    
     try {
       const response = await apiClient.getPerplexityAnalysis(fullPrompt, selectedModel)
       setResult(response.result)
+      
+      // Save result to store (truncate if too large to avoid localStorage quota issues)
+      const truncatedResult = response.result.length > 20000 
+        ? response.result.substring(0, 20000) + "...\n\n[Analysis truncated for storage - download full version]"
+        : response.result
+      safeUpdateFormData("results.aiAnalysis", truncatedResult)
+      safeUpdateFormData("results.model", selectedModel)
+      safeUpdateFormData("results.generatedAt", new Date().toISOString())
+      
     } catch (error) {
       console.error("Error generating result:", error)
-      setError("Failed to generate the analysis. Please check your connection and try again.")
+      if (error instanceof Error && (error.message.includes("429") || error.message.includes("Rate limit"))) {
+        setError("Rate limit exceeded. Please wait a few minutes before generating another analysis.")
+      } else {
+        setError("Failed to generate the analysis. Please check your connection and try again.")
+      }
     } finally {
       setIsGeneratingResult(false)
     }
@@ -129,6 +295,10 @@ Please be specific and actionable in your recommendations, considering their uni
 
     if (!result.trim()) {
       setFollowUpError("Please generate the initial analysis first.")
+      return
+    }
+
+    if (!checkRateLimit()) {
       return
     }
 
@@ -149,9 +319,21 @@ Please provide a detailed answer to the follow-up question, referencing the prev
 
       const response = await apiClient.getPerplexityAnalysis(followUpPrompt, followUpModel)
       setFollowUpResult(response.result)
+      
+      // Save follow-up to store (truncate if too large)
+      const truncatedFollowUp = response.result.length > 15000 
+        ? response.result.substring(0, 15000) + "...\n\n[Follow-up truncated for storage]"
+        : response.result
+      safeUpdateFormData("results.followUpQuestion", followUpQuestion)
+      safeUpdateFormData("results.followUpAnswer", truncatedFollowUp)
+      
     } catch (error) {
       console.error("Error generating follow-up:", error)
-      setFollowUpError("Failed to generate the follow-up response. Please check your connection and try again.")
+      if (error instanceof Error && (error.message.includes("429") || error.message.includes("Rate limit"))) {
+        setFollowUpError("Rate limit exceeded. Please wait a few minutes before asking another follow-up question.")
+      } else {
+        setFollowUpError("Failed to generate the follow-up response. Please check your connection and try again.")
+      }
     } finally {
       setIsGeneratingFollowUp(false)
     }
@@ -221,9 +403,14 @@ Please provide a detailed answer to the follow-up question, referencing the prev
             <Settings className="w-6 h-6 text-purple-600" />
             AI Model Configuration (Only useful for testing: Sonar Deep Research is the best model for this use case in my experience. We can try the GPT API actually because it can surf the web too these days apparently)
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Select the AI model and generate your analysis (We will default this to Sonar Deep Research)
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              Select the AI model and generate your analysis (We will default this to Sonar Deep Research)
+            </p>
+            <div className="text-xs text-muted-foreground">
+              Storage: {getStorageInfo().percentage}% used
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="pt-6">
           <div className="space-y-6">
@@ -257,7 +444,7 @@ Please provide a detailed answer to the follow-up question, referencing the prev
             <div className="flex justify-center">
               <Button
                 onClick={generateResult}
-                disabled={isGeneratingResult || isGeneratingPrompt || !fullPrompt.trim()}
+                disabled={isGeneratingResult || isGeneratingPrompt || !fullPrompt.trim() || isRateLimited}
                 size="lg"
                 className="px-8 py-3 text-lg font-semibold bg-purple-600 hover:bg-purple-700 text-white shadow-lg gap-3"
               >
@@ -324,13 +511,41 @@ Please provide a detailed answer to the follow-up question, referencing the prev
                     <Sparkles className="w-6 h-6 text-green-600" />
                     AI Analysis Result
                   </div>
-                  <Button variant="ghost" size="sm" className="h-auto p-1">
-                    {isResultCollapsed ? (
-                      <ChevronDown className="w-5 h-5 text-green-600" />
-                    ) : (
-                      <ChevronUp className="w-5 h-5 text-green-600" />
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        downloadMarkdown()
+                      }}
+                      className="h-8 px-3 text-xs"
+                    >
+                      <Download className="w-4 h-4 mr-1" />
+                      Download
+                    </Button>
+                    {debugMode && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          clearResults()
+                        }}
+                        className="h-8 px-3 text-xs text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Clear
+                      </Button>
                     )}
-                  </Button>
+                    <Button variant="ghost" size="sm" className="h-auto p-1">
+                      {isResultCollapsed ? (
+                        <ChevronDown className="w-5 h-5 text-green-600" />
+                      ) : (
+                        <ChevronUp className="w-5 h-5 text-green-600" />
+                      )}
+                    </Button>
+                  </div>
                 </CardTitle>
                 <p className="text-sm text-muted-foreground text-left">
                   Comprehensive VISA and TAX guidance based on your profile
@@ -340,14 +555,22 @@ Please provide a detailed answer to the follow-up question, referencing the prev
             </CollapsibleTrigger>
             <CollapsibleContent>
               <CardContent className="pt-6">
+                {/* Debug Think Section - Only show in debug mode */}
+                {debugMode && thinkSection && (
+                  <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Eye className="w-4 h-4 text-yellow-600" />
+                      <h4 className="font-semibold text-yellow-800 dark:text-yellow-200">AI Reasoning (Debug Mode)</h4>
+                    </div>
+                    <div className="text-sm text-yellow-700 dark:text-yellow-300 whitespace-pre-wrap font-mono">
+                      {thinkSection}
+                    </div>
+                  </div>
+                )}
+
+                {/* Main Content - Rendered Markdown */}
                 <div className="prose prose-lg max-w-none dark:prose-invert">
-                  {result.split('\n').map((paragraph, idx) => (
-                    paragraph.trim() ? (
-                      <p key={idx} className="mb-4 leading-relaxed">{paragraph}</p>
-                    ) : (
-                      <br key={idx} />
-                    )
-                  ))}
+                  <div dangerouslySetInnerHTML={{ __html: renderMarkdown(mainContent) }} />
                 </div>
               </CardContent>
             </CollapsibleContent>
@@ -383,26 +606,29 @@ Please provide a detailed answer to the follow-up question, referencing the prev
                 />
               </div>
 
-              <div className="space-y-3">
-                <Label htmlFor="followup-model" className="text-base font-semibold">
-                  AI Model for Follow-up
-                </Label>
-                <Select value={followUpModel} onValueChange={setFollowUpModel}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PERPLEXITY_MODELS.map((model) => (
-                      <SelectItem key={model.id} value={model.id}>
-                        <div className="flex flex-col items-start">
-                          <span className="font-medium">{model.name}</span>
-                          <span className="text-xs text-muted-foreground">{model.description}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              {/* Model Selection - Debug Mode Only */}
+              {debugMode && (
+                <div className="space-y-3">
+                  <Label htmlFor="followup-model" className="text-base font-semibold">
+                    AI Model for Follow-up
+                  </Label>
+                  <Select value={followUpModel} onValueChange={setFollowUpModel}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PERPLEXITY_MODELS.map((model) => (
+                        <SelectItem key={model.id} value={model.id}>
+                          <div className="flex flex-col items-start">
+                            <span className="font-medium">{model.name}</span>
+                            <span className="text-xs text-muted-foreground">{model.description}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               {followUpError && (
                 <Alert variant="destructive">
@@ -459,13 +685,7 @@ Please provide a detailed answer to the follow-up question, referencing the prev
               <p className="text-sm text-indigo-700 dark:text-indigo-300 italic">"{followUpQuestion}"</p>
             </div>
             <div className="prose prose-lg max-w-none dark:prose-invert">
-              {followUpResult.split('\n').map((paragraph, idx) => (
-                paragraph.trim() ? (
-                  <p key={idx} className="mb-4 leading-relaxed">{paragraph}</p>
-                ) : (
-                  <br key={idx} />
-                )
-              ))}
+              <div dangerouslySetInnerHTML={{ __html: renderMarkdown(followUpResult) }} />
             </div>
           </CardContent>
         </Card>
