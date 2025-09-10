@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useEffect } from "react"
+import { useMemo, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -123,10 +123,36 @@ const COUNTRIES: CountryEntry[] = Object.entries(
 
 export function Destination({ onComplete, debugMode }: DestinationProps) {
   const { getFormData, updateFormData, markSectionComplete, isSectionMarkedComplete } = useFormStore()
+  const [isEditing, setIsEditing] = useState(false)
   
-  // Use correct data structure matching Streamlit
-  const selectedCountry = getFormData("residencyIntentions.destinationCountry.country") ?? ""
-  const selectedRegion = getFormData("residencyIntentions.destinationCountry.region") ?? ""
+  // Saved destination data (what's actually committed)
+  const savedCountry = getFormData("residencyIntentions.destinationCountry.country") ?? ""
+  const savedRegion = getFormData("residencyIntentions.destinationCountry.region") ?? ""
+  
+  // Temporary editing state
+  const [tempCountry, setTempCountry] = useState("")
+  const [tempRegion, setTempRegion] = useState("")
+  
+  // Determine if section is completed
+  const isDestinationCompleted = isSectionMarkedComplete("destination")
+  
+  // Initialize editing state
+  useEffect(() => {
+    if (isDestinationCompleted && !isEditing) {
+      // Show saved state
+      setTempCountry(savedCountry)
+      setTempRegion(savedRegion)
+    } else if (!isDestinationCompleted) {
+      // First time or incomplete - start in editing mode
+      setIsEditing(true)
+      setTempCountry(savedCountry)
+      setTempRegion(savedRegion)
+    }
+  }, [savedCountry, savedRegion, isDestinationCompleted, isEditing])
+  
+  // Use temp values for display during editing, saved values when viewing
+  const selectedCountry = isEditing ? tempCountry : savedCountry
+  const selectedRegion = isEditing ? tempRegion : savedRegion
 
   // Component lifecycle tracking
   useEffect(() => {
@@ -139,47 +165,67 @@ export function Destination({ onComplete, debugMode }: DestinationProps) {
   const handleCountryChange = (countryCode: string) => {
     if (!countryCode || countryCode.trim() === "") return
     
-    updateFormData("residencyIntentions.destinationCountry.country", countryCode)
-    updateFormData("residencyIntentions.destinationCountry.region", "") // Clear region when country changes
+    if (isEditing) {
+      // During editing, update temp state only
+      setTempCountry(countryCode)
+      setTempRegion("") // Clear region when country changes
+    } else {
+      // If not editing, shouldn't happen, but handle gracefully
+      updateFormData("residencyIntentions.destinationCountry.country", countryCode)
+      updateFormData("residencyIntentions.destinationCountry.region", "")
+    }
   }
 
   const handleRegionChange = (region: string) => {
     if (!region || region.trim() === "") return
     
-    updateFormData("residencyIntentions.destinationCountry.region", region)
+    if (isEditing) {
+      // During editing, update temp state only
+      setTempRegion(region)
+    } else {
+      // If not editing, shouldn't happen, but handle gracefully
+      updateFormData("residencyIntentions.destinationCountry.region", region)
+    }
   }
 
   const handleContinue = () => {
-    console.log('Destination handleContinue called')
-    console.log('Selected country:', selectedCountry)
-    console.log('Selected region:', selectedRegion)
-    
     if (!selectedCountry || selectedCountry.trim() === "") {
-      console.log('No country selected, returning')
       return
     }
     
     // Check if country has regions
     const countryData = COUNTRIES.find(c => c.name === selectedCountry)
     const hasRegions = countryData?.regions && countryData.regions.length > 0
-    console.log('Country data:', countryData?.name, 'Has regions:', hasRegions)
     
     // If country has regions, require region selection
     if (hasRegions && (!selectedRegion || selectedRegion.trim() === "")) {
-      console.log('Country has regions but no region selected, returning')
       return
     }
     
-    // For countries without regions, clear any saved region
-    if (!hasRegions) {
-      console.log('Country has no regions, clearing region')
+    // Save temp values to store
+    updateFormData("residencyIntentions.destinationCountry.country", selectedCountry)
+    if (hasRegions && selectedRegion) {
+      updateFormData("residencyIntentions.destinationCountry.region", selectedRegion)
+    } else {
       updateFormData("residencyIntentions.destinationCountry.region", "")
     }
     
-    console.log('Marking destination as complete')
+    // Mark section complete and exit editing mode
     markSectionComplete("destination")
-    console.log('Calling onComplete')
+    setIsEditing(false)
     onComplete()
+  }
+
+  const handleEdit = () => {
+    setIsEditing(true)
+    setTempCountry(savedCountry)
+    setTempRegion(savedRegion)
+  }
+
+  const handleCancel = () => {
+    setIsEditing(false)
+    setTempCountry(savedCountry)
+    setTempRegion(savedRegion)
   }
 
   const selectedCountryData = useMemo(() => {
@@ -194,8 +240,51 @@ export function Destination({ onComplete, debugMode }: DestinationProps) {
         icon={<Globe className="w-7 h-7 text-green-600" />}
       />
 
-      {/* Removed About this section hint per request */}
+      {/* Saved Destination Summary (when completed and not editing) */}
+      {isDestinationCompleted && !isEditing && (
+        <Card className="shadow-sm border-l-4 border-l-green-500">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <CountryFlag 
+                  countryCode={getCountryFlagCode(savedCountry)} 
+                  size="lg"
+                  className="flex-shrink-0"
+                />
+                <div>
+                  <CardTitle className="text-xl">
+                    {savedRegion && savedRegion !== "I don't know yet" && savedRegion.trim() !== ""
+                      ? `${savedRegion}, ${savedCountry}`
+                      : savedCountry
+                    }
+                  </CardTitle>
+                  {(() => {
+                    const langs = getLanguages(savedCountry, savedRegion || "")
+                    if (langs.length === 0) return null
+                    return (
+                      <p className="text-sm mt-1 flex items-center gap-1 text-muted-foreground">
+                        <Languages className="w-4 h-4" /> Dominant language{langs.length > 1 ? 's' : ''}: {langs.join(", ")}
+                      </p>
+                    )
+                  })()}
+                </div>
+              </div>
+              <Button
+                onClick={handleEdit}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                Change Destination
+              </Button>
+            </div>
+          </CardHeader>
+        </Card>
+      )}
 
+      {/* Editing Form (when not completed or actively editing) */}
+      {(!isDestinationCompleted || isEditing) && (
+        <>
       {/* Country Selection Card */}
       <Card className="shadow-sm border-l-4 border-l-primary">
         <CardContent className="pt-4">
@@ -285,23 +374,36 @@ export function Destination({ onComplete, debugMode }: DestinationProps) {
       <Card className="shadow-md">
         <CardFooter className="pt-6">
           <div className="w-full space-y-4">
-            <Button
-              disabled={(() => {
-                if (!selectedCountry) return true
-                const countryData = COUNTRIES.find(c => c.name === selectedCountry)
-                const hasRegions = countryData?.regions && countryData.regions.length > 0
-                // If has regions: require region selection. If no regions: allow continue
-                return hasRegions ? !selectedRegion : false
-              })()}
-              onClick={handleContinue}
-              className="w-full"
-              size="lg"
-            >
-              Submit and Continue to Personal Information
-            </Button>
+            <div className="flex gap-3">
+              {isEditing && isDestinationCompleted && (
+                <Button
+                  onClick={handleCancel}
+                  variant="outline"
+                  size="lg"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              )}
+              <Button
+                disabled={(() => {
+                  if (!selectedCountry) return true
+                  const countryData = COUNTRIES.find(c => c.name === selectedCountry)
+                  const hasRegions = countryData?.regions && countryData.regions.length > 0
+                  return hasRegions ? !selectedRegion : false
+                })()}
+                onClick={handleContinue}
+                className="flex-1"
+                size="lg"
+              >
+                {isEditing && isDestinationCompleted ? "Save Changes" : "Submit and Continue to Personal Information"}
+              </Button>
+            </div>
           </div>
         </CardFooter>
       </Card>
+        </>
+      )}
 
       {/* Debug Info (Debug Mode Only) */}
       {debugMode && (
@@ -319,37 +421,6 @@ export function Destination({ onComplete, debugMode }: DestinationProps) {
         </div>
       )}
 
-      {/* Selected Destination Display - Only show when section is completed */}
-      {selectedCountry && isSectionMarkedComplete("destination") && (
-        <Card className="shadow-sm border-l-4 border-l-green-500">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <CountryFlag 
-                countryCode={getCountryFlagCode(selectedCountryData?.name || selectedCountry)} 
-                size="lg"
-                className="flex-shrink-0"
-              />
-              <div>
-                <h3 className="font-semibold text-foreground text-lg">
-                  {selectedCountryData?.regions && selectedCountryData.regions.length > 0 && selectedRegion && selectedRegion !== "I don't know yet"
-                    ? `${selectedRegion}, ${selectedCountryData?.name}`
-                    : selectedCountryData?.name
-                  }
-                </h3>
-                {(() => {
-                  const langs = getLanguages(selectedCountry, selectedRegion || "")
-                  if (langs.length === 0) return null
-                  return (
-                    <p className="text-sm mt-1 flex items-center gap-1 text-muted-foreground">
-                      <Languages className="w-4 h-4" /> Dominant language{langs.length > 1 ? 's' : ''}: {langs.join(", ")}
-                    </p>
-                  )
-                })()}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
 
 
