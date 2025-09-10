@@ -2425,7 +2425,7 @@ def make_social_security_story(
     # Always prioritize skip message over any data
     if skip_finance_details:
         return "Social Security & Pensions:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
-    
+
     # Check if section is empty
     if not ssp_info or not any([
         ssp_info.get("currentCountryContributions", {}).get("isContributing"),
@@ -2433,7 +2433,7 @@ def make_social_security_story(
         ssp_info.get("existingPlans", {}).get("hasPlans")
     ]):
         return "Social Security & Pensions:\nNothing entered"
-    
+
     return f"Social Security & Pensions:\n{ssp_section(ssp_info, dest_currency)}"
 
 
@@ -2443,11 +2443,11 @@ def make_tax_deductions_story(
     """Generate a story for just the tax deductions and credits section."""
     if skip_finance_details:
         return "Tax Deductions & Credits:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
-    
+
     # Check if section is empty
     if not tax_info or not tax_info.get("potentialDeductions"):
         return "Tax Deductions & Credits:\nNothing entered"
-    
+
     return f"Tax Deductions & Credits:\n{deductions_section(tax_info, dest_currency)}"
 
 
@@ -2457,11 +2457,11 @@ def make_future_financial_plans_story(
     """Generate a story for just the future financial plans section."""
     if skip_finance_details:
         return "Future Financial Plans:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
-    
+
     # Check if section is empty
     if not future_info or (not future_info.get("plannedInvestments") and not future_info.get("businessPlans") and not future_info.get("retirementPlans")):
         return "Future Financial Plans:\nNothing entered"
-    
+
     return f"Future Financial Plans:\n{future_plans_section(future_info, dest_currency)}"
 
 
