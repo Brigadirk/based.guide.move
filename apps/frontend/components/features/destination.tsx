@@ -260,7 +260,7 @@ export function Destination({ onComplete }: DestinationProps) {
                     <div className="flex items-center gap-2">
                       <Lightbulb className="w-5 h-5 text-blue-600" />
                       <p className="text-sm text-blue-800 dark:text-blue-200">
-                        ✅ No region-specific visa or tax rules—skip region selection for this country.
+                        No region-specific visa or tax rules.
                       </p>
                     </div>
                   </div>
