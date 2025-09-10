@@ -389,7 +389,7 @@ export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () 
                 <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
                   <Checkbox
                     id="dependents_apply_residency"
-                    checked={anyDependentNeedsVisa ? (getFormData("residencyIntentions.dependentsVisa.applyForResidency") ?? true) : false}
+                    checked={getFormData("residencyIntentions.dependentsVisa.applyForResidency") ?? true}
                     onCheckedChange={(v) => updateFormData("residencyIntentions.dependentsVisa.applyForResidency", !!v)}
                   />
                   <Label htmlFor="dependents_apply_residency" className="text-sm">We will apply for residency permits for dependents who need them</Label>

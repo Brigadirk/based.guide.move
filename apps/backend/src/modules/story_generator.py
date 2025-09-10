@@ -526,6 +526,27 @@ def residency_section(
     if motivation:
         sentences.append(f'Their motivation for moving: "{motivation}"')
 
+    # Move timing
+    timing = ri.get("moveTiming", "").strip()
+    if timing:
+        sentences.append(f'Move timing and readiness: "{timing}"')
+
+    # Family coordination
+    family_coord = ri.get("familyCoordination", {})
+    if family_coord:
+        app_timing = family_coord.get("applicationTiming", "").strip()
+        if app_timing:
+            if app_timing == "together":
+                sentences.append("They plan to submit all family applications together.")
+            elif app_timing == "sequential":
+                sentences.append("They plan to submit family applications sequentially.")
+            elif app_timing == "undecided":
+                sentences.append("They are still undecided about their family application timing strategy.")
+        
+        special_circumstances = family_coord.get("specialFamilyCircumstances", "").strip()
+        if special_circumstances:
+            sentences.append(f'Special family circumstances: "{special_circumstances}"')
+
     # Analyze family visa situation if personal info is available
     if personal_info and country != "an unspecified country":
         user_nationalities = personal_info.get("nationalities", [])

@@ -459,7 +459,7 @@ export default function HomePage() {
                               </div>
                               <div>
                                 <Label htmlFor="finance-skip-main" className="text-sm font-medium text-stone-800 dark:text-stone-200 cursor-pointer">
-                                  Quick Finance Skip
+                                  Finance Skip
                                 </Label>
                                 <p className="text-xs text-stone-700 dark:text-stone-300">
                                   Skip detailed finance sections

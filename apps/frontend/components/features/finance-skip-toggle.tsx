@@ -33,7 +33,7 @@ export function FinanceSkipToggle({ variant = "sidebar", onToggle }: FinanceSkip
               </div>
               <div>
                 <Label htmlFor="finance-skip" className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                  Quick Finance Skip
+                  Finance Skip
                 </Label>
                 <p className="text-xs text-amber-700 dark:text-amber-300">
                   Skip detailed finance sections
@@ -69,7 +69,7 @@ export function FinanceSkipToggle({ variant = "sidebar", onToggle }: FinanceSkip
             </div>
             <div>
               <Label htmlFor="finance-skip-section" className="text-sm font-medium text-stone-800 dark:text-stone-200 cursor-pointer">
-                Quick Finance Skip
+                Finance Skip
               </Label>
               <p className="text-xs text-stone-700 dark:text-stone-300">
                 Skip detailed finance sections

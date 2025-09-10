@@ -70,7 +70,7 @@ export function SocialSecurityPensions({ onComplete }: { onComplete: () => void 
             </div>
             <div className="mt-4 text-center">
               <p className="text-sm text-muted-foreground">
-                💡 Toggle Quick Finance Skip in the sidebar to enable detailed inputs
+                💡 Toggle Finance Skip in the sidebar to enable detailed inputs
               </p>
             </div>
           </CardContent>

@@ -96,7 +96,7 @@ export const defaultFormData: FormData = {
       }
     },
     dependentsVisa: {
-      applyForResidency: false
+      applyForResidency: true
     },
     residencyPlans: {
       openToVisiting: false,

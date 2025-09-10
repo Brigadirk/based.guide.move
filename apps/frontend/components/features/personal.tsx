@@ -281,8 +281,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
         guardianshipType: "none" as "full" | "partial" | "temporary" | "none",
         additionalNotes: ""
       },
-      relationshipToUser: "none" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none",
-      relationshipToPartner: hasPartner ? "none" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable" : "not_applicable" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable",
+      relationshipToUser: "biological" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none",
+      relationshipToPartner: hasPartner ? "biological" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable" : "not_applicable" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable",
       custodyArrangement: hasPartner ? "shared" as "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable" : "sole_user" as "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable",
       canProveRelationship: false,
       dateOfBirth: "",
@@ -2054,7 +2054,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     <div className="space-y-3">
                       <Label className="font-medium text-stone-900 dark:text-stone-100">Your relationship to the dependent *</Label>
                       <Select
-                        value={dep.relationshipToUser ?? "none"}
+                        value={dep.relationshipToUser ?? "biological"}
                         onValueChange={(v: "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none") => {
                           const updated = [...localDepList]
                           updated[idx] = { ...updated[idx], relationshipToUser: v }
@@ -2082,7 +2082,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       <div className="space-y-3">
                         <Label className="font-medium text-stone-900 dark:text-stone-100">Partner's relationship to the dependent *</Label>
                         <Select
-                          value={dep.relationshipToPartner ?? "not_applicable"}
+                          value={dep.relationshipToPartner ?? (hasPartner ? "biological" : "not_applicable")}
                           onValueChange={(v: "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable") => {
                             const updated = [...localDepList]
                             updated[idx] = { ...updated[idx], relationshipToPartner: v }
