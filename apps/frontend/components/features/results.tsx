@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label"
 import { useFormStore } from "@/lib/stores"
 import { apiClient } from "@/lib/api-client"
-import { Sparkles, Settings, Loader2, FileText, Zap, ChevronUp, ChevronDown, MessageCirclePlus, Download, Eye, EyeOff, Trash2 } from "lucide-react"
+import { Sparkles, Settings, Loader2, FileText, Zap, ChevronUp, ChevronDown, MessageSquarePlus, Download, Eye, EyeOff, Trash2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { PerplexityLoading } from "@/components/ui/perplexity-loading"
@@ -583,7 +583,7 @@ Please provide a detailed answer to the follow-up question, referencing the prev
         <Card className="shadow-sm border-l-4 border-l-orange-500">
           <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
             <CardTitle className="text-xl flex items-center gap-3">
-              <MessageCirclePlus className="w-6 h-6 text-orange-600" />
+              <MessageSquarePlus className="w-6 h-6 text-orange-600" />
               Follow-up Question
             </CardTitle>
             <p className="text-sm text-muted-foreground">
@@ -650,7 +650,7 @@ Please provide a detailed answer to the follow-up question, referencing the prev
                     </>
                   ) : (
                     <>
-                      <MessageCirclePlus className="w-5 h-5" />
+                      <MessageSquarePlus className="w-5 h-5" />
                       Ask Follow-up Question
                     </>
                   )}
@@ -672,7 +672,7 @@ Please provide a detailed answer to the follow-up question, referencing the prev
         <Card className="shadow-sm border-l-4 border-l-indigo-500">
           <CardHeader className="bg-gradient-to-r from-indigo-50 to-transparent dark:from-indigo-950/20">
             <CardTitle className="text-xl flex items-center gap-3">
-              <MessageCirclePlus className="w-6 h-6 text-indigo-600" />
+              <MessageSquarePlus className="w-6 h-6 text-indigo-600" />
               Follow-up Answer
             </CardTitle>
             <p className="text-sm text-muted-foreground">
