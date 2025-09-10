@@ -96,6 +96,7 @@ function getCountryFlagCode(countryName: string): string {
 
 interface DestinationProps {
   onComplete: () => void
+  debugMode?: boolean
 }
 
 // Full country dataset copied from the Streamlit project
@@ -120,8 +121,8 @@ const COUNTRIES: CountryEntry[] = Object.entries(
     : [],
 }))
 
-export function Destination({ onComplete }: DestinationProps) {
-  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+export function Destination({ onComplete, debugMode }: DestinationProps) {
+  const { getFormData, updateFormData, markSectionComplete, isSectionMarkedComplete } = useFormStore()
   
   // Use correct data structure matching Streamlit
   const selectedCountry = getFormData("residencyIntentions.destinationCountry.country") ?? ""
@@ -149,25 +150,35 @@ export function Destination({ onComplete }: DestinationProps) {
   }
 
   const handleContinue = () => {
+    console.log('Destination handleContinue called')
+    console.log('Selected country:', selectedCountry)
+    console.log('Selected region:', selectedRegion)
+    
     if (!selectedCountry || selectedCountry.trim() === "") {
+      console.log('No country selected, returning')
       return
     }
     
     // Check if country has regions
     const countryData = COUNTRIES.find(c => c.name === selectedCountry)
     const hasRegions = countryData?.regions && countryData.regions.length > 0
+    console.log('Country data:', countryData?.name, 'Has regions:', hasRegions)
     
     // If country has regions, require region selection
     if (hasRegions && (!selectedRegion || selectedRegion.trim() === "")) {
+      console.log('Country has regions but no region selected, returning')
       return
     }
     
     // For countries without regions, clear any saved region
     if (!hasRegions) {
+      console.log('Country has no regions, clearing region')
       updateFormData("residencyIntentions.destinationCountry.region", "")
     }
     
+    console.log('Marking destination as complete')
     markSectionComplete("destination")
+    console.log('Calling onComplete')
     onComplete()
   }
 
@@ -279,6 +290,7 @@ export function Destination({ onComplete }: DestinationProps) {
                 if (!selectedCountry) return true
                 const countryData = COUNTRIES.find(c => c.name === selectedCountry)
                 const hasRegions = countryData?.regions && countryData.regions.length > 0
+                // If has regions: require region selection. If no regions: allow continue
                 return hasRegions ? !selectedRegion : false
               })()}
               onClick={handleContinue}
@@ -291,8 +303,24 @@ export function Destination({ onComplete }: DestinationProps) {
         </CardFooter>
       </Card>
 
-      {/* Selected Destination Display */}
-      {selectedCountry && (
+      {/* Debug Info (Debug Mode Only) */}
+      {debugMode && (
+        <div className="mb-4 p-3 bg-amber-100 dark:bg-amber-900 border border-amber-200 dark:border-amber-800 rounded text-xs space-y-1">
+          <div className="font-medium">Destination Debug:</div>
+          <div>• Selected Country: {selectedCountry || "None"}</div>
+          <div>• Selected Region: {selectedRegion || "None"}</div>
+          <div>• Section Completed: {isSectionMarkedComplete("destination") ? "YES" : "NO"}</div>
+          <div>• Button Disabled: {(() => {
+            if (!selectedCountry) return "YES (no country)"
+            const countryData = COUNTRIES.find(c => c.name === selectedCountry)
+            const hasRegions = countryData?.regions && countryData.regions.length > 0
+            return hasRegions ? (!selectedRegion ? "YES (needs region)" : "NO") : "NO"
+          })()}</div>
+        </div>
+      )}
+
+      {/* Selected Destination Display - Only show when section is completed */}
+      {selectedCountry && isSectionMarkedComplete("destination") && (
         <Card className="shadow-sm border-l-4 border-l-green-500">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">

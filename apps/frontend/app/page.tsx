@@ -223,7 +223,7 @@ export default function HomePage() {
       case "disclaimer":
         return <Disclaimer onComplete={handleContinue} />;
       case "destination":
-        return <Destination onComplete={handleContinue} />;
+        return <Destination onComplete={handleContinue} debugMode={debugMode} />;
       case "personal":
         return <PersonalInformation onComplete={handleContinue} />;
       case "residency":
@@ -365,12 +365,12 @@ export default function HomePage() {
         <div className="flex flex-col lg:flex-row lg:items-start lg:gap-8">
           {/* Sidebar - Desktop only */}
           <aside className="hidden lg:block w-80">
-            {/* Selected Destination Card - Show immediately when country is selected */}
-            {destCountry && destCountry.trim() !== "" ? (
+            {/* Selected Destination Card - Show only when destination is completed */}
+            {destCountry && destCountry.trim() !== "" && isSectionComplete("destination") ? (
               <div className="mb-4">
                 <SelectedDestinationCard 
                   country={destCountry} 
-                  region={destRegion} 
+                  region={destRegion || "No specific region"} 
                   compact={true}
                 />
               </div>

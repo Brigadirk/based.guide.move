@@ -38,17 +38,29 @@ const stepIcons = [
 
 export function Sidebar({ steps, currentStep, onStepChange }: SidebarProps) {
   const { formData, getFormData, updateFormData, markSectionComplete, isSectionMarkedComplete } = useFormStore()
-  const destCountry = formData.destination?.country ?? ""
-  const destRegion = formData.destination?.region ?? ""
+  
+  // Only show destination bulletin when destination section is completed
+  const isDestinationComplete = isSectionMarkedComplete("destination")
+  const destCountry = (formData.residencyIntentions?.destinationCountry as any)?.country ?? formData.destination?.country ?? ""
+  const destRegion = (formData.residencyIntentions?.destinationCountry as any)?.region ?? formData.destination?.region ?? ""
+  
+  // Debug logging for destination bulletin
+  console.log('Sidebar destination debug:', {
+    isDestinationComplete,
+    destCountry,
+    destRegion,
+    residencyDestData: formData.residencyIntentions?.destinationCountry,
+    fallbackDestData: formData.destination
+  })
   
   return (
     <div className="w-[26rem] bg-card border-r border-border p-4 h-screen overflow-y-auto">
       <div className="mb-6">
         <h2 className="text-lg font-semibold text-foreground mb-2">Assessment Steps</h2>
         <p className="text-sm text-muted-foreground">Complete each section to generate your personalized analysis</p>
-        {destCountry && (
+        {isDestinationComplete && destCountry && destCountry.trim() !== "" && (
           <p className="text-sm mt-3 text-accent-positive">
-            Destination: {destCountry}{destRegion && ` – ${destRegion}`}
+            Destination: {destCountry}{destRegion && destRegion.trim() !== "" && destRegion !== "I don't know yet / open to any" ? ` – ${destRegion}` : ""}
           </p>
         )}
       </div>
