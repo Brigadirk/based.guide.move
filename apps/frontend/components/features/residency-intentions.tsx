@@ -21,10 +21,9 @@ import { computeVisaStatus } from "@/lib/utils/visa-status"
 import { useDebug } from "@/lib/contexts/debug-context"
  
 
-export function ResidencyIntentions({ onComplete }: { onComplete: () => void }) {
+export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () => void; debugMode?: boolean }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
-  const { debugMode } = useDebug()
 
   // Destination & move
   const destCountry = getFormData("residencyIntentions.destinationCountry.country") ?? ""

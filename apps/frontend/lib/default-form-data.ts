@@ -113,6 +113,10 @@ export const defaultFormData: FormData = {
   },
   finance: {
     skipTaxSections: false,
+    skipDetails: false,
+    autoCompletedSections: false,
+    originalCompletionStates: {},
+    preservedData: {},
     totalWealth: {
       total: 0,
       currency: "USD",
@@ -150,5 +154,8 @@ export const defaultFormData: FormData = {
     specialCircumstances: "",
     specialSections: []
   },
-  completedSections: {}
+  completedSections: {},
+  summary: {
+    editedFullStory: ""
+  }
 } 

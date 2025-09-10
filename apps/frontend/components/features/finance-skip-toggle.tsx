@@ -12,36 +12,83 @@ interface FinanceSkipToggleProps {
 }
 
 export function FinanceSkipToggle({ variant = "sidebar" }: FinanceSkipToggleProps) {
-  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { getFormData, updateFormData, markSectionComplete, isSectionComplete } = useFormStore()
   const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
 
   const handleFinanceSkipToggle = (checked: boolean) => {
-    const wasAutoCompleted = getFormData("finance.autoCompletedSections") ?? false
+    const financeeSections = ["finance", "social-security", "tax-deductions", "future-plans"]
+    const sectionDataKeys = ["finance", "socialSecurityAndPensions", "taxDeductionsAndCredits", "futureFinancialPlans"]
+    
+    console.log(`Finance skip toggle: ${checked ? 'ON' : 'OFF'}`)
     
     updateFormData("finance.skipDetails", checked)
     
     if (checked) {
-      // Mark all finance-related sections as complete when skipping details
-      markSectionComplete("finance")
-      markSectionComplete("socialSecurityAndPensions") 
-      markSectionComplete("taxDeductionsAndCredits")
-      markSectionComplete("futureFinancialPlans")
+      // PRESERVE ORIGINAL STATE BEFORE SKIP
       
-      // Store which sections were auto-completed so we can unmark them later
-      updateFormData("finance.autoCompletedSections", [
-        "finance", "socialSecurityAndPensions", "taxDeductionsAndCredits", "futureFinancialPlans"
-      ])
-    } else {
-      // When unchecking, always unmark all finance sections
-      const financeeSections = ["finance", "socialSecurityAndPensions", "taxDeductionsAndCredits", "futureFinancialPlans"]
+      // 1. Save current completion states
+      const originalStates: Record<string, boolean> = {}
+      financeeSections.forEach(sectionId => {
+        const isComplete = isSectionComplete(sectionId)
+        originalStates[sectionId] = isComplete
+        console.log(`Section ${sectionId} was originally complete: ${isComplete}`)
+      })
+      updateFormData("finance.originalCompletionStates", originalStates)
       
-      // Unmark each finance section
-      financeeSections.forEach((sectionId: string) => {
-        updateFormData(`completedSections.${sectionId}`, false)
+      // 2. Save current section data
+      const preservedData: Record<string, any> = {}
+      sectionDataKeys.forEach(dataKey => {
+        const data = getFormData(dataKey)
+        if (data && Object.keys(data).length > 0) {
+          preservedData[dataKey] = data
+          console.log(`Preserved data for ${dataKey}:`, Object.keys(data))
+        }
+      })
+      updateFormData("finance.preservedData", preservedData)
+      
+      // 3. Mark all finance sections as complete (skip override)
+      console.log('Marking finance sections as complete...')
+      financeeSections.forEach(sectionId => {
+        markSectionComplete(sectionId)
+        console.log(`Marked ${sectionId} as complete`)
       })
       
-      // Clear the auto-completion flag
+      // 4. Flag that sections were auto-completed by skip
+      updateFormData("finance.autoCompletedSections", financeeSections)
+      
+    } else {
+      // RESTORE ORIGINAL STATE AFTER UNFLIP
+      
+      console.log('Restoring original finance states...')
+      
+      // 1. Get preserved states and data
+      const originalStates = getFormData("finance.originalCompletionStates") ?? {}
+      const preservedData = getFormData("finance.preservedData") ?? {}
+      
+      console.log('Original states to restore:', originalStates)
+      console.log('Preserved data to restore:', Object.keys(preservedData))
+      
+      // 2. Restore original completion states
+      financeeSections.forEach(sectionId => {
+        const wasOriginallyComplete = originalStates[sectionId] ?? false
+        updateFormData(`completedSections.${sectionId}`, wasOriginallyComplete)
+        console.log(`Restored ${sectionId} completion state to: ${wasOriginallyComplete}`)
+      })
+      
+      // 3. Restore original section data
+      sectionDataKeys.forEach(dataKey => {
+        if (preservedData[dataKey]) {
+          updateFormData(dataKey, preservedData[dataKey])
+          console.log(`Restored data for ${dataKey}`)
+        }
+      })
+      
+      // 4. Clear skip flags
       updateFormData("finance.autoCompletedSections", false)
+      updateFormData("finance.originalCompletionStates", {})
+      updateFormData("finance.preservedData", {})
+      
+      console.log('Finance skip restore complete')
     }
   }
 

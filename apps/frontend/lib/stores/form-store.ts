@@ -168,6 +168,15 @@ export interface FormData {
   }
   finance?: {
     skipTaxSections: boolean
+    skipDetails?: boolean
+    autoCompletedSections?: string[] | false
+    originalCompletionStates?: Record<string, boolean>
+    preservedData?: {
+      finance?: any
+      socialSecurityAndPensions?: any
+      taxDeductionsAndCredits?: any
+      futureFinancialPlans?: any
+    }
     totalWealth?: {
       total: number
       currency: string
@@ -253,6 +262,9 @@ export interface FormData {
     }>
   }
   completedSections?: Record<string, boolean>
+  summary?: {
+    editedFullStory?: string
+  }
 }
 
 interface FormStoreState {

@@ -272,13 +272,7 @@ export function AdditionalInformation({ onComplete }: { onComplete: () => void }
                   </Card>
                 ))}
               </div>
-            ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p>ℹ️ No special information sections added yet.</p>
-                <p className="text-sm">Use the form above to add important details.</p>
-              </div>
-            )}
+            ) : null}
           </div>
         </CardContent>
       </Card>

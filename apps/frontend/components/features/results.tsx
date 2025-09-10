@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { PerplexityLoading } from "@/components/ui/perplexity-loading"
 import { PageHeading } from "@/components/ui/page-heading"
+import { useDebug } from "@/lib/contexts/debug-context"
 
 const PERPLEXITY_MODELS = [
   { id: "sonar-deep-research", name: "Sonar Deep Research", description: "Best for comprehensive analysis" },
@@ -21,7 +22,7 @@ const PERPLEXITY_MODELS = [
   { id: "sonar-pro", name: "Sonar Pro", description: "Enhanced performance model" }
 ]
 
-export function Results() {
+export function Results({ debugMode }: { debugMode?: boolean }) {
   const { formData } = useFormStore()
   const [fullPrompt, setFullPrompt] = useState("")
   const [selectedModel, setSelectedModel] = useState("sonar-deep-research")
@@ -165,8 +166,9 @@ Please provide a detailed answer to the follow-up question, referencing the prev
         icon={<Sparkles className="w-7 h-7 text-green-600" />}
       />
 
-      {/* Full Prompt Card */}
-      <Card className="shadow-sm border-l-4 border-l-blue-500">
+      {/* Analysis Prompt Card (Debug Only) */}
+      {debugMode && (
+        <Card className="shadow-sm border-l-4 border-l-orange-500">
         <CardHeader className="bg-gradient-to-r from-blue-50 to-transparent dark:from-blue-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
             <FileText className="w-6 h-6 text-blue-600" />
@@ -210,9 +212,11 @@ Please provide a detailed answer to the follow-up question, referencing the prev
           </div>
         </CardContent>
       </Card>
+      )}
 
-      {/* Model Selection & Generate Card */}
-      <Card className="shadow-sm border-l-4 border-l-purple-500">
+      {/* Model Selection & Generate Card (Debug Only) */}
+      {debugMode && (
+        <Card className="shadow-sm border-l-4 border-l-purple-500">
         <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
             <Settings className="w-6 h-6 text-purple-600" />
@@ -274,6 +278,35 @@ Please provide a detailed answer to the follow-up question, referencing the prev
           </div>
         </CardContent>
       </Card>
+      )}
+
+      {/* Generate Analysis Button (Always Visible when not in debug mode) */}
+      {!debugMode && (
+        <Card className="shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex justify-center">
+              <Button
+                onClick={generateResult}
+                disabled={isGeneratingResult || isGeneratingPrompt || !fullPrompt.trim()}
+                size="lg"
+                className="px-8 py-3 text-lg font-semibold shadow-lg gap-3"
+              >
+                {isGeneratingResult ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Generating Analysis...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5" />
+                    Generate Analysis
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Loading Animation */}
       <PerplexityLoading 

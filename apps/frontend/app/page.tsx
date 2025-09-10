@@ -35,7 +35,7 @@ import { SocialSecurityPensions } from "@/components/features/social-security-pe
 import { TaxDeductionsAndCredits } from "@/components/features/tax-deductions-and-credits";
 import { FutureFinancialPlans } from "@/components/features/future-financial-plans";
 import { AdditionalInformation } from "@/components/features/additional-information";
-import { Summary } from "@/components/features/summary";
+import { Summary } from "@/components/features/summary-clean";
 import { Results } from "@/components/features/results";
 import { useFormStore } from "@/lib/stores";
 import { DevStateViewer } from "@/components/dev/state-viewer";
@@ -183,8 +183,10 @@ export default function HomePage() {
   // canProceed function removed - no longer needed without navigation buttons
 
   // FIXED: Progress based on actual completion, not navigation position
-  const completedSections = SECTIONS.filter(section => isSectionComplete(section.id))
-  const progress = (completedSections.length / SECTIONS.length) * 100;
+  // Only count the 10 data entry sections (exclude Summary & Results)
+  const dataEntrySections = SECTIONS.filter(section => section.id !== "summary")
+  const completedDataSections = dataEntrySections.filter(section => isSectionComplete(section.id))
+  const progress = (completedDataSections.length / 10) * 100; // Fixed denominator to 10
 
   const renderSection = () => {
     const section = SECTIONS[currentSection];
@@ -216,7 +218,7 @@ export default function HomePage() {
       case "personal":
         return <PersonalInformation onComplete={handleContinue} />;
       case "residency":
-        return <ResidencyIntentions onComplete={handleContinue} />;
+        return <ResidencyIntentions onComplete={handleContinue} debugMode={debugMode} />;
       case "education":
         return <Education onComplete={handleContinue} />;
       case "finance":
@@ -232,8 +234,8 @@ export default function HomePage() {
       case "summary":
         return (
           <div className="space-y-8">
-            <Summary />
-            <Results />
+            <Summary debugMode={debugMode} />
+            <Results debugMode={debugMode} />
           </div>
         );
       default:
@@ -252,16 +254,35 @@ export default function HomePage() {
           <div className="fixed top-4 left-4 z-50">
             <Card className="shadow-lg border-amber-200 bg-amber-50/90 dark:bg-amber-950/90 backdrop-blur-sm">
               <CardContent className="p-3">
-                <div className="flex items-center gap-2">
-                  <Bug className="w-4 h-4 text-amber-600" />
-                  <Label htmlFor="debug-mode" className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                    Debug
-                  </Label>
-                  <Switch
-                    id="debug-mode"
-                    checked={debugMode}
-                    onCheckedChange={setDebugMode}
-                  />
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Bug className="w-4 h-4 text-amber-600" />
+                    <Label htmlFor="debug-mode" className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                      Debug
+                    </Label>
+                    <Switch
+                      id="debug-mode"
+                      checked={debugMode}
+                      onCheckedChange={setDebugMode}
+                    />
+                  </div>
+                  {debugMode && (
+                    <div className="text-xs text-amber-700 dark:text-amber-300 pt-1 border-t border-amber-200 dark:border-amber-800 space-y-1">
+                      <div>Finance Skip: <span className="font-medium">{skipFinanceDetails ? "ON" : "OFF"}</span></div>
+                      <div className="space-y-0.5">
+                        <div className="font-medium">Section Completion:</div>
+                        <div>• Finance: {isSectionComplete("finance") ? "✅" : "❌"}</div>
+                        <div>• Social Security: {isSectionComplete("social-security") ? "✅" : "❌"}</div>
+                        <div>• Tax Deductions: {isSectionComplete("tax-deductions") ? "✅" : "❌"}</div>
+                        <div>• Future Plans: {isSectionComplete("future-plans") ? "✅" : "❌"}</div>
+                      </div>
+                      <div className="space-y-0.5">
+                        <div className="font-medium">Skip State:</div>
+                        <div>• Auto-completed: {JSON.stringify(getFormData("finance.autoCompletedSections"))}</div>
+                        <div>• Original states: {JSON.stringify(getFormData("finance.originalCompletionStates"))}</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -466,7 +487,7 @@ export default function HomePage() {
                   Progress: {Math.round(progress)}%
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  Step {currentSection + 1} of {SECTIONS.length}
+                  Step {Math.min(currentSection + 1, 10)} of 10
                 </span>
               </div>
               <Progress value={progress} className="h-2" />
