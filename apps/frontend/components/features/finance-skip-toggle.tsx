@@ -49,12 +49,20 @@ export function FinanceSkipToggle({ variant = "sidebar" }: FinanceSkipToggleProp
       // 3. Mark all finance sections as complete (skip override)
       console.log('Marking finance sections as complete...')
       financeeSections.forEach(sectionId => {
+        console.log(`About to mark ${sectionId} as complete`)
         markSectionComplete(sectionId)
-        console.log(`Marked ${sectionId} as complete`)
+        console.log(`Called markSectionComplete for ${sectionId}`)
+        
+        // Verify it was marked
+        setTimeout(() => {
+          const isNowComplete = isSectionComplete(sectionId)
+          console.log(`${sectionId} is now complete: ${isNowComplete}`)
+        }, 100)
       })
       
       // 4. Flag that sections were auto-completed by skip
       updateFormData("finance.autoCompletedSections", financeeSections)
+      console.log('Set autoCompletedSections to:', financeeSections)
       
     } else {
       // RESTORE ORIGINAL STATE AFTER UNFLIP

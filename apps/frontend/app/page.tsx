@@ -267,19 +267,44 @@ export default function HomePage() {
                     />
                   </div>
                   {debugMode && (
-                    <div className="text-xs text-amber-700 dark:text-amber-300 pt-1 border-t border-amber-200 dark:border-amber-800 space-y-1">
+                    <div className="text-xs text-amber-700 dark:text-amber-300 pt-1 border-t border-amber-200 dark:border-amber-800 space-y-2 max-w-xs">
                       <div>Finance Skip: <span className="font-medium">{skipFinanceDetails ? "ON" : "OFF"}</span></div>
+                      
                       <div className="space-y-0.5">
-                        <div className="font-medium">Section Completion:</div>
+                        <div className="font-medium">Section Completion (isSectionComplete):</div>
                         <div>• Finance: {isSectionComplete("finance") ? "✅" : "❌"}</div>
                         <div>• Social Security: {isSectionComplete("social-security") ? "✅" : "❌"}</div>
                         <div>• Tax Deductions: {isSectionComplete("tax-deductions") ? "✅" : "❌"}</div>
                         <div>• Future Plans: {isSectionComplete("future-plans") ? "✅" : "❌"}</div>
                       </div>
+                      
                       <div className="space-y-0.5">
-                        <div className="font-medium">Skip State:</div>
-                        <div>• Auto-completed: {JSON.stringify(getFormData("finance.autoCompletedSections"))}</div>
-                        <div>• Original states: {JSON.stringify(getFormData("finance.originalCompletionStates"))}</div>
+                        <div className="font-medium">Raw completedSections Object:</div>
+                        <div className="bg-amber-100 dark:bg-amber-900 p-1 rounded text-xs font-mono">
+                          {JSON.stringify(getFormData("completedSections"), null, 1)}
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-0.5">
+                        <div className="font-medium">Finance Skip State:</div>
+                        <div>• skipDetails: {String(getFormData("finance.skipDetails"))}</div>
+                        <div>• autoCompleted: {JSON.stringify(getFormData("finance.autoCompletedSections"))}</div>
+                        <div>• originalStates: {JSON.stringify(getFormData("finance.originalCompletionStates"))}</div>
+                        <div>• preservedData keys: {JSON.stringify(Object.keys(getFormData("finance.preservedData") ?? {}))}</div>
+                      </div>
+                      
+                      <div className="space-y-0.5">
+                        <div className="font-medium">Store Functions Available:</div>
+                        <div>• markSectionComplete: {typeof markSectionComplete}</div>
+                        <div>• isSectionComplete: {typeof isSectionComplete}</div>
+                        <div>• updateFormData: {typeof updateFormData}</div>
+                      </div>
+                      
+                      <div className="space-y-0.5">
+                        <div className="font-medium">Current Section:</div>
+                        <div>• Index: {currentSection}</div>
+                        <div>• ID: {SECTIONS[currentSection]?.id}</div>
+                        <div>• Title: {SECTIONS[currentSection]?.title}</div>
                       </div>
                     </div>
                   )}

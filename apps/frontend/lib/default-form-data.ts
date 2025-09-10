@@ -154,7 +154,18 @@ export const defaultFormData: FormData = {
     specialCircumstances: "",
     specialSections: []
   },
-  completedSections: {},
+  completedSections: {
+    "disclaimer": false,
+    "destination": false,
+    "personal": false,
+    "residency": false,
+    "education": false,
+    "finance": false,
+    "social-security": false,
+    "tax-deductions": false,
+    "future-plans": false,
+    "additional": false
+  },
   summary: {
     editedFullStory: ""
   }
