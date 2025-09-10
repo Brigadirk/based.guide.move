@@ -64,6 +64,7 @@ export interface FormData {
     }>
   }
   education?: {
+    autoSkipped?: boolean
     previousDegrees: Array<{
       degreeName: string
       institution: string
@@ -150,7 +151,6 @@ export interface FormData {
       applyForResidency?: boolean
     } & Record<string, {
       notes?: string
-      schoolTiming?: string
     }>
     residencyPlans?: {
       openToVisiting?: boolean
@@ -163,7 +163,6 @@ export interface FormData {
     familyCoordination?: {
       applicationTiming?: "together" | "sequential" | "undecided"
       specialFamilyCircumstances?: string
-      schoolTimingConsiderations?: string
     }
   }
   finance?: {

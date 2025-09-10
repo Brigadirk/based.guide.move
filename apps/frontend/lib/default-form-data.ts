@@ -29,6 +29,7 @@ export const defaultFormData: FormData = {
     dependents: []
   },
   education: {
+    autoSkipped: false,
     previousDegrees: [],
     visaSkills: [],
     learningInterests: []
@@ -107,8 +108,7 @@ export const defaultFormData: FormData = {
     moveMotivationDetails: "",
     familyCoordination: {
       applicationTiming: "undecided",
-      specialFamilyCircumstances: "",
-      schoolTimingConsiderations: ""
+      specialFamilyCircumstances: ""
     }
   },
   finance: {

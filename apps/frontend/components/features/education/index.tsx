@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { GraduationCap, BookOpen, CheckCircle, Info } from "lucide-react"
@@ -28,9 +29,12 @@ import { OtherLanguagesSection } from "./language/other-languages-section"
 import { LanguageProficiencyFull } from "./language/language-proficiency-full"
 import type { EducationProps } from "./types"
 
-export function Education({ onComplete }: EducationProps) {
-  const { markSectionComplete } = useFormStore()
+export function Education({ onComplete, debugMode }: EducationProps & { debugMode?: boolean }) {
+  const { markSectionComplete, getFormData } = useFormStore()
   const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
+  
+  // Check if education was auto-skipped due to no visa requirements
+  const isAutoSkipped = getFormData("education.autoSkipped") ?? false
   
   // Use our custom hooks for state management
   const educationState = useEducationState()
@@ -104,6 +108,42 @@ export function Education({ onComplete }: EducationProps) {
         icon={<GraduationCap className="w-7 h-7 text-green-600" />}
       />
 
+      {/* Auto-Skip Indicator */}
+      {isAutoSkipped && (
+        <Card className="shadow-sm border-l-4 border-l-green-500">
+          <CardHeader className="bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20">
+            <CardTitle className="text-xl flex items-center gap-3">
+              <GraduationCap className="w-6 h-6 text-green-600" />
+              Education Details Skipped
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">No visa requirements detected</p>
+          </CardHeader>
+          <CardContent className="pt-6 space-y-4">
+            <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950/20">
+              <p className="text-green-800 dark:text-green-200">
+                ✅ Education section auto-completed. Since neither you nor your partner need a visa, detailed education information is not required for visa applications.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <Button
+                onClick={onComplete}
+                size="lg"
+                className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white"
+              >
+                Continue to Income and Assets
+              </Button>
+            </div>
+            
+            {debugMode && (
+              <div className="text-xs text-amber-700 bg-amber-100 p-2 rounded">
+                Debug: isAutoSkipped = {String(isAutoSkipped)}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Visa Requirement Summary (read-only) */}
       {destCountry && (
         (() => {
@@ -176,9 +216,33 @@ export function Education({ onComplete }: EducationProps) {
         <Alert className="border-stone-200 bg-stone-50 dark:border-stone-700 dark:bg-stone-900/50">
           <CheckCircle className="h-4 w-4 text-stone-600 dark:text-stone-400" />
           <AlertDescription className="text-stone-700 dark:text-stone-300">
-            <strong>Education section auto-completed:</strong> You do not need a visa to move to {destCountry} as an EU citizen, so detailed educational documentation is not required for immigration purposes. You can still add information if desired for professional registration or other purposes.
+            <strong>Education section auto-completed:</strong> You do not need a visa to move to {destCountry} {(() => {
+              const isUserCitizen = Array.isArray(userNationalities) && destCountry ? userNationalities.some((n: any) => n?.country === destCountry) : false
+              const userCanMoveEU = destCountry ? canMoveWithinEU(userNationalities, destCountry) : false
+              
+              if (isUserCitizen) {
+                return "as you are already a citizen"
+              } else if (userCanMoveEU) {
+                return "as an EU citizen with freedom of movement"
+              } else {
+                return ""
+              }
+            })()}, so detailed educational documentation is not required for immigration purposes. You can still add information if desired for professional registration or other purposes.
           </AlertDescription>
         </Alert>
+      )}
+
+      {/* Continue button for auto-completed education */}
+      {shouldAutoComplete && (
+        <div className="text-center">
+          <Button
+            onClick={onComplete}
+            size="lg"
+            className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white"
+          >
+            Continue to Income and Assets
+          </Button>
+        </div>
       )}
 
       {/* Advisory message for mixed EU/non-EU partnerships */}

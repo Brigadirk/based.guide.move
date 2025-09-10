@@ -38,8 +38,20 @@ const MARITAL_OPTIONS = [
 ] as const
 
 export function PersonalInformation({ onComplete }: { onComplete: () => void }) {
-  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { getFormData, updateFormData, markSectionComplete, isSectionMarkedComplete } = useFormStore()
   const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
+  
+  // Editing state management
+  const [isEditing, setIsEditing] = useState(false)
+  const isPersonalCompleted = isSectionMarkedComplete("personal")
+  
+  // Initialize editing state
+  useEffect(() => {
+    if (!isPersonalCompleted) {
+      // First time or incomplete - start in editing mode
+      setIsEditing(true)
+    }
+  }, [isPersonalCompleted])
   
   // Get full country list
   const countries = getCountries()
@@ -76,17 +88,17 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     return `${defaultYear}-${month}-${day}`
   }
 
-  // Helper function to calculate age from date of birth (in decimal years)
+  // Helper function to calculate age from date of birth (in whole years)
   const calculateAge = (dateOfBirth: string): number => {
     if (!dateOfBirth) return 0
     const today = new Date()
     const birthDate = new Date(dateOfBirth)
     
-    // Calculate age in milliseconds and convert to years
+    // Calculate age in milliseconds and convert to years, then floor to whole number
     const ageInMs = today.getTime() - birthDate.getTime()
     const ageInYears = ageInMs / (1000 * 60 * 60 * 24 * 365.25) // Account for leap years
     
-    return Math.max(0, ageInYears)
+    return Math.floor(Math.max(0, ageInYears)) // Round down to whole years
   }
 
   // Helper function to format age for display
@@ -598,7 +610,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
   const handleComplete = () => {
     markSectionComplete("personal")
+    setIsEditing(false)
     onComplete()
+  }
+
+  const handleEdit = () => {
+    setIsEditing(true)
   }
 
   return (
@@ -610,6 +627,39 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
         icon={<User className="w-7 h-7 text-green-600" />}
       />
 
+      {/* Saved Personal Information Summary (when completed and not editing) */}
+      {isPersonalCompleted && !isEditing && (
+        <Card className="shadow-sm border-l-4 border-l-green-500">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <CardTitle className="text-xl">Personal Information Summary</CardTitle>
+                <div className="mt-2 space-y-1 text-sm text-muted-foreground">
+                  <div>• Age: {calculateAge(dob)} years old</div>
+                  <div>• Nationalities: {natList.map(n => n.country).join(", ")}</div>
+                  <div>• Marital Status: {maritalStatus}</div>
+                  <div>• Current Residence: {curCountry} ({curStatus})</div>
+                  {hasPartner && <div>• Relocating with partner</div>}
+                  {localDepList.length > 0 && <div>• {localDepList.length} dependent{localDepList.length > 1 ? 's' : ''}</div>}
+                </div>
+              </div>
+              <Button
+                onClick={handleEdit}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                <Pencil className="w-4 h-4" />
+                Edit
+              </Button>
+            </div>
+          </CardHeader>
+        </Card>
+      )}
+
+      {/* Editing Form (when not completed or actively editing) */}
+      {(!isPersonalCompleted || isEditing) && (
+        <>
       <SectionHint title="About this section">
         Accurate personal and family information enables country-specific tax residency analysis, spousal/dependent visa eligibility checks, and tailored planning based on your household composition.
       </SectionHint>
@@ -2617,6 +2667,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
         onGoToSection={goToSection}
         onNavigateToSection={navigateToSection}
       />
+        </>
+      )}
     </div>
   )
 } 

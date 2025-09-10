@@ -139,6 +139,47 @@ export default function HomePage() {
     localStorage.setItem('migration-current-section', currentSection.toString())
   }, [currentSection])
 
+  // Auto-complete education when no visa is needed
+  useEffect(() => {
+    const destCountry = getFormData("residencyIntentions.destinationCountry.country")
+    const userNationalities = getFormData("personalInformation.nationalities") || []
+    const partnerNationalities = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") || []
+    const hasPartner = getFormData("personalInformation.relocationPartner") || false
+    
+    if (destCountry && isSectionComplete("personal") && isSectionComplete("residency")) {
+      // Check if user needs visa
+      const isUserCitizen = Array.isArray(userNationalities) && userNationalities.some((n: any) => n?.country === destCountry)
+      const userCanMoveEU = destCountry && Array.isArray(userNationalities) ? userNationalities.some((n: any) => {
+        // Simple EU check - would need to import canMoveWithinEU for full check
+        const euCountries = ["Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg", "Malta", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia", "Slovenia", "Spain", "Sweden"]
+        return euCountries.includes(n?.country) && euCountries.includes(destCountry)
+      }) : false
+      const userNeedsVisa = !(isUserCitizen || userCanMoveEU)
+      
+      // Check if partner needs visa
+      const isPartnerCitizen = hasPartner && Array.isArray(partnerNationalities) && partnerNationalities.some((n: any) => n?.country === destCountry)
+      const partnerCanMoveEU = hasPartner && destCountry && Array.isArray(partnerNationalities) ? partnerNationalities.some((n: any) => {
+        const euCountries = ["Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg", "Malta", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia", "Slovenia", "Spain", "Sweden"]
+        return euCountries.includes(n?.country) && euCountries.includes(destCountry)
+      }) : false
+      const partnerNeedsVisa = hasPartner && !(isPartnerCitizen || partnerCanMoveEU)
+      
+      // If neither user nor partner need visa, auto-complete education
+      if (!userNeedsVisa && !partnerNeedsVisa) {
+        if (!isSectionComplete("education")) {
+          markSectionComplete("education")
+          updateFormData("education.autoSkipped", true)
+        }
+      } else {
+        // If someone needs visa, unmark education if it was auto-skipped
+        if (getFormData("education.autoSkipped")) {
+          updateFormData("completedSections.education", false)
+          updateFormData("education.autoSkipped", false)
+        }
+      }
+    }
+  }, [getFormData("residencyIntentions.destinationCountry.country"), getFormData("personalInformation.nationalities"), getFormData("personalInformation.relocationPartnerInfo.partnerNationalities"), getFormData("personalInformation.relocationPartner")])
+
   // Listen for formData changes from custom events
   useEffect(() => {
     const handleFormDataChange = (event: CustomEvent) => {
@@ -229,7 +270,7 @@ export default function HomePage() {
       case "residency":
         return <ResidencyIntentions onComplete={handleContinue} debugMode={debugMode} />;
       case "education":
-        return <Education onComplete={handleContinue} />;
+        return <Education onComplete={handleContinue} debugMode={debugMode} />;
       case "finance":
         return <Finance onComplete={handleContinue} />;
       case "social-security":

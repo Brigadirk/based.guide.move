@@ -98,8 +98,9 @@ export function useAlternativeInterests() {
   }
 
   const handleMistake = () => {
-    // Unset the finance skip to get them out of this condition
-    updateFormData("finance.skipDetails", false)
+    // Trigger the same logic as manually unflipping the finance skip toggle
+    const event = new CustomEvent('financeSkipToggle', { detail: { checked: false } })
+    window.dispatchEvent(event)
     
     // Clear alternative interests data
     updateFormData("alternativeInterests", {})

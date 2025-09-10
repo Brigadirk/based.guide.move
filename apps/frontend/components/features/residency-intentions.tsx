@@ -80,12 +80,11 @@ export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () 
   const userCanMoveEU = destCountry ? canMoveWithinEU(userNationalities, destCountry) : false
   const userNeedsVisa = !!destCountry && !(isUserCitizen || userCanMoveEU)
 
-  const partnerNeedsVisa = hasPartner && destCountry
-    ? !(
-        (Array.isArray(partnerNationalities) && partnerNationalities.some((n: any) => n?.country === destCountry)) ||
-        canMoveWithinEU(partnerNationalities, destCountry)
-      )
+  const isPartnerCitizen = hasPartner && destCountry && Array.isArray(partnerNationalities) 
+    ? partnerNationalities.some((n: any) => n?.country === destCountry)
     : false
+  const partnerCanMoveEU = hasPartner && destCountry ? canMoveWithinEU(partnerNationalities, destCountry) : false
+  const partnerNeedsVisa = hasPartner && destCountry && !(isPartnerCitizen || partnerCanMoveEU)
 
   const dependentsForVisaCheck = Array.isArray(dependents)
     ? dependents.filter((d: any) => !d?.isDraft)
@@ -141,7 +140,7 @@ export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () 
       showFamilyCoordination ? "Family Coordination" : ""
     )
   }
-  if (s1_userNeeds_partnerNot && anyDependentNeedsVisa) debugVisibleSections.push("Dependents Visa Notes (notes + school timing)")
+  if (s1_userNeeds_partnerNot && anyDependentNeedsVisa) debugVisibleSections.push("Dependents Visa Notes")
   if (anyDependentNeedsVisa) debugVisibleSections.push("Dependents Residency/Citizenship Plans (checkbox + details)")
   // Clean empty entries
   const debugVisibleSectionsClean = debugVisibleSections.filter(Boolean)
@@ -323,7 +322,7 @@ export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () 
               </div>
             )}
 
-              {/* Special situation field */}
+              {/* Special situation field - only show if there are complexities to describe */}
               <div className="space-y-3">
                 <div>
                   <button
@@ -331,7 +330,7 @@ export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () 
                     className="text-sm text-muted-foreground hover:text-foreground"
                     onClick={() => updateFormData("residencyIntentions.destinationCountry.showSpecialSituation", !getFormData("residencyIntentions.destinationCountry.showSpecialSituation"))}
                   >
-                    I have a special situation (e.g. my partner has a different move interest).
+                    I have a special situation{hasPartner ? " (e.g. my partner has a different move interest)" : ""}.
                   </button>
                   {getFormData("residencyIntentions.destinationCountry.showSpecialSituation") && (
                     <div className="space-y-2 mt-2">
@@ -339,13 +338,16 @@ export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () 
                       <Textarea
                         value={getFormData("residencyIntentions.destinationCountry.specialSituation") || ""}
                         onChange={(e) => updateFormData("residencyIntentions.destinationCountry.specialSituation", e.target.value)}
-                        placeholder="e.g., partner will move with me the first year, then return; I have a remote work arrangement; etc."
+                        placeholder={hasPartner 
+                          ? "e.g., partner will move with me the first year, then return; I have a remote work arrangement; etc."
+                          : "e.g., I have a remote work arrangement, special visa situation, etc."
+                        }
                         rows={3}
                       />
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-                      </div>
                       </div>
               </CardContent>
             </Card>
@@ -479,19 +481,23 @@ export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () 
                       {willingToConsider?.familyConnections && (
                         <div className="space-y-2">
                           <Label className="text-sm">Family connection details</Label>
-                          <Input
+                          <Textarea
                             value={getFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnectionDetails") || ""}
                             onChange={(e) => updateFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnectionDetails", e.target.value)}
                             placeholder="e.g., spouse is a citizen, grandparent was born there"
-                            className="max-w-md"
+                            maxLength={280}
+                            rows={3}
                           />
-                                  </div>
+                          <div className="text-xs text-muted-foreground text-right">
+                            {(getFormData("residencyIntentions.citizenshipInterest.willingToConsider.familyConnectionDetails") || "").length}/280
+                          </div>
+                        </div>
                       )}
                                 </div>
                   )}
                   
-                  {/* Special situation for different partner interests */}
-                  {hasPartner && (
+                  {/* Special situation for different partner interests - only if partner isn't already a citizen */}
+                  {hasPartner && !isPartnerCitizen && (
                     <div className="space-y-3">
                       <button
                         type="button"
@@ -500,7 +506,7 @@ export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () 
                       >
                         My partner has different citizenship interests
                       </button>
-                            </div>
+                    </div>
                   )}
               </div>
               )}
@@ -592,15 +598,15 @@ export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () 
       </Card>
           )}
 
-      {/* Citizenship Interest for EU Rights Holders (when adults don't need visas but have EU rights) */}
-      {destCountry && adultsNoVisa && (
+      {/* Citizenship Interest for EU Rights Holders (when adults don't need visas but have EU rights and aren't already citizens) */}
+      {destCountry && adultsNoVisa && !isUserCitizen && (
             <Card className="shadow-sm border-l-4 border-l-orange-500">
               <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
           <CardTitle className="text-xl flex items-center gap-3">
                   <Shield className="w-6 h-6 text-orange-600" />
                   Citizenship Interest
           </CardTitle>
-            <p className="text-sm text-muted-foreground">Limited citizenship pathways for EU citizens/residents</p>
+              <p className="text-sm text-muted-foreground">Limited citizenship pathways for EU citizens moving within the EU</p>
         </CardHeader>
         <CardContent className="pt-6">
           <div className="space-y-6">
@@ -775,16 +781,10 @@ export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () 
                           onChange={(e) => updateFormData(`residencyIntentions.dependentsVisa.${i}.notes`, e.target.value)}
                           rows={2}
                         />
-                        <Label className="text-sm">School timing considerations</Label>
-                        <Input
-                          value={getFormData(`residencyIntentions.dependentsVisa.${i}.schoolTiming`) ?? ""}
-                          onChange={(e) => updateFormData(`residencyIntentions.dependentsVisa.${i}.schoolTiming`, e.target.value)}
-                          placeholder="e.g., move during summer break"
-                        />
-                          </div>
+                      </div>
                     ))}
-                          </div>
-                          </div>
+                  </div>
+                </div>
               )}
               {!s4_noneNeed && (
                     <div className="space-y-2">
@@ -818,15 +818,6 @@ export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () 
                   onChange={(e) => updateFormData("residencyIntentions.familyCoordination.specialFamilyCircumstances", e.target.value)}
                   placeholder="Briefly describe any special circumstances"
                       rows={3}
-                    />
-                  </div>
-              <div className="space-y-2">
-                <Label className="text-base font-medium">School timing considerations (if children)</Label>
-                <Input
-                  value={getFormData("residencyIntentions.familyCoordination.schoolTimingConsiderations") || ""}
-                  onChange={(e) => updateFormData("residencyIntentions.familyCoordination.schoolTimingConsiderations", e.target.value)}
-                  placeholder="e.g., prefer to move during summer break"
-                  className="max-w-xl"
                     />
                   </div>
                 </div>
