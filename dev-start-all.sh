@@ -324,6 +324,19 @@ start_backend_tester() {
 
 # Main execution
 main() {
+    # Run linting checks before starting services
+    print_status "Running linting checks..."
+    if [ -f "lint-check.sh" ]; then
+        ./lint-check.sh || {
+            print_error "Linting checks failed! Fix the issues before starting development servers."
+            print_status "Run './lint-check.sh --fix' to auto-fix issues, or fix manually."
+            exit 1
+        }
+        print_success "All linting checks passed!"
+    else
+        print_warning "lint-check.sh not found, skipping linting checks"
+    fi
+    
     # Setup all services
     setup_backend || exit 1
     setup_frontend || exit 1

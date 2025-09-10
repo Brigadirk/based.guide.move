@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +19,10 @@ import {
   CheckCircle,
   AlertCircle,
   Check,
-  Zap
+  Zap,
+  Bug,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -34,7 +37,7 @@ import { SocialSecurityPensions } from "@/components/features/social-security-pe
 import { TaxDeductionsAndCredits } from "@/components/features/tax-deductions-and-credits";
 import { FutureFinancialPlans } from "@/components/features/future-financial-plans";
 import { AdditionalInformation } from "@/components/features/additional-information";
-import { Summary } from "@/components/features/summary";
+import { Summary } from "@/components/features/summary-clean";
 import { Results } from "@/components/features/results";
 import { useFormStore } from "@/lib/stores";
 import { DevStateViewer } from "@/components/dev/state-viewer";
@@ -52,7 +55,7 @@ interface Section {
 
 const SECTIONS: Section[] = [
   { id: "disclaimer", title: "Disclaimer", icon: AlertCircle, required: true, showDot: true },
-  { id: "destination", title: "Desired Destination", icon: Globe, required: true, showDot: true },
+  { id: "destination", title: "Candidate Destination", icon: Globe, required: true, showDot: true },
   { id: "personal", title: "Personal Information", icon: User, required: true, showDot: true },
   { id: "residency", title: "Residency Intentions", icon: Plane, required: true, showDot: true },
   { id: "education", title: "Education", icon: BookOpen, required: false, showDot: true },
@@ -61,8 +64,7 @@ const SECTIONS: Section[] = [
   { id: "tax-deductions", title: "Tax Deductions and Credits", icon: Calculator, required: false, showDot: true },
   { id: "future-plans", title: "Future Financial Plans", icon: TrendingUp, required: false, showDot: true },
   { id: "additional", title: "Additional Information", icon: Info, required: false, showDot: true },
-  { id: "summary", title: "Summary", icon: CheckCircle, required: false, showDot: false }, // No red dot for summary
-  { id: "results", title: "Results", icon: Zap, required: false, showDot: false }, // No red dot for results
+  { id: "summary", title: "Summary & Results", icon: CheckCircle, required: false, showDot: false }, // Combined section
 ];
 
 export default function HomePage() {
@@ -79,6 +81,32 @@ export default function HomePage() {
     getFormData
   } = useFormStore();
 
+  // Debug mode state (only in development)
+  const [debugMode, setDebugMode] = useState(false)
+  const [debugCollapsed, setDebugCollapsed] = useState(false)
+  const isDev = process.env.NODE_ENV === 'development'
+
+  // Finance skip functionality (moved from toggle component to main app)
+  const handleFinanceSkipToggle = (checked: boolean) => {
+    const financeeSections = ["finance", "social-security", "tax-deductions", "future-plans"]
+    
+    updateFormData("finance.skipDetails", checked)
+    
+    if (checked) {
+      // Mark all finance sections as complete
+      financeeSections.forEach(sectionId => {
+        markSectionComplete(sectionId)
+      })
+      updateFormData("finance.autoCompletedSections", financeeSections)
+    } else {
+      // Unmark all finance sections
+      financeeSections.forEach(sectionId => {
+        updateFormData(`completedSections.${sectionId}`, false)
+      })
+      updateFormData("finance.autoCompletedSections", false)
+    }
+  }
+
   // Alternative interests modal for visa-free + finance-skipped users
   const {
     shouldShowAlternativeInterests,
@@ -89,40 +117,9 @@ export default function HomePage() {
     handleMistake
   } = useAlternativeInterests();
   
-  // Finance skip functionality
+  // Finance skip state
   const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
   
-  const handleFinanceSkipToggle = (checked: boolean) => {
-    const wasAutoCompleted = getFormData("finance.autoCompletedSections") ?? false
-    
-    updateFormData("finance.skipDetails", checked)
-    
-    if (checked) {
-      // Mark all finance-related sections as complete when skipping details
-      markSectionComplete("finance")
-      markSectionComplete("social-security") 
-      markSectionComplete("tax-deductions")
-      markSectionComplete("future-plans")
-      
-      // Store which sections were auto-completed so we can unmark them later
-      updateFormData("finance.autoCompletedSections", [
-        "finance", "social-security", "tax-deductions", "future-plans"
-      ])
-    } else if (wasAutoCompleted) {
-      // When unchecking, unmark the sections that were auto-completed
-      const autoCompletedSections = Array.isArray(wasAutoCompleted) 
-        ? wasAutoCompleted 
-        : ["finance", "social-security", "tax-deductions", "future-plans"]
-      
-      // Unmark each auto-completed section
-      autoCompletedSections.forEach((sectionId: string) => {
-        updateFormData(`completedSections.${sectionId}`, false)
-      })
-      
-      // Clear the auto-completion flag
-      updateFormData("finance.autoCompletedSections", false)
-    }
-  }
   const destCountry = (formData.residencyIntentions?.destinationCountry as any)?.country ?? formData.destination?.country ?? "";
   const destRegion = (formData.residencyIntentions?.destinationCountry as any)?.region ?? formData.destination?.region ?? "";
 
@@ -142,21 +139,88 @@ export default function HomePage() {
     localStorage.setItem('migration-current-section', currentSection.toString())
   }, [currentSection])
 
+  // Auto-complete education when no visa is needed
+  useEffect(() => {
+    const destCountry = getFormData("residencyIntentions.destinationCountry.country")
+    const userNationalities = getFormData("personalInformation.nationalities") || []
+    const partnerNationalities = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") || []
+    const hasPartner = getFormData("personalInformation.relocationPartner") || false
+    
+    if (destCountry && isSectionComplete("personal") && isSectionComplete("residency")) {
+      // Check if user needs visa
+      const isUserCitizen = Array.isArray(userNationalities) && userNationalities.some((n: any) => n?.country === destCountry)
+      const userCanMoveEU = destCountry && Array.isArray(userNationalities) ? userNationalities.some((n: any) => {
+        // Simple EU check - would need to import canMoveWithinEU for full check
+        const euCountries = ["Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg", "Malta", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia", "Slovenia", "Spain", "Sweden"]
+        return euCountries.includes(n?.country) && euCountries.includes(destCountry)
+      }) : false
+      const userNeedsVisa = !(isUserCitizen || userCanMoveEU)
+      
+      // Check if partner needs visa
+      const isPartnerCitizen = hasPartner && Array.isArray(partnerNationalities) && partnerNationalities.some((n: any) => n?.country === destCountry)
+      const partnerCanMoveEU = hasPartner && destCountry && Array.isArray(partnerNationalities) ? partnerNationalities.some((n: any) => {
+        const euCountries = ["Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg", "Malta", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia", "Slovenia", "Spain", "Sweden"]
+        return euCountries.includes(n?.country) && euCountries.includes(destCountry)
+      }) : false
+      const partnerNeedsVisa = hasPartner && !(isPartnerCitizen || partnerCanMoveEU)
+      
+      // If neither user nor partner need visa, auto-complete education
+      if (!userNeedsVisa && !partnerNeedsVisa) {
+        if (!isSectionComplete("education")) {
+          markSectionComplete("education")
+          updateFormData("education.autoSkipped", true)
+        }
+      } else {
+        // If someone needs visa, unmark education if it was auto-skipped
+        if (getFormData("education.autoSkipped")) {
+          updateFormData("completedSections.education", false)
+          updateFormData("education.autoSkipped", false)
+        }
+      }
+    }
+  }, [getFormData("residencyIntentions.destinationCountry.country"), getFormData("personalInformation.nationalities"), getFormData("personalInformation.relocationPartnerInfo.partnerNationalities"), getFormData("personalInformation.relocationPartner")])
+
   // Listen for formData changes from custom events
   useEffect(() => {
     const handleFormDataChange = (event: CustomEvent) => {
       // Event listener for form data changes
     }
+    
+    const handleFinanceSkipEvent = (event: CustomEvent) => {
+      const { checked } = event.detail
+      handleFinanceSkipToggle(checked)
+    }
 
     if (typeof window !== "undefined") {
       window.addEventListener("formDataChange", handleFormDataChange as EventListener)
-      return () => window.removeEventListener("formDataChange", handleFormDataChange as EventListener)
+      window.addEventListener("financeSkipToggle", handleFinanceSkipEvent as EventListener)
+      return () => {
+        window.removeEventListener("formDataChange", handleFormDataChange as EventListener)
+        window.removeEventListener("financeSkipToggle", handleFinanceSkipEvent as EventListener)
+      }
     }
   }, [])
 
   // Called when user clicks "Continue" button within a section component
   const handleContinue = () => {
     markSectionComplete(SECTIONS[currentSection].id)
+    
+    // Check if we should skip finance sections
+    const skipDetails = getFormData("finance.skipDetails") ?? false
+    const currentSectionId = SECTIONS[currentSection].id
+    const isFinanceSection = ["finance", "social-security", "tax-deductions", "future-plans"].includes(currentSectionId)
+    
+    if (skipDetails && isFinanceSection) {
+      // Skip to Additional Information (index 9)
+      const additionalInfoIndex = SECTIONS.findIndex(s => s.id === "additional")
+      if (additionalInfoIndex !== -1) {
+        setCurrentSection(additionalInfoIndex)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        return
+      }
+    }
+    
+    // Normal progression
     if (currentSection < SECTIONS.length - 1) {
       setCurrentSection(currentSection + 1);
       // Scroll to top of the page when navigating to next section
@@ -164,33 +228,15 @@ export default function HomePage() {
     }
   };
 
-  // Called when user clicks navigation "Next" button (should NOT mark complete)
-  const handleNavigateNext = () => {
-    if (currentSection < SECTIONS.length - 1) {
-      setCurrentSection(currentSection + 1);
-      // Scroll to top when navigating
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
+  // Navigation functions removed - users now navigate only through section Submit buttons
 
-  const handlePrevious = () => {
-    if (currentSection > 0) {
-      setCurrentSection(currentSection - 1);
-      // Scroll to top when navigating
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const canProceed = () => {
-    const currentSectionData = SECTIONS[currentSection];
-    if (!currentSectionData.required) return true;
-    // Use hasRequiredData for navigation (not isSectionComplete which is for manual completion)
-    return hasRequiredData(currentSectionData.id);
-  };
+  // canProceed function removed - no longer needed without navigation buttons
 
   // FIXED: Progress based on actual completion, not navigation position
-  const completedSections = SECTIONS.filter(section => isSectionComplete(section.id))
-  const progress = (completedSections.length / SECTIONS.length) * 100;
+  // Only count the 10 data entry sections (exclude Summary & Results)
+  const dataEntrySections = SECTIONS.filter(section => section.id !== "summary")
+  const completedDataSections = dataEntrySections.filter(section => isSectionComplete(section.id))
+  const progress = (completedDataSections.length / 10) * 100; // Fixed denominator to 10
 
   const renderSection = () => {
     const section = SECTIONS[currentSection];
@@ -205,7 +251,7 @@ export default function HomePage() {
     ) {
       const missingSteps = [];
       if (!disclaimerComplete) missingSteps.push("Disclaimer");
-      if (!destinationComplete) missingSteps.push("Desired Destination");
+      if (!destinationComplete) missingSteps.push("Destination Candidate");
       
       return (
         <div className="p-6 text-center text-sm text-muted-foreground">
@@ -218,13 +264,13 @@ export default function HomePage() {
       case "disclaimer":
         return <Disclaimer onComplete={handleContinue} />;
       case "destination":
-        return <Destination onComplete={handleContinue} />;
+        return <Destination onComplete={handleContinue} debugMode={debugMode} />;
       case "personal":
         return <PersonalInformation onComplete={handleContinue} />;
       case "residency":
-        return <ResidencyIntentions onComplete={handleContinue} />;
+        return <ResidencyIntentions onComplete={handleContinue} debugMode={debugMode} />;
       case "education":
-        return <Education onComplete={handleContinue} />;
+        return <Education onComplete={handleContinue} debugMode={debugMode} />;
       case "finance":
         return <Finance onComplete={handleContinue} />;
       case "social-security":
@@ -236,9 +282,12 @@ export default function HomePage() {
       case "additional":
         return <AdditionalInformation onComplete={handleContinue} />;
       case "summary":
-        return <Summary onNavigateToResults={() => setCurrentSection(11)} />;
-      case "results":
-        return <Results />;
+        return (
+          <div className="space-y-8">
+            <Summary debugMode={debugMode} />
+            <Results debugMode={debugMode} />
+          </div>
+        );
       default:
         return <div>Section not found</div>;
     }
@@ -249,6 +298,64 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+        {/* Debug Toggle (Development Only) */}
+        {isDev && (
+          <div className="fixed top-4 left-4 z-50">
+            <Card className="shadow-lg border-amber-200 bg-amber-50/90 dark:bg-amber-950/90 backdrop-blur-sm">
+              <CardContent className="p-3">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Bug className="w-4 h-4 text-amber-600" />
+                    <Label htmlFor="debug-mode" className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                      Debug
+                    </Label>
+                    <Switch
+                      id="debug-mode"
+                      checked={debugMode}
+                      onCheckedChange={setDebugMode}
+                    />
+                    {debugMode && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setDebugCollapsed(!debugCollapsed)}
+                        className="p-1 h-6 w-6"
+                      >
+                        {debugCollapsed ? <ChevronDown className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
+                      </Button>
+                    )}
+                  </div>
+                  {debugMode && !debugCollapsed && (
+                    <div className="text-xs text-amber-700 dark:text-amber-300 pt-1 border-t border-amber-200 dark:border-amber-800 space-y-2 max-w-xs">
+                      <div>Finance Skip: <span className="font-medium">{skipFinanceDetails ? "ON" : "OFF"}</span></div>
+                      
+                      <div className="space-y-0.5">
+                        <div className="font-medium">Section Completion:</div>
+                        <div>• Finance: {isSectionComplete("finance") ? "✅" : "❌"}</div>
+                        <div>• Social Security: {isSectionComplete("social-security") ? "✅" : "❌"}</div>
+                        <div>• Tax Deductions: {isSectionComplete("tax-deductions") ? "✅" : "❌"}</div>
+                        <div>• Future Plans: {isSectionComplete("future-plans") ? "✅" : "❌"}</div>
+                      </div>
+                      
+                      <div className="space-y-0.5">
+                        <div className="font-medium">Raw completedSections:</div>
+                        <div className="bg-amber-100 dark:bg-amber-900 p-1 rounded text-xs font-mono max-h-20 overflow-y-auto">
+                          {JSON.stringify(getFormData("completedSections"), null, 1)}
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-0.5">
+                        <div className="font-medium">Skip State:</div>
+                        <div>• autoCompleted: {JSON.stringify(getFormData("finance.autoCompletedSections"))}</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8 text-center relative">
@@ -263,7 +370,7 @@ export default function HomePage() {
           {/* Visually hidden heading for accessibility */}
           <h1 className="sr-only">Mr Pro Bonobo's Ape Escape Consultancy</h1>
           <p className="text-lg text-muted-foreground">
-            Mr. Pro Bonobo's Ape Escape Consultancy Migration Questionnaire (APE-M)
+            Mr. Pro Bonobo's Ape Escape Consultancy Migration Questionnaire
           </p>
           
           {/* Auto-save indicator and reset button */}
@@ -299,12 +406,12 @@ export default function HomePage() {
         <div className="flex flex-col lg:flex-row lg:items-start lg:gap-8">
           {/* Sidebar - Desktop only */}
           <aside className="hidden lg:block w-80">
-            {/* Selected Destination Card - Show immediately when country is selected */}
-            {destCountry && destCountry.trim() !== "" ? (
+            {/* Selected Destination Card - Show only when destination is completed */}
+            {destCountry && destCountry.trim() !== "" && isSectionComplete("destination") ? (
               <div className="mb-4">
                 <SelectedDestinationCard 
                   country={destCountry} 
-                  region={destRegion} 
+                  region={destRegion || "No specific region"} 
                   compact={true}
                 />
               </div>
@@ -352,7 +459,7 @@ export default function HomePage() {
                               </div>
                               <div>
                                 <Label htmlFor="finance-skip-main" className="text-sm font-medium text-stone-800 dark:text-stone-200 cursor-pointer">
-                                  Quick Finance Skip
+                                  Finance Skip
                                 </Label>
                                 <p className="text-xs text-stone-700 dark:text-stone-300">
                                   Skip detailed finance sections
@@ -368,10 +475,10 @@ export default function HomePage() {
                           
                           <div className="border-t border-emerald-200/40 pt-2">
                             <details className="group">
-                              <summary className="text-[10px] text-stone-700 dark:text-stone-300 cursor-pointer hover:text-stone-800 dark:hover:text-stone-200">
+                              <summary className="text-base font-semibold text-stone-900 dark:text-white cursor-pointer">
                                 💡 Why would I want to do this?
                               </summary>
-                              <p className="text-[9px] text-stone-600 dark:text-stone-400 mt-1 leading-relaxed">
+                              <p className="text-base text-stone-800 dark:text-stone-200 mt-2 leading-relaxed">
                                 You may not care about detailed taxation and finance tracking—you simply want to know if there are any financial requirements (income thresholds, bank balances, etc.) needed to be allowed into your destination country.
                               </p>
                             </details>
@@ -379,7 +486,7 @@ export default function HomePage() {
                           
                           {skipFinanceDetails && (
                             <div className="mt-2 p-1.5 rounded bg-emerald-100 dark:bg-emerald-900/30">
-                              <p className="text-[10px] text-emerald-800 dark:text-emerald-200">
+                              <p className="text-xs text-emerald-900 dark:text-emerald-100">
                                 ✅ Finance sections auto-completed
                               </p>
                             </div>
@@ -447,7 +554,7 @@ export default function HomePage() {
                   Progress: {Math.round(progress)}%
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  Step {currentSection + 1} of {SECTIONS.length}
+                  Step {Math.min(currentSection + 1, 10)} of 10
                 </span>
               </div>
               <Progress value={progress} className="h-2" />
@@ -507,55 +614,21 @@ export default function HomePage() {
             {/* Main Content */}
             <div className="max-w-4xl mx-auto">
               <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <HeaderIcon className="w-6 h-6" />
-                    {SECTIONS[currentSection].title}
-                  </CardTitle>
-                  <CardDescription>
-                    {currentSection === 0 && "Please read and accept the disclaimer to continue"}
-                    {currentSection === 1 && "Select your desired destination country and region"}
-                    {currentSection === 2 && "Tell us about yourself and your family"}
-                    {currentSection === 3 && "Describe your residency intentions and timeline"}
-                    {currentSection === 4 && "Share your educational background and skills"}
-                    {currentSection === 5 && "Provide details about your income and assets"}
-                    {currentSection === 6 && "Information about your social security and pension plans"}
-                    {currentSection === 7 && "Potential tax deductions and credits you may qualify for"}
-                    {currentSection === 8 && "Your future financial plans and investments"}
-                    {currentSection === 9 && "Any additional information or special circumstances"}
-                    {currentSection === 10 && "Review and download your completed questionnaire"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
+                {/* Removed top-left CardHeader (icon + description) to avoid duplication with section headers */}
+                <CardContent className="pt-8">
                   {renderSection()}
                 </CardContent>
               </Card>
 
-              {/* Navigation Buttons */}
-              {currentSection < SECTIONS.length - 1 && (
-                <div className="flex justify-between mt-6">
-                  <Button
-                    variant="outline"
-                    onClick={handlePrevious}
-                    disabled={currentSection === 0}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    onClick={handleNavigateNext}
-                    disabled={!canProceed()}
-                  >
-                    {currentSection === SECTIONS.length - 2 ? "Finish" : "Next"}
-                  </Button>
-                </div>
-              )}
+              {/* Navigation Buttons - Completely removed */}
+              {/* Users now navigate only through section-specific Submit buttons */}
             </div>
 
           </main>
         </div>
 
-        {/* Dev JSON viewer */}
-        <DevStateViewer />
+        {/* Dev JSON viewer (Debug Mode Only) */}
+        {debugMode && <DevStateViewer />}
 
         {/* Alternative Interests Modal */}
         <AlternativeInterestsModal

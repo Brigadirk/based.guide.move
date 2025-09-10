@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -38,27 +39,37 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      {/* Hero Section */}
-      <div className="text-center space-y-4 py-8">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-full">
-          <Brain className="w-4 h-4 text-blue-600" />
-          <span className="text-sm font-medium text-blue-700">AI-Powered Assessment</span>
+      {/* Hero Section with Bonobo Office */}
+      <div className="text-center space-y-6 py-8">
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 bg-clip-text text-transparent">
+            Welcome to Mr. Pro Bonobo's Office
+          </h1>
         </div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-          Your Global Move Assistant
-        </h1>
+        
+        <div className="mx-auto max-w-2xl relative rounded-2xl overflow-hidden shadow-xl border-4 border-amber-200">
+          <Image
+            src="/images/bonobo_office.png"
+            alt="Mr. Pro Bonobo's Office"
+            width={800}
+            height={600}
+            className="w-full h-auto object-contain"
+            priority
+          />
+        </div>
+        
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Get personalized insights for your international relocation with our intelligent assessment tool.
+          Step into my professional consultation room. I'll guide you through your international relocation journey with personalized insights and professional advice.
         </p>
       </div>
 
       {/* Feature Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { icon: Target, title: "Tax Analysis", desc: "Smart tax obligation insights", color: "blue" },
-          { icon: CheckCircle, title: "Visa Guidance", desc: "Residency requirements", color: "green" },
-          { icon: FileText, title: "Financial Planning", desc: "Cross-border strategies", color: "purple" },
-          { icon: Download, title: "Custom Report", desc: "Downloadable summary", color: "orange" }
+          { icon: Target, title: "Tax Analysis", color: "blue", desc: "Comprehensive tax implications analysis" },
+          { icon: CheckCircle, title: "Visa Guidance", color: "green", desc: "Step-by-step visa requirements" },
+          { icon: FileText, title: "Financial Planning", color: "purple", desc: "Detailed financial roadmap" },
+          { icon: Download, title: "Custom Report", color: "orange", desc: "Personalized PDF report" }
         ].map((feature, i) => (
           <Card 
             key={i}
@@ -91,7 +102,7 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
               <div>
                 <h3 className="font-semibold text-amber-900 mb-2">AI-Powered Guidance</h3>
                 <p className="text-sm text-amber-800 leading-relaxed">
-                  Our AI provides personalized insights based on your situation. Always verify with qualified professionals before making decisions.
+                  Our AI offers general, personalized insights and does not constitute legal, tax, immigration, or financial advice. Laws and policies change and vary by jurisdiction, so we cannot guarantee accuracy or completeness. Always verify with qualified professionals before making decisions.
                 </p>
                 <Badge variant="secondary" className="mt-2 bg-amber-100 text-amber-700">
                   Informational Only
@@ -111,13 +122,13 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
               <div>
                 <h3 className="font-semibold text-green-900 mb-2">Your Privacy Matters</h3>
                 <p className="text-sm text-green-800 leading-relaxed">
-                  Data is encrypted, processed securely, and not stored. Only used to generate your personalized analysis. 
+                  We do not retain your data beyond the active consultation session. To generate your personalised report, your prompts and necessary context are transmitted to Perplexity AI for processing. No permanent storage occurs on our systems.
                   <a 
                     href="/privacy-policy" 
                     target="_blank" 
                     className="underline hover:text-green-900 font-medium ml-1"
                   >
-                    Read our Privacy Policy
+                    See our Privacy Policy (includes a link to Perplexity AI’s Privacy Policy).
                   </a>
                 </p>
                 <Badge variant="secondary" className="mt-2 bg-green-100 text-green-700">
@@ -129,18 +140,7 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
         </Card>
       </div>
 
-      {/* Legal Notice - Minimal */}
-      <Card className="border-2 border-dashed border-gray-300 bg-card">
-        <CardContent className="p-6">
-          <div className="flex items-start gap-3">
-            <Shield className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-gray-600">
-              <strong>Legal Notice:</strong> This assessment provides general information only. Tax laws vary by jurisdiction and change frequently. 
-              Consult qualified professionals for specific advice. No guarantees on accuracy or completeness.
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Legal Notice merged into AI-Powered Guidance above */}
 
       {/* Acceptance - Beautiful */}
       <Card className={`transition-all duration-300 ${accepted ? 'ring-2 ring-green-200 bg-green-50/50' : 'border-2 border-dashed'}`}>
@@ -160,10 +160,18 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
             />
             <div className="space-y-2">
               <Label htmlFor="accept-disclaimer" className="text-base font-medium cursor-pointer">
-                I understand and accept the terms above
+                I have read and agree to the Terms & Conditions
               </Label>
               <p className="text-sm text-muted-foreground">
-                By proceeding, you acknowledge this is for informational purposes and agree to verify all information with professionals.
+                By proceeding, you acknowledge this consultation is for informational purposes, agree to verify all recommendations with qualified professionals, and agree to our{' '}
+                <a
+                  href="/terms"
+                  target="_blank"
+                  className="underline font-medium hover:text-foreground"
+                >
+                  Terms & Conditions
+                </a>
+                . I'm ready to begin my consultation with Mr. Pro Bonobo.
               </p>
             </div>
           </div>
@@ -178,31 +186,41 @@ export function Disclaimer({ onComplete }: DisclaimerProps) {
           size="lg"
           className={`px-10 py-4 text-lg transition-all duration-300 ${
             accepted 
-              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:scale-105' 
+              ? 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 shadow-lg hover:shadow-xl transform hover:scale-105' 
               : 'opacity-50'
           }`}
         >
           <span className="flex items-center gap-2">
-            Begin Your Assessment
+            Start Your Assessment
             <ArrowRight className="w-5 h-5" />
           </span>
         </Button>
         
         {!accepted && (
-          <p className="text-sm text-muted-foreground mt-3">
-            Please accept the terms above to continue
-          </p>
+          <div className="mt-3 space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Please check the box above to continue
+            </p>
+          </div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="text-center">
+      <div className="text-center space-x-4">
         <a 
           href="/privacy-policy" 
           target="_blank" 
           className="text-sm text-muted-foreground hover:text-foreground underline transition-colors"
         >
-          View Privacy Policy
+          Privacy Policy
+        </a>
+        <span className="text-muted-foreground/60">•</span>
+        <a 
+          href="/terms" 
+          target="_blank" 
+          className="text-sm text-muted-foreground hover:text-foreground underline transition-colors"
+        >
+          Terms & Conditions
         </a>
       </div>
     </div>

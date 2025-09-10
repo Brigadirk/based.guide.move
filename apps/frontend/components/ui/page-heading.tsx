@@ -4,23 +4,47 @@ interface PageHeadingProps {
   title: string
   description?: string
   actions?: React.ReactNode
+  gradient?: boolean
+  icon?: React.ReactNode
 }
 
 export function PageHeading({
   title,
   description,
-  actions
+  actions,
+  gradient = false,
+  icon
 }: PageHeadingProps) {
-  return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
-      <div>
-        <h1 className="text-3xl font-bold leading-tight">{title}</h1>
+  if (gradient) {
+    return (
+      <div className="rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 mb-8">
+        <div className="flex items-center gap-3 px-6">
+          {icon}
+          <h1 className="text-3xl font-bold leading-tight">{title}</h1>
+        </div>
         {description && (
-          <p className="mt-2 text-muted-foreground">{description}</p>
+          <p className="mt-2 px-6 text-white/90">{description}</p>
+        )}
+        {actions && (
+          <div className="mt-4 px-6">
+            {actions}
+          </div>
         )}
       </div>
+    )
+  }
+
+  return (
+    <div className="text-left pb-4 border-b mb-8">
+      <div className="flex items-center gap-3 mb-4">
+        {icon}
+        <h1 className="text-3xl font-bold leading-tight">{title}</h1>
+      </div>
+      {description && (
+        <p className="text-lg text-muted-foreground max-w-2xl">{description}</p>
+      )}
       {actions && (
-        <div className="mt-4 md:mt-0 flex-shrink-0">
+        <div className="mt-4">
           {actions}
         </div>
       )}

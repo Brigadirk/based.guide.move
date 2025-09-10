@@ -18,10 +18,12 @@ import { Plus, Info, AlertTriangle, HelpCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
-import { getCountries } from "@/lib/utils/country-utils"
 import { SectionFooter } from "@/components/ui/section-footer"
+import { getCountries } from "@/lib/utils/country-utils"
+
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { useCurrencies } from "@/lib/hooks/use-currencies"
+import { PageHeading } from "@/components/ui/page-heading"
 
 export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
@@ -60,15 +62,11 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      {/* Page Header */}
-      <div className="text-center pb-4 border-b">
-        <h1 className="text-3xl font-bold text-primary mb-3">
-          📉 Tax Deductions & Credits
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Your potential tax deductions and credits for international tax compliance
-        </p>
-      </div>
+      <PageHeading 
+        title="Tax Deductions & Credits"
+        description="Your potential tax deductions and credits for international tax compliance"
+        icon={<HelpCircle className="w-7 h-7 text-green-600" />}
+      />
 
       <SectionHint title="Why is this section important?">
         <div className="space-y-2 text-sm">
@@ -509,7 +507,7 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
                     <Alert>
                       <AlertTriangle className="h-4 w-4" />
                       <AlertDescription>
-                        ⚠️ Whether this is a deductible in your desired destination remains to be seen.
+                        ⚠️ Whether this is a deductible in your desired candidate destination remains to be seen.
                       </AlertDescription>
                     </Alert>
                   </div>
@@ -535,8 +533,9 @@ export function TaxDeductionsAndCredits({ onComplete }: { onComplete: () => void
               sectionId="tax-deductions"
               onContinue={handleComplete}
               canContinue={true}
-              nextSectionName="Future Financial Plans"
+              nextSectionName={getFormData("finance.skipDetails") ? "Additional Information" : "Future Financial Plans"}
             />
+
           </div>
         </CardFooter>
       </Card>

@@ -313,8 +313,8 @@ export function SelectedDestinationCard({
     }
   }, [country, region])
 
-  if (!country || !region) {
-    console.log("❌ SelectedDestinationCard: Missing country or region")
+  if (!country) {
+    console.log("❌ SelectedDestinationCard: Missing country")
     return null
   }
 

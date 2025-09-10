@@ -17,8 +17,7 @@ import {
   CheckCircle,
   Zap
 } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { FinanceSkipToggle } from "@/components/features/finance-skip-toggle";
 
 interface Step {
   id: string;
@@ -39,87 +38,39 @@ const stepIcons = [
 
 export function Sidebar({ steps, currentStep, onStepChange }: SidebarProps) {
   const { formData, getFormData, updateFormData, markSectionComplete, isSectionMarkedComplete } = useFormStore()
-  const destCountry = formData.destination?.country ?? ""
-  const destRegion = formData.destination?.region ?? ""
   
-  // Finance skip functionality
-  const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
+  // Only show destination bulletin when destination section is completed
+  const isDestinationComplete = isSectionMarkedComplete("destination")
+  const destCountry = (formData.residencyIntentions?.destinationCountry as any)?.country ?? formData.destination?.country ?? ""
+  const destRegion = (formData.residencyIntentions?.destinationCountry as any)?.region ?? formData.destination?.region ?? ""
   
-  const handleFinanceSkipToggle = (checked: boolean) => {
-    const wasAutoCompleted = getFormData("finance.autoCompletedSections") ?? false
-    
-    updateFormData("finance.skipDetails", checked)
-    
-    if (checked) {
-      // Mark all finance-related sections as complete when skipping details
-      markSectionComplete("finance")
-      markSectionComplete("social-security") 
-      markSectionComplete("tax-deductions")
-      markSectionComplete("future-plans")
-      
-      // Store which sections were auto-completed so we can unmark them later
-      updateFormData("finance.autoCompletedSections", [
-        "finance", "social-security", "tax-deductions", "future-plans"
-      ])
-    } else if (wasAutoCompleted) {
-      // When unchecking, unmark the sections that were auto-completed
-      const autoCompletedSections = Array.isArray(wasAutoCompleted) 
-        ? wasAutoCompleted 
-        : ["finance", "social-security", "tax-deductions", "future-plans"]
-      
-      // Unmark each auto-completed section
-      autoCompletedSections.forEach((sectionId: string) => {
-        updateFormData(`completedSections.${sectionId}`, false)
-      })
-      
-      // Clear the auto-completion flag
-      updateFormData("finance.autoCompletedSections", false)
-    }
-  }
+  // Debug logging for destination bulletin
+  console.log('Sidebar destination debug:', {
+    isDestinationComplete,
+    destCountry,
+    destRegion,
+    residencyDestData: formData.residencyIntentions?.destinationCountry,
+    fallbackDestData: formData.destination
+  })
+  
   return (
     <div className="w-[26rem] bg-card border-r border-border p-4 h-screen overflow-y-auto">
       <div className="mb-6">
         <h2 className="text-lg font-semibold text-foreground mb-2">Assessment Steps</h2>
         <p className="text-sm text-muted-foreground">Complete each section to generate your personalized analysis</p>
-        {destCountry && (
+        {isDestinationComplete && destCountry && destCountry.trim() !== "" && (
           <p className="text-sm mt-3 text-accent-positive">
-            Destination: {destCountry}{destRegion && ` – ${destRegion}`}
+            Destination: {destCountry}{destRegion && destRegion.trim() !== "" && destRegion !== "I don't know yet / open to any" ? ` – ${destRegion}` : ""}
           </p>
         )}
       </div>
 
       {/* Finance Skip Toggle */}
-      <Card className="mb-6 border-amber-200 bg-amber-50/50 dark:bg-amber-950/20">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-900/50">
-                <Zap className="w-4 h-4 text-amber-600" />
-              </div>
-              <div>
-                <Label htmlFor="finance-skip" className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                  Quick Finance Skip
-                </Label>
-                <p className="text-xs text-amber-700 dark:text-amber-300">
-                  Skip detailed finance sections
-                </p>
-              </div>
-            </div>
-            <Switch
-              id="finance-skip"
-              checked={skipFinanceDetails}
-              onCheckedChange={handleFinanceSkipToggle}
-            />
-          </div>
-          {skipFinanceDetails && (
-            <div className="mt-3 p-2 rounded bg-green-100 dark:bg-green-900/30">
-              <p className="text-xs text-green-800 dark:text-green-200">
-                ✅ Finance sections auto-completed
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <FinanceSkipToggle variant="sidebar" onToggle={(checked) => {
+        // This will be handled by the main app's handleFinanceSkipToggle
+        const event = new CustomEvent('financeSkipToggle', { detail: { checked } })
+        window.dispatchEvent(event)
+      }} />
 
       <div className="space-y-2">
         {steps.map((step, index) => {

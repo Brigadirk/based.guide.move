@@ -1,12 +1,13 @@
 "use client"
 
-import { useMemo, useEffect } from "react"
+import { useMemo, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { Globe, MapPin, Languages, Lightbulb } from "lucide-react"
+import { PageHeading } from "@/components/ui/page-heading"
 import { useFormStore } from "@/lib/stores"
 import { getLanguages } from "@/lib/utils/country-utils"
 import { SectionHint } from "@/components/ui/section-hint"
@@ -95,6 +96,7 @@ function getCountryFlagCode(countryName: string): string {
 
 interface DestinationProps {
   onComplete: () => void
+  debugMode?: boolean
 }
 
 // Full country dataset copied from the Streamlit project
@@ -119,12 +121,38 @@ const COUNTRIES: CountryEntry[] = Object.entries(
     : [],
 }))
 
-export function Destination({ onComplete }: DestinationProps) {
-  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+export function Destination({ onComplete, debugMode }: DestinationProps) {
+  const { getFormData, updateFormData, markSectionComplete, isSectionMarkedComplete } = useFormStore()
+  const [isEditing, setIsEditing] = useState(false)
   
-  // Use correct data structure matching Streamlit
-  const selectedCountry = getFormData("residencyIntentions.destinationCountry.country") ?? ""
-  const selectedRegion = getFormData("residencyIntentions.destinationCountry.region") ?? ""
+  // Saved destination data (what's actually committed)
+  const savedCountry = getFormData("residencyIntentions.destinationCountry.country") ?? ""
+  const savedRegion = getFormData("residencyIntentions.destinationCountry.region") ?? ""
+  
+  // Temporary editing state
+  const [tempCountry, setTempCountry] = useState("")
+  const [tempRegion, setTempRegion] = useState("")
+  
+  // Determine if section is completed
+  const isDestinationCompleted = isSectionMarkedComplete("destination")
+  
+  // Initialize editing state
+  useEffect(() => {
+    if (isDestinationCompleted && !isEditing) {
+      // Show saved state
+      setTempCountry(savedCountry)
+      setTempRegion(savedRegion)
+    } else if (!isDestinationCompleted) {
+      // First time or incomplete - start in editing mode
+      setIsEditing(true)
+      setTempCountry(savedCountry)
+      setTempRegion(savedRegion)
+    }
+  }, [savedCountry, savedRegion, isDestinationCompleted, isEditing])
+  
+  // Use temp values for display during editing, saved values when viewing
+  const selectedCountry = isEditing ? tempCountry : savedCountry
+  const selectedRegion = isEditing ? tempRegion : savedRegion
 
   // Component lifecycle tracking
   useEffect(() => {
@@ -137,14 +165,27 @@ export function Destination({ onComplete }: DestinationProps) {
   const handleCountryChange = (countryCode: string) => {
     if (!countryCode || countryCode.trim() === "") return
     
-    updateFormData("residencyIntentions.destinationCountry.country", countryCode)
-    updateFormData("residencyIntentions.destinationCountry.region", "") // Clear region when country changes
+    if (isEditing) {
+      // During editing, update temp state only
+      setTempCountry(countryCode)
+      setTempRegion("") // Clear region when country changes
+    } else {
+      // If not editing, shouldn't happen, but handle gracefully
+      updateFormData("residencyIntentions.destinationCountry.country", countryCode)
+      updateFormData("residencyIntentions.destinationCountry.region", "")
+    }
   }
 
   const handleRegionChange = (region: string) => {
     if (!region || region.trim() === "") return
     
-    updateFormData("residencyIntentions.destinationCountry.region", region)
+    if (isEditing) {
+      // During editing, update temp state only
+      setTempRegion(region)
+    } else {
+      // If not editing, shouldn't happen, but handle gracefully
+      updateFormData("residencyIntentions.destinationCountry.region", region)
+    }
   }
 
   const handleContinue = () => {
@@ -161,13 +202,30 @@ export function Destination({ onComplete }: DestinationProps) {
       return
     }
     
-    // For countries without regions, clear any saved region
-    if (!hasRegions) {
+    // Save temp values to store
+    updateFormData("residencyIntentions.destinationCountry.country", selectedCountry)
+    if (hasRegions && selectedRegion) {
+      updateFormData("residencyIntentions.destinationCountry.region", selectedRegion)
+    } else {
       updateFormData("residencyIntentions.destinationCountry.region", "")
     }
     
+    // Mark section complete and exit editing mode
     markSectionComplete("destination")
+    setIsEditing(false)
     onComplete()
+  }
+
+  const handleEdit = () => {
+    setIsEditing(true)
+    setTempCountry(savedCountry)
+    setTempRegion(savedRegion)
+  }
+
+  const handleCancel = () => {
+    setIsEditing(false)
+    setTempCountry(savedCountry)
+    setTempRegion(savedRegion)
   }
 
   const selectedCountryData = useMemo(() => {
@@ -176,31 +234,60 @@ export function Destination({ onComplete }: DestinationProps) {
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      {/* Page Header */}
-      <div className="text-center pb-4 border-b">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <Globe className="w-7 h-7 text-primary" />
-          <h1 className="text-3xl font-bold tracking-tight">Desired Destination</h1>
-        </div>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Select the country and region you plan to relocate to
-        </p>
-      </div>
+      <PageHeading 
+        title="Candidate Destination"
+        description="Select the country and region you are interested in relocating to"
+        icon={<Globe className="w-7 h-7 text-green-600" />}
+      />
 
-      <SectionHint title="About this section">
-        Multi‑destination comparison is coming soon.
-      </SectionHint>
+      {/* Saved Destination Summary (when completed and not editing) */}
+      {isDestinationCompleted && !isEditing && (
+        <Card className="shadow-sm border-l-4 border-l-green-500">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <CountryFlag 
+                  countryCode={getCountryFlagCode(savedCountry)} 
+                  size="lg"
+                  className="flex-shrink-0"
+                />
+                <div>
+                  <CardTitle className="text-xl">
+                    {savedRegion && savedRegion !== "I don't know yet" && savedRegion.trim() !== ""
+                      ? `${savedRegion}, ${savedCountry}`
+                      : savedCountry
+                    }
+                  </CardTitle>
+                  {(() => {
+                    const langs = getLanguages(savedCountry, savedRegion || "")
+                    if (langs.length === 0) return null
+                    return (
+                      <p className="text-sm mt-1 flex items-center gap-1 text-muted-foreground">
+                        <Languages className="w-4 h-4" /> Dominant language{langs.length > 1 ? 's' : ''}: {langs.join(", ")}
+                      </p>
+                    )
+                  })()}
+                </div>
+              </div>
+              <Button
+                onClick={handleEdit}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                Change Destination
+              </Button>
+            </div>
+          </CardHeader>
+        </Card>
+      )}
 
+      {/* Editing Form (when not completed or actively editing) */}
+      {(!isDestinationCompleted || isEditing) && (
+        <>
       {/* Country Selection Card */}
       <Card className="shadow-sm border-l-4 border-l-primary">
-        <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent">
-          <CardTitle className="text-xl flex items-center gap-3">
-            <Globe className="w-6 h-6 text-primary" />
-            Destination Country
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">Enter the country you plan to relocate to</p>
-        </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className="pt-4">
           <div className="space-y-6">
             <div className="space-y-2">
               <Label className="text-base font-medium">Destination country *</Label>
@@ -273,7 +360,7 @@ export function Destination({ onComplete }: DestinationProps) {
                     <div className="flex items-center gap-2">
                       <Lightbulb className="w-5 h-5 text-blue-600" />
                       <p className="text-sm text-blue-800 dark:text-blue-200">
-                        ✅ No region-specific visa or tax rules—skip region selection for this country.
+                        No region-specific visa or tax rules.
                       </p>
                     </div>
                   </div>
@@ -287,54 +374,53 @@ export function Destination({ onComplete }: DestinationProps) {
       <Card className="shadow-md">
         <CardFooter className="pt-6">
           <div className="w-full space-y-4">
-            <Button
-              disabled={(() => {
-                if (!selectedCountry) return true
-                const countryData = COUNTRIES.find(c => c.name === selectedCountry)
-                const hasRegions = countryData?.regions && countryData.regions.length > 0
-                return hasRegions ? !selectedRegion : false
-              })()}
-              onClick={handleContinue}
-              className="w-full"
-              size="lg"
-            >
-              Continue to Personal Information
-            </Button>
+            <div className="flex gap-3">
+              {isEditing && isDestinationCompleted && (
+                <Button
+                  onClick={handleCancel}
+                  variant="outline"
+                  size="lg"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              )}
+              <Button
+                disabled={(() => {
+                  if (!selectedCountry) return true
+                  const countryData = COUNTRIES.find(c => c.name === selectedCountry)
+                  const hasRegions = countryData?.regions && countryData.regions.length > 0
+                  return hasRegions ? !selectedRegion : false
+                })()}
+                onClick={handleContinue}
+                className="flex-1"
+                size="lg"
+              >
+                {isEditing && isDestinationCompleted ? "Save Changes" : "Submit and Continue to Personal Information"}
+              </Button>
+            </div>
           </div>
         </CardFooter>
       </Card>
-
-      {/* Selected Destination Display */}
-      {selectedCountry && (
-        <Card className="shadow-sm border-l-4 border-l-green-500">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <CountryFlag 
-                countryCode={getCountryFlagCode(selectedCountryData?.name || selectedCountry)} 
-                size="lg"
-                className="flex-shrink-0"
-              />
-              <div>
-                <h3 className="font-semibold text-foreground text-lg">
-                  {selectedCountryData?.regions && selectedCountryData.regions.length > 0 && selectedRegion && selectedRegion !== "I don't know yet"
-                    ? `${selectedRegion}, ${selectedCountryData?.name}`
-                    : selectedCountryData?.name
-                  }
-                </h3>
-                {(() => {
-                  const langs = getLanguages(selectedCountry, selectedRegion || "")
-                  if (langs.length === 0) return null
-                  return (
-                    <p className="text-sm mt-1 flex items-center gap-1 text-muted-foreground">
-                      <Languages className="w-4 h-4" /> Dominant language{langs.length > 1 ? 's' : ''}: {langs.join(", ")}
-                    </p>
-                  )
-                })()}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        </>
       )}
+
+      {/* Debug Info (Debug Mode Only) */}
+      {debugMode && (
+        <div className="mb-4 p-3 bg-amber-100 dark:bg-amber-900 border border-amber-200 dark:border-amber-800 rounded text-xs space-y-1">
+          <div className="font-medium">Destination Debug:</div>
+          <div>• Selected Country: {selectedCountry || "None"}</div>
+          <div>• Selected Region: {selectedRegion || "None"}</div>
+          <div>• Section Completed: {isSectionMarkedComplete("destination") ? "YES" : "NO"}</div>
+          <div>• Button Disabled: {(() => {
+            if (!selectedCountry) return "YES (no country)"
+            const countryData = COUNTRIES.find(c => c.name === selectedCountry)
+            const hasRegions = countryData?.regions && countryData.regions.length > 0
+            return hasRegions ? (!selectedRegion ? "YES (needs region)" : "NO") : "NO"
+          })()}</div>
+        </div>
+      )}
+
 
 
 

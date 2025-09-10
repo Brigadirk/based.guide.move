@@ -158,13 +158,62 @@ export function transformFormDataForBackend(formData: any): any {
   
   const transformed = JSON.parse(JSON.stringify(formData))
   
-  // Apply finance-specific transformations
-  if (transformed.finance) {
-    transformed.finance = transformFinanceForBackend(transformed.finance)
+  // Map frontend structure to backend expected structure
+  const backendStructure: any = {}
+  
+  // Map destination to residencyIntentions.destinationCountry
+  if (transformed.destination) {
+    backendStructure.residencyIntentions = {
+      destinationCountry: {
+        country: transformed.destination.country,
+        region: transformed.destination.region
+      }
+    }
   }
   
-  // Apply other section transformations as needed
-  // ... (can be extended for other sections)
+  // Map residencyIntentions data
+  if (transformed.residencyIntentions) {
+    if (!backendStructure.residencyIntentions) {
+      backendStructure.residencyIntentions = {}
+    }
+    // Merge existing residencyIntentions data
+    Object.assign(backendStructure.residencyIntentions, transformed.residencyIntentions)
+  }
   
-  return transformed
+  // Map personalInformation
+  if (transformed.personalInformation) {
+    backendStructure.personalInformation = transformed.personalInformation
+  }
+  
+  // Map education
+  if (transformed.education) {
+    backendStructure.education = transformed.education
+  }
+  
+  // Apply finance-specific transformations
+  if (transformed.finance) {
+    backendStructure.finance = transformFinanceForBackend(transformed.finance)
+  }
+  
+  // Map socialSecurityAndPensions
+  if (transformed.socialSecurityAndPensions) {
+    backendStructure.socialSecurityAndPensions = transformed.socialSecurityAndPensions
+  }
+  
+  // Map futureFinancialPlans
+  if (transformed.futureFinancialPlans) {
+    backendStructure.futureFinancialPlans = transformed.futureFinancialPlans
+  }
+  
+  // Map taxDeductionsAndCredits
+  if (transformed.taxDeductionsAndCredits) {
+    backendStructure.taxDeductionsAndCredits = transformed.taxDeductionsAndCredits
+  }
+  
+  // Map additionalInformation
+  if (transformed.additionalInformation) {
+    backendStructure.additionalInformation = transformed.additionalInformation
+  }
+  
+  return backendStructure
 }

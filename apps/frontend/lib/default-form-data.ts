@@ -29,67 +29,92 @@ export const defaultFormData: FormData = {
     dependents: []
   },
   education: {
+    autoSkipped: false,
     previousDegrees: [],
     visaSkills: [],
-    workExperience: [],
-    professionalLicenses: [],
-    interestedInStudying: undefined,
-    schoolInterestDetails: "",
-    learningInterests: [],
-    schoolOffers: [],
-    militaryService: {
-      hasService: undefined,
-      country: "",
-      branch: "",
-      startDate: "",
-      endDate: "",
-      currentlyServing: false,
-      rank: "",
-      occupation: "",
-      securityClearance: "",
-      languages: "",
-      certifications: "",
-      leadership: ""
-    }
+    learningInterests: []
   },
   residencyIntentions: {
     destinationCountry: {
       moveType: "",
-      intendedTemporaryDurationOfStay: "",
-      citizenshipStatus: ""
+      intendedTemporaryDurationOfStay: 0,
+      showSpecialSituation: false,
+      specialSituation: ""
     },
-    residencyPlans: {
-      applyForResidency: false,
-      maxMonthsWillingToReside: 6,
-      openToVisiting: false,
+    physicalPresenceIntentions: {
+      interestedInMinimumStay: false
     },
-    familyVisaPlanning: {
-      applicationTimeline: undefined,
-      relocationPriority: undefined,
-      concerns: [],
-      specialCircumstances: "",
-    },
-    citizenshipPlans: {
-      interestedInCitizenship: false,
-      willingToRenounceCurrent: false,
-      investmentCitizenship: false,
-      donationCitizenship: false,
-      militaryService: false,
-    },
-    languageProficiency: {
-      primaryLanguage: "",
-      otherLanguages: []
+    citizenshipInterest: {
+      interest: "undecided",
+      willingToConsider: {
+        naturalization: true,
+        familyConnections: false,
+        familyConnectionDetails: "",
+        investmentPrograms: false,
+        militaryService: false,
+        otherPrograms: false
+      },
+      showPartnerSpecialSituation: false,
+      partnerSpecialSituation: ""
     },
     centerOfLife: {
-      familyTies: false,
-      businessTies: false,
-      socialTies: false,
+      maintainOtherCountryTies: false,
+      maintainOtherCountryTiesDetails: "",
+      // Legacy fields for backend compatibility
+      maintainsSignificantTies: false,
+      tiesDescription: ""
+    },
+    backgroundDisclosures: {
+      criminalRecord: false,
+      criminalDetails: "",
+      taxComplianceIssues: false,
+      taxComplianceDetails: "",
+      previousVisaDenials: false,
+      visaDenialDetails: ""
+    },
+    backgroundDisclosuresPartner: {
+      criminalRecord: false,
+      criminalDetails: "",
+      taxComplianceIssues: false,
+      taxComplianceDetails: "",
+      previousVisaDenials: false,
+      visaDenialDetails: ""
+    },
+    userVisa: {
+      applyForResidency: true
+    },
+    partnerVisa: {
+      applyForResidency: true,
+      citizenshipInterest: "undecided",
+      willingToConsider: {
+        naturalization: true,
+        familyConnections: false,
+        familyConnectionDetails: "",
+        investmentPrograms: false,
+        militaryService: false,
+        otherPrograms: false
+      }
+    },
+    dependentsVisa: {
+      applyForResidency: true
+    },
+    residencyPlans: {
+      openToVisiting: false,
+      exploratoryVisits: {
+        details: ""
+      }
     },
     moveMotivation: "",
-    taxCompliantEverywhere: true,
+    moveTiming: "",
+    familyCoordination: {
+      applicationTiming: "undecided",
+      specialFamilyCircumstances: ""
+    }
   },
   finance: {
     skipTaxSections: false,
+    skipDetails: false,
+    autoCompletedSections: false,
     totalWealth: {
       total: 0,
       currency: "USD",
@@ -127,5 +152,19 @@ export const defaultFormData: FormData = {
     specialCircumstances: "",
     specialSections: []
   },
-  completedSections: {}
+  completedSections: {
+    "disclaimer": false,
+    "destination": false,
+    "personal": false,
+    "residency": false,
+    "education": false,
+    "finance": false,
+    "social-security": false,
+    "tax-deductions": false,
+    "future-plans": false,
+    "additional": false
+  },
+  summary: {
+    editedFullStory: ""
+  }
 } 

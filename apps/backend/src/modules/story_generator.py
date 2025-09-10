@@ -311,12 +311,40 @@ def personal_section(pi: dict[str, Any]) -> str:
                 except Exception:
                     pass
 
-            # Student status
-            student_status = " - currently a student" if d.get("isStudent") else ""
+            # Student status (support both keys)
+            student_flag = d.get("student") if d.get("student") is not None else d.get("isStudent")
+            student_status = " - currently a student" if student_flag else ""
 
             # Build dependent description
             nationality_text = f" with citizenship of {', '.join(nat_list)}" if nat_list else ""
             dep_desc = f"{rel_desc}{age_str}{nationality_text}{student_status}"
+
+            # Include simplified relationship fields if present
+            rel_to_user = (d.get("relationshipToUser") or "").replace("_", " ")
+            if rel_to_user and rel_to_user != "none":
+                dep_desc += f" (your relationship: {rel_to_user})"
+
+            rel_to_partner = (d.get("relationshipToPartner") or "").replace("_", " ")
+            if rel_to_partner and rel_to_partner not in (
+                "none",
+                "not applicable",
+                "not_applicable",
+            ):
+                dep_desc += f" (partner's relationship: {rel_to_partner})"
+
+            custody = d.get("custodyArrangement")
+            custody_map = {
+                "sole_user": "sole custody (you)",
+                "sole_partner": "sole custody (partner)",
+                "shared": "shared custody",
+                "neither": "no custody",
+                "not_applicable": None,
+            }
+            if custody in custody_map and custody_map[custody]:
+                dep_desc += f" ({custody_map[custody]})"
+
+            if d.get("canProveRelationship") is True:
+                dep_desc += " (documentation available)"
 
             # Include additional notes if provided
             notes = rel_details.get("additionalNotes", "").strip()
@@ -399,12 +427,21 @@ def residency_section(
         duration = dest.get("intendedTemporaryDurationOfStay")
         if duration:
             sent = sent.rstrip(".") + f" for approximately {duration} months."
+    if move_type in ("undecided", "not sure yet", "not_sure_yet"):
+        sent = (
+            f"The individual is not yet sure about the type or length of their move to {country}."
+        )
     sentences.append(sent)
 
     # Add region information if specified (may be omitted in citizen/EU minimal mode below)
     region = dest.get("region", "").strip()
     if region:
         sentences.append(f"They are specifically interested in the {region} region.")
+
+    # Special situation details
+    special_situation = dest.get("specialSituation", "").strip()
+    if special_situation:
+        sentences.append(f'Special situation: "{special_situation}"')
 
     # If this function is called without personal_info (e.g., section-only story),
     # fall back to residencyIntentions.destinationCountry.citizenshipStatus and produce minimal output.
@@ -488,6 +525,29 @@ def residency_section(
     motivation = ri.get("moveMotivation", "").strip()
     if motivation:
         sentences.append(f'Their motivation for moving: "{motivation}"')
+
+    # Move timing
+    timing = ri.get("moveTiming", "").strip()
+    if timing:
+        sentences.append(f'Move timing and readiness: "{timing}"')
+
+    # Family coordination
+    family_coord = ri.get("familyCoordination", {})
+    if family_coord:
+        app_timing = family_coord.get("applicationTiming", "").strip()
+        if app_timing:
+            if app_timing == "together":
+                sentences.append("They plan to submit all family applications together.")
+            elif app_timing == "sequential":
+                sentences.append("They plan to submit family applications sequentially.")
+            elif app_timing == "undecided":
+                sentences.append(
+                    "They are still undecided about their family application timing strategy."
+                )
+
+        special_circumstances = family_coord.get("specialFamilyCircumstances", "").strip()
+        if special_circumstances:
+            sentences.append(f'Special family circumstances: "{special_circumstances}"')
 
     # Analyze family visa situation if personal info is available
     if personal_info and country != "an unspecified country":
@@ -584,8 +644,13 @@ def residency_section(
 
             # Centre of life (ensure inclusion in minimal mode)
             col = ri.get("centerOfLife", {})
-            ties_text = col.get("tiesDescription")
-            if col.get("maintainsSignificantTies"):
+            # Support both new and legacy field names
+            ties_text = col.get("maintainOtherCountryTiesDetails") or col.get("tiesDescription", "")
+            maintain_ties = col.get("maintainOtherCountryTies") or col.get(
+                "maintainsSignificantTies", False
+            )
+
+            if maintain_ties:
                 minimal.append(
                     "They maintain significant ties to their current country ("
                     + (f'"{ties_text}"' if ties_text else "details not specified")
@@ -749,7 +814,103 @@ def residency_section(
         elif rp.get("openToVisiting") is False:
             sentences.append("They are not planning any exploratory visits prior to relocation.")
 
-    # Citizenship ambitions - only mention if explicitly provided
+    # Citizenship interest (new structure)
+    ci = ri.get("citizenshipInterest", {})
+    if ci:
+        interest = ci.get("interest")
+        if interest == "yes":
+            sentences.append("They are interested in eventual citizenship.")
+        elif interest == "no":
+            sentences.append("They are not interested in citizenship.")
+        elif interest == "undecided":
+            sentences.append("They are undecided about pursuing citizenship.")
+
+        # Citizenship pathways
+        willing = ci.get("willingToConsider", {})
+        if willing:
+            pathways = []
+            if willing.get("naturalization"):
+                pathways.append("naturalization")
+            if willing.get("familyConnections"):
+                pathways.append("family connections")
+                family_details = willing.get("familyConnectionDetails", "").strip()
+                if family_details:
+                    sentences.append(f'Family connection details: "{family_details}"')
+            if willing.get("investmentPrograms"):
+                pathways.append("investment programs")
+            if willing.get("militaryService"):
+                pathways.append("military service")
+            if willing.get("otherPrograms"):
+                pathways.append("other special programs")
+
+            if pathways:
+                if len(pathways) == 1:
+                    sentences.append(
+                        f"They are willing to consider {pathways[0]} as a citizenship pathway."
+                    )
+                else:
+                    sentences.append(
+                        f"They are willing to consider multiple citizenship pathways: {', '.join(pathways[:-1])}, and {pathways[-1]}."
+                    )
+
+    # Partner citizenship interest (only process if special situation is explicitly set)
+    show_partner_special = ci.get("showPartnerSpecialSituation", False)
+    if show_partner_special:
+        partner_special_situation = ci.get("partnerSpecialSituation", "").strip()
+        if partner_special_situation:
+            sentences.append(
+                f'Partner citizenship special situation: "{partner_special_situation}"'
+            )
+        else:
+            # Use standard partner citizenship interest when special situation is active
+            partner_visa = ri.get("partnerVisa", {})
+            if partner_visa and partner_visa.get("citizenshipInterest"):
+                p_interest = partner_visa.get("citizenshipInterest")
+                if p_interest == "yes":
+                    sentences.append("Their partner is interested in eventual citizenship.")
+                    p_willing = partner_visa.get("willingToConsider", {})
+                    if p_willing:
+                        p_pathways = []
+                        if p_willing.get("naturalization"):
+                            p_pathways.append("naturalization")
+                        if p_willing.get("familyConnections"):
+                            p_pathways.append("family connections")
+                            p_family_details = p_willing.get("familyConnectionDetails", "").strip()
+                            if p_family_details:
+                                sentences.append(
+                                    f'Partner family connection details: "{p_family_details}"'
+                                )
+                        if p_willing.get("investmentPrograms"):
+                            p_pathways.append("investment programs")
+                        if p_willing.get("militaryService"):
+                            p_pathways.append("military service")
+                        if p_willing.get("otherPrograms"):
+                            p_pathways.append("other special programs")
+
+                        if p_pathways:
+                            if len(p_pathways) == 1:
+                                sentences.append(
+                                    f"Their partner is willing to consider {p_pathways[0]} as a citizenship pathway."
+                                )
+                            else:
+                                sentences.append(
+                                    f"Their partner is willing to consider multiple citizenship pathways: {', '.join(p_pathways[:-1])}, and {p_pathways[-1]}."
+                                )
+                elif p_interest == "no":
+                    sentences.append("Their partner is not interested in citizenship.")
+                elif p_interest == "undecided":
+                    sentences.append("Their partner is undecided about pursuing citizenship.")
+    else:
+        # When no special situation, citizenship interest applies to both if partner exists
+        if personal_info and personal_info.get("relocationPartner") and interest in ["yes", "no"]:
+            if interest == "yes":
+                sentences.append(
+                    "Both partners share the same citizenship interest and pathway preferences."
+                )
+            elif interest == "no":
+                sentences.append("Neither partner is interested in citizenship.")
+
+    # Legacy citizenship plans support (for backward compatibility)
     cp = ri.get("citizenshipPlans", {})
     if cp:
         interested = cp.get("interestedInCitizenship")
@@ -783,7 +944,11 @@ def residency_section(
 
     # Centre of life ties - always include for citizens and EU citizens
     col = ri.get("centerOfLife", {})
-    ties_text = col.get("tiesDescription")
+    # Support both new and legacy field names
+    ties_text = col.get("maintainOtherCountryTiesDetails") or col.get("tiesDescription", "")
+    maintain_ties = col.get("maintainOtherCountryTies") or col.get(
+        "maintainsSignificantTies", False
+    )
 
     # Check if user is citizen or EU citizen for the destination country
     user_is_citizen_or_eu = False
@@ -793,7 +958,7 @@ def residency_section(
         user_has_eu_freedom = can_move_within_eu(user_nationalities, country)
         user_is_citizen_or_eu = user_is_citizen or user_has_eu_freedom
 
-    if col.get("maintainsSignificantTies"):
+    if maintain_ties:
         sentences.append(
             "They maintain significant ties to their current country ("
             + (f'"{ties_text}"' if ties_text else "details not specified")
@@ -806,6 +971,75 @@ def residency_section(
         sentences.append(
             "As a citizen/EU citizen, center-of-life considerations are particularly important for tax residency determination."
         )
+
+    # Physical presence intentions
+    ppi = ri.get("physicalPresenceIntentions", {})
+    if ppi and ppi.get("interestedInMinimumStay"):
+        sentences.append(
+            "They are interested in understanding minimum stay requirements for visa compliance."
+        )
+
+    # Residency applications
+    user_visa = ri.get("userVisa", {})
+    if user_visa and user_visa.get("applyForResidency"):
+        sentences.append("They will apply for a residency permit.")
+
+    partner_visa = ri.get("partnerVisa", {})
+    if partner_visa and partner_visa.get("applyForResidency"):
+        sentences.append("Their partner will apply for a residency permit.")
+
+    dependents_visa = ri.get("dependentsVisa", {})
+    # Only mention dependents visa if there are actual dependents and they need visas
+    if dependents_visa and dependents_visa.get("applyForResidency"):
+        # Check if there are actual dependents in personal info
+        has_dependents = False
+        if personal_info:
+            dependents_info = personal_info.get("dependents", [])
+            has_dependents = len(dependents_info) > 0
+
+        if has_dependents:
+            sentences.append("They will apply for residency permits for their dependents.")
+
+    # Background disclosures
+    bg = ri.get("backgroundDisclosures", {})
+    if bg:
+        if bg.get("criminalRecord"):
+            details = bg.get("criminalDetails", "").strip()
+            sentences.append(
+                "They have disclosed a criminal record" + (f': "{details}"' if details else ".")
+            )
+        if bg.get("taxComplianceIssues"):
+            details = bg.get("taxComplianceDetails", "").strip()
+            sentences.append(
+                "They have tax compliance issues" + (f': "{details}"' if details else ".")
+            )
+        if bg.get("previousVisaDenials"):
+            details = bg.get("visaDenialDetails", "").strip()
+            sentences.append(
+                "They have previous visa denials/immigration issues"
+                + (f': "{details}"' if details else ".")
+            )
+
+    # Partner background disclosures
+    p_bg = ri.get("backgroundDisclosuresPartner", {})
+    if p_bg:
+        if p_bg.get("criminalRecord"):
+            details = p_bg.get("criminalDetails", "").strip()
+            sentences.append(
+                "Their partner has disclosed a criminal record"
+                + (f': "{details}"' if details else ".")
+            )
+        if p_bg.get("taxComplianceIssues"):
+            details = p_bg.get("taxComplianceDetails", "").strip()
+            sentences.append(
+                "Their partner has tax compliance issues" + (f': "{details}"' if details else ".")
+            )
+        if p_bg.get("previousVisaDenials"):
+            details = p_bg.get("visaDenialDetails", "").strip()
+            sentences.append(
+                "Their partner has previous visa denials/immigration issues"
+                + (f': "{details}"' if details else ".")
+            )
 
     # Tax compliance - explicit mention for both compliant and non-compliant
     tax_compliant = ri.get("taxCompliantEverywhere")
@@ -1200,7 +1434,7 @@ def _summarise_capital_gains(cg: dict[str, Any], dest_currency: str) -> str:
 
 
 def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
-    # Check if user chose to skip finance details
+    # Always check skip first, regardless of data presence
     if fin.get("skipDetails") is True:
         return "The user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
 
@@ -1211,6 +1445,12 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
 
     # Income Situation Assessment
     income_situation = fin.get("income_situation", fin.get("incomeSituation"))
+    partner_income_situation = fin.get("partner", {}).get(
+        "income_situation", fin.get("partner", {}).get("incomeSituation")
+    )
+    supported_by_partner = fin.get("supportedByPartner", False)
+    partner_supported_by_me = fin.get("partner", {}).get("supportedByMe", False)
+
     if income_situation:
         situation_descriptions = {
             "continuing_income": "plans to continue all current income sources after moving (remote work, investments, rental income, etc.)",
@@ -1220,7 +1460,31 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
             "dependent/supported": "will be financially supported by family, partner, scholarship, or institutional funding",
         }
         description = situation_descriptions.get(income_situation, income_situation)
-        parts.append(f"Income Situation Assessment: {description}.")
+
+        # Add support relationship details
+        support_detail = ""
+        if income_situation == "dependent/supported" and supported_by_partner:
+            support_detail = " (specifically supported by their partner)"
+
+        parts.append(f"User's Income Situation: {description}{support_detail}.")
+
+    # Partner's income situation
+    if partner_income_situation:
+        situation_descriptions = {
+            "continuing_income": "plans to continue all current income sources after moving (remote work, investments, rental income, etc.)",
+            "current_and_new_income": "will maintain some existing income sources while adding new ones in the destination country",
+            "seeking_income": "plans to find new employment, start a business, or develop other new income sources after moving",
+            "gainfully_unemployed": "will be self-funded, living off savings, gifts, or investment returns without active employment",
+            "dependent/supported": "will be financially supported by family, partner, scholarship, or institutional funding",
+        }
+        description = situation_descriptions.get(partner_income_situation, partner_income_situation)
+
+        # Add support relationship details
+        support_detail = ""
+        if partner_income_situation == "dependent/supported" and partner_supported_by_me:
+            support_detail = " (specifically supported by the user)"
+
+        parts.append(f"Partner's Income Situation: {description}{support_detail}.")
 
     # Total Wealth
     tw = fin.get("totalWealth", fin.get("total_wealth"))
@@ -1242,6 +1506,20 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
     if income_sources:
         parts.append(_summarise_income_sources(income_sources, dest_currency))
 
+    # Partner income sources
+    partner_data = fin.get("partner", {})
+    partner_income_sources = partner_data.get(
+        "incomeSources", partner_data.get("income_sources", [])
+    )
+    if partner_income_sources:
+        partner_summary = _summarise_income_sources(partner_income_sources, dest_currency)
+        if partner_summary:
+            # Replace "User" with "Partner" in the summary
+            partner_summary = partner_summary.replace("User has ", "Partner has ").replace(
+                "User's ", "Partner's "
+            )
+            parts.append(partner_summary)
+
     # Planned Asset Sales in Your First Year (Capital Gains)
     cg = fin.get("capitalGains", fin.get("capital_gains", {}))
     capital_gains_summary = _summarise_capital_gains(cg, dest_currency)
@@ -1253,12 +1531,33 @@ def finance_section(fin: dict[str, Any], dest_currency: str) -> str:
         if isinstance(future_sales, list) and len(future_sales) == 0:
             parts.append("User has no planned asset sales in their first year after moving.")
 
+    # Partner capital gains
+    partner_cg = partner_data.get("capitalGains", partner_data.get("capital_gains", {}))
+    partner_capital_gains_summary = _summarise_capital_gains(partner_cg, dest_currency)
+    if partner_capital_gains_summary:
+        # Replace "User" with "Partner" in the summary
+        partner_capital_gains_summary = partner_capital_gains_summary.replace(
+            "User has ", "Partner has "
+        ).replace("User's ", "Partner's ")
+        parts.append(partner_capital_gains_summary)
+
     # Liabilities & Debts
     liabs = fin.get("liabilities", [])
     if liabs:
         liabs_summary = _summarise_liabilities(liabs, dest_currency)
         if liabs_summary:
             parts.append(liabs_summary)
+
+    # Partner liabilities
+    partner_liabs = partner_data.get("liabilities", [])
+    if partner_liabs:
+        partner_liabs_summary = _summarise_liabilities(partner_liabs, dest_currency)
+        if partner_liabs_summary:
+            # Replace "User" with "Partner" in the summary
+            partner_liabs_summary = partner_liabs_summary.replace(
+                "User has ", "Partner has "
+            ).replace("User's ", "Partner's ")
+            parts.append(partner_liabs_summary)
 
     # Assets summary
     assets = fin.get("assets", [])
@@ -1540,6 +1839,49 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
     else:
         sentences.append("User did not provide more information on education.")
 
+    # Partner degrees
+    partner_data = edu.get("partner", {})
+    partner_degrees = partner_data.get("previousDegrees", [])
+    if partner_degrees:
+        partner_degree_count = len(partner_degrees)
+        if partner_degree_count == 1:
+            degree = partner_degrees[0]
+            degree_name = degree.get("degree", "Unspecified degree")
+            institution = degree.get("institution", "Unspecified institution")
+            field = degree.get("field", "Unspecified field")
+            start_date = degree.get("start_date", "")
+            end_date = degree.get("end_date", "")
+            in_progress = degree.get("in_progress", False)
+
+            date_info = ""
+            if start_date and end_date:
+                start_formatted = (
+                    start_date[:4] if len(start_date) >= 4 else start_date
+                )  # Extract year from date
+                end_formatted = end_date[:4] if len(end_date) >= 4 else end_date
+                if in_progress:
+                    date_info = f" ({start_formatted} - present, in progress)"
+                else:
+                    date_info = f" ({start_formatted} - {end_formatted})"
+            elif start_date:
+                start_formatted = start_date[:4] if len(start_date) >= 4 else start_date
+                date_info = f" (started {start_formatted})"
+
+            sentences.append(
+                f"Their partner holds a {degree_name} in {field} from {institution}{date_info}."
+            )
+        else:
+            sentences.append(
+                f"Their partner holds {partner_degree_count} degrees from various institutions."
+            )
+            for degree in partner_degrees[:3]:  # Show first 3 degrees in detail
+                degree_name = degree.get("degree", "Unspecified degree")
+                institution = degree.get("institution", "Unspecified institution")
+                field = degree.get("field", "Unspecified field")
+                sentences.append(f"• {degree_name} in {field} from {institution}")
+            if partner_degree_count > 3:
+                sentences.append(f"...and {partner_degree_count - 3} additional degrees.")
+
     # Professional skills/credentials
     skills = edu.get("visaSkills", [])
     if skills:
@@ -1569,6 +1911,38 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
                     sentences.append(f"• {skill_name}")
             if skill_count > 3:
                 sentences.append(f"...and {skill_count - 3} additional skills.")
+
+    # Partner skills/credentials
+    partner_skills = partner_data.get("visaSkills", [])
+    if partner_skills:
+        partner_skill_count = len(partner_skills)
+        if partner_skill_count == 1:
+            skill = partner_skills[0]
+            skill_name = skill.get("skill", "Unspecified skill")
+            credential = skill.get("credentialName", "")
+            institute = skill.get("credentialInstitute", "")
+
+            skill_desc = skill_name
+            if credential:
+                skill_desc += f" ({credential}"
+                if institute:
+                    skill_desc += f" from {institute}"
+                skill_desc += ")"
+
+            sentences.append(f"Their partner has professional expertise in {skill_desc}.")
+        else:
+            sentences.append(
+                f"Their partner has {partner_skill_count} professional skills and credentials:"
+            )
+            for skill in partner_skills[:3]:  # Show first 3 skills
+                skill_name = skill.get("skill", "Unspecified skill")
+                credential = skill.get("credentialName", "")
+                if credential:
+                    sentences.append(f"• {skill_name} ({credential})")
+                else:
+                    sentences.append(f"• {skill_name}")
+            if partner_skill_count > 3:
+                sentences.append(f"...and {partner_skill_count - 3} additional skills.")
 
     # Work experience
     work_exp = edu.get("workExperience", [])
@@ -1601,6 +1975,38 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
         if exp_count > 3:
             sentences.append(f"...and {exp_count - 3} additional work experiences.")
 
+    # Partner work experience
+    partner_work_exp = partner_data.get("workExperience", [])
+    if partner_work_exp:
+        partner_exp_count = len(partner_work_exp)
+        sentences.append(
+            f"Their partner has {partner_exp_count} work experience entr{'ies' if partner_exp_count != 1 else 'y'}:"
+        )
+        for exp in partner_work_exp[:3]:  # Show first 3 experiences
+            company = exp.get("company", "Unspecified company")
+            position = exp.get(
+                "jobTitle", exp.get("position", "Unspecified position")
+            )  # Try jobTitle first, then position
+            start_date = exp.get("startDate", "")
+            end_date = exp.get("endDate", "")
+            current = exp.get("current", False)
+
+            date_range = ""
+            if start_date:
+                start_year = start_date[:4] if len(start_date) >= 4 else start_date
+                if current:
+                    date_range = f" ({start_year} - present)"
+                elif end_date:
+                    end_year = end_date[:4] if len(end_date) >= 4 else end_date
+                    date_range = f" ({start_year} - {end_year})"
+                else:
+                    date_range = f" (since {start_year})"
+
+            sentences.append(f"• {position} at {company}{date_range}")
+
+        if partner_exp_count > 3:
+            sentences.append(f"...and {partner_exp_count - 3} additional work experiences.")
+
     # Professional licenses
     licenses = edu.get("professionalLicenses", [])
     if licenses:
@@ -1626,6 +2032,35 @@ def education_section(edu: dict[str, Any], residency_intentions: dict[str, Any] 
             sentences.append(f"• {license_desc}")
         if license_count > 3:
             sentences.append(f"...and {license_count - 3} additional licenses.")
+
+    # Partner professional licenses
+    partner_licenses = partner_data.get("professionalLicenses", [])
+    if partner_licenses:
+        partner_license_count = len(partner_licenses)
+        sentences.append(
+            f"Their partner holds {partner_license_count} professional license{'s' if partner_license_count != 1 else ''}:"
+        )
+        for license in partner_licenses[:3]:  # Show first 3 licenses
+            license_name = license.get("licenseName", "Unspecified license")
+            license_type = license.get("licenseType", "")
+            issuing_body = license.get("issuingBody", "")
+            country = license.get("country", "")
+            active = license.get("active", False)
+
+            license_desc = license_name
+            if license_type:
+                license_desc = f"{license_type} ({license_name})"
+            if issuing_body:
+                license_desc += f" from {issuing_body}"
+            if country:
+                license_desc += f" in {country}"
+            if active:
+                license_desc += " (active)"
+
+            sentences.append(f"• {license_desc}")
+
+        if partner_license_count > 3:
+            sentences.append(f"...and {partner_license_count - 3} additional licenses.")
 
     # Study interests
     if edu.get("interestedInStudying") is True:
@@ -2010,8 +2445,20 @@ def make_social_security_story(
     ssp_info: dict[str, Any], dest_currency: str = "USD", skip_finance_details: bool = False
 ) -> str:
     """Generate a story for just the social security and pensions section."""
+    # Always prioritize skip message over any data
     if skip_finance_details:
         return "Social Security & Pensions:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
+
+    # Check if section is empty
+    if not ssp_info or not any(
+        [
+            ssp_info.get("currentCountryContributions", {}).get("isContributing"),
+            ssp_info.get("futurePensionContributions", {}).get("isPlanning"),
+            ssp_info.get("existingPlans", {}).get("hasPlans"),
+        ]
+    ):
+        return "Social Security & Pensions:\nNothing entered"
+
     return f"Social Security & Pensions:\n{ssp_section(ssp_info, dest_currency)}"
 
 
@@ -2021,6 +2468,11 @@ def make_tax_deductions_story(
     """Generate a story for just the tax deductions and credits section."""
     if skip_finance_details:
         return "Tax Deductions & Credits:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
+
+    # Check if section is empty
+    if not tax_info or not tax_info.get("potentialDeductions"):
+        return "Tax Deductions & Credits:\nNothing entered"
+
     return f"Tax Deductions & Credits:\n{deductions_section(tax_info, dest_currency)}"
 
 
@@ -2030,6 +2482,15 @@ def make_future_financial_plans_story(
     """Generate a story for just the future financial plans section."""
     if skip_finance_details:
         return "Future Financial Plans:\nThe user is not interested in providing detailed financial information and just wants to know about minimum requirements to get a visa in the destination country."
+
+    # Check if section is empty
+    if not future_info or (
+        not future_info.get("plannedInvestments")
+        and not future_info.get("businessPlans")
+        and not future_info.get("retirementPlans")
+    ):
+        return "Future Financial Plans:\nNothing entered"
+
     return f"Future Financial Plans:\n{future_plans_section(future_info, dest_currency)}"
 
 

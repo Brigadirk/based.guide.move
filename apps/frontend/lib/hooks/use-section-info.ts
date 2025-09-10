@@ -174,6 +174,16 @@ Please try again in a moment.`)
     setIsLoading(true)
     
     try {
+      // Check for cached edited story first
+      const cachedStory = getFormData("summary.editedFullStory")
+      if (cachedStory) {
+        setModalTitle("Complete Tax Migration Profile - All Information (Edited)")
+        setCurrentStory(cachedStory)
+        setIsFullView(true)
+        setIsLoading(false)
+        return
+      }
+      
       const destinationCountry = getFormData("residencyIntentions.destinationCountry.country")
       const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
       

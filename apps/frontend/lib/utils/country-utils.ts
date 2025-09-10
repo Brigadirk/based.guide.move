@@ -35,4 +35,31 @@ export function getLanguages(country: string, region?: string): string[] {
   }
 
   return Array.from(langs)
+}
+
+export function getAllLanguages(): string[] {
+  const allLanguages = new Set<string>()
+  
+  Object.values(countryInfo).forEach((countryData: any) => {
+    if (countryData.dominant_language) {
+      if (Array.isArray(countryData.dominant_language)) {
+        countryData.dominant_language.forEach((lang: string) => allLanguages.add(lang))
+      } else if (typeof countryData.dominant_language === "string") {
+        allLanguages.add(countryData.dominant_language)
+      }
+    }
+    
+    // Also check regional languages if they exist
+    if (countryData.regions && typeof countryData.regions === "object") {
+      Object.values(countryData.regions).forEach((regionData: any) => {
+        if (Array.isArray(regionData)) {
+          regionData.forEach((lang: string) => allLanguages.add(lang))
+        } else if (regionData && typeof regionData === "object" && Array.isArray(regionData.languages)) {
+          regionData.languages.forEach((lang: string) => allLanguages.add(lang))
+        }
+      })
+    }
+  })
+  
+  return Array.from(allLanguages).sort()
 } 

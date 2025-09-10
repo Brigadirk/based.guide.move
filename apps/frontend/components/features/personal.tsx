@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -20,10 +21,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { CheckInfoButton } from "@/components/ui/check-info-button"
 import { SectionInfoModal } from "@/components/ui/section-info-modal"
 import { SectionFooter } from "@/components/ui/section-footer"
+
 import { ValidationAlert } from "@/components/ui/validation-alert"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { hasEUCitizenship, getUserEUCountries } from "@/lib/utils/eu-utils"
 import { getCountries } from "@/lib/utils/country-utils"
+import { PageHeading } from "@/components/ui/page-heading"
 
 const RESIDENCY_OPTIONS = ["Citizen", "Permanent Resident", "Temporary Resident", "Work Visa", "Student Visa", "Refugee", "Other"] as const
 const MARITAL_OPTIONS = [
@@ -35,8 +38,20 @@ const MARITAL_OPTIONS = [
 ] as const
 
 export function PersonalInformation({ onComplete }: { onComplete: () => void }) {
-  const { getFormData, updateFormData, markSectionComplete } = useFormStore()
+  const { getFormData, updateFormData, markSectionComplete, isSectionMarkedComplete } = useFormStore()
   const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
+  
+  // Editing state management
+  const [isEditing, setIsEditing] = useState(false)
+  const isPersonalCompleted = isSectionMarkedComplete("personal")
+  
+  // Initialize editing state
+  useEffect(() => {
+    if (!isPersonalCompleted) {
+      // First time or incomplete - start in editing mode
+      setIsEditing(true)
+    }
+  }, [isPersonalCompleted])
   
   // Get full country list
   const countries = getCountries()
@@ -73,17 +88,17 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     return `${defaultYear}-${month}-${day}`
   }
 
-  // Helper function to calculate age from date of birth (in decimal years)
+  // Helper function to calculate age from date of birth (in whole years)
   const calculateAge = (dateOfBirth: string): number => {
     if (!dateOfBirth) return 0
     const today = new Date()
     const birthDate = new Date(dateOfBirth)
     
-    // Calculate age in milliseconds and convert to years
+    // Calculate age in milliseconds and convert to years, then floor to whole number
     const ageInMs = today.getTime() - birthDate.getTime()
     const ageInYears = ageInMs / (1000 * 60 * 60 * 24 * 365.25) // Account for leap years
     
-    return Math.max(0, ageInYears)
+    return Math.floor(Math.max(0, ageInYears)) // Round down to whole years
   }
 
   // Helper function to format age for display
@@ -154,6 +169,11 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
       guardianshipType?: "full" | "partial" | "temporary" | "none"
       additionalNotes?: string
     }
+    // Simplified relationship model (new)
+    relationshipToUser?: "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none"
+    relationshipToPartner?: "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable"
+    custodyArrangement?: "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable"
+    canProveRelationship?: boolean
     dateOfBirth: string
     student: boolean
     nationalities: { country: string; willingToRenounce: boolean }[]
@@ -162,12 +182,16 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
       status?: string
       duration?: string
     }
+    // Local UI flag to avoid rendering unsaved drafts after refresh
+    isDraft?: boolean
   }
   const depList: Dependent[] = getFormData("personalInformation.dependents") ?? []
+  const [localDepList, setLocalDepList] = useState<Dependent[]>(depList)
+  useEffect(() => {
+    setLocalDepList(depList)
+  }, [depList])
   const updateDepList = (next: Dependent[]) => {
-    updateFormData("personalInformation.dependents", next)
-    // Debug logging to track dependent changes
-    console.log("📝 Dependents updated:", next.length, "dependents")
+    setLocalDepList(next)
   }
   
   // Function to clear all dependents
@@ -177,18 +201,20 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     setEditingDependents([])
     setSavedDependents([])
     setAttemptedDependentSaves([])
-    console.log("🗑️ All dependents cleared")
   }
   
   // Check for data consistency on component mount
   useEffect(() => {
     const storedDeps = getFormData("personalInformation.dependents") ?? []
-    if (storedDeps.length > 0) {
-      console.log("📊 Found", storedDeps.length, "dependents in storage:", storedDeps)
-      // Initialize visible dependents if there are stored dependents
-      if (visibleDependents.length === 0) {
-        setVisibleDependents(storedDeps.map((_, idx) => idx))
-      }
+    // Only show previously saved dependents (filter out drafts)
+    if (storedDeps.length > 0 && visibleDependents.length === 0) {
+      const indices = storedDeps
+        .map((d: any, idx: number) => ({ d, idx }))
+        .filter(({ d }) => !d?.isDraft)
+        .map(({ idx }) => idx)
+      setVisibleDependents(indices)
+      // Mark previously saved dependents as saved so the Add button stays enabled after refresh
+      setSavedDependents(indices)
     }
   }, [])
   const [visibleDependents, setVisibleDependents] = useState<number[]>([])
@@ -196,9 +222,85 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   const [savedDependents, setSavedDependents] = useState<number[]>([])
   const [attemptedDependentSaves, setAttemptedDependentSaves] = useState<number[]>([])
   const [addCountry, setAddCountry] = useState("")
+  // Toggles to reveal additional citizenship add rows after at least one exists
+  const [showMoreUserCitizenship, setShowMoreUserCitizenship] = useState(false)
+  const [showPartnerMore, setShowPartnerMore] = useState(false)
+  // Dependent add-citizenship UI state
+  const [showMoreDependentCitizenship, setShowMoreDependentCitizenship] = useState<number[]>([])
+  const [depAddCountry, setDepAddCountry] = useState<Record<number, string>>({})
 
   // Local state
   const [partnerSel, setPartnerSel] = useState("")
+  
+  // Reusable add-citizenship committers
+  const commitAddCitizenshipForUser = () => {
+    if (!addCountry) return
+    const next = [...natList]
+    if (!next.some(n => n.country === addCountry)) {
+      updateNatList([...next, { country: addCountry, willingToRenounce: false }])
+    }
+    setAddCountry("")
+  }
+  const commitAddCitizenshipForPartner = () => {
+    if (!partnerSel) return
+    const current = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+    if (!current.some((n: any) => n.country === partnerSel)) {
+      updateFormData(
+        "personalInformation.relocationPartnerInfo.partnerNationalities",
+        [...current, { country: partnerSel, willingToRenounce: false }]
+      )
+    }
+    setPartnerSel("")
+  }
+  const commitAddCitizenshipForDependent = (depIndex: number) => {
+    const country = depAddCountry[depIndex]
+    if (!country) return
+    const updated = [...localDepList]
+    const currentNats = updated[depIndex].nationalities || []
+    if (!currentNats.some((n: any) => n.country === country)) {
+      updated[depIndex] = {
+        ...updated[depIndex],
+        nationalities: [...currentNats, { country, willingToRenounce: false }]
+      }
+      updateDepList(updated)
+    }
+    setDepAddCountry(prev => ({ ...prev, [depIndex]: "" }))
+  }
+
+  // Reusable dependent creator
+  const handleAddDependent = () => {
+    const newDependent = {
+      relationship: "Child",
+      relationshipDetails: {
+        biologicalRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
+        legalRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
+        custodialRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
+        isStepRelation: false,
+        isAdopted: false,
+        isLegalWard: false,
+        guardianshipType: "none" as "full" | "partial" | "temporary" | "none",
+        additionalNotes: ""
+      },
+      relationshipToUser: "biological" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none",
+      relationshipToPartner: hasPartner ? "biological" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable" : "not_applicable" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable",
+      custodyArrangement: hasPartner ? "shared" as "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable" : "sole_user" as "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable",
+      canProveRelationship: false,
+      dateOfBirth: "",
+      student: false,
+      nationalities: [],
+      currentResidency: {
+        country: "",
+        status: "",
+        duration: ""
+      },
+      isDraft: true
+    }
+    const next = [...localDepList, newDependent]
+    updateDepList(next)
+    const newIndex = next.length - 1
+    setVisibleDependents(prev => [...prev, newIndex])
+    setEditingDependents(prev => [...prev, newIndex])
+  }
 
   // Auto-citizenship management (matches Streamlit logic exactly)
   useEffect(() => {
@@ -262,12 +364,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     }
   }, [getFormData("personalInformation.relocationPartnerInfo.currentResidency.country"), getFormData("personalInformation.relocationPartnerInfo.currentResidency.status"), getFormData("personalInformation.relocationPartnerInfo.partnerNationalities")])
 
-  // Auto-citizenship for dependents
+  // Auto-citizenship for dependents (local-only until save)
   useEffect(() => {
     let hasChanges = false
-    const updatedDepList = [...depList]
+    const updatedDepList = [...localDepList]
     
-    depList.forEach((dep: any, idx: number) => {
+    localDepList.forEach((dep: any, idx: number) => {
       const depCountry = dep.currentResidency?.country
       const depStatus = dep.currentResidency?.status
       const depNats = dep.nationalities || []
@@ -299,7 +401,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     if (hasChanges) {
       updateDepList(updatedDepList)
     }
-  }, [depList.map((dep: any) => `${dep.currentResidency?.country}-${dep.currentResidency?.status}-${JSON.stringify(dep.nationalities)}`).join(',')])
+  }, [localDepList.map((dep: any) => `${dep.currentResidency?.country}-${dep.currentResidency?.status}-${JSON.stringify(dep.nationalities)}`).join(',')])
 
   // Clear partner info when partner checkbox is unchecked
   useEffect(() => {
@@ -415,9 +517,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     }
   }
 
-  // Dependent validation function
+  // Dependent validation function (validate local edits)
   const validateDependentInfo = (depIndex: number) => {
-    const dep = depList[depIndex]
+    const dep = localDepList[depIndex]
     if (!dep) return false
     
     const dobValid = !!dep.dateOfBirth
@@ -443,6 +545,20 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
     setAttemptedDependentSaves(prev => [...prev.filter(i => i !== depIndex), depIndex])
     
     if (validateDependentInfo(depIndex)) {
+      // Persist to global store from local state
+      const persisted = [...localDepList]
+      // Normalize relationships if no partner
+      if (!hasPartner && persisted[depIndex]?.relationshipDetails) {
+        const rd = persisted[depIndex].relationshipDetails as any
+        const normalize = (v: string) => (v === "partner" || v === "both" ? "user" : v)
+        rd.biologicalRelationTo = normalize(rd.biologicalRelationTo)
+        rd.legalRelationTo = normalize(rd.legalRelationTo)
+        rd.custodialRelationTo = normalize(rd.custodialRelationTo)
+      }
+      if (persisted[depIndex]?.isDraft) {
+        delete (persisted[depIndex] as any).isDraft
+      }
+      updateFormData("personalInformation.dependents", persisted)
       setSavedDependents(prev => [...prev.filter(i => i !== depIndex), depIndex])
       setEditingDependents(prev => prev.filter(i => i !== depIndex))
       setAttemptedDependentSaves(prev => prev.filter(i => i !== depIndex))
@@ -455,8 +571,10 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   }
 
   const removeDependentInfo = (depIndex: number) => {
-    const newDepList = depList.filter((_, idx) => idx !== depIndex)
+    const newDepList = localDepList.filter((_, idx) => idx !== depIndex)
     updateDepList(newDepList)
+    // Persist to global store
+    updateFormData("personalInformation.dependents", newDepList)
     
     // Clean up state arrays by removing this index and adjusting higher indices
     setVisibleDependents(prev => prev.filter(i => i !== depIndex).map(i => i > depIndex ? i - 1 : i))
@@ -481,8 +599,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
   if (!curStatus) errors.push("Current residency status is required")
   if (natList.length === 0) errors.push("At least one citizenship is required")
   if (!maritalStatus) errors.push("Marital status is required")
-  if (hasPartner && !partnerSaved) errors.push("Partner information must be completed and saved")
-  if (!allDependentsSaved) errors.push("All dependents information must be completed and saved")
+  if (hasPartner && !partnerSaved) errors.push("Complete and save partner information")
+  if (!allDependentsSaved) errors.push("Complete and save all dependents information")
   if (!mainPersonDurationValid) errors.push("Duration in current status cannot exceed your age")
   
   const canContinue = errors.length === 0
@@ -492,22 +610,56 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
   const handleComplete = () => {
     markSectionComplete("personal")
+    setIsEditing(false)
     onComplete()
+  }
+
+  const handleEdit = () => {
+    setIsEditing(true)
   }
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Page Header */}
-      <div className="text-center pb-4 border-b">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <UserPlus className="w-7 h-7 text-primary" />
-          <h1 className="text-3xl font-bold tracking-tight">Personal Information</h1>
-        </div>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Tell us about yourself to determine visa eligibility, tax obligations, and residency requirements
-        </p>
-      </div>
+      <PageHeading 
+        title="Personal Information"
+        description="Provide your personal details to help us tailor recommendations"
+        icon={<User className="w-7 h-7 text-green-600" />}
+      />
 
+      {/* Saved Personal Information Summary (when completed and not editing) */}
+      {isPersonalCompleted && !isEditing && (
+        <Card className="shadow-sm border-l-4 border-l-green-500">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <CardTitle className="text-xl">Personal Information Summary</CardTitle>
+                <div className="mt-2 space-y-1 text-sm text-muted-foreground">
+                  <div>• Age: {calculateAge(dob)} years old</div>
+                  <div>• Nationalities: {natList.map(n => n.country).join(", ")}</div>
+                  <div>• Marital Status: {maritalStatus}</div>
+                  <div>• Current Residence: {curCountry} ({curStatus})</div>
+                  {hasPartner && <div>• Relocating with partner</div>}
+                  {localDepList.length > 0 && <div>• {localDepList.length} dependent{localDepList.length > 1 ? 's' : ''}</div>}
+                </div>
+              </div>
+              <Button
+                onClick={handleEdit}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                <Pencil className="w-4 h-4" />
+                Edit
+              </Button>
+            </div>
+          </CardHeader>
+        </Card>
+      )}
+
+      {/* Editing Form (when not completed or actively editing) */}
+      {(!isPersonalCompleted || isEditing) && (
+        <>
       <SectionHint title="About this section">
         Accurate personal and family information enables country-specific tax residency analysis, spousal/dependent visa eligibility checks, and tailored planning based on your household composition.
       </SectionHint>
@@ -666,10 +818,11 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
             </AlertDescription>
           </Alert>
 
-          {/* Add citizenship */}
+          {/* Add citizenship (top) - only when none exist yet */}
+          {natList.length === 0 && (
           <div className="flex gap-3 mb-6">
             <Select value={addCountry} onValueChange={setAddCountry}>
-              <SelectTrigger className="flex-1">
+              <SelectTrigger id="user-add-citizenship-trigger" className="flex-1">
                 <SelectValue placeholder="Add citizenship" />
               </SelectTrigger>
               <SelectContent>
@@ -682,16 +835,15 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
             </Select>
             <Button
               disabled={!addCountry}
-              onClick={() => {
-                updateNatList([...natList, { country: addCountry, willingToRenounce: false }])
-                setAddCountry("")
-              }}
+              onClick={commitAddCitizenshipForUser}
+              size="sm"
               className="shrink-0"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add
             </Button>
           </div>
+          )}
 
           {/* Citizenship list */}
           {natList.length > 0 ? (
@@ -742,15 +894,49 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
             </Alert>
           )}
 
-          {/* EU Citizenship Indicator */}
-          {natList.length > 0 && hasEUCitizenship(natList) && (
-            <Alert className="border-blue-200 bg-blue-50 dark:bg-blue-950/20">
-              <Globe className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-blue-800 dark:text-blue-200">
-                🇪🇺 <strong>You're an EU citizen!</strong> You have citizenship in: {getUserEUCountries(natList).join(", ")}
-              </AlertDescription>
-            </Alert>
+          {/* Add citizenship (below list) - when user clicks link */}
+          {natList.length > 0 && showMoreUserCitizenship && (
+            <div className="flex gap-3 mt-3">
+              <Select value={addCountry} onValueChange={setAddCountry}>
+                <SelectTrigger className="flex-1">
+                  <SelectValue placeholder="Add citizenship" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries.filter((c) => !nationalityExists(c)).map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                disabled={!addCountry}
+                onClick={() => {
+                  updateNatList([...natList, { country: addCountry, willingToRenounce: false }])
+                  setAddCountry("")
+                  setShowMoreUserCitizenship(false)
+                }}
+                className="shrink-0"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add
+              </Button>
+            </div>
           )}
+
+          {natList.length > 0 && !showMoreUserCitizenship && (
+            <div className="mt-2">
+              <Button
+                variant="link"
+                size="sm"
+                className="px-0 text-muted-foreground"
+                onClick={() => setShowMoreUserCitizenship(true)}
+              >
+                I have another citizenship
+              </Button>
+            </div>
+          )}
+
         </CardContent>
       </Card>
 
@@ -809,27 +995,20 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               <>
                 {/* Partner Card Display (when saved) */}
                 {partnerSaved && !editingPartner && (
-                  <Card className="shadow-lg border-2 border-pink-100 dark:border-pink-900/30 bg-gradient-to-br from-pink-50/50 via-white to-rose-50/30 dark:from-pink-950/20 dark:via-background dark:to-rose-950/20">
+                  <Card className="relative overflow-hidden rounded-2xl border border-stone-200/60 dark:border-stone-800/40 bg-card shadow-xl">
                     <CardHeader className="pb-4">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-lg">
-                            <Heart className="w-6 h-6 text-white" />
-                          </div>
-                          <div>
-                            <CardTitle className="text-xl text-pink-900 dark:text-pink-100">Partner Information</CardTitle>
-                            <p className="text-sm text-pink-700 dark:text-pink-300 font-medium">
-                              {getFormData("personalInformation.relocationPartnerInfo.relationshipType")}
-                            </p>
-                          </div>
+                        <div>
+                          <CardTitle className="text-xl">Partner Information</CardTitle>
+                          <p className="text-sm text-muted-foreground">
+                            {getFormData("personalInformation.relocationPartnerInfo.relationshipType")}
+                          </p>
                         </div>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setEditingPartner(true)}
-                          className="border-pink-200 hover:bg-pink-50 dark:border-pink-800 dark:hover:bg-pink-950/20"
                         >
-                          <Pencil className="w-4 h-4 mr-2" />
                           Edit
                         </Button>
                       </div>
@@ -839,33 +1018,23 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       <div className="grid md:grid-cols-2 gap-6">
                         {/* Personal Details */}
                         <div className="space-y-4">
-                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-pink-100 dark:border-pink-900/50">
-                            <h5 className="font-semibold text-pink-900 dark:text-pink-100 mb-3 flex items-center gap-2">
-                              <User className="w-4 h-4" />
-                              Personal Details
-                            </h5>
+                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                            <h5 className="font-semibold mb-3">Personal Details</h5>
                             <div className="space-y-3">
-                              <div className="flex items-center gap-3">
-                                <Calendar className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-                                <div>
-                                  <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</Label>
-                                  <p className="text-sm font-medium">{new Date(getFormData("personalInformation.relocationPartnerInfo.dateOfBirth")).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                                </div>
+                              <div>
+                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</Label>
+                                <p className="text-sm font-medium">{new Date(getFormData("personalInformation.relocationPartnerInfo.dateOfBirth")).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                               </div>
-                              
-                              <div className="flex items-center gap-3">
-                                <Users className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-                                <div>
-                                  <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Relationship Type</Label>
-                                  <p className="text-sm font-medium flex items-center gap-2">
-                                    {getFormData("personalInformation.relocationPartnerInfo.relationshipType")}
-                                    {getFormData("personalInformation.relocationPartnerInfo.sameSex") && (
-                                      <Badge variant="outline" className="text-xs bg-rainbow-100 border-rainbow-300">
-                                        Same-Sex
-                                      </Badge>
-                                    )}
-                                  </p>
-                                </div>
+                              <div>
+                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Relationship Type</Label>
+                                <p className="text-sm font-medium">
+                                  {getFormData("personalInformation.relocationPartnerInfo.relationshipType")}
+                                  {getFormData("personalInformation.relocationPartnerInfo.sameSex") && (
+                                    <Badge variant="outline" className="text-xs">
+                                      Same-Sex
+                                    </Badge>
+                                  )}
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -873,26 +1042,16 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
                         {/* Relationship Timeline */}
                         <div className="space-y-4">
-                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-pink-100 dark:border-pink-900/50">
-                            <h5 className="font-semibold text-pink-900 dark:text-pink-100 mb-3 flex items-center gap-2">
-                              <Clock className="w-4 h-4" />
-                              Relationship Timeline
-                            </h5>
+                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                            <h5 className="font-semibold mb-3">Relationship Timeline</h5>
                             <div className="space-y-3">
-                              <div className="flex items-center gap-3">
-                                <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
-                                <div>
-                                  <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total Duration</Label>
-                                  <p className="text-sm font-medium">{getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration")} years together</p>
-                                </div>
+                              <div>
+                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total Duration</Label>
+                                <p className="text-sm font-medium">{getFormData("personalInformation.relocationPartnerInfo.fullRelationshipDuration")} years together</p>
                               </div>
-                              
-                              <div className="flex items-center gap-3">
-                                <div className="w-2 h-2 bg-rose-500 rounded-full"></div>
-                                <div>
-                                  <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Official Duration</Label>
-                                  <p className="text-sm font-medium">{getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration")} years official</p>
-                                </div>
+                              <div>
+                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Official Duration</Label>
+                                <p className="text-sm font-medium">{getFormData("personalInformation.relocationPartnerInfo.officialRelationshipDuration")} years official</p>
                               </div>
                             </div>
                           </div>
@@ -900,37 +1059,25 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                       </div>
 
                       {/* Current Residency */}
-                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-pink-100 dark:border-pink-900/50">
-                        <h5 className="font-semibold text-pink-900 dark:text-pink-100 mb-3 flex items-center gap-2">
-                          <MapPin className="w-4 h-4" />
-                          Current Residency
-                        </h5>
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-full bg-pink-100 dark:bg-pink-900/30">
-                            <Globe className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-                          </div>
-                          <div>
-                            <p className="font-medium">
-                              {getFormData("personalInformation.relocationPartnerInfo.currentResidency.country")}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {getFormData("personalInformation.relocationPartnerInfo.currentResidency.status")}
-                            </p>
-                          </div>
+                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                        <h5 className="font-semibold mb-3">Current Residency</h5>
+                        <div>
+                          <p className="font-medium">
+                            {getFormData("personalInformation.relocationPartnerInfo.currentResidency.country")}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {getFormData("personalInformation.relocationPartnerInfo.currentResidency.status")}
+                          </p>
                         </div>
                       </div>
                       
                       {/* Citizenships */}
-                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-pink-100 dark:border-pink-900/50">
-                        <h5 className="font-semibold text-pink-900 dark:text-pink-100 mb-3 flex items-center gap-2">
-                          <Flag className="w-4 h-4" />
-                          Citizenships
-                        </h5>
+                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                        <h5 className="font-semibold mb-3">Citizenships</h5>
                         <div className="flex flex-wrap gap-2">
                           {(getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") || []).map((nat: any, idx: number) => (
-                            <Badge key={idx} variant="secondary" className="bg-pink-100 text-pink-800 border-pink-200 dark:bg-pink-900/30 dark:text-pink-200 dark:border-pink-800">
-                              <Flag className="w-3 h-3 mr-1" />
-                              {nat.country} 
+                            <Badge key={idx} variant="secondary" className="bg-stone-100 text-stone-800 border-stone-200 dark:bg-stone-900/30 dark:text-stone-200 dark:border-stone-800">
+                              {nat.country}
                               {nat.willingToRenounce && (
                                 <span className="ml-1 text-xs opacity-75">(willing to renounce)</span>
                               )}
@@ -941,16 +1088,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
                       {/* Relationship Proof Indicator */}
                       {getFormData("personalInformation.relocationPartnerInfo.canProveRelationship") && (
-                        <div className="p-4 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border border-green-200 dark:border-green-800">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-                            </div>
-                            <div>
-                              <p className="font-semibold text-green-800 dark:text-green-200">Documentation Available</p>
-                              <p className="text-sm text-green-700 dark:text-green-300">Can provide relationship proof</p>
-                            </div>
-                          </div>
+                        <div className="p-4 rounded-lg border border-stone-200/60 dark:border-stone-800/40">
+                          <p className="font-semibold">Documentation Available</p>
+                          <p className="text-sm text-muted-foreground">Can provide relationship proof</p>
                         </div>
                       )}
                     </CardContent>
@@ -959,7 +1099,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
                 {/* Partner Form (when editing or not saved) */}
                 {(!partnerSaved || editingPartner) && (
-              <div className="space-y-6 p-6 border rounded-lg bg-card">
+              <div className="space-y-6 p-6 border rounded-lg bg-stone-50/80 dark:bg-stone-900/30 border-stone-200 dark:border-stone-800/50">
                 <h4 className="font-medium text-lg">Partner Information</h4>
                 
                 {/* Partner Date of Birth */}
@@ -1009,10 +1149,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                              <p><strong>3. Civil Partner:</strong> Kept for jurisdictions that recognize this status.</p>
                              <p><strong>4. Unmarried Partner:</strong> A common term in immigration contexts for long-term, committed relationships.</p>
                              <p><strong>5. Common-law Partner:</strong> Recognized in some countries for long-term cohabiting couples.</p>
-                             <p><strong>6. Cohabiting Partner:</strong> Retained from your original list, as some systems specifically use this term.</p>
-                             <p><strong>7. Domestic Partner:</strong> Added for jurisdictions that recognize this status.</p>
-                             <p><strong>8. Conjugal Partner:</strong> Recognized in some immigration systems (e.g., Canada) for committed partners unable to live together.</p>
-                             <p><strong>9. Other:</strong> Kept to cover any unique situations or relationships not fitting the above categories.</p>
+                             <p><strong>6. Domestic Partner:</strong> Added for jurisdictions that recognize this status.</p>
+                             <p><strong>7. Conjugal Partner:</strong> Recognized in some immigration systems (e.g., Canada) for committed partners unable to live together.</p>
+                             <p><strong>8. Other:</strong> Kept to cover any unique situations or relationships not fitting the above categories.</p>
                            </div>
                            <p className="italic text-xs">This expanded list aims to be more inclusive of various relationship types recognized across different immigration systems while maintaining clarity for users.</p>
                          </div>
@@ -1042,10 +1181,10 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                          return ["Civil Partner", "Domestic Partner"]
                        }
                        if (["Single", "Divorced", "Widowed"].includes(maritalStatus)) {
-                         return ["Unmarried Partner", "Fiancé(e)", "Cohabiting Partner", "Common-law Partner", "Conjugal Partner", "Other"]
+                         return ["Unmarried Partner", "Fiancé(e)", "Common-law Partner", "Conjugal Partner", "Other"]
                        }
                        // If no marital status set, default to non-married options only
-                       return ["Unmarried Partner", "Fiancé(e)", "Cohabiting Partner", "Common-law Partner", "Conjugal Partner", "Other"]
+                       return ["Unmarried Partner", "Fiancé(e)", "Common-law Partner", "Conjugal Partner", "Other"]
                      }
                      
                      const allowedTypes = getAllowedRelationshipTypes()
@@ -1447,43 +1586,79 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     )
                   })()}
 
-                  {/* Add partner citizenship */}
-                  <div className="flex gap-2">
-                    <Select
-                      value={partnerSel}
-                      onValueChange={setPartnerSel}
-                    >
-                      <SelectTrigger className="flex-1">
-                        <SelectValue placeholder="Add partner citizenship" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {countries.filter(c => {
-                          const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
-                          return !partnerNats.some((n: any) => n.country === c)
-                        }).map((c) => (
-                          <SelectItem key={c} value={c}>
-                            {c}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      disabled={!partnerSel}
-                      onClick={() => {
-                        if (partnerSel) {
-                          const current = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
-                          updateFormData("personalInformation.relocationPartnerInfo.partnerNationalities", [
-                            ...current,
-                            { country: partnerSel, willingToRenounce: false }
-                          ])
-                          setPartnerSel("")
-                        }
-                      }}
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add
-                    </Button>
-                  </div>
+                  {/* Add partner citizenship (top) - only when none exist yet */}
+                  {(() => { const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []; return partnerNats.length === 0; })() && (
+                    <div className="flex gap-2">
+                      <Select
+                        value={partnerSel}
+                        onValueChange={setPartnerSel}
+                      >
+                        <SelectTrigger id="partner-add-citizenship-trigger" className="flex-1">
+                          <SelectValue placeholder="Add partner citizenship" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countries.filter(c => {
+                            const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+                            return !partnerNats.some((n: any) => n.country === c)
+                          }).map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        disabled={!partnerSel}
+                        onClick={commitAddCitizenshipForPartner}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Add partner citizenship (below list) - when clicked */}
+                  {(() => { const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []; return partnerNats.length > 0 && showPartnerMore; })() && (
+                    <div className="flex gap-2 mt-2">
+                      <Select
+                        value={partnerSel}
+                        onValueChange={setPartnerSel}
+                      >
+                        <SelectTrigger className="flex-1">
+                          <SelectValue placeholder="Add partner citizenship" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countries.filter(c => {
+                            const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []
+                            return !partnerNats.some((n: any) => n.country === c)
+                          }).map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        disabled={!partnerSel}
+                        onClick={() => { commitAddCitizenshipForPartner(); setShowPartnerMore(false) }}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add
+                      </Button>
+                    </div>
+                  )}
+                  {(() => { const partnerNats = getFormData("personalInformation.relocationPartnerInfo.partnerNationalities") ?? []; return partnerNats.length > 0 && !showPartnerMore; })() && (
+                    <div className="mt-2">
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="px-0 text-muted-foreground"
+                        onClick={() => setShowPartnerMore(true)}
+                      >
+                        Partner has another citizenship
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Save Partner Information Button */}
@@ -1568,18 +1743,15 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
       </Card>
 
       {/* Dependents Card */}
-      <Card className="shadow-sm border-l-4 border-l-orange-500">
-        <CardHeader className="bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20">
-          <CardTitle className="text-xl flex items-center gap-3">
-            <Baby className="w-6 h-6 text-orange-600" />
-            Dependents
-          </CardTitle>
+      <Card className="shadow-sm border-l-4 border-l-emerald-500">
+        <CardHeader className="bg-gradient-to-r from-emerald-50 to-transparent dark:from-emerald-950/20">
+          <CardTitle className="text-xl">Dependents</CardTitle>
           <p className="text-sm text-muted-foreground">Family members who will relocate with you and depend on your support</p>
         </CardHeader>
         <CardContent className="pt-6">
           <div className="space-y-6">
             {/* Dependent cards and forms */}
-            {depList.map((dep, idx) => {
+            {localDepList.map((dep, idx) => {
               if (!visibleDependents.includes(idx)) return null
               
               const isEditing = editingDependents.includes(idx)
@@ -1597,60 +1769,30 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                   "Not specified"
                 
                 return (
-                  <Card key={idx} className="shadow-lg border-2 border-blue-100 dark:border-blue-900/30 bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/30 dark:from-blue-950/20 dark:via-background dark:to-indigo-950/20">
+                  <Card key={idx} className="shadow-lg border-2 border-stone-200/60 dark:border-stone-800/40 bg-gradient-to-br from-stone-50/30 via-white to-stone-100/20 dark:from-stone-900/10 dark:via-background dark:to-stone-900/10">
                     <CardHeader className="pb-4">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg">
-                            {dep.relationship === 'Child' ? (
-                              <Baby className="w-6 h-6 text-white" />
-                            ) : dep.relationship === 'Parent' ? (
-                              <Users className="w-6 h-6 text-white" />
-                            ) : (
-                              <User className="w-6 h-6 text-white" />
-                            )}
-                          </div>
-                          <div>
-                            <CardTitle className="text-lg text-blue-900 dark:text-blue-100">
-                              Dependent {dependentNumber}
-                            </CardTitle>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:border-blue-800">
-                                {dep.relationship}
-                              </Badge>
-                              <Badge variant="secondary" className="text-xs">
-                                {(() => {
-                                  const details = dep.relationshipDetails
-                                  if (!details) return "relationship not specified"
-                                  
-                                  const bio = details.biologicalRelationTo
-                                  const legal = details.legalRelationTo  
-                                  const custodial = details.custodialRelationTo
-                                  
-                                  // Simplified display logic for badges
-                                  if (bio === "both" || legal === "both" || custodial === "both") return "to both"
-                                  if (bio === "partner" || legal === "partner" || custodial === "partner") return "to partner"
-                                  if (bio === "user" || legal === "user" || custodial === "user") return "to me"
-                                  return "no direct relation"
-                                })()}
-                              </Badge>
-                              {dep.student && (
-                                <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-200 dark:border-amber-800">
-                                  <GraduationCap className="w-3 h-3 mr-1" />
-                                  Student
-                                </Badge>
-                              )}
-                            </div>
+                        <div>
+                          <CardTitle className="text-lg text-stone-900 dark:text-stone-100">Dependent {dependentNumber}</CardTitle>
+                          <div className="mt-1 text-sm text-muted-foreground">
+                            {dep.relationship}
+                            {(() => {
+                              const details = dep.relationshipDetails
+                              if (!details) return ""
+                              const bio = details.biologicalRelationTo
+                              const legal = details.legalRelationTo
+                              const custodial = details.custodialRelationTo
+                              if (bio === "both" || legal === "both" || custodial === "both") return " • related to both of you"
+                              if (bio === "partner" || legal === "partner" || custodial === "partner") return " • related to your partner"
+                              if (bio === "user" || legal === "user" || custodial === "user") return " • related to you"
+                              return ""
+                            })()}
+                            {dep.student ? " • student" : ""}
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setEditingDependents([...editingDependents, idx])}
-                            className="border-blue-200 hover:bg-blue-50 dark:border-blue-800 dark:hover:bg-blue-950/20"
-                          >
-                            <Pencil className="w-4 h-4" />
+                          <Button variant="outline" size="sm" onClick={() => setEditingDependents([...editingDependents, idx])}>
+                            Edit
                           </Button>
                           <Button
                             variant="outline"
@@ -1660,7 +1802,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
                               setEditingDependents(editingDependents.filter((i: number) => i !== idx))
                               // Remove from data list  
-                              const updated = depList.filter((_, i) => i !== idx)
+                              const updated = localDepList.filter((_, i) => i !== idx)
                               updateDepList(updated)
                               // Adjust indices for remaining dependents
                               setVisibleDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
@@ -1668,7 +1810,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             }}
                             className="border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 dark:border-red-800 dark:hover:bg-red-950/20 dark:text-red-400"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            Remove
                           </Button>
                         </div>
                       </div>
@@ -1677,56 +1819,74 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                     <CardContent className="space-y-4">
                       <div className="grid md:grid-cols-2 gap-4">
                         {/* Personal Information */}
-                        <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-blue-100 dark:border-blue-900/50">
-                          <h5 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
-                            <User className="w-4 h-4" />
-                            Personal Info
-                          </h5>
+                        <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                          <h5 className="font-semibold text-stone-900 dark:text-stone-100 mb-3">Personal information</h5>
                           <div className="space-y-3">
-                            <div className="flex items-center gap-3">
-                              <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                              <div>
-                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</Label>
-                                <p className="text-sm font-medium">{formattedBirthDate}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  Age: {formatAge(calculateAge(dep.dateOfBirth))}
-                                </p>
-                              </div>
+                            <div>
+                              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of birth</Label>
+                              <p className="text-sm font-medium">{formattedBirthDate}</p>
+                              <p className="text-xs text-muted-foreground">Age: {formatAge(calculateAge(dep.dateOfBirth))}</p>
+                            </div>
+                            <div>
+                              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Student</Label>
+                              <p className="text-sm font-medium">{dep.student ? "Yes" : "No"}</p>
                             </div>
                           </div>
                         </div>
 
                         {/* Current Residency */}
                         {dep.currentResidency?.country && (
-                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-blue-100 dark:border-blue-900/50">
-                            <h5 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
-                              <MapPin className="w-4 h-4" />
-                              Current Residency
-                            </h5>
-                            <div className="flex items-center gap-3">
-                              <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
-                                <Globe className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                              </div>
-                              <div>
-                                <p className="font-medium">{dep.currentResidency.country}</p>
-                                <p className="text-sm text-muted-foreground">{dep.currentResidency.status}</p>
-                              </div>
+                          <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                            <h5 className="font-semibold text-stone-900 dark:text-stone-100 mb-3">Current residency</h5>
+                            <div className="space-y-1">
+                              <p className="font-medium">{dep.currentResidency.country}</p>
+                              <p className="text-sm text-muted-foreground">{dep.currentResidency.status}</p>
+                              {dep.currentResidency?.duration && dep.currentResidency.status !== "Citizen" && (
+                                <p className="text-sm text-muted-foreground">Duration in current status: {dep.currentResidency.duration} years</p>
+                              )}
                             </div>
                           </div>
                         )}
                       </div>
 
+                      {/* Relationships and custody */}
+                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                        <h5 className="font-semibold text-stone-900 dark:text-stone-100 mb-3">Relationships and custody</h5>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div>
+                            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Your relationship</Label>
+                            <p className="text-sm font-medium">{dep.relationshipToUser || "Not specified"}</p>
+                          </div>
+                          {hasPartner && (
+                            <div>
+                              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Partner relationship</Label>
+                              <p className="text-sm font-medium">{dep.relationshipToPartner || "Not specified"}</p>
+                            </div>
+                          )}
+                          <div>
+                            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Custody arrangement</Label>
+                            <p className="text-sm font-medium">{dep.custodyArrangement || "Not specified"}</p>
+                          </div>
+                          <div>
+                            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Documentation available</Label>
+                            <p className="text-sm font-medium">{dep.canProveRelationship ? "Yes" : "No"}</p>
+                          </div>
+                        </div>
+                        {dep.relationshipDetails?.additionalNotes && (
+                          <div className="mt-3">
+                            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Notes</Label>
+                            <p className="text-sm">{dep.relationshipDetails.additionalNotes}</p>
+                          </div>
+                        )}
+                      </div>
+
                       {/* Citizenships */}
-                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-blue-100 dark:border-blue-900/50">
-                        <h5 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
-                          <Flag className="w-4 h-4" />
-                          Citizenships
-                        </h5>
+                      <div className="p-4 rounded-lg bg-white/60 dark:bg-background/60 border border-stone-200/60 dark:border-stone-800/40">
+                        <h5 className="font-semibold text-stone-900 dark:text-stone-100 mb-3">Citizenships</h5>
                         {citizenshipCount > 0 ? (
                           <div className="flex flex-wrap gap-2">
                             {(dep.nationalities || []).map((nat: any, natIdx: number) => (
-                              <Badge key={natIdx} variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:border-blue-800">
-                                <Flag className="w-3 h-3 mr-1" />
+                              <Badge key={natIdx} variant="secondary" className="bg-stone-100 text-stone-800 border-stone-200 dark:bg-stone-900/30 dark:text-stone-200 dark:border-stone-800">
                                 {nat.country}
                                 {nat.willingToRenounce && (
                                   <span className="ml-1 text-xs opacity-75">(willing to renounce)</span>
@@ -1745,16 +1905,16 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               
               // Show full form if editing
               return (
-                <div key={idx} className="relative overflow-hidden rounded-2xl border border-blue-200/60 dark:border-blue-800/40 bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20 dark:from-blue-950/10 dark:via-background dark:to-indigo-950/10 shadow-xl">
+                <div key={idx} className="relative overflow-hidden rounded-2xl border border-stone-200/60 dark:border-stone-800/40 bg-card shadow-xl">
                   {/* Header */}
-                  <div className="relative bg-gradient-to-r from-blue-500/5 to-indigo-500/5 dark:from-blue-500/10 dark:to-indigo-500/10 px-6 py-4 border-b border-blue-100 dark:border-blue-800/50">
+                  <div className="relative bg-gradient-to-r from-green-500/5 to-emerald-500/5 dark:from-green-500/10 dark:to-emerald-500/10 px-6 py-4 border-b border-stone-200 dark:border-stone-800/50">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg">
                           <Baby className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                          <h5 className="text-xl font-semibold text-blue-900 dark:text-blue-100">Dependent {dependentNumber}</h5>
+                          <h5 className="text-xl font-semibold text-stone-900 dark:text-stone-100">Dependent {dependentNumber}</h5>
                           <Badge variant="secondary" className="text-xs mt-1">
                             {(() => {
                               const details = dep.relationshipDetails
@@ -1781,9 +1941,14 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           // Remove from all state
                           setVisibleDependents(visibleDependents.filter((i: number) => i !== idx))
                           setEditingDependents(editingDependents.filter((i: number) => i !== idx))
-                          // Remove from data list  
-                          const updated = depList.filter((_, i) => i !== idx)
-                          updateDepList(updated)
+                          // Remove from data list and persist
+                          const updatedList = localDepList.filter((_, i) => i !== idx)
+                          updateDepList(updatedList)
+                          updateFormData("personalInformation.dependents", updatedList)
+                          // Remove from data list and persist
+                          const updatedList2 = localDepList.filter((_, i) => i !== idx)
+                          updateDepList(updatedList2)
+                          updateFormData("personalInformation.dependents", updatedList2)
                           // Adjust indices for remaining dependents
                           setVisibleDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
                           setEditingDependents((prev: number[]) => prev.map((i: number) => i > idx ? i - 1 : i).filter((i: number) => i !== idx))
@@ -1798,56 +1963,54 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                   <div className="p-6 space-y-8">
                     {/* Basic Information */}
                     <div className="space-y-6">
-                      <div className="flex items-center gap-3 pb-2 border-b border-blue-100 dark:border-blue-800/50">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 shadow-sm">
-                          <User className="w-4 h-4 text-white" />
-                        </div>
-                        <h6 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Basic Information</h6>
+                      <div className="flex items-center gap-3 pb-2 border-b border-stone-200 dark:border-stone-800/50">
+                        <h6 className="text-lg font-semibold text-stone-900 dark:text-stone-100">Basic Information</h6>
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-6">
                         {/* Date of birth */}
                         <div className="space-y-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                            <Label className="font-medium text-blue-900 dark:text-blue-100">Date of birth *</Label>
+                            <Label className="font-medium text-stone-900 dark:text-stone-100">Date of birth *</Label>
                           </div>
                           <Input
                             type="date"
                             value={dep.dateOfBirth}
                             max={getTodayDate()}
                             onChange={(e) => {
-                              const updated = [...depList]
+                              const updated = [...localDepList]
                               updated[idx] = { ...updated[idx], dateOfBirth: e.target.value }
                               updateDepList(updated)
                             }}
                             onFocus={(e) => {
                               // If the field is empty, set it to a reasonable default when focused
                               if (!dep.dateOfBirth) {
-                                const updated = [...depList]
+                                const updated = [...localDepList]
                                 updated[idx] = { ...updated[idx], dateOfBirth: getDependentDefaultBirthDate() }
                                 updateDepList(updated)
                               }
                             }}
-                            className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600"
+                            className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600"
                           />
+                          {attemptedDependentSaves.includes(idx) && !dep.dateOfBirth && (
+                            <p className="text-xs text-red-600 mt-1">Please enter date of birth</p>
+                          )}
                         </div>
 
                         {/* Relationship */}
                         <div className="space-y-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                            <Label className="font-medium text-blue-900 dark:text-blue-100">Relationship type *</Label>
+                            <Label className="font-medium text-stone-900 dark:text-stone-100">Relationship type *</Label>
                           </div>
                           <Select
                             value={dep.relationship}
                             onValueChange={(v) => {
-                              const updated = [...depList]
+                              const updated = [...localDepList]
                               updated[idx] = { ...updated[idx], relationship: v }
                               updateDepList(updated)
                             }}
                           >
-                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -1858,267 +2021,149 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               <SelectItem value="Other">Other</SelectItem>
                             </SelectContent>
                           </Select>
+                          {attemptedDependentSaves.includes(idx) && !dep.relationship && (
+                            <p className="text-xs text-red-600 mt-1">Please select relationship</p>
+                          )}
                         </div>
                       </div>
 
                       {/* Student status */}
-                      <div className="flex items-center gap-3 p-4 rounded-lg bg-stone-50/80 dark:bg-stone-900/30 border border-blue-100 dark:border-blue-800/50">
+                      <div className="flex items-center gap-3 p-4 rounded-lg bg-stone-50/80 dark:bg-stone-900/30 border border-stone-200 dark:border-stone-800/50">
                         <Checkbox
                           id={`student_${idx}`}
                           checked={dep.student}
                           onCheckedChange={(v) => {
-                            const updated = [...depList]
+                            const updated = [...localDepList]
                             updated[idx] = { ...updated[idx], student: !!v }
                             updateDepList(updated)
                           }}
                         />
-                        <Label htmlFor={`student_${idx}`} className="font-medium text-blue-900 dark:text-blue-100 flex items-center gap-2">
-                          <GraduationCap className="w-4 h-4" />
+                        <Label htmlFor={`student_${idx}`} className="font-medium text-stone-900 dark:text-stone-100">
                           Is currently a student
                         </Label>
                       </div>
                     </div>
 
-                {/* Relationship Details Section */}
+                {/* Relationship Details Section (Simplified) */}
                 <div className="space-y-6">
-                  <div className="flex items-center gap-3 pb-2 border-b border-blue-100 dark:border-blue-800/50">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 shadow-sm">
-                      <Network className="w-4 h-4 text-white" />
-                    </div>
-                    <h6 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Relationship Details</h6>
+                  <div className="flex items-center gap-3 pb-2 border-b border-stone-200 dark:border-stone-800/50">
+                    <h6 className="text-lg font-semibold text-stone-900 dark:text-stone-100">Relationship Details</h6>
                   </div>
 
-                  {/* Core Relationship Grid */}
                   <div className="grid md:grid-cols-2 gap-6">
-                    {/* Biological Relationship */}
                     <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                        <Label className="font-medium text-blue-900 dark:text-blue-100">Biological relationship</Label>
-                      </div>
+                      <Label className="font-medium text-stone-900 dark:text-stone-100">Your relationship to the dependent *</Label>
                       <Select
-                        value={dep.relationshipDetails?.biologicalRelationTo ?? (hasPartner ? "both" : "user")}
-                        onValueChange={(v: "user" | "partner" | "both" | "neither") => {
-                          const updated = [...depList]
-                          if (!updated[idx].relationshipDetails) {
-                            updated[idx].relationshipDetails = {
-                              biologicalRelationTo: "neither",
-                              legalRelationTo: "neither", 
-                              custodialRelationTo: "neither"
-                            }
-                          }
-                          updated[idx].relationshipDetails.biologicalRelationTo = v
-                          // If there is any biological relationship, "Adopted" cannot apply
-                          if (v !== "neither") {
-                            updated[idx].relationshipDetails.isAdopted = false
-                          }
-                          // Step-relationship only makes sense when exactly one party is biological (user or partner)
-                          if (v === "both" || v === "neither") {
-                            updated[idx].relationshipDetails.isStepRelation = false
-                          }
+                        value={dep.relationshipToUser ?? "biological"}
+                        onValueChange={(v: "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none") => {
+                          const updated = [...localDepList]
+                          updated[idx] = { ...updated[idx], relationshipToUser: v }
                           updateDepList(updated)
                         }}
                       >
-                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="user">Me</SelectItem>
-                          {hasPartner && <SelectItem value="partner">My partner</SelectItem>}
-                          {hasPartner && <SelectItem value="both">Both of us</SelectItem>}
-                          <SelectItem value="neither">Neither</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Legal Care Responsibility */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
-                        <Label className="font-medium text-blue-900 dark:text-blue-100">Legal care responsibility</Label>
-                      </div>
-                      <Select
-                        value={dep.relationshipDetails?.custodialRelationTo ?? "both"}
-                        onValueChange={(v: "user" | "partner" | "both" | "neither") => {
-                          const updated = [...depList]
-                          if (!updated[idx].relationshipDetails) {
-                            updated[idx].relationshipDetails = {
-                              biologicalRelationTo: "neither",
-                              legalRelationTo: "neither", 
-                              custodialRelationTo: "neither"
-                            }
-                          }
-                          updated[idx].relationshipDetails.custodialRelationTo = v
-                          updateDepList(updated)
-                        }}
-                      >
-                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="user">Me</SelectItem>
-                          {hasPartner && <SelectItem value="partner">My partner</SelectItem>}
-                          {hasPartner && <SelectItem value="both">Both of us</SelectItem>}
-                          <SelectItem value="neither">Neither</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {/* Relationship Type & Guardianship */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {/* Relationship Subtype */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-                        <Label className="font-medium text-blue-900 dark:text-blue-100">Relationship type</Label>
-                      </div>
-                      <Select
-                        value={(() => {
-                          const details = dep.relationshipDetails
-                          if (details?.isAdopted) return "adopted"
-                          if (details?.isLegalWard) return "ward"
-                          if (details?.isStepRelation) return "step"
-                          return "biological"
-                        })()}
-                        onValueChange={(v: "biological" | "step" | "adopted" | "ward" | "other") => {
-                          const updated = [...depList]
-                          if (!updated[idx].relationshipDetails) {
-                            updated[idx].relationshipDetails = {
-                              biologicalRelationTo: hasPartner ? "both" : "user",
-                              legalRelationTo: "both", 
-                              custodialRelationTo: "both"
-                            }
-                          }
-                          updated[idx].relationshipDetails.isStepRelation = v === "step"
-                          updated[idx].relationshipDetails.isAdopted = v === "adopted"
-                          updated[idx].relationshipDetails.isLegalWard = v === "ward"
-                          updateDepList(updated)
-                        }}
-                      >
-                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
-                          <SelectValue />
+                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
+                          <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="biological">Biological</SelectItem>
-                          {(() => {
-                            const bio = dep.relationshipDetails?.biologicalRelationTo ?? (hasPartner ? "both" : "user")
-                            const allowStep = bio === "user" || bio === "partner"
-                            const allowAdopted = bio === "neither"
-                            const allowWard = bio === "neither"
-                            return (
-                              <>
-                                {allowStep && <SelectItem value="step">Step‑relationship</SelectItem>}
-                                {allowAdopted && <SelectItem value="adopted">Adopted</SelectItem>}
-                                {allowWard && <SelectItem value="ward">Legal ward</SelectItem>}
-                              </>
-                            )
-                          })()}
-                          <SelectItem value="other">Other</SelectItem>
+                          <SelectItem value="adopted">Adopted</SelectItem>
+                          <SelectItem value="step">Step</SelectItem>
+                          <SelectItem value="foster">Foster</SelectItem>
+                          <SelectItem value="legal_ward">Legal ward</SelectItem>
+                          <SelectItem value="none">None</SelectItem>
                         </SelectContent>
                       </Select>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        How government forms typically categorize this relationship
-                      </p>
+                      {attemptedDependentSaves.includes(idx) && (!dep.relationshipToUser || dep.relationshipToUser === "none") && (
+                        <p className="text-xs text-red-600 mt-1">Please specify your relationship</p>
+                      )}
                     </div>
 
-                    {/* Guardianship Type */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                        <Label className="font-medium text-blue-900 dark:text-blue-100">Guardianship type</Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <HelpCircle className="w-4 h-4 text-blue-500 hover:text-blue-600 cursor-help" />
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-xs">
-                              <p className="text-sm">
-                                The legal form of guardianship as documented by authorities. 
-                                <strong>Full:</strong> Complete legal authority. 
-                                <strong>Partial:</strong> Shared or limited authority. 
-                                <strong>Temporary:</strong> Time-limited guardianship. 
-                                Select what matches your official documentation.
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                    {hasPartner && (
+                      <div className="space-y-3">
+                        <Label className="font-medium text-stone-900 dark:text-stone-100">Partner's relationship to the dependent *</Label>
+                        <Select
+                          value={dep.relationshipToPartner ?? (hasPartner ? "biological" : "not_applicable")}
+                          onValueChange={(v: "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable") => {
+                            const updated = [...localDepList]
+                            updated[idx] = { ...updated[idx], relationshipToPartner: v }
+                            updateDepList(updated)
+                          }}
+                        >
+                          <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="biological">Biological</SelectItem>
+                            <SelectItem value="adopted">Adopted</SelectItem>
+                            <SelectItem value="step">Step</SelectItem>
+                            <SelectItem value="foster">Foster</SelectItem>
+                            <SelectItem value="legal_ward">Legal ward</SelectItem>
+                            <SelectItem value="none">None</SelectItem>
+                            <SelectItem value="not_applicable">Not applicable</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
+                    )}
+
+                    <div className="space-y-3">
+                      <Label className="font-medium text-stone-900 dark:text-stone-100">Custody arrangement *</Label>
                       <Select
-                        value={dep.relationshipDetails?.guardianshipType ?? "none"}
-                        onValueChange={(v: "full" | "partial" | "temporary" | "none") => {
-                          const updated = [...depList]
-                          if (!updated[idx].relationshipDetails) {
-                            updated[idx].relationshipDetails = {
-                              biologicalRelationTo: "neither",
-                              legalRelationTo: "neither", 
-                              custodialRelationTo: "neither"
-                            }
-                          }
-                          updated[idx].relationshipDetails.guardianshipType = v
+                        value={dep.custodyArrangement ?? (hasPartner ? "shared" : "sole_user")}
+                        onValueChange={(v: "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable") => {
+                          const updated = [...localDepList]
+                          updated[idx] = { ...updated[idx], custodyArrangement: v }
                           updateDepList(updated)
                         }}
                       >
-                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
-                          <SelectValue />
+                        <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
+                          <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="none">No formal guardianship</SelectItem>
-                          <SelectItem value="full">Full legal guardian</SelectItem>
-                          <SelectItem value="partial">Partial guardian</SelectItem>
-                          <SelectItem value="temporary">Temporary guardian</SelectItem>
+                          <SelectItem value="sole_user">Sole custody (you)</SelectItem>
+                          {hasPartner && <SelectItem value="sole_partner">Sole custody (partner)</SelectItem>}
+                          {hasPartner && <SelectItem value="shared">Shared custody</SelectItem>}
+                          <SelectItem value="neither">Neither</SelectItem>
+                          {!hasPartner && <SelectItem value="not_applicable">Not applicable</SelectItem>}
                         </SelectContent>
                       </Select>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        Legal form of guardianship as documented by authorities
-                      </p>
+                      {attemptedDependentSaves.includes(idx) && !dep.custodyArrangement && (
+                        <p className="text-xs text-red-600 mt-1">Please select custody arrangement</p>
+                      )}
                     </div>
-                  </div>
 
-                  {/* Additional Notes */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-gray-400"></div>
-                      <Label className="font-medium text-blue-900 dark:text-blue-100">Additional notes (optional)</Label>
+                    <div className="space-y-3 md:col-span-2">
+                      <Label className="font-medium text-stone-900 dark:text-stone-100">Can you provide documentation? *</Label>
+                      <div className="flex items-center gap-3 p-3 border rounded-lg bg-stone-50/80 dark:bg-stone-900/30 border-stone-200 dark:border-stone-800/50">
+                        <Checkbox
+                          id={`dep_doc_${idx}`}
+                          checked={!!dep.canProveRelationship}
+                          onCheckedChange={(v) => {
+                            const updated = [...localDepList]
+                            updated[idx] = { ...updated[idx], canProveRelationship: !!v }
+                            updateDepList(updated)
+                          }}
+                        />
+                        <Label htmlFor={`dep_doc_${idx}`}>I can provide official documents (birth/adoption certificates, court orders, etc.)</Label>
+                      </div>
+                      {attemptedDependentSaves.includes(idx) && !dep.canProveRelationship && (
+                        <p className="text-xs text-red-600 mt-1">Please confirm if you can provide documentation</p>
+                      )}
                     </div>
-                    <Textarea
-                      placeholder="Any additional context about this relationship that might be relevant for immigration purposes..."
-                      value={dep.relationshipDetails?.additionalNotes ?? ""}
-                      onChange={(e) => {
-                        const updated = [...depList]
-                        if (!updated[idx].relationshipDetails) {
-                          updated[idx].relationshipDetails = {
-                            biologicalRelationTo: "neither",
-                            legalRelationTo: "neither", 
-                            custodialRelationTo: "neither"
-                          }
-                        }
-                        updated[idx].relationshipDetails.additionalNotes = e.target.value
-                        updateDepList(updated)
-                      }}
-                      rows={3}
-                      className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600 resize-none"
-                    />
                   </div>
                 </div>
 
                     {/* Current Residency */}
                     <div className="space-y-6">
-                      <div className="flex items-center justify-between pb-2 border-b border-blue-100 dark:border-blue-800/50">
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-500 shadow-sm">
-                            <MapPin className="w-4 h-4 text-white" />
-                          </div>
-                          <h6 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Current Residency</h6>
-                        </div>
+                      <div className="flex items-center justify-between pb-2 border-b border-stone-200 dark:border-stone-800/50">
+                        <h6 className="text-lg font-semibold text-stone-900 dark:text-stone-100">Current residency</h6>
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30"
+                          className="border-stone-300 text-stone-700 hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-900/30"
                           onClick={() => {
-                            // Copy main user's residency info to dependent
-                            const updated = [...depList]
+                            // Copy main user's residency info to dependent (local)
+                            const updated = [...localDepList]
                             updated[idx] = { 
                               ...updated[idx], 
                               currentResidency: {
@@ -2129,22 +2174,18 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             }
                             updateDepList(updated)
                           }}
-                        >
-                          <Copy className="w-4 h-4 mr-2" />
-                          Same as mine
-                        </Button>
+                        >Copy from my details</Button>
                       </div>
                   
                       <div className="grid gap-6 md:grid-cols-3">
                         <div className="space-y-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                            <Label className="font-medium text-blue-900 dark:text-blue-100">Country *</Label>
+                            <Label className="font-medium text-stone-900 dark:text-stone-100">Country *</Label>
                           </div>
                           <Select
                             value={dep.currentResidency?.country ?? ""}
                             onValueChange={(val) => {
-                              const updated = [...depList]
+                              const updated = [...localDepList]
                               updated[idx] = { 
                                 ...updated[idx], 
                                 currentResidency: { ...updated[idx].currentResidency, country: val }
@@ -2152,7 +2193,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               updateDepList(updated)
                             }}
                           >
-                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
                               <SelectValue placeholder="Select country" />
                             </SelectTrigger>
                             <SelectContent>
@@ -2163,17 +2204,19 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               ))}
                             </SelectContent>
                           </Select>
+                          {attemptedDependentSaves.includes(idx) && !dep.currentResidency?.country && (
+                            <p className="text-xs text-red-600 mt-1">Please select country</p>
+                          )}
                         </div>
 
                         <div className="space-y-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                            <Label className="font-medium text-blue-900 dark:text-blue-100">Residency status *</Label>
+                            <Label className="font-medium text-stone-900 dark:text-stone-100">Residency status *</Label>
                           </div>
                           <Select
                             value={dep.currentResidency?.status ?? ""}
                             onValueChange={(val) => {
-                              const updated = [...depList]
+                              const updated = [...localDepList]
                               updated[idx] = { 
                                 ...updated[idx], 
                                 currentResidency: { ...updated[idx].currentResidency, status: val }
@@ -2181,7 +2224,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               updateDepList(updated)
                             }}
                           >
-                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
+                            <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600">
                               <SelectValue placeholder="Select status" />
                             </SelectTrigger>
                             <SelectContent>
@@ -2194,6 +2237,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                               <SelectItem value="Other">Other</SelectItem>
                             </SelectContent>
                           </Select>
+                          {attemptedDependentSaves.includes(idx) && !dep.currentResidency?.status && (
+                            <p className="text-xs text-red-600 mt-1">Please select residency status</p>
+                          )}
                         </div>
 
                         {(() => {
@@ -2205,8 +2251,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           return (
                             <div className={`space-y-3 ${dependentStatus === "Citizen" ? "opacity-50" : ""}`}>
                               <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-pink-500"></div>
-                                <Label className="font-medium text-blue-900 dark:text-blue-100">
+                                <Label className="font-medium text-stone-900 dark:text-stone-100">
                                   Duration (years) {dependentStatus !== "Citizen" ? "*" : ""}
                                 </Label>
                               </div>
@@ -2216,10 +2261,10 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                 min={0}
                                 max={dep.dateOfBirth ? Math.ceil(dependentAge * 2) / 2 : 100} // Round up to nearest 0.5
                                 placeholder="2.5"
-                                className={`bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600 placeholder:!text-muted-foreground/60 ${durationExceedsAge ? 'border-red-500 focus:ring-red-500' : ''}`}
+                                className={`bg-stone-50 dark:bg-stone-900/50 border-stone-300 dark:border-stone-700 focus:border-emerald-400 dark:focus:border-emerald-600 placeholder:!text-muted-foreground/60 ${durationExceedsAge ? 'border-red-500 focus:ring-red-500' : ''}`}
                                 value={dependentStatus === "Citizen" ? "" : dep.currentResidency?.duration ?? ""}
                                 onChange={(e) => {
-                                  const updated = [...depList]
+                                  const updated = [...localDepList]
                                   updated[idx] = { 
                                     ...updated[idx], 
                                     currentResidency: { ...updated[idx].currentResidency, duration: e.target.value }
@@ -2234,6 +2279,9 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                   Duration cannot exceed their age ({formatAge(dependentAge)})
                                 </p>
                               )}
+                              {attemptedDependentSaves.includes(idx) && dependentStatus !== "Citizen" && !dep.currentResidency?.duration && (
+                                <p className="text-xs text-red-600 mt-1">Please enter duration</p>
+                              )}
                               {dep.dateOfBirth && dependentAge > 0 && dependentStatus !== "Citizen" && !durationExceedsAge && (
                                 <p className="text-xs text-muted-foreground">
                                   Maximum: {Math.ceil(dependentAge * 2) / 2} years (their age: {formatAge(dependentAge)})
@@ -2247,31 +2295,23 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
 
                     {/* Citizenships */}
                     <div className="space-y-6">
-                      <div className="flex items-center justify-between pb-2 border-b border-blue-100 dark:border-blue-800/50">
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 shadow-sm">
-                            <Flag className="w-4 h-4 text-white" />
-                          </div>
-                          <h6 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Citizenships</h6>
-                        </div>
+                      <div className="flex items-center justify-between pb-2 border-b border-stone-200 dark:border-stone-800/50">
+                        <h6 className="text-lg font-semibold text-stone-900 dark:text-stone-100">Citizenships</h6>
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30"
+                          className="border-stone-300 text-stone-700 hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-900/30"
                           onClick={() => {
-                            // Copy main user's citizenships to dependent
-                            const updated = [...depList]
+                            // Copy main user's citizenships to dependent (local)
+                            const updated = [...localDepList]
                             updated[idx] = { 
                               ...updated[idx], 
                               nationalities: [...natList]
                             }
                             updateDepList(updated)
                           }}
-                        >
-                          <Copy className="w-4 h-4 mr-2" />
-                          Same as mine
-                        </Button>
+                        >Copy from my details</Button>
                       </div>
 
                       {/* Existing citizenships */}
@@ -2289,7 +2329,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                     id={`dep_${idx}_renounce_${natIdx}`}
                                     checked={nat.willingToRenounce ?? false}
                                     onCheckedChange={(v) => {
-                                      const updated = [...depList]
+                                      const updated = [...localDepList]
                                       const updatedNats = [...(updated[idx].nationalities || [])]
                                       updatedNats[natIdx] = { ...updatedNats[natIdx], willingToRenounce: !!v }
                                       updated[idx] = { ...updated[idx], nationalities: updatedNats }
@@ -2306,7 +2346,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                                 size="sm"
                                 className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/20"
                                 onClick={() => {
-                                  const updated = [...depList]
+                                  const updated = [...localDepList]
                                   const updatedNats = (updated[idx].nationalities || []).filter((_: any, i: number) => i !== natIdx)
                                   updated[idx] = { ...updated[idx], nationalities: updatedNats }
                                   updateDepList(updated)
@@ -2319,30 +2359,17 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                         </div>
                       )}
 
-                      {/* Add citizenship */}
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-                          <Label className="font-medium text-blue-900 dark:text-blue-100">Add citizenship</Label>
-                        </div>
+                      {/* Add citizenship (top) - only when none exist yet */}
+                      {!(dep.nationalities && dep.nationalities.length > 0) && (
+                      <div className="flex gap-3">
                         <Select
-                          value=""
+                          value={depAddCountry[idx] || ""}
                           onValueChange={(country) => {
-                            if (country) {
-                              const updated = [...depList]
-                              const currentNats = updated[idx].nationalities || []
-                              if (!currentNats.some((n: any) => n.country === country)) {
-                                updated[idx] = {
-                                  ...updated[idx],
-                                  nationalities: [...currentNats, { country, willingToRenounce: false }]
-                                }
-                                updateDepList(updated)
-                              }
-                            }
+                            setDepAddCountry(prev => ({ ...prev, [idx]: country }))
                           }}
                         >
-                          <SelectTrigger className="bg-stone-50 dark:bg-stone-900/50 border-blue-200 dark:border-blue-800 focus:border-blue-400 dark:focus:border-blue-600">
-                            <SelectValue placeholder="Select a country to add" />
+                          <SelectTrigger id={`dep-${idx}-add-citizenship-trigger`} className="flex-1">
+                            <SelectValue placeholder="Add citizenship" />
                           </SelectTrigger>
                           <SelectContent>
                             {countries.filter(c => {
@@ -2355,7 +2382,101 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                             ))}
                           </SelectContent>
                         </Select>
+                        <Button
+                          disabled={!depAddCountry[idx]}
+                          onClick={() => {
+                            const country = depAddCountry[idx]
+                            if (!country) return
+                            const updated = [...localDepList]
+                            const currentNats = updated[idx].nationalities || []
+                            if (!currentNats.some((n: any) => n.country === country)) {
+                              updated[idx] = {
+                                ...updated[idx],
+                                nationalities: [...currentNats, { country, willingToRenounce: false }]
+                              }
+                              updateDepList(updated)
+                            }
+                            setDepAddCountry(prev => ({ ...prev, [idx]: "" }))
+                          }}
+                          className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white"
+                        >
+                          Add
+                        </Button>
                       </div>
+                      )}
+
+                      {/* Add citizenship (below list) - link reveals the same add row */}
+                      {dep.nationalities && dep.nationalities.length > 0 && (
+                        <div className="mt-2">
+                          <Button
+                            variant="link"
+                            size="sm"
+                            className="px-0 text-muted-foreground"
+                            onClick={() => {
+                              setShowMoreDependentCitizenship(prev => prev.includes(idx) ? prev : [...prev, idx])
+                              setDepAddCountry(prev => ({ ...prev, [idx]: "" }))
+                            }}
+                          >
+                            This dependent has another citizenship
+                          </Button>
+                          {showMoreDependentCitizenship.includes(idx) && (
+                            <div className="flex gap-3 mt-2">
+                              <Select
+                                value={depAddCountry[idx] || ""}
+                                onValueChange={(country) => {
+                                  if (country) {
+                                    const updated = [...localDepList]
+                                    const currentNats = updated[idx].nationalities || []
+                                    if (!currentNats.some((n: any) => n.country === country)) {
+                                      updated[idx] = {
+                                        ...updated[idx],
+                                        nationalities: [...currentNats, { country, willingToRenounce: false }]
+                                      }
+                                      updateDepList(updated)
+                                    }
+                                    setDepAddCountry(prev => ({ ...prev, [idx]: country }))
+                                  }
+                                }}
+                              >
+                                <SelectTrigger className="flex-1">
+                                  <SelectValue placeholder="Add citizenship" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {countries.filter(c => {
+                                    const currentNats = dep.nationalities || []
+                                    return !currentNats.some((n: any) => n.country === c)
+                                  }).map((c) => (
+                                    <SelectItem key={c} value={c}>
+                                      {c}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <Button
+                                disabled={!depAddCountry[idx]}
+                                onClick={() => {
+                                  const country = depAddCountry[idx]
+                                  if (!country) return
+                                  const updated = [...localDepList]
+                                  const currentNats = updated[idx].nationalities || []
+                                  if (!currentNats.some((n: any) => n.country === country)) {
+                                    updated[idx] = {
+                                      ...updated[idx],
+                                      nationalities: [...currentNats, { country, willingToRenounce: false }]
+                                    }
+                                    updateDepList(updated)
+                                  }
+                                  setDepAddCountry(prev => ({ ...prev, [idx]: "" }))
+                                  setShowMoreDependentCitizenship(prev => prev.filter(i => i !== idx))
+                                }}
+                                className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white"
+                              >
+                                Add
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                   
@@ -2405,20 +2526,19 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                           </div>
                         )}
                         
-                        <div className="flex gap-2 pt-4 border-t border-blue-200/60 dark:border-blue-800/30">
+                        <div className="flex gap-2 pt-4 border-t border-stone-200/60 dark:border-stone-800/30">
                           <Button
                             size="sm"
                             onClick={() => saveDependentInfo(idx)}
                             disabled={!isValid}
-                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 dark:border-blue-500 dark:hover:border-blue-600 disabled:bg-blue-300 disabled:border-blue-300 dark:disabled:bg-blue-700 dark:disabled:border-blue-700"
+                            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600 hover:border-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 dark:border-emerald-500 dark:hover:border-emerald-600 disabled:bg-emerald-300 disabled:border-emerald-300 dark:disabled:bg-emerald-700 dark:disabled:border-emerald-700"
                           >
-                            <Check className="w-4 h-4 mr-2" />
                             Save Dependent Information
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30"
+                            className="border-stone-300 text-stone-700 hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-900/30"
                             onClick={() => {
                               // If this dependent was never saved (not in savedDependents), remove it entirely
                               if (!savedDependents.includes(idx)) {
@@ -2455,19 +2575,23 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                 <Button
                   variant="outline"
                   onClick={() => {
-                    // Add new dependent to data
+                    // Add new dependent as draft (not considered saved)
                     const newDependent = {
                       relationship: "Child",
                       relationshipDetails: {
                         biologicalRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
-                        legalRelationTo: "both" as "user" | "partner" | "both" | "neither",
-                        custodialRelationTo: "both" as "user" | "partner" | "both" | "neither",
+                        legalRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
+                        custodialRelationTo: (hasPartner ? "both" : "user") as "user" | "partner" | "both" | "neither",
                         isStepRelation: false,
                         isAdopted: false,
                         isLegalWard: false,
                         guardianshipType: "none" as "full" | "partial" | "temporary" | "none",
                         additionalNotes: ""
                       },
+                      relationshipToUser: "none" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none",
+                      relationshipToPartner: hasPartner ? "none" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable" : "not_applicable" as "biological" | "adopted" | "step" | "foster" | "legal_ward" | "none" | "not_applicable",
+                      custodyArrangement: hasPartner ? "shared" as "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable" : "sole_user" as "sole_user" | "sole_partner" | "shared" | "neither" | "not_applicable",
+                      canProveRelationship: false,
                       dateOfBirth: "",
                       student: false,
                       nationalities: [],
@@ -2475,11 +2599,12 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
                         country: "",
                         status: "",
                         duration: ""
-                      }
+                      },
+                      isDraft: true
                     }
-                    updateDepList([...depList, newDependent])
+                    updateDepList([...localDepList, newDependent])
                     // Make this dependent form visible and editable
-                    const newIndex = depList.length
+                    const newIndex = localDepList.length
                     setVisibleDependents([...visibleDependents, newIndex])
                     setEditingDependents([...editingDependents, newIndex])
                   }}
@@ -2497,22 +2622,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               Include children, elderly parents, or other family members who depend on your financial support and will move with you.
             </p>
             
-            {/* Debug section - remove in production */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                <p className="text-xs font-medium text-yellow-800 dark:text-yellow-200 mb-2">
-                  Debug: {depList.length} dependents in store
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clearAllDependents}
-                  className="text-xs"
-                >
-                  Clear All Dependents (Debug)
-                </Button>
-              </div>
-            )}
+            {/* Debug section removed */}
           </div>
         </CardContent>
       </Card>
@@ -2521,24 +2631,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
       <Card className="shadow-md">
         <CardFooter className="pt-6">
           <div className="w-full space-y-4">
-            {!canContinue && (
-              <Alert variant="destructive">
-                <AlertDescription>
-                  <strong>Complete required fields:</strong>
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    {!dob && <li>Date of birth</li>}
-                    {!curCountry && <li>Country of current residence</li>}
-                    {!curStatus && <li>Current residency status</li>}
-                    {natList.length === 0 && <li>At least one citizenship</li>}
-                    {!maritalStatus && <li>Marital status</li>}
-                    {curStatus === "Temporary Resident" && !tempDuration && <li>Years at current residence</li>}
-                    {!mainPersonDurationValid && <li>Residence duration cannot exceed your age ({formatAge(userAge)})</li>}
-                    {hasPartner && !partnerSaved && <li>Complete and save partner information</li>}
-                    {!allDependentsSaved && <li>Complete and save all dependent information</li>}
-                  </ul>
-                </AlertDescription>
-              </Alert>
-            )}
+            {/* Removed duplicate custom required-fields alert; ValidationAlert below handles this */}
 
             {/* Validation Alert */}
             <ValidationAlert 
@@ -2555,6 +2648,7 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
               canContinue={canContinue}
               nextSectionName="Residency Intentions"
             />
+
           </div>
         </CardFooter>
       </Card>
@@ -2573,6 +2667,8 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
         onGoToSection={goToSection}
         onNavigateToSection={navigateToSection}
       />
+        </>
+      )}
     </div>
   )
 } 
