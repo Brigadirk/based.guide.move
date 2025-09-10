@@ -887,15 +887,6 @@ export function PersonalInformation({ onComplete }: { onComplete: () => void }) 
             </div>
           )}
 
-          {/* EU Citizenship Indicator */}
-          {natList.length > 0 && hasEUCitizenship(natList) && (
-            <Alert className="border-blue-200 bg-blue-50 dark:bg-blue-950/20">
-              <Globe className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-blue-800 dark:text-blue-200">
-                🇪🇺 <strong>You're an EU citizen!</strong> You have citizenship in: {getUserEUCountries(natList).join(", ")}
-              </AlertDescription>
-            </Alert>
-          )}
         </CardContent>
       </Card>
 
