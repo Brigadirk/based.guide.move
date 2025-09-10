@@ -541,8 +541,10 @@ def residency_section(
             elif app_timing == "sequential":
                 sentences.append("They plan to submit family applications sequentially.")
             elif app_timing == "undecided":
-                sentences.append("They are still undecided about their family application timing strategy.")
-        
+                sentences.append(
+                    "They are still undecided about their family application timing strategy."
+                )
+
         special_circumstances = family_coord.get("specialFamilyCircumstances", "").strip()
         if special_circumstances:
             sentences.append(f'Special family circumstances: "{special_circumstances}"')

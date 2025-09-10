@@ -149,7 +149,7 @@ export interface FormData {
     }
     dependentsVisa?: {
       applyForResidency?: boolean
-    } & Record<string, {
+    } & Record<number, {
       notes?: string
     }>
     residencyPlans?: {

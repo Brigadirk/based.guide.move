@@ -105,7 +105,7 @@ export const defaultFormData: FormData = {
       }
     },
     moveMotivation: "",
-    moveMotivationDetails: "",
+    moveTiming: "",
     familyCoordination: {
       applicationTiming: "undecided",
       specialFamilyCircumstances: ""
