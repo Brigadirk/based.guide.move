@@ -20,7 +20,9 @@ import {
   AlertCircle,
   Check,
   Zap,
-  Bug
+  Bug,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -42,7 +44,6 @@ import { DevStateViewer } from "@/components/dev/state-viewer";
 import { AlternativeInterestsModal } from "@/components/ui/alternative-interests-modal";
 import { useAlternativeInterests } from "@/lib/hooks/use-alternative-interests";
 import { SelectedDestinationCard } from "@/components/features/selected-destination-card";
-import { DebugProvider } from "@/lib/contexts/debug-context";
 
 interface Section {
   id: string
@@ -82,7 +83,29 @@ export default function HomePage() {
 
   // Debug mode state (only in development)
   const [debugMode, setDebugMode] = useState(false)
+  const [debugCollapsed, setDebugCollapsed] = useState(false)
   const isDev = process.env.NODE_ENV === 'development'
+
+  // Finance skip functionality (moved from toggle component to main app)
+  const handleFinanceSkipToggle = (checked: boolean) => {
+    const financeeSections = ["finance", "social-security", "tax-deductions", "future-plans"]
+    
+    updateFormData("finance.skipDetails", checked)
+    
+    if (checked) {
+      // Mark all finance sections as complete
+      financeeSections.forEach(sectionId => {
+        markSectionComplete(sectionId)
+      })
+      updateFormData("finance.autoCompletedSections", financeeSections)
+    } else {
+      // Unmark all finance sections
+      financeeSections.forEach(sectionId => {
+        updateFormData(`completedSections.${sectionId}`, false)
+      })
+      updateFormData("finance.autoCompletedSections", false)
+    }
+  }
 
   // Alternative interests modal for visa-free + finance-skipped users
   const {
@@ -94,32 +117,9 @@ export default function HomePage() {
     handleMistake
   } = useAlternativeInterests();
   
-  // Finance skip functionality
+  // Finance skip state
   const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
   
-  const handleFinanceSkipToggle = (checked: boolean) => {
-    const wasAutoCompleted = getFormData("finance.autoCompletedSections") ?? false
-    
-    updateFormData("finance.skipDetails", checked)
-    
-    if (checked) {
-      // Do not auto-complete sections; require explicit submission of each section
-      updateFormData("finance.autoCompletedSections", false)
-    } else if (wasAutoCompleted) {
-      // When unchecking, unmark the sections that were auto-completed
-      const autoCompletedSections = Array.isArray(wasAutoCompleted) 
-        ? wasAutoCompleted 
-        : ["finance", "social-security", "tax-deductions", "future-plans"]
-      
-      // Unmark each auto-completed section
-      autoCompletedSections.forEach((sectionId: string) => {
-        updateFormData(`completedSections.${sectionId}`, false)
-      })
-      
-      // Clear the auto-completion flag
-      updateFormData("finance.autoCompletedSections", false)
-    }
-  }
   const destCountry = (formData.residencyIntentions?.destinationCountry as any)?.country ?? formData.destination?.country ?? "";
   const destRegion = (formData.residencyIntentions?.destinationCountry as any)?.region ?? formData.destination?.region ?? "";
 
@@ -144,10 +144,19 @@ export default function HomePage() {
     const handleFormDataChange = (event: CustomEvent) => {
       // Event listener for form data changes
     }
+    
+    const handleFinanceSkipEvent = (event: CustomEvent) => {
+      const { checked } = event.detail
+      handleFinanceSkipToggle(checked)
+    }
 
     if (typeof window !== "undefined") {
       window.addEventListener("formDataChange", handleFormDataChange as EventListener)
-      return () => window.removeEventListener("formDataChange", handleFormDataChange as EventListener)
+      window.addEventListener("financeSkipToggle", handleFinanceSkipEvent as EventListener)
+      return () => {
+        window.removeEventListener("formDataChange", handleFormDataChange as EventListener)
+        window.removeEventListener("financeSkipToggle", handleFinanceSkipEvent as EventListener)
+      }
     }
   }, [])
 
@@ -247,8 +256,7 @@ export default function HomePage() {
   const HeaderIcon = SECTIONS[currentSection].icon
 
   return (
-    <DebugProvider>
-      <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground">
         {/* Debug Toggle (Development Only) */}
         {isDev && (
           <div className="fixed top-4 left-4 z-50">
@@ -265,13 +273,23 @@ export default function HomePage() {
                       checked={debugMode}
                       onCheckedChange={setDebugMode}
                     />
+                    {debugMode && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setDebugCollapsed(!debugCollapsed)}
+                        className="p-1 h-6 w-6"
+                      >
+                        {debugCollapsed ? <ChevronDown className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
+                      </Button>
+                    )}
                   </div>
-                  {debugMode && (
+                  {debugMode && !debugCollapsed && (
                     <div className="text-xs text-amber-700 dark:text-amber-300 pt-1 border-t border-amber-200 dark:border-amber-800 space-y-2 max-w-xs">
                       <div>Finance Skip: <span className="font-medium">{skipFinanceDetails ? "ON" : "OFF"}</span></div>
                       
                       <div className="space-y-0.5">
-                        <div className="font-medium">Section Completion (isSectionComplete):</div>
+                        <div className="font-medium">Section Completion:</div>
                         <div>• Finance: {isSectionComplete("finance") ? "✅" : "❌"}</div>
                         <div>• Social Security: {isSectionComplete("social-security") ? "✅" : "❌"}</div>
                         <div>• Tax Deductions: {isSectionComplete("tax-deductions") ? "✅" : "❌"}</div>
@@ -279,32 +297,15 @@ export default function HomePage() {
                       </div>
                       
                       <div className="space-y-0.5">
-                        <div className="font-medium">Raw completedSections Object:</div>
-                        <div className="bg-amber-100 dark:bg-amber-900 p-1 rounded text-xs font-mono">
+                        <div className="font-medium">Raw completedSections:</div>
+                        <div className="bg-amber-100 dark:bg-amber-900 p-1 rounded text-xs font-mono max-h-20 overflow-y-auto">
                           {JSON.stringify(getFormData("completedSections"), null, 1)}
                         </div>
                       </div>
                       
                       <div className="space-y-0.5">
-                        <div className="font-medium">Finance Skip State:</div>
-                        <div>• skipDetails: {String(getFormData("finance.skipDetails"))}</div>
+                        <div className="font-medium">Skip State:</div>
                         <div>• autoCompleted: {JSON.stringify(getFormData("finance.autoCompletedSections"))}</div>
-                        <div>• originalStates: {JSON.stringify(getFormData("finance.originalCompletionStates"))}</div>
-                        <div>• preservedData keys: {JSON.stringify(Object.keys(getFormData("finance.preservedData") ?? {}))}</div>
-                      </div>
-                      
-                      <div className="space-y-0.5">
-                        <div className="font-medium">Store Functions Available:</div>
-                        <div>• markSectionComplete: {typeof markSectionComplete}</div>
-                        <div>• isSectionComplete: {typeof isSectionComplete}</div>
-                        <div>• updateFormData: {typeof updateFormData}</div>
-                      </div>
-                      
-                      <div className="space-y-0.5">
-                        <div className="font-medium">Current Section:</div>
-                        <div>• Index: {currentSection}</div>
-                        <div>• ID: {SECTIONS[currentSection]?.id}</div>
-                        <div>• Title: {SECTIONS[currentSection]?.title}</div>
                       </div>
                     </div>
                   )}
@@ -585,8 +586,8 @@ export default function HomePage() {
           </main>
         </div>
 
-        {/* Dev JSON viewer */}
-        <DevStateViewer />
+        {/* Dev JSON viewer (Debug Mode Only) */}
+        {debugMode && <DevStateViewer />}
 
         {/* Alternative Interests Modal */}
         <AlternativeInterestsModal
@@ -598,6 +599,5 @@ export default function HomePage() {
         />
       </div>
     </div>
-    </DebugProvider>
   );
 } 

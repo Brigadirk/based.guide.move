@@ -9,94 +9,16 @@ import { useFormStore } from "@/lib/stores"
 
 interface FinanceSkipToggleProps {
   variant?: "sidebar" | "section"
+  onToggle?: (checked: boolean) => void
 }
 
-export function FinanceSkipToggle({ variant = "sidebar" }: FinanceSkipToggleProps) {
-  const { getFormData, updateFormData, markSectionComplete, isSectionComplete } = useFormStore()
+export function FinanceSkipToggle({ variant = "sidebar", onToggle }: FinanceSkipToggleProps) {
+  const { getFormData } = useFormStore()
   const skipFinanceDetails = getFormData("finance.skipDetails") ?? false
 
   const handleFinanceSkipToggle = (checked: boolean) => {
-    const financeeSections = ["finance", "social-security", "tax-deductions", "future-plans"]
-    const sectionDataKeys = ["finance", "socialSecurityAndPensions", "taxDeductionsAndCredits", "futureFinancialPlans"]
-    
-    console.log(`Finance skip toggle: ${checked ? 'ON' : 'OFF'}`)
-    
-    updateFormData("finance.skipDetails", checked)
-    
-    if (checked) {
-      // PRESERVE ORIGINAL STATE BEFORE SKIP
-      
-      // 1. Save current completion states
-      const originalStates: Record<string, boolean> = {}
-      financeeSections.forEach(sectionId => {
-        const isComplete = isSectionComplete(sectionId)
-        originalStates[sectionId] = isComplete
-        console.log(`Section ${sectionId} was originally complete: ${isComplete}`)
-      })
-      updateFormData("finance.originalCompletionStates", originalStates)
-      
-      // 2. Save current section data
-      const preservedData: Record<string, any> = {}
-      sectionDataKeys.forEach(dataKey => {
-        const data = getFormData(dataKey)
-        if (data && Object.keys(data).length > 0) {
-          preservedData[dataKey] = data
-          console.log(`Preserved data for ${dataKey}:`, Object.keys(data))
-        }
-      })
-      updateFormData("finance.preservedData", preservedData)
-      
-      // 3. Mark all finance sections as complete (skip override)
-      console.log('Marking finance sections as complete...')
-      financeeSections.forEach(sectionId => {
-        console.log(`About to mark ${sectionId} as complete`)
-        markSectionComplete(sectionId)
-        console.log(`Called markSectionComplete for ${sectionId}`)
-        
-        // Verify it was marked
-        setTimeout(() => {
-          const isNowComplete = isSectionComplete(sectionId)
-          console.log(`${sectionId} is now complete: ${isNowComplete}`)
-        }, 100)
-      })
-      
-      // 4. Flag that sections were auto-completed by skip
-      updateFormData("finance.autoCompletedSections", financeeSections)
-      console.log('Set autoCompletedSections to:', financeeSections)
-      
-    } else {
-      // RESTORE ORIGINAL STATE AFTER UNFLIP
-      
-      console.log('Restoring original finance states...')
-      
-      // 1. Get preserved states and data
-      const originalStates = getFormData("finance.originalCompletionStates") ?? {}
-      const preservedData = getFormData("finance.preservedData") ?? {}
-      
-      console.log('Original states to restore:', originalStates)
-      console.log('Preserved data to restore:', Object.keys(preservedData))
-      
-      // 2. Restore original completion states
-      financeeSections.forEach(sectionId => {
-        const wasOriginallyComplete = originalStates[sectionId] ?? false
-        updateFormData(`completedSections.${sectionId}`, wasOriginallyComplete)
-        console.log(`Restored ${sectionId} completion state to: ${wasOriginallyComplete}`)
-      })
-      
-      // 3. Restore original section data
-      sectionDataKeys.forEach(dataKey => {
-        if (preservedData[dataKey]) {
-          updateFormData(dataKey, preservedData[dataKey])
-          console.log(`Restored data for ${dataKey}`)
-        }
-      })
-      
-      // 4. Clear skip flags
-      updateFormData("finance.autoCompletedSections", false)
-      updateFormData("finance.originalCompletionStates", {})
-      updateFormData("finance.preservedData", {})
-      
-      console.log('Finance skip restore complete')
+    if (onToggle) {
+      onToggle(checked)
     }
   }
 

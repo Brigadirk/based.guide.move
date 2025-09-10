@@ -13,7 +13,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { PerplexityLoading } from "@/components/ui/perplexity-loading"
 import { PageHeading } from "@/components/ui/page-heading"
-import { useDebug } from "@/lib/contexts/debug-context"
 
 const PERPLEXITY_MODELS = [
   { id: "sonar-deep-research", name: "Sonar Deep Research", description: "Best for comprehensive analysis" },

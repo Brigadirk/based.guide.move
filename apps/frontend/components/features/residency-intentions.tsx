@@ -18,7 +18,6 @@ import { ValidationAlert } from "@/components/ui/validation-alert"
 import { useSectionInfo } from "@/lib/hooks/use-section-info"
 import { canMoveWithinEU } from "@/lib/utils/eu-utils"
 import { computeVisaStatus } from "@/lib/utils/visa-status"
-import { useDebug } from "@/lib/contexts/debug-context"
  
 
 export function ResidencyIntentions({ onComplete, debugMode }: { onComplete: () => void; debugMode?: boolean }) {

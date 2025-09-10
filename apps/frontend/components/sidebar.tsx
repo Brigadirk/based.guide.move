@@ -54,7 +54,11 @@ export function Sidebar({ steps, currentStep, onStepChange }: SidebarProps) {
       </div>
 
       {/* Finance Skip Toggle */}
-      <FinanceSkipToggle variant="sidebar" />
+      <FinanceSkipToggle variant="sidebar" onToggle={(checked) => {
+        // This will be handled by the main app's handleFinanceSkipToggle
+        const event = new CustomEvent('financeSkipToggle', { detail: { checked } })
+        window.dispatchEvent(event)
+      }} />
 
       <div className="space-y-2">
         {steps.map((step, index) => {

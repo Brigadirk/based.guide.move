@@ -338,7 +338,11 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
       />
 
       {/* Finance Skip Toggle */}
-      <FinanceSkipToggle variant="section" />
+      <FinanceSkipToggle variant="section" onToggle={(checked) => {
+        // This will be handled by the main app's handleFinanceSkipToggle
+        const event = new CustomEvent('financeSkipToggle', { detail: { checked } })
+        window.dispatchEvent(event)
+      }} />
 
       {/* Finance scope selector */}
       {!skipDetails && hasPartnerSelected && (

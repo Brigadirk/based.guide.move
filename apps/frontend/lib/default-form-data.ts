@@ -115,8 +115,6 @@ export const defaultFormData: FormData = {
     skipTaxSections: false,
     skipDetails: false,
     autoCompletedSections: false,
-    originalCompletionStates: {},
-    preservedData: {},
     totalWealth: {
       total: 0,
       currency: "USD",
