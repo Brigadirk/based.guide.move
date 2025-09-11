@@ -44,6 +44,7 @@ import { DevStateViewer } from "@/components/dev/state-viewer";
 import { AlternativeInterestsModal } from "@/components/ui/alternative-interests-modal";
 import { useAlternativeInterests } from "@/lib/hooks/use-alternative-interests";
 import { SelectedDestinationCard } from "@/components/features/selected-destination-card";
+import { ScenarioSelector } from "@/components/debug/scenario-selector";
 
 interface Section {
   id: string
@@ -298,6 +299,21 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+        {/* Debug Scenario Selector - Top of page when debug mode is enabled */}
+        {debugMode && (
+          <div className="border-b border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-950/10 p-4">
+            <div className="max-w-4xl mx-auto">
+              <ScenarioSelector 
+                onScenarioApplied={(scenarioId) => {
+                  console.log(`Applied scenario: ${scenarioId}`)
+                  // Optionally navigate to summary or results
+                  setCurrentSection(SECTIONS.findIndex(s => s.id === 'summary'))
+                }}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Debug Toggle (Development Only) */}
         {isDev && (
           <div className="fixed top-4 left-4 z-50">
@@ -627,7 +643,7 @@ export default function HomePage() {
           </main>
         </div>
 
-        {/* Dev JSON viewer (Debug Mode Only) */}
+        {/* Debug Tools (Debug Mode Only) */}
         {debugMode && <DevStateViewer />}
 
         {/* Alternative Interests Modal */}
