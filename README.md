@@ -19,6 +19,9 @@ basedguide2/
 │   ├── backend/                    # FastAPI backend
 │   │   ├── src/                    # Source code
 │   │   │   ├── api/                # API routes and handlers
+│   │   │   │   ├── prompt.py       # AI prompt management
+│   │   │   │   ├── perplexity.py   # Perplexity API integration
+│   │   │   │   └── routes.py       # Main API routes
 │   │   │   ├── modules/            # Business logic modules
 │   │   │   ├── services/           # External services
 │   │   │   ├── app.py              # FastAPI application
@@ -27,19 +30,21 @@ basedguide2/
 │   │   ├── data/                   # Static data files
 │   │   ├── schemas/                # JSON schemas
 │   │   ├── pyproject.toml          # Python dependencies
-│   │   ├── Dockerfile              # Container definition
-│   │   ├── Procfile                # Railway deployment
-│   │   └── .env.example            # Environment variables
+│   │   ├── requirements.txt        # Python dependencies (legacy)
+│   │   ├── .env.example            # Environment variables template
+│   │   └── Dockerfile              # Container definition
 │   │
 │   ├── frontend/                   # Next.js frontend
 │   │   ├── app/                    # Next.js app directory
 │   │   ├── components/             # React components
 │   │   ├── lib/                    # Frontend utilities
 │   │   ├── public/                 # Static assets
-│   │   ├── tests/                  # Frontend tests
+│   │   ├── __tests__/              # Frontend tests
+│   │   ├── types/                  # TypeScript type definitions
+│   │   ├── data/                   # Static data files
 │   │   ├── package.json            # Frontend dependencies
-│   │   ├── Dockerfile              # Container definition
-│   │   └── .env.example            # Environment variables
+│   │   ├── .env.example            # Environment variables template
+│   │   └── Dockerfile              # Container definition
 │   │
 │   └── backend-tester/             # API testing tool
 │       ├── app/                    # Next.js testing app
@@ -65,17 +70,25 @@ basedguide2/
 │   ├── railway/                    # Railway deployment configs
 │   └── docker/                     # Docker compose files
 │
-├── .github/workflows/              # CI/CD pipelines
+├── scripts/                        # Development and utility scripts
+│   ├── dev-start.sh               # Main development startup
+│   ├── dev-start-all.sh           # Start all services
+│   ├── dev-docker.sh              # Docker development setup
+│   ├── lint-check.sh              # Linting utility script
+│   └── test-monorepo.sh           # Monorepo testing script
+├── .github/workflows/              # CI/CD pipelines (future)
 ├── package.json                    # Monorepo root configuration
 ├── pnpm-workspace.yaml             # PNPM workspace definition
 └── README.md                       # This file
+
+Note: `frontend-deprecated-switch-works/` contains a backup of the frontend and is excluded from version control.
 ```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- **Node.js** 18+ and **pnpm** 8+
+- **Node.js** 18.18.0+ (Next.js 15 requirement) and **pnpm** 8+
 - **Python** 3.11+
 - **PostgreSQL** 15+ (for local development)
 - **Docker** (optional, for containerized development)
@@ -282,18 +295,37 @@ docker run -p 3000:3000 --env-file apps/frontend/.env basedguide-frontend
 
 The FastAPI backend provides:
 
-- **Interactive docs**: `http://localhost:8000/docs` (Swagger UI)
-- **Alternative docs**: `http://localhost:8000/redoc` (ReDoc)
-- **OpenAPI spec**: `http://localhost:8000/openapi.json`
+- **Interactive docs**: `http://localhost:5001/docs` (Swagger UI)
+- **Alternative docs**: `http://localhost:5001/redoc` (ReDoc)
+- **OpenAPI spec**: `http://localhost:5001/openapi.json`
 
 ### Key Endpoints
 
+**Core API:**
 - `GET /health` - Health check
-- `POST /api/v1/tax-advice` - Generate tax advice
-- `POST /api/v1/section/*` - Section-specific story generation
-- `POST /api/v1/perplexity-analysis` - AI-powered analysis
-- `GET /api/v1/exchange-rates` - Get latest exchange rates
-- `POST /api/v1/exchange-rates/refresh` - Force refresh exchange rates
+- `GET /ping` - Simple ping endpoint
+- `POST /tax-advice` - Generate comprehensive tax advice
+- `POST /custom-prompt` - Custom prompt processing
+- `POST /perplexity-analysis` - AI-powered analysis via Perplexity
+- `POST /generate-prompt` - Generate AI prompts
+- `POST /generate-full-story` - Generate complete user story
+
+**Section-Specific Story Generation:**
+- `POST /section/personal-information` - Personal information story
+- `POST /section/education` - Education background story
+- `POST /section/residency-intentions` - Residency plans story
+- `POST /section/finance` - Financial situation story
+- `POST /section/social-security-pensions` - Social security story
+- `POST /section/tax-deductions-credits` - Tax deductions story
+- `POST /section/future-financial-plans` - Future financial plans story
+- `POST /section/additional-information` - Additional information story
+- `POST /section/summary` - Summary story
+
+**Exchange Rates:**
+- `GET /exchange-rates` - Get latest exchange rates
+- `POST /exchange-rates/refresh` - Force refresh exchange rates
+- `GET /exchange-rates/files` - List exchange rate files
+- `GET /exchange-rates/file/latest` - Get latest exchange rate file
 
 ## 🛠️ Development Workflow
 

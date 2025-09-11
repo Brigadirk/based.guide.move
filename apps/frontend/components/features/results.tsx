@@ -115,17 +115,24 @@ export function Results({ debugMode }: { debugMode?: boolean }) {
       updateFormData(path, value)
     } catch (error) {
       if (error instanceof Error && error.name === 'QuotaExceededError') {
-        console.warn('localStorage quota exceeded, clearing old results to make space')
-        // Clear old results and try again
+        console.warn('localStorage quota exceeded, clearing old data to make space')
+        // Clear old results and other large data, then try again
         try {
+          // Clear old results
           updateFormData("results.aiAnalysis", "")
           updateFormData("results.followUpAnswer", "")
           updateFormData("results.fullPrompt", "")
+          
+          // Clear other potentially large sections
+          updateFormData("summary.editedFullStory", "")
+          
           // Try saving again with cleared space
           updateFormData(path, value)
+          console.log('Successfully saved after clearing space')
         } catch (secondError) {
           console.error('Failed to save even after clearing space:', secondError)
-          setError("Storage full - results won't persist across sessions. Consider downloading your analysis.")
+          // Show user-friendly message but don't set as error (results still work in session)
+          console.warn("Storage full - results won't persist across sessions but are still available for download")
         }
       } else {
         console.error('Error saving to storage:', error)
@@ -224,11 +231,8 @@ export function Results({ debugMode }: { debugMode?: boolean }) {
       const promptData = await promptResponse.json()
       setFullPrompt(promptData.prompt)
       
-      // Save prompt to store (truncate if too large to avoid localStorage quota issues)
-      const truncatedPrompt = promptData.prompt.length > 10000 
-        ? promptData.prompt.substring(0, 10000) + "...\n\n[Prompt truncated for storage]"
-        : promptData.prompt
-      safeUpdateFormData("results.fullPrompt", truncatedPrompt)
+      // Save prompt to store (full version)
+      safeUpdateFormData("results.fullPrompt", promptData.prompt)
       safeUpdateFormData("results.generatedAt", new Date().toISOString())
       
     } catch (error) {
@@ -267,11 +271,8 @@ export function Results({ debugMode }: { debugMode?: boolean }) {
       const response = await apiClient.getPerplexityAnalysis(fullPrompt, selectedModel)
       setResult(response.result)
       
-      // Save result to store (truncate if too large to avoid localStorage quota issues)
-      const truncatedResult = response.result.length > 20000 
-        ? response.result.substring(0, 20000) + "...\n\n[Analysis truncated for storage - download full version]"
-        : response.result
-      safeUpdateFormData("results.aiAnalysis", truncatedResult)
+      // Save result to store (full version - let safeUpdateFormData handle quota issues)
+      safeUpdateFormData("results.aiAnalysis", response.result)
       safeUpdateFormData("results.model", selectedModel)
       safeUpdateFormData("results.generatedAt", new Date().toISOString())
       
@@ -320,12 +321,9 @@ Please provide a detailed answer to the follow-up question, referencing the prev
       const response = await apiClient.getPerplexityAnalysis(followUpPrompt, followUpModel)
       setFollowUpResult(response.result)
       
-      // Save follow-up to store (truncate if too large)
-      const truncatedFollowUp = response.result.length > 15000 
-        ? response.result.substring(0, 15000) + "...\n\n[Follow-up truncated for storage]"
-        : response.result
+      // Save follow-up to store (full version)
       safeUpdateFormData("results.followUpQuestion", followUpQuestion)
-      safeUpdateFormData("results.followUpAnswer", truncatedFollowUp)
+      safeUpdateFormData("results.followUpAnswer", response.result)
       
     } catch (error) {
       console.error("Error generating follow-up:", error)

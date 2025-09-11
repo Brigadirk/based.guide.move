@@ -5,8 +5,8 @@ This guide explains how to set up and run the BasedGuide2 application for local 
 ## 📋 Prerequisites
 
 ### Required
-- **Node.js** (v18+) - [Download here](https://nodejs.org/)
-- **Python** (v3.9+) - [Download here](https://python.org/)
+- **Node.js** (v18.18.0+ - Next.js 15 requirement) - [Download here](https://nodejs.org/)
+- **Python** (v3.11+) - [Download here](https://python.org/)
 - **pnpm** - Install with `npm install -g pnpm`
 
 ### Optional (for Docker setup)
@@ -48,7 +48,7 @@ For a containerized environment with database:
 pnpm run dev:docker
 
 # Or directly:
-./dev-docker.sh
+./scripts/dev-docker.sh
 ```
 
 This includes:
@@ -79,6 +79,9 @@ PORT=5001
 
 # CORS Configuration
 ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
+
+# Generate a secret key with:
+# python3 -c "import secrets; print('SECRET_KEY=' + secrets.token_urlsafe(32))"
 ```
 
 ### Frontend Environment Variables
@@ -249,9 +252,10 @@ basedguide2/
 │       ├── app/          # App router pages
 │       ├── components/   # React components
 │       └── .env.local    # Frontend environment variables
-├── schemas/              # Shared schemas
-├── dev-start.sh         # Native development script
-├── dev-docker.sh        # Docker development script
+├── scripts/              # Development and utility scripts
+│   ├── dev-start.sh     # Native development script
+│   ├── dev-docker.sh    # Docker development script
+│   └── ...              # Other utility scripts
 ├── docker-compose.dev.yml # Docker services definition
 └── package.json         # Root package.json with scripts
 ```
