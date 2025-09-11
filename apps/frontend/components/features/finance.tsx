@@ -72,7 +72,7 @@ const LIABILITY_CATEGORIES = {
   }
 }
 
-export function Finance({ onComplete }: { onComplete: () => void }) {
+export function Finance({ onComplete, debugMode }: { onComplete: () => void; debugMode?: boolean }) {
   const { getFormData, updateFormData, markSectionComplete } = useFormStore()
   const { isLoading: isCheckingInfo, currentStory, modalTitle, isModalOpen, currentSection, isFullView, showSectionInfo, closeModal, expandFullInformation, backToSection, goToSection, navigateToSection } = useSectionInfo()
   const currencies = useCurrencies()
@@ -352,16 +352,18 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      {/* Debug Partner Status */}
-      <div className="p-4 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-        <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">🐛 Debug: Partner Status</h3>
-        <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
-          <p><strong>Has Partner Selected:</strong> {hasPartnerSelected ? "✅ Yes" : "❌ No"}</p>
-          <p><strong>Partner Enabled:</strong> {partnerEnabled ? "✅ Yes" : "❌ No"}</p>
-          <p><strong>Finance Scope:</strong> {financeScope}</p>
-          <p><strong>Raw Partner Data:</strong> {JSON.stringify(getFormData("personalInformation.relocationPartner"))}</p>
+      {/* Debug Partner Status - Only show in debug mode */}
+      {debugMode && (
+        <div className="p-4 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+          <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">🐛 Debug: Partner Status</h3>
+          <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
+            <p><strong>Has Partner Selected:</strong> {hasPartnerSelected ? "✅ Yes" : "❌ No"}</p>
+            <p><strong>Partner Enabled:</strong> {partnerEnabled ? "✅ Yes" : "❌ No"}</p>
+            <p><strong>Finance Scope:</strong> {financeScope}</p>
+            <p><strong>Raw Partner Data:</strong> {JSON.stringify(getFormData("personalInformation.relocationPartner"))}</p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Page Header */}
       <PageHeading 
@@ -811,19 +813,19 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                     <strong>Income details required:</strong> {
                       (() => {
                         const userNeedsIncome = incomeSituation && ["continuing_income", "current_and_new_income", "seeking_income"].includes(incomeSituation) && !(incomeSituation === "dependent/supported" && supportedByPartner)
-                        const partnerNeedsIncome = partnerIncomeSituation && ["continuing_income", "current_and_new_income", "seeking_income"].includes(partnerIncomeSituation) && !(partnerIncomeSituation === "dependent/supported" && partnerSupportedByMe)
-                        const bothSelfFunded = incomeSituation === "gainfully_unemployed" && partnerIncomeSituation === "gainfully_unemployed"
+                        const partnerNeedsIncome = partnerEnabled && partnerIncomeSituation && ["continuing_income", "current_and_new_income", "seeking_income"].includes(partnerIncomeSituation) && !(partnerIncomeSituation === "dependent/supported" && partnerSupportedByMe)
+                        const bothSelfFunded = partnerEnabled && incomeSituation === "gainfully_unemployed" && partnerIncomeSituation === "gainfully_unemployed"
                         
                         if (bothSelfFunded) {
                           return "Both partners are self-funded, so at least one must show source of funds."
-                        } else if (userNeedsIncome && partnerNeedsIncome) {
+                        } else if (partnerEnabled && userNeedsIncome && partnerNeedsIncome) {
                           return "Both partners have income situations that require details."
                         } else if (userNeedsIncome) {
                           return "Your income situation requires details."
-                        } else if (partnerNeedsIncome) {
+                        } else if (partnerEnabled && partnerNeedsIncome) {
                           return "Your partner's income situation requires details."
                         }
-                        return "Income details are needed based on your situations."
+                        return "Income details are needed based on your situation."
                       })()
                     }
                   </AlertDescription>
@@ -1094,6 +1096,7 @@ function IncomeSourcesSection({ incomeSources, partnerIncomeSources, newIncomeSo
               <TabsList className={`grid w-full ${showUserTab && showPartnerTab ? 'grid-cols-2' : 'grid-cols-1'} mb-6`}>
                 {showUserTab && (
                   <TabsTrigger 
+                    key="you-tab"
                     value="you" 
                     className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                   >
@@ -1102,6 +1105,7 @@ function IncomeSourcesSection({ incomeSources, partnerIncomeSources, newIncomeSo
                 )}
                 {showPartnerTab && (
                   <TabsTrigger 
+                    key="partner-tab"
                     value="partner" 
                     className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                   >
@@ -1111,7 +1115,7 @@ function IncomeSourcesSection({ incomeSources, partnerIncomeSources, newIncomeSo
               </TabsList>
               
               {showUserTab && (
-                <TabsContent value="you" className="mt-6 space-y-6">
+                <TabsContent key="you-content" value="you" className="mt-6 space-y-6">
                   {/* Add income source form for You */}
           <div className="p-4 border rounded-lg bg-card">
             <h4 className="font-medium mb-4">➕ Add Income Source</h4>
@@ -1171,7 +1175,7 @@ function IncomeSourcesSection({ incomeSources, partnerIncomeSources, newIncomeSo
                     type="number"
                     min="0"
                     step="0.01"
-                    value={newIncomeSource.amount}
+                    value={newIncomeSource.amount || ""}
                     onChange={(e) => setNewIncomeSource({...newIncomeSource, amount: parseFloat(e.target.value) || 0})}
                     onFocus={(e) => e.target.select()}
                     placeholder="0.00"
@@ -1315,7 +1319,7 @@ function IncomeSourcesSection({ incomeSources, partnerIncomeSources, newIncomeSo
               )}
               
               {showPartnerTab && (
-                <TabsContent value="partner" className="mt-6 space-y-6">
+                <TabsContent key="partner-content" value="partner" className="mt-6 space-y-6">
                   {/* Add income source form for Partner */}
                   <div className="p-4 border rounded-lg bg-card">
                     <h4 className="font-medium mb-4">➕ Add Partner's Income Source</h4>
@@ -1375,7 +1379,7 @@ function IncomeSourcesSection({ incomeSources, partnerIncomeSources, newIncomeSo
                             type="number"
                             min="0"
                             step="0.01"
-                            value={newPartnerIncomeSource.amount}
+                            value={newPartnerIncomeSource.amount || ""}
                             onChange={(e) => setNewPartnerIncomeSource({...newPartnerIncomeSource, amount: parseFloat(e.target.value) || 0})}
                             onFocus={(e) => e.target.select()}
                             placeholder="0.00"
@@ -1573,8 +1577,8 @@ function IncomeSourcesSection({ incomeSources, partnerIncomeSources, newIncomeSo
                         </SelectTrigger>
                         <SelectContent>
                           {currencies.map((currency) => (
-                            <SelectItem key={currency.code} value={currency.code}>
-                              {currency.code} - {currency.name}
+                            <SelectItem key={currency} value={currency}>
+                              {currency}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -1593,8 +1597,8 @@ function IncomeSourcesSection({ incomeSources, partnerIncomeSources, newIncomeSo
                       </SelectTrigger>
                       <SelectContent>
                         {getCountryOptions().map((country) => (
-                          <SelectItem key={country.id} value={country.id}>
-                            {country.name}
+                          <SelectItem key={country} value={country}>
+                            {country}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -1791,13 +1795,14 @@ function IncomeSourcesList({ incomeSources, updateFormData, isPartner = false, r
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-start">
               <div className="md:col-span-2">
                 <p className="font-medium text-green-700">{source.category}</p>
-                {source.fields && Object.entries(source.fields).map(([key, value]: [string, any]) => 
-                  value ? (
+                {source.fields && Object.entries(source.fields)
+                  .filter(([key, value]: [string, any]) => value)
+                  .map(([key, value]: [string, any]) => (
                     <p key={key} className="text-sm text-muted-foreground">
                       • {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: {value}
                     </p>
-                  ) : null
-                )}
+                  ))
+                }
               </div>
               <div>
                 <p className="font-medium">Country</p>
@@ -1993,7 +1998,7 @@ function TotalWealthSection({ totalWealth, updateFormData, currencies, incomeSit
                     type="number"
                     min="0"
                     step="0.01"
-                    value={tempWealth.total}
+                    value={tempWealth.total || ""}
                     onChange={(e) => setTempWealth({...tempWealth, total: parseFloat(e.target.value) || 0})}
                     onFocus={(e) => e.target.select()}
                     placeholder="0.00"
@@ -2005,7 +2010,7 @@ function TotalWealthSection({ totalWealth, updateFormData, currencies, incomeSit
                     type="number"
                     min="0"
                     step="0.01"
-                    value={tempWealth.primaryResidence}
+                    value={tempWealth.primaryResidence || ""}
                     onChange={(e) => setTempWealth({...tempWealth, primaryResidence: parseFloat(e.target.value) || 0})}
                     onFocus={(e) => e.target.select()}
                     placeholder="0.00"
@@ -2322,7 +2327,7 @@ function CapitalGainsSection({ capitalGains, partnerCapitalGains, newCapitalGain
                     type="number"
                     min="0"
                     step="0.01"
-                    value={newCapitalGain.surplusValue}
+                    value={newCapitalGain.surplusValue || ""}
                     onChange={(e) => setNewCapitalGain({...newCapitalGain, surplusValue: parseFloat(e.target.value) || 0})}
                     onFocus={(e) => e.target.select()}
                     placeholder="0.00"
@@ -2398,8 +2403,8 @@ function CapitalGainsSection({ capitalGains, partnerCapitalGains, newCapitalGain
                       </SelectTrigger>
                       <SelectContent>
                         {getCountryOptions().map((country) => (
-                          <SelectItem key={country.id} value={country.id}>
-                            {country.name}
+                          <SelectItem key={country} value={country}>
+                            {country}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -2438,7 +2443,7 @@ function CapitalGainsSection({ capitalGains, partnerCapitalGains, newCapitalGain
                       type="number"
                       min="0"
                       step="0.01"
-                      value={newCapitalGain.surplusValue}
+                      value={newCapitalGain.surplusValue || ""}
                       onChange={(e) => setNewCapitalGain({...newCapitalGain, surplusValue: parseFloat(e.target.value) || 0})}
                       onFocus={(e) => e.target.select()}
                       placeholder="0.00"
@@ -2458,8 +2463,8 @@ function CapitalGainsSection({ capitalGains, partnerCapitalGains, newCapitalGain
                       </SelectTrigger>
                       <SelectContent>
                         {currencies.map((currency) => (
-                          <SelectItem key={currency.code} value={currency.code}>
-                            {currency.code} - {currency.name}
+                          <SelectItem key={currency} value={currency}>
+                            {currency}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -2640,7 +2645,7 @@ function LiabilitiesSection({ liabilities, partnerLiabilities, newLiability, set
                 </div>
               </div>
               
-              <TabsContent value="you" className="mt-6 space-y-6">
+              <TabsContent key="you-liability-content" value="you" className="mt-6 space-y-6">
                 {/* Add liability form for You */}
           <div className="p-4 border rounded-lg bg-card">
             <h4 className="font-medium mb-4">➕ Add Liability</h4>
@@ -2697,7 +2702,7 @@ function LiabilitiesSection({ liabilities, partnerLiabilities, newLiability, set
                     type="number"
                     min="0"
                     step="0.01"
-                    value={newLiability.amount}
+                    value={newLiability.amount || ""}
                     onChange={(e) => setNewLiability({...newLiability, amount: parseFloat(e.target.value) || 0})}
                     onFocus={(e) => e.target.select()}
                     placeholder="0.00"
@@ -2731,7 +2736,7 @@ function LiabilitiesSection({ liabilities, partnerLiabilities, newLiability, set
                     min="0"
                     max="50"
                     step="0.5"
-                    value={newLiability.paybackYears}
+                    value={newLiability.paybackYears || ""}
                     onChange={(e) => setNewLiability({...newLiability, paybackYears: parseFloat(e.target.value) || 0})}
                     onFocus={(e) => e.target.select()}
                     placeholder="0.0"
@@ -2745,7 +2750,7 @@ function LiabilitiesSection({ liabilities, partnerLiabilities, newLiability, set
                     min="0"
                     max="100"
                     step="0.1"
-                    value={newLiability.interestRate}
+                    value={newLiability.interestRate || ""}
                     onChange={(e) => setNewLiability({...newLiability, interestRate: parseFloat(e.target.value) || 0})}
                     onFocus={(e) => e.target.select()}
                     placeholder="0.0"
@@ -2765,7 +2770,7 @@ function LiabilitiesSection({ liabilities, partnerLiabilities, newLiability, set
           </div>
               </TabsContent>
               
-              <TabsContent value="partner" className="mt-6 space-y-6">
+              <TabsContent key="partner-liability-content" value="partner" className="mt-6 space-y-6">
                 {/* Partner form - placeholder for now */}
                 <div className="p-4 border rounded-lg bg-card">
                   <h4 className="font-medium mb-4">➕ Add Partner's Liability</h4>
@@ -2780,16 +2785,127 @@ function LiabilitiesSection({ liabilities, partnerLiabilities, newLiability, set
               </TabsContent>
             </Tabs>
           ) : (
-            /* Single user mode - preserve existing form */
+            /* Single user mode - show complete form */
             <div className="p-4 border rounded-lg bg-card">
               <h4 className="font-medium mb-4">➕ Add Liability</h4>
-              <Button 
-                onClick={() => addLiability(false)}
-                disabled={!newLiability.category || newLiability.amount <= 0}
-                className="w-full"
-              >
-                💾 Save Liability
-              </Button>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Liability Category</Label>
+                  <Select
+                    value={newLiability.category}
+                    onValueChange={(value) => setNewLiability({...newLiability, category: value, fields: {}})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(LIABILITY_CATEGORIES).map(([key, config]) => (
+                        <SelectItem key={key} value={key}>
+                          {key}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {newLiability.category && LIABILITY_CATEGORIES[newLiability.category as keyof typeof LIABILITY_CATEGORIES] && (
+                    <p className="text-sm text-muted-foreground italic">
+                      {LIABILITY_CATEGORIES[newLiability.category as keyof typeof LIABILITY_CATEGORIES].help}
+                    </p>
+                  )}
+                </div>
+                
+                {/* Dynamic fields based on category */}
+                <DynamicLiabilityFields newLiability={newLiability} setNewLiability={setNewLiability} />
+                
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>Country</Label>
+                    <Select
+                      value={newLiability.country}
+                      onValueChange={(value) => setNewLiability({...newLiability, country: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {getCountryOptions().map((country) => (
+                          <SelectItem key={country} value={country}>
+                            {country}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Amount</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={newLiability.amount || ""}
+                      onChange={(e) => setNewLiability({...newLiability, amount: parseFloat(e.target.value) || 0})}
+                      onFocus={(e) => e.target.select()}
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Currency</Label>
+                    <Select
+                      value={newLiability.currency}
+                      onValueChange={(value) => setNewLiability({...newLiability, currency: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select currency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {currencies.map((currency) => (
+                          <SelectItem key={currency} value={currency}>
+                            {currency}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Payback timeline (years)</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="50"
+                      step="0.5"
+                      value={newLiability.paybackYears || ""}
+                      onChange={(e) => setNewLiability({...newLiability, paybackYears: parseFloat(e.target.value) || 0})}
+                      onFocus={(e) => e.target.select()}
+                      placeholder="0.0"
+                    />
+                    <p className="text-xs text-muted-foreground">How many years until this debt is fully paid off</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Interest rate (%)</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      value={newLiability.interestRate || ""}
+                      onChange={(e) => setNewLiability({...newLiability, interestRate: parseFloat(e.target.value) || 0})}
+                      onFocus={(e) => e.target.select()}
+                      placeholder="0.0"
+                    />
+                    <p className="text-xs text-muted-foreground">Annual interest rate on this debt</p>
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={() => addLiability(false)}
+                  disabled={!newLiability.category || newLiability.amount <= 0}
+                  className="w-full"
+                >
+                  💾 Save Liability
+                </Button>
+              </div>
             </div>
           )}
         </div>

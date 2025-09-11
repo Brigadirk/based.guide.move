@@ -272,7 +272,7 @@ export default function HomePage() {
       case "education":
         return <Education onComplete={handleContinue} debugMode={debugMode} />;
       case "finance":
-        return <Finance onComplete={handleContinue} />;
+        return <Finance onComplete={handleContinue} debugMode={debugMode} />;
       case "social-security":
         return <SocialSecurityPensions onComplete={handleContinue} />;
       case "tax-deductions":
