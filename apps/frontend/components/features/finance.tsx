@@ -105,7 +105,16 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
   // Partner selection
   const hasPartnerSelected = getFormData("personalInformation.relocationPartner") ?? false
   const financeScope = getFormData("finance.scope") ?? (hasPartnerSelected ? "joint" : "me")
-  const partnerEnabled = hasPartnerSelected && financeScope === "joint"
+  const partnerEnabled = hasPartnerSelected
+
+  // Debug partner status
+  console.log("Finance Debug - Partner Status:", {
+    hasPartnerSelected,
+    financeScope,
+    partnerEnabled,
+    personalInformationData: getFormData("personalInformation"),
+    relocationPartner: getFormData("personalInformation.relocationPartner")
+  })
 
   // Enhanced validation with memoization
   const financeData = useMemo(() => ({
@@ -279,17 +288,29 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
 
   // Income Sources section visibility logic
   const shouldShowIncomeSources = useMemo(() => {
-    // If no income situations are set, don't show
-    if (!incomeSituation && !(partnerEnabled && partnerIncomeSituation)) return false
+    // If no income situation is set for the user, don't show
+    if (!incomeSituation) return false
     
-    // Check if either partner needs income details
+    // For single person (no partner), only check user's situation
+    if (!partnerEnabled) {
+      const userNeedsIncomeDetails = [
+        "continuing_income", 
+        "current_and_new_income", 
+        "seeking_income",
+        "gainfully_unemployed"  // Self-funded also needs to show source
+      ].includes(incomeSituation)
+      
+      return userNeedsIncomeDetails
+    }
+    
+    // For couples, check both partners
     const userNeedsIncomeDetails = incomeSituation && [
       "continuing_income", 
       "current_and_new_income", 
       "seeking_income"
     ].includes(incomeSituation)
     
-    const partnerNeedsIncomeDetails = partnerEnabled && partnerIncomeSituation && [
+    const partnerNeedsIncomeDetails = partnerIncomeSituation && [
       "continuing_income", 
       "current_and_new_income", 
       "seeking_income"
@@ -297,11 +318,11 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
     
     // Check support relationships
     const userSupportedByPartner = incomeSituation === "dependent/supported" && supportedByPartner
-    const partnerSupportedByUser = partnerEnabled && partnerIncomeSituation === "dependent/supported" && partnerSupportedByMe
+    const partnerSupportedByUser = partnerIncomeSituation === "dependent/supported" && partnerSupportedByMe
     
     // Check if both are self-funded
     const userSelfFunded = incomeSituation === "gainfully_unemployed"
-    const partnerSelfFunded = partnerEnabled && partnerIncomeSituation === "gainfully_unemployed"
+    const partnerSelfFunded = partnerIncomeSituation === "gainfully_unemployed"
     const bothSelfFunded = userSelfFunded && partnerSelfFunded
     
     // Show income sources if:
@@ -313,6 +334,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
     
     return false
   }, [
+    partnerEnabled,
     incomeSituation, 
     partnerIncomeSituation, 
     supportedByPartner, 
@@ -330,6 +352,17 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
+      {/* Debug Partner Status */}
+      <div className="p-4 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+        <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">🐛 Debug: Partner Status</h3>
+        <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
+          <p><strong>Has Partner Selected:</strong> {hasPartnerSelected ? "✅ Yes" : "❌ No"}</p>
+          <p><strong>Partner Enabled:</strong> {partnerEnabled ? "✅ Yes" : "❌ No"}</p>
+          <p><strong>Finance Scope:</strong> {financeScope}</p>
+          <p><strong>Raw Partner Data:</strong> {JSON.stringify(getFormData("personalInformation.relocationPartner"))}</p>
+        </div>
+      </div>
+
       {/* Page Header */}
       <PageHeading 
         title="Income and Assets"
@@ -646,11 +679,15 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
                       className="w-full"
                       disabled={!currentIncomeSituation}
                     >
-                      Save Income Situation for {
-                        incomeSituationOwnership === "you" ? "You" :
-                        incomeSituationOwnership === "partner" ? "Partner" :
-                        "Both"
-                      }
+                      {partnerEnabled ? (
+                        `Save Income Situation for ${
+                          incomeSituationOwnership === "you" ? "You" :
+                          incomeSituationOwnership === "partner" ? "Partner" :
+                          "Both"
+                        }`
+                      ) : (
+                        "Save Income Situation"
+                      )}
                     </Button>
                   </div>
                 )}
@@ -858,6 +895,7 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
             setNewCapitalGain={setNewCapitalGain}
             updateFormData={updateFormData}
             currencies={currencies}
+            getCountryOptions={getCountryOptions}
             hasPartnerSelected={partnerEnabled}
             capitalGainsTab={capitalGainsTab}
             setCapitalGainsTab={setCapitalGainsTab}
@@ -929,25 +967,40 @@ export function Finance({ onComplete }: { onComplete: () => void }) {
 
 function IncomeSourcesSection({ incomeSources, partnerIncomeSources, newIncomeSource, setNewIncomeSource, newPartnerIncomeSource, setNewPartnerIncomeSource, updateFormData, currencies, getCountryOptions, incomeSituation, partnerIncomeSituation, supportedByPartner, partnerSupportedByMe, hasPartnerSelected, incomeTab, setIncomeTab }: any) {
   
-  // Determine which tabs should be available based on income situations
-  const userCanAddIncome = incomeSituation && [
-    "continuing_income", 
-    "current_and_new_income", 
-    "seeking_income"
-  ].includes(incomeSituation) && !(incomeSituation === "dependent/supported" && supportedByPartner)
+  // Determine which tabs should be available
+  let showUserTab = false
+  let showPartnerTab = false
   
-  const partnerCanAddIncome = partnerIncomeSituation && [
-    "continuing_income", 
-    "current_and_new_income", 
-    "seeking_income"
-  ].includes(partnerIncomeSituation) && !(partnerIncomeSituation === "dependent/supported" && partnerSupportedByMe)
-  
-  // Both self-funded case - at least one needs to show source
-  const bothSelfFunded = incomeSituation === "gainfully_unemployed" && partnerIncomeSituation === "gainfully_unemployed"
-  
-  // Final determination of who can add income
-  const showUserTab = userCanAddIncome || (bothSelfFunded)
-  const showPartnerTab = partnerCanAddIncome || (bothSelfFunded)
+  if (!hasPartnerSelected) {
+    // For single person (no partner), always show user tab only
+    showUserTab = true
+    showPartnerTab = false
+    
+    // Set default tab to user if no partner
+    if (incomeTab !== "you") {
+      setIncomeTab("you")
+    }
+  } else {
+    // Determine which tabs should be available based on income situations (couples)
+    const userCanAddIncome = incomeSituation && [
+      "continuing_income", 
+      "current_and_new_income", 
+      "seeking_income"
+    ].includes(incomeSituation) && !(incomeSituation === "dependent/supported" && supportedByPartner)
+    
+    const partnerCanAddIncome = partnerIncomeSituation && [
+      "continuing_income", 
+      "current_and_new_income", 
+      "seeking_income"
+    ].includes(partnerIncomeSituation) && !(partnerIncomeSituation === "dependent/supported" && partnerSupportedByMe)
+    
+    // Both self-funded case - at least one needs to show source
+    const bothSelfFunded = incomeSituation === "gainfully_unemployed" && partnerIncomeSituation === "gainfully_unemployed"
+    
+    // Final determination of who can add income
+    showUserTab = userCanAddIncome || (bothSelfFunded)
+    showPartnerTab = partnerCanAddIncome || (bothSelfFunded)
+  }
   
   // Unified function for adding income sources
   const addIncomeSource = (isPartner: boolean = false) => {
@@ -1034,8 +1087,9 @@ function IncomeSourcesSection({ incomeSources, partnerIncomeSources, newIncomeSo
             )}
           </div>
 
-          {/* Tab-based form inputs - only show available tabs */}
-          {hasPartnerSelected && (showUserTab || showPartnerTab) ? (
+          {/* Tab-based form inputs for couples, direct form for singles */}
+          {hasPartnerSelected ? (
+            /* Couple mode - show tabs */
             <Tabs value={incomeTab} onValueChange={setIncomeTab} className="w-full">
               <TabsList className={`grid w-full ${showUserTab && showPartnerTab ? 'grid-cols-2' : 'grid-cols-1'} mb-6`}>
                 {showUserTab && (
@@ -1466,17 +1520,193 @@ function IncomeSourcesSection({ incomeSources, partnerIncomeSources, newIncomeSo
               )}
             </Tabs>
           ) : (
-            /* Single user mode - only show if user can add income */
+            /* Single user mode - show full form for user */
             showUserTab && (
               <div className="p-4 border rounded-lg bg-card">
                 <h4 className="font-medium mb-4">➕ Add Income Source</h4>
-                <Button 
-                  onClick={() => addIncomeSource(false)}
-                  disabled={!newIncomeSource.category || newIncomeSource.amount <= 0 || !newIncomeSource.country}
-                  className="w-full"
-                >
-                  💾 Save Income Source
-                </Button>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Income Category</Label>
+                    <Select
+                      value={newIncomeSource.category}
+                      onValueChange={(value) => setNewIncomeSource({...newIncomeSource, category: value, fields: {}})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(INCOME_CATEGORIES).map(([key, config]) => (
+                          <SelectItem key={key} value={key}>
+                            {key}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {newIncomeSource.category && INCOME_CATEGORIES[newIncomeSource.category as keyof typeof INCOME_CATEGORIES] && (
+                      <p className="text-sm text-muted-foreground italic">
+                        {INCOME_CATEGORIES[newIncomeSource.category as keyof typeof INCOME_CATEGORIES].help}
+                      </p>
+                    )}
+                  </div>
+                  
+                  {/* Dynamic fields based on category */}
+                  <DynamicIncomeFields newIncomeSource={newIncomeSource} setNewIncomeSource={setNewIncomeSource} />
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Annual Amount</Label>
+                      <Input
+                        type="number"
+                        value={newIncomeSource.amount || ""}
+                        onChange={(e) => setNewIncomeSource({...newIncomeSource, amount: parseFloat(e.target.value) || 0})}
+                        placeholder="0"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Currency</Label>
+                      <Select
+                        value={newIncomeSource.currency}
+                        onValueChange={(value) => setNewIncomeSource({...newIncomeSource, currency: value})}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {currencies.map((currency) => (
+                            <SelectItem key={currency.code} value={currency.code}>
+                              {currency.code} - {currency.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Country</Label>
+                    <Select
+                      value={newIncomeSource.country}
+                      onValueChange={(value) => setNewIncomeSource({...newIncomeSource, country: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {getCountryOptions().map((country) => (
+                          <SelectItem key={country.id} value={country.id}>
+                            {country.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {/* Timing selection */}
+                  <div className="space-y-3">
+                    <Label className="text-base font-medium">Income Timing</Label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id="current_income_single"
+                        name="timing_single"
+                        checked={newIncomeSource.continueInDestination}
+                        onChange={() => setNewIncomeSource({...newIncomeSource, continueInDestination: true})}
+                        disabled={incomeSituation === "seeking_income"}
+                        className={`h-4 w-4 ${incomeSituation === "seeking_income" ? "text-gray-400 cursor-not-allowed" : "text-green-600"}`}
+                      />
+                      <label htmlFor="current_income_single" className={`text-sm ${incomeSituation === "seeking_income" ? "text-gray-400 cursor-not-allowed" : "cursor-pointer"}`}>
+                        This is a current source of income that I will continue
+                      </label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id="hypothetical_income_single"
+                        name="timing_single"
+                        checked={!newIncomeSource.continueInDestination}
+                        onChange={() => setNewIncomeSource({...newIncomeSource, continueInDestination: false})}
+                        className="h-4 w-4 text-green-600"
+                      />
+                      <label htmlFor="hypothetical_income_single" className="text-sm cursor-pointer">
+                        This is expected/future income I plan to earn
+                      </label>
+                    </div>
+                  </div>
+                  
+                  {/* Additional fields for expected income */}
+                  {!newIncomeSource.continueInDestination && (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Expected Timeline</Label>
+                        <Select
+                          value={newIncomeSource.timeline}
+                          onValueChange={(value) => setNewIncomeSource({...newIncomeSource, timeline: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select timeline" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {[
+                              "Within 1 month",
+                              "Within 3 months", 
+                              "Within 6 months",
+                              "Within 1 year",
+                              "1-2 years",
+                              "Uncertain timing"
+                            ].map((timeline) => (
+                              <SelectItem key={timeline} value={timeline}>
+                                {timeline}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Confidence Level</Label>
+                        <Select
+                          value={newIncomeSource.confidence}
+                          onValueChange={(value) => setNewIncomeSource({...newIncomeSource, confidence: value})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select confidence" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {[
+                              "Very High (Job offer/contract)",
+                              "High (Strong prospects)",
+                              "Medium (Good chances)",
+                              "Low (Uncertain)",
+                              "Speculative"
+                            ].map((confidence) => (
+                              <SelectItem key={confidence} value={confidence}>
+                                {confidence}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  )}
+                  {!newIncomeSource.continueInDestination && (
+                    <div className="space-y-2">
+                      <Label>Additional Notes (Optional)</Label>
+                      <Textarea
+                        value={newIncomeSource.notes}
+                        onChange={(e) => setNewIncomeSource({...newIncomeSource, notes: e.target.value})}
+                        placeholder="Any additional details about this expected income source"
+                        rows={3}
+                      />
+                    </div>
+                  )}
+                  
+                  <Button 
+                    onClick={() => addIncomeSource(false)}
+                    disabled={!newIncomeSource.category || newIncomeSource.amount <= 0 || !newIncomeSource.country}
+                    className="w-full"
+                  >
+                    💾 Save Income Source
+                  </Button>
+                </div>
               </div>
             )
           )}
@@ -1815,7 +2045,7 @@ function TotalWealthSection({ totalWealth, updateFormData, currencies, incomeSit
   )
 }
 
-function CapitalGainsSection({ capitalGains, partnerCapitalGains, newCapitalGain, setNewCapitalGain, updateFormData, currencies, hasPartnerSelected, capitalGainsTab, setCapitalGainsTab }: any) {
+function CapitalGainsSection({ capitalGains, partnerCapitalGains, newCapitalGain, setNewCapitalGain, updateFormData, currencies, getCountryOptions, hasPartnerSelected, capitalGainsTab, setCapitalGainsTab }: any) {
   const futureSales = capitalGains.futureSales || []
   const partnerFutureSales = partnerCapitalGains.futureSales || []
 
@@ -1986,42 +2216,47 @@ function CapitalGainsSection({ capitalGains, partnerCapitalGains, newCapitalGain
                 </TabsTrigger>
               </TabsList>
               
-              {/* Asset ownership options */}
-              <div className="mb-4">
-                <div className="grid grid-cols-3 gap-2">
-                  <Button
-                    type="button"
-                    onClick={() => addCapitalGain(false, false)}
-                    disabled={!newCapitalGain.asset || newCapitalGain.surplusValue <= 0}
-                    size="sm"
-                    className="h-10"
-                  >
-                    You
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => addCapitalGain(true, false)}
-                    disabled={!newCapitalGain.asset || newCapitalGain.surplusValue <= 0}
-                    variant="secondary"
-                    size="sm"
-                    className="h-10"
-                  >
-                    Partner
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => addCapitalGain(false, true)}
-                    disabled={!newCapitalGain.asset || newCapitalGain.surplusValue <= 0}
-                    variant="outline"
-                    size="sm"
-                    className="h-10"
-                  >
-                    Both
-                  </Button>
+              {/* Asset ownership options - only show for couples */}
+              {hasPartnerSelected && (
+                <div key="ownership-buttons" className="mb-4">
+                  <div className="grid grid-cols-3 gap-2">
+                    <Button
+                      key="you-button"
+                      type="button"
+                      onClick={() => addCapitalGain(false, false)}
+                      disabled={!newCapitalGain.asset || newCapitalGain.surplusValue <= 0}
+                      size="sm"
+                      className="h-10"
+                    >
+                      You
+                    </Button>
+                    <Button
+                      key="partner-button"
+                      type="button"
+                      onClick={() => addCapitalGain(true, false)}
+                      disabled={!newCapitalGain.asset || newCapitalGain.surplusValue <= 0}
+                      variant="secondary"
+                      size="sm"
+                      className="h-10"
+                    >
+                      Partner
+                    </Button>
+                    <Button
+                      key="both-button"
+                      type="button"
+                      onClick={() => addCapitalGain(false, true)}
+                      disabled={!newCapitalGain.asset || newCapitalGain.surplusValue <= 0}
+                      variant="outline"
+                      size="sm"
+                      className="h-10"
+                    >
+                      Both
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
               
-              <TabsContent value="you" className="mt-6 space-y-6">
+              <TabsContent key="you-tab" value="you" className="mt-6 space-y-6">
                 {/* Add capital gain form for You */}
           <div className="p-4 border rounded-lg bg-card">
             <h4 className="font-medium mb-4">➕ Add Planned Sale</h4>
@@ -2130,7 +2365,7 @@ function CapitalGainsSection({ capitalGains, partnerCapitalGains, newCapitalGain
           </div>
               </TabsContent>
               
-              <TabsContent value="partner" className="mt-6 space-y-6">
+              <TabsContent key="partner-tab" value="partner" className="mt-6 space-y-6">
                 {/* Partner form fields only - no add button (use ownership buttons above) */}
                 <div className="p-4 border rounded-lg bg-card">
                   <h4 className="font-medium mb-4">➕ Add Partner's Planned Sale</h4>
@@ -2139,16 +2374,116 @@ function CapitalGainsSection({ capitalGains, partnerCapitalGains, newCapitalGain
               </TabsContent>
             </Tabs>
           ) : (
-            /* Single user mode - preserve existing form */
-            <div className="p-4 border rounded-lg bg-card">
+            /* Single user mode - show full form */
+            <div key="single-user-form" className="p-4 border rounded-lg bg-card">
               <h4 className="font-medium mb-4">➕ Add Planned Sale</h4>
-                          <Button
-                onClick={() => addCapitalGain(false)}
-                disabled={!newCapitalGain.asset}
-                className="w-full"
-              >
-                ➕ Add Planned Sale
-                          </Button>
+              <div className="grid gap-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>1️⃣ Asset name / description</Label>
+                    <Input
+                      value={newCapitalGain.asset}
+                      onChange={(e) => setNewCapitalGain({...newCapitalGain, asset: e.target.value})}
+                      placeholder="Enter asset name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>2️⃣ Country of sale</Label>
+                    <Select
+                      value={newCapitalGain.country}
+                      onValueChange={(value) => setNewCapitalGain({...newCapitalGain, country: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {getCountryOptions().map((country) => (
+                          <SelectItem key={country.id} value={country.id}>
+                            {country.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>3️⃣ Expected sale timeframe</Label>
+                    <Select
+                      value={newCapitalGain.timeframe}
+                      onValueChange={(value) => setNewCapitalGain({...newCapitalGain, timeframe: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select timeframe" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[
+                          "Within 1 year",
+                          "1 – 2 years",
+                          "2 – 5 years",
+                          "5 – 10 years",
+                          "> 10 years"
+                        ].map((period) => (
+                          <SelectItem key={period} value={period}>
+                            {period}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>4️⃣ Estimated surplus value (profit)</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={newCapitalGain.surplusValue}
+                      onChange={(e) => setNewCapitalGain({...newCapitalGain, surplusValue: parseFloat(e.target.value) || 0})}
+                      onFocus={(e) => e.target.select()}
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Currency</Label>
+                    <Select
+                      value={newCapitalGain.currency}
+                      onValueChange={(value) => setNewCapitalGain({...newCapitalGain, currency: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select currency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {currencies.map((currency) => (
+                          <SelectItem key={currency.code} value={currency.code}>
+                            {currency.code} - {currency.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Additional notes (optional)</Label>
+                    <Textarea
+                      value={newCapitalGain.notes}
+                      onChange={(e) => setNewCapitalGain({...newCapitalGain, notes: e.target.value})}
+                      placeholder="Any additional details"
+                      rows={2}
+                    />
+                  </div>
+                </div>
+                
+                <Button
+                  onClick={() => addCapitalGain(false)}
+                  disabled={!newCapitalGain.asset || newCapitalGain.surplusValue <= 0}
+                  className="w-full"
+                >
+                  💾 Save Planned Sale
+                </Button>
+              </div>
             </div>
           )}
         </div>
